@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31605.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlasServer", "BlasServer\BlasServer.csproj", "{5AFE70BE-76AE-4255-8357-6EE7BE2A208B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlasClient", "BlasClient\BlasClient.csproj", "{42BA2DBD-1D2C-4288-BE98-6AA23DC34E46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5AFE70BE-76AE-4255-8357-6EE7BE2A208B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AFE70BE-76AE-4255-8357-6EE7BE2A208B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AFE70BE-76AE-4255-8357-6EE7BE2A208B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AFE70BE-76AE-4255-8357-6EE7BE2A208B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42BA2DBD-1D2C-4288-BE98-6AA23DC34E46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42BA2DBD-1D2C-4288-BE98-6AA23DC34E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42BA2DBD-1D2C-4288-BE98-6AA23DC34E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42BA2DBD-1D2C-4288-BE98-6AA23DC34E46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {672057FF-C207-4911-B8C1-897E558ADAD0}
+	EndGlobalSection
+EndGlobal
