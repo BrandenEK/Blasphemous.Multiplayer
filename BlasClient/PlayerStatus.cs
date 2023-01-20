@@ -15,9 +15,35 @@ namespace BlasClient
 
         public string sceneName;
 
-        public void updateStatus(byte[] data)
+        // Returns the length of the playerstatus in data
+        public int updateStatus(byte[] data, int startIdx)
         {
+            int length = data[startIdx]; startIdx++;
+            if (length != 0)
+            {
+                name = Encoding.UTF8.GetString(data, startIdx, length);
+                startIdx += length;
+            }
 
+            xPos = BitConverter.ToSingle(data, startIdx); startIdx += 4;
+            yPos = BitConverter.ToSingle(data, startIdx); startIdx += 4;
+            facingDirection = BitConverter.ToBoolean(data, startIdx); startIdx += 1;
+
+            length = data[startIdx]; startIdx++;
+            if (length != 0)
+            {
+                animation = Encoding.UTF8.GetString(data, startIdx, length);
+                startIdx += length;
+            }
+
+            length = data[startIdx]; startIdx++;
+            if (length != 0)
+            {
+                sceneName = Encoding.UTF8.GetString(data, startIdx, length);
+                startIdx += length;
+            }
+
+            return startIdx;
         }
 
         public byte[] loadStatus()
@@ -59,6 +85,11 @@ namespace BlasClient
             }
 
             return data.ToArray();
+        }
+
+        public override string ToString()
+        {
+            return $"{name} is at position ({xPos},{yPos}) facing {(facingDirection ? "right" : "left")} in the animation {animation} in room {sceneName}";
         }
     }
 }

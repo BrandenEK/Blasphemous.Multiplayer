@@ -47,7 +47,43 @@ namespace BlasServer
 
         public byte[] loadStatus()
         {
-            return null;
+            List<byte> data = new List<byte>();
+
+            if (name == null)
+            {
+                data.Add(0);
+            }
+            else
+            {
+                data.Add((byte)name.Length);
+                data.AddRange(Encoding.UTF8.GetBytes(name));
+            }
+
+            data.AddRange(BitConverter.GetBytes(xPos));
+            data.AddRange(BitConverter.GetBytes(yPos));
+            data.AddRange(BitConverter.GetBytes(facingDirection));
+
+            if (animation == null)
+            {
+                data.Add(0);
+            }
+            else
+            {
+                data.Add((byte)animation.Length);
+                data.AddRange(Encoding.UTF8.GetBytes(animation));
+            }
+
+            if (sceneName == null)
+            {
+                data.Add(0);
+            }
+            else
+            {
+                data.Add((byte)sceneName.Length);
+                data.AddRange(Encoding.UTF8.GetBytes(sceneName));
+            }
+
+            return data.ToArray();
         }
 
         public override string ToString()

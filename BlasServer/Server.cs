@@ -35,7 +35,6 @@ namespace BlasServer
             }
 
             connectedPlayers = new Dictionary<string, PlayerStatus>();
-            GameLoop();
             return true;
         }
 
@@ -57,7 +56,7 @@ namespace BlasServer
                 list.Add(dataType);
                 list.AddRange(data);
                 Core.displayMessage($"Sending {list.Count} bytes");
-                server.Broadcast(list.ToArray());
+                server.Send(ip, list.ToArray());
             }
         }
 
@@ -96,7 +95,10 @@ namespace BlasServer
 
         void sendPlayerUpdate()
         {
-            Send(currentIp, new byte[] { 1 }, 1);
+            List<byte> allPlayers = new List<byte>();
+            foreach (PlayerStatus status in connectedPlayers.Values)
+                allPlayers.AddRange(status.loadStatus());
+            Send(currentIp, allPlayers.ToArray(), 1);
         }
 
         // Right after client connects, they send their name
@@ -112,9 +114,13 @@ namespace BlasServer
         {
             PlayerStatus status = new PlayerStatus();
             status.updateStatus(data);
+            connectedPlayers[currentIp] = status;
 
             Core.displayMessage("Received status from " + status.name);
             Core.displayMessage(status.ToString());
+
+            Core.displayMessage("Sending other player statuses");
+            sendPlayerUpdate();
         }
 
         private void clientConnected(object sender, ClientConnectionEventArgs e)

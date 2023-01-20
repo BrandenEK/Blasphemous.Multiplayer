@@ -65,7 +65,15 @@ namespace BlasClient
 
         private void receivePlayerUpdate(byte[] data)
         {
-            Main.Multiplayer.displayNotification("Received playerupdate");
+            List<PlayerStatus> players = new List<PlayerStatus>();
+            int startIdx = 0;
+            while (startIdx < data.Length)
+            {
+                PlayerStatus status = new PlayerStatus();
+                startIdx = status.updateStatus(data, startIdx);
+                players.Add(status);
+            }
+            Main.Multiplayer.updatePlayers(players);
         }
 
         // Data should be formatted as length length type data
@@ -96,7 +104,7 @@ namespace BlasClient
                 case 0:
                     break;
                 case 1:
-                    break;
+                    receivePlayerUpdate(data); break;
                 default:
                     Console.WriteLine($"Data type '{type}' is not valid"); break;
             }
