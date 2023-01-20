@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Text;
 using SimpleTcp;
 
@@ -10,7 +11,7 @@ namespace BlasServer
         private string ipAddress;
         private SimpleTcpServer server;
 
-        private Dictionary<string, string> connectedPlayers;
+        private Dictionary<string, PlayerStatus> connectedPlayers;
         private string currentIp;
 
         public Server(string ip)
@@ -33,8 +34,19 @@ namespace BlasServer
                 return false;
             }
 
-            connectedPlayers = new Dictionary<string, string>();
+            connectedPlayers = new Dictionary<string, PlayerStatus>();
+            GameLoop();
             return true;
+        }
+
+        private async Task GameLoop()
+        {
+            while (true)
+            {
+                Core.displayMessage("Game loop tick");
+
+                await Task.Delay(100);
+            }
         }
 
         private void Send(string ip, byte[] data, byte dataType)
@@ -86,21 +98,21 @@ namespace BlasServer
         void receivePlayerName(byte[] data)
         {
             string name = Encoding.UTF8.GetString(data);
-            connectedPlayers[currentIp] = name;
+            connectedPlayers[currentIp].name = name;
             // Notification for join
         }
 
         // Every certain number of frames, a client will send data about position, orientation, sprite, etc.
         void receivePlayerUpdate(byte[] data)
         {
-            string player = connectedPlayers[currentIp];
+            string player = connectedPlayers[currentIp].name;
             Core.displayMessage("Updating player " + player);
         }
 
         private void clientConnected(object sender, ClientConnectedEventArgs e)
         {
             Core.displayMessage("Client connected at " + e.IpPort);
-            connectedPlayers.Add(e.IpPort, "");
+            connectedPlayers.Add(e.IpPort, new PlayerStatus());
         }
 
         private void clientDisconnected(object sender, ClientDisconnectedEventArgs e)

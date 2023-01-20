@@ -37,7 +37,6 @@ namespace BlasClient
             //    Program.EndProgram();
             //}
 
-            // send name
             sendPlayerName();
             return true;
         }
@@ -74,7 +73,9 @@ namespace BlasClient
             {
                 ushort length = BitConverter.ToUInt16(e.Data, startIdx);
                 byte type = e.Data[startIdx + 2];
-                byte[] messageData = e.Data[(startIdx + 3)..(startIdx + 3 + length)];
+                byte[] messageData = new byte[length];
+                for (int i = 0; i < messageData.Length; i++)
+                    messageData[i] = e.Data[startIdx + 3 + i];
 
                 processDataReceived(type, messageData);
                 startIdx += 3 + length;
