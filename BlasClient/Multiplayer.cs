@@ -18,6 +18,9 @@ namespace BlasClient
         private int frameDelay = 120;
         private int currentFrame = 0;
 
+        private string[] animNames = new string[] { "Idle", "Falling", "Run", "Jump" };
+        private Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+
         public void Initialize()
         {
             LevelManager.OnLevelLoaded += onLevelLoaded;
@@ -44,9 +47,14 @@ namespace BlasClient
             SpriteRenderer render = obj.GetComponent<SpriteRenderer>();
             render.flipX = !status.facingDirection;
             render.sortingLayerName = Core.Logic.Penitent.SpriteRenderer.sortingLayerName;
-            render.sprite = Core.Logic.Penitent.SpriteRenderer.sprite;
+
+            //if (status.animation != null && sprites.ContainsKey(status.animation))
+            //{
+            //    render.sprite = sprites[status.animation];
+            //}
 
             Animator anim = obj.GetComponent<Animator>();
+            anim.speed = 0;
             anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
             if (status.animation != null)
             {
@@ -76,6 +84,11 @@ namespace BlasClient
                     currentFrame = 0;
                 }
             }
+
+            // temp
+            //Sprite s = Core.Logic.Penitent.SpriteRenderer.sprite;
+            //if (!sprites.ContainsKey(s.name))
+            //    sprites.Add(s.name, s);
         }
 
         private PlayerStatus getCurrentStatus()
@@ -90,12 +103,16 @@ namespace BlasClient
                 status.yPos = penitent.transform.position.y;
                 status.facingDirection = penitent.GetOrientation() == Framework.FrameworkCore.EntityOrientation.Right ? true : false;
 
+                //status.animation = penitent.SpriteRenderer.sprite.name;
+
                 Animator anim = penitent.Animator;
-                //anim.GetCurrentAnimatorStateInfo(0).hash
-                int length = anim.GetCurrentAnimatorClipInfo(0).Length;
-                for (int i = 0; i < length; i++)
+                for (int i = 0; i < animNames.Length; i++)
                 {
-                    status.animation = anim.GetCurrentAnimatorClipInfo(0)[i].clip.name;
+                    if (anim.GetCurrentAnimatorStateInfo(0).IsName(animNames[i]))
+                    {
+                        status.animation = animNames[i];
+                        break;
+                    }
                 }
             }
             if (Core.LevelManager.currentLevel != null && Core.LevelManager.currentLevel.LevelName != "MainMenu")
