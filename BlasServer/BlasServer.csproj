@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="SimpleTcp">
-      <HintPath>..\lib\SimpleTcp.dll</HintPath>
+    <Reference Include="SimpleTCP">
+      <HintPath>..\lib\SimpleTCP.dll</HintPath>
     </Reference>
   </ItemGroup>
 

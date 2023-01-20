@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net35</TargetFramework>
     <AssemblyName>BlasClient</AssemblyName>
     <Description>A multiplayer client for the game Blasphemous</Description>
     <Version>1.0.0</Version>
@@ -13,7 +13,6 @@
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
-    <PackageReference Include="SimpleTCP" Version="1.0.24" />
     <PackageReference Include="UnityEngine.Modules" Version="2017.4.40" IncludeAssets="compile" />
   </ItemGroup>
   
@@ -25,8 +24,17 @@
     <Reference Include="0Harmony">
       <HintPath>..\lib\0Harmony.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\lib\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\lib\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleTCP">
+      <HintPath>..\lib\SimpleTCP.dll</HintPath>
+    </Reference>
+    <Reference Include="Sirenix.Serialization">
+      <HintPath>..\lib\Sirenix.Serialization.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
