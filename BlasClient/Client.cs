@@ -88,30 +88,43 @@ namespace BlasClient
             }
         }
 
+        // Retrieves the player name from the beginning of data & returns the new start idx
+        private int getPlayerNameFromData(byte[] data, out string name)
+        {
+            byte nameLength = data[0];
+            name = Encoding.UTF8.GetString(data, 1, nameLength);
+            return nameLength + 1;
+        }
+
         // Send functions
 
         // Send this player's updated position
         public void sendPlayerPostition(float xPos, float yPos, bool facingDirection)
         {
+            List<byte> bytes = new List<byte>();
+            bytes.AddRange(BitConverter.GetBytes(xPos));
+            bytes.AddRange(BitConverter.GetBytes(yPos));
+            bytes.AddRange(BitConverter.GetBytes(facingDirection));
 
+            Send(bytes.ToArray(), 0);
         }
 
         // Send this player's updated animation
         public void sendPlayerAnimation(string animation)
         {
+            Send(Encoding.UTF8.GetBytes(animation), 1);
+        }
 
+        // Send that this player entered a scene
+        public void sendPlayerEnterScene(string scene)
+        {
+            Send(Encoding.UTF8.GetBytes(scene), 2);
         }
 
         // Send that this player left a scene
         public void sendPlayerLeaveScene()
         {
-
-        }
-
-        // Send that this player entered a scene
-        public void scenePlayerEnterScene(string scene)
-        {
-
+            Send(new byte[] { 0 }, 3);
         }
 
         public void sendPlayerName(string name) // old
@@ -129,25 +142,33 @@ namespace BlasClient
         // Received a player's updated position
         public void receivePlayerPostition(byte[] data)
         {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            float xPos = BitConverter.ToSingle(data, startIdx);
+            float yPos = BitConverter.ToSingle(data, startIdx + 4);
+            bool facingDirection = BitConverter.ToBoolean(data, startIdx + 8);
 
+            // Update specified player with new data
         }
 
         // Recieved a player's updated animation
         public void receivePlayerAnimation(byte[] data)
         {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            string animation = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
 
+            // Update specified player with new data
         }
 
         // Received that a player left a scene
         public void receivePlayerLeaveScene(byte[] data)
         {
-
+            // Remove the player object
         }
 
         // Received that a player entered a scene
         public void receivePlayerEnterScene(byte[] data)
         {
-
+            // Create the new player object
         }
 
         private void receivePlayerUpdate(byte[] data) // old
