@@ -19,19 +19,40 @@ namespace BlasClient
         private int frameDelay = 20;
         private int currentFrame = 0;
 
+        private Vector2 lastPosition;
+        private string lastAnimation;
+
         public void Initialize()
         {
             LevelManager.OnLevelLoaded += onLevelLoaded;
+            LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
             playerControl = new PlayerControl();
         }
         public void Dispose()
         {
             LevelManager.OnLevelLoaded -= onLevelLoaded;
+            LevelManager.OnBeforeLevelLoad -= onLevelUnloaded;
         }
 
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
+            if (client != null && client.connected)
+            {
+                // Entered a new scene
+                Main.UnityLog("Entering new scene: " + newLevel.LevelName);
+                client.sendPlayerEnterScene(newLevel.LevelName);
+            }
             playerControl.newScene();   
+        }
+
+        private void onLevelUnloaded(Level oldLevel, Level newLevel)
+        {
+            if (client != null && client.connected)
+            {
+                // Left a scene
+                Main.UnityLog("Leaving scene: " + oldLevel.LevelName);
+                client.sendPlayerLeaveScene();
+            }
         }
 
         public void update()
@@ -47,14 +68,24 @@ namespace BlasClient
 
             if (client != null && client.connected)
             {
-                currentFrame++;
-                if (currentFrame > frameDelay)
+                Transform penitent = Core.Logic.Penitent.transform;
+                if (penitent.position.x != lastPosition.x || penitent.position.y != lastPosition.y)
                 {
-                    // Send player status
-                    Main.UnityLog("Sending player status");
-                    client.sendPlayerUpdate(getCurrentStatus());
-                    currentFrame = 0;
+                    // Position has been updated
+                    Main.UnityLog("Sending new player position");
+                    bool dir = !Core.Logic.Penitent.SpriteRenderer.flipX;
+                    client.sendPlayerPostition(penitent.position.x, penitent.position.y, dir);
                 }
+                // Logic to check if animation clip is different
+
+                //currentFrame++;
+                //if (currentFrame > frameDelay)
+                //{
+                //    // Send player status
+                //    Main.UnityLog("Sending player status");
+                //    client.sendPlayerUpdate(getCurrentStatus());
+                //    currentFrame = 0;
+                //}
             }
 
             // temp
@@ -95,6 +126,7 @@ namespace BlasClient
             return status;
         }
 
+        // old
         public void updatePlayers(List<PlayerStatus> statuses)
         {
             // Skip updating players if not loaded into a real level
