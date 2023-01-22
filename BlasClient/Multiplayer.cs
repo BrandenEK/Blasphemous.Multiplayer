@@ -23,6 +23,11 @@ namespace BlasClient
         private Vector2 lastPosition;
         private string lastAnimation;
 
+        private bool shouldSendData
+        {
+            get { return inLevel && client != null && client.connected; }
+        }
+
         public void Initialize()
         {
             LevelManager.OnLevelLoaded += onLevelLoaded;
@@ -39,7 +44,7 @@ namespace BlasClient
         {
             inLevel = newLevel.LevelName != "MainMenu";
 
-            if (client != null && client.connected && inLevel)
+            if (shouldSendData)
             {
                 // Entered a new scene
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
@@ -50,7 +55,7 @@ namespace BlasClient
 
         private void onLevelUnloaded(Level oldLevel, Level newLevel)
         {
-            if (client != null && client.connected && inLevel)
+            if (shouldSendData)
             {
                 // Left a scene
                 Main.UnityLog("Leaving scene: " + oldLevel.LevelName);
@@ -71,7 +76,7 @@ namespace BlasClient
 
             }
 
-            if (client != null && client.connected && inLevel)
+            if (shouldSendData)
             {
                 Transform penitent = Core.Logic.Penitent.transform;
                 if (penitent.position.x != lastPosition.x || penitent.position.y != lastPosition.y)

@@ -85,9 +85,13 @@ namespace BlasServer
                 switch (type)
                 {
                     case 0:
-                        receivePlayerName(data); break;
+                        receivePlayerPostition(data); break;
                     case 1:
-                        receivePlayerUpdate(data); break;
+                        receivePlayerAnimation(data); break;
+                    case 2:
+                        receivePlayerEnterScene(data); break;
+                    case 3:
+                        receivePlayerLeaveScene(data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
