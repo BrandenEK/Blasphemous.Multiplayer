@@ -159,16 +159,16 @@ namespace BlasClient
             // Update specified player with new data
         }
 
-        // Received that a player left a scene
-        public void receivePlayerLeaveScene(byte[] data)
-        {
-            // Remove the player object
-        }
-
         // Received that a player entered a scene
         public void receivePlayerEnterScene(byte[] data)
         {
             // Create the new player object
+        }
+
+        // Received that a player left a scene
+        public void receivePlayerLeaveScene(byte[] data)
+        {
+            // Remove the player object
         }
 
         private void receivePlayerUpdate(byte[] data) // old

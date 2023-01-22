@@ -78,27 +78,93 @@ namespace BlasServer
             }
             if (startIdx != e.data.Length)
                 Core.displayError("Received data was formatted incorrectly");
-        }
 
-        private void processDataReceived(byte type, byte[] data)
-        {
-            switch (type)
+            // Determines which received function to call based on the type
+            void processDataReceived(byte type, byte[] data)
             {
-                case 0:
-                    receivePlayerName(data); break;
-                case 1:
-                    receivePlayerUpdate(data); break;
-                default:
-                    Core.displayError($"Data type '{type}' is not valid"); break;
+                switch (type)
+                {
+                    case 0:
+                        receivePlayerName(data); break;
+                    case 1:
+                        receivePlayerUpdate(data); break;
+                    default:
+                        Core.displayError($"Data type '{type}' is not valid"); break;
+                }
             }
         }
 
-        void sendPlayerUpdate()
+        private void clientConnected(object sender, ClientConnectionEventArgs e)
+        {
+            Core.displayMessage("Client connected at " + e.ip);
+            connectedPlayers.Add(e.ip, new PlayerStatus());
+        }
+
+        private void clientDisconnected(object sender, ClientConnectionEventArgs e)
+        {
+            Core.displayMessage("Client disconnected at " + e.ip);
+            connectedPlayers.Remove(e.ip);
+            // Noitification for leave
+        }
+
+        // Send functions
+
+        // Send a player's updated position
+        public void sendPlayerPostition(byte[] data)
+        {
+            
+        }
+
+        // Send a player's updated animation
+        public void sendPlayerAnimation(byte[] data)
+        {
+            
+        }
+
+        // Send that a player entered a scene
+        public void sendPlayerEnterScene(byte[] data)
+        {
+            
+        }
+
+        // Send that a player left a scene
+        public void sendPlayerLeaveScene()
+        {
+            
+        }
+
+        void sendPlayerUpdate() // old
         {
             List<byte> allPlayers = new List<byte>();
             foreach (PlayerStatus status in connectedPlayers.Values)
                 allPlayers.AddRange(status.loadStatus());
             Send(currentIp, allPlayers.ToArray(), 1);
+        }
+
+        // Receive functions
+
+        // Received a player's updated position
+        public void receivePlayerPostition(byte[] data)
+        {
+            // Send this to all players in the same scene as this player
+        }
+
+        // Recieved a player's updated animation
+        public void receivePlayerAnimation(byte[] data)
+        {
+            // Send this to all players in the same scene as this player
+        }
+
+        // Received that a player entered a scene
+        public void receivePlayerEnterScene(byte[] data)
+        {
+            // Update this players scene and send message to all players in the same scene
+        }
+
+        // Received that a player left a scene
+        public void receivePlayerLeaveScene(byte[] data)
+        {
+            // Update this players scene and send message to all players in the same scene
         }
 
         // Right after client connects, they send their name
@@ -121,19 +187,6 @@ namespace BlasServer
 
             Core.displayMessage("Sending other player statuses");
             sendPlayerUpdate();
-        }
-
-        private void clientConnected(object sender, ClientConnectionEventArgs e)
-        {
-            Core.displayMessage("Client connected at " + e.ip);
-            connectedPlayers.Add(e.ip, new PlayerStatus());
-        }
-
-        private void clientDisconnected(object sender, ClientConnectionEventArgs e)
-        {
-            Core.displayMessage("Client disconnected at " + e.ip);
-            connectedPlayers.Remove(e.ip);
-            // Noitification for leave
         }
     }
 }
