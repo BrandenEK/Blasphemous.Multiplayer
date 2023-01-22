@@ -138,27 +138,58 @@ namespace BlasServer
         #region Send functions
 
         // Send a player's updated position
-        public void sendPlayerPostition(byte[] data)
+        public void sendPlayerPostition(PlayerStatus player)
         {
-            
+            List<byte> bytes = new List<byte>(addPlayerNameToData(player.name));
+            bytes.AddRange(BitConverter.GetBytes(player.xPos));
+            bytes.AddRange(BitConverter.GetBytes(player.yPos));
+            bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
+
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send this player's updated position
+                    Send(ip, bytes.ToArray(), 0);
+                }
+            }
         }
 
         // Send a player's updated animation
-        public void sendPlayerAnimation(byte[] data)
+        public void sendPlayerAnimation(PlayerStatus player)
         {
             
         }
 
         // Send that a player entered a scene
-        public void sendPlayerEnterScene(byte[] data)
+        public void sendPlayerEnterScene(PlayerStatus player)
         {
-            
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send that this player has entered their scene
+                    Send(ip, Encoding.UTF8.GetBytes(player.name), 2);
+
+                    // Send that the other player is in this player's scene & the other player's position/animation
+                    Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
+                    sendPlayerPostition(connectedPlayers[ip]);
+                    sendPlayerAnimation(connectedPlayers[ip]);
+                }
+            }
         }
 
         // Send that a player left a scene
-        public void sendPlayerLeaveScene()
+        public void sendPlayerLeaveScene(PlayerStatus player)
         {
-            
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send that this player has left their scene
+                    Send(ip, Encoding.UTF8.GetBytes(player.name), 3);
+                }
+            }
         }
 
         void sendPlayerUpdate() // old
@@ -181,17 +212,7 @@ namespace BlasServer
             current.yPos = BitConverter.ToSingle(data, 4);
             current.facingDirection = BitConverter.ToBoolean(data, 8);
 
-            List<byte> bytes = new List<byte>(addPlayerNameToData(current.name));
-            bytes.AddRange(data);
-
-            foreach (string ip in connectedPlayers.Keys)
-            {
-                if (currentIp != ip && current.sceneName == connectedPlayers[ip].sceneName)
-                {
-                    // Send this player's updated position
-                    Send(ip, bytes.ToArray(), 0);
-                }
-            }
+            sendPlayerPostition(current);
         }
 
         // Recieved a player's updated animation
@@ -206,16 +227,7 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer();
             current.sceneName = Encoding.UTF8.GetString(data);
 
-            foreach (string ip in connectedPlayers.Keys)
-            {
-                if (currentIp != ip && current.sceneName == connectedPlayers[ip].sceneName)
-                {
-                    // Send that this player has entered their scene
-                    Send(ip, Encoding.UTF8.GetBytes(current.name), 2);
-                    // Send that the other player is in this player's scene
-                    Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                }
-            }
+            sendPlayerEnterScene(current);
         }
 
         // Received that a player left a scene
@@ -223,14 +235,7 @@ namespace BlasServer
         {
             PlayerStatus current = getCurrentPlayer();
 
-            foreach (string ip in connectedPlayers.Keys)
-            {
-                if (currentIp != ip && current.sceneName == connectedPlayers[ip].sceneName)
-                {
-                    // Send that this player has left their scene
-                    Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
-                }
-            }
+            sendPlayerLeaveScene(current);
             current.sceneName = "";
         }
 
