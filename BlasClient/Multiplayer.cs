@@ -13,7 +13,7 @@ namespace BlasClient
     public class Multiplayer
     {
         private Client client;
-        private PlayerControl playerControl;
+        public PlayerControl playerControl;
         private string playerName;
 
         private int frameDelay = 20;

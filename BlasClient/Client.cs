@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using SimpleTCP;
+using UnityEngine;
 
 namespace BlasClient
 {
@@ -150,6 +151,7 @@ namespace BlasClient
             bool facingDirection = BitConverter.ToBoolean(data, startIdx + 8);
 
             // Update specified player with new data
+            Main.Multiplayer.playerControl.updatePlayerPosition(playerName, new Vector2(xPos, yPos), facingDirection);
         }
 
         // Recieved a player's updated animation
@@ -159,18 +161,21 @@ namespace BlasClient
             string animation = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
 
             // Update specified player with new data
+            Main.Multiplayer.playerControl.updatePlayerAnimation(playerName, animation);
         }
 
         // Received that a player entered a scene
         public void receivePlayerEnterScene(byte[] data)
         {
             // Create the new player object
+            Main.Multiplayer.playerControl.addPlayer(Encoding.UTF8.GetString(data));
         }
 
         // Received that a player left a scene
         public void receivePlayerLeaveScene(byte[] data)
         {
             // Remove the player object
+            Main.Multiplayer.playerControl.removePlayer(Encoding.UTF8.GetString(data));
         }
 
         private void receivePlayerUpdate(byte[] data) // old
