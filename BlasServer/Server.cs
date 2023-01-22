@@ -121,6 +121,15 @@ namespace BlasServer
             return new PlayerStatus();
         }
 
+        private byte[] getPositionBytes(PlayerStatus player)
+        {
+            List<byte> bytes = new List<byte>(addPlayerNameToData(player.name));
+            bytes.AddRange(BitConverter.GetBytes(player.xPos));
+            bytes.AddRange(BitConverter.GetBytes(player.yPos));
+            bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
+            return bytes.ToArray();
+        }
+
         private byte[] addPlayerNameToData(string name)
         {
             byte[] nameBytes = Encoding.UTF8.GetBytes(name);
@@ -140,17 +149,14 @@ namespace BlasServer
         // Send a player's updated position
         public void sendPlayerPostition(PlayerStatus player)
         {
-            List<byte> bytes = new List<byte>(addPlayerNameToData(player.name));
-            bytes.AddRange(BitConverter.GetBytes(player.xPos));
-            bytes.AddRange(BitConverter.GetBytes(player.yPos));
-            bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
+            byte[] positionBytes = getPositionBytes(player);
 
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated position
-                    Send(ip, bytes.ToArray(), 0);
+                    Send(ip, positionBytes, 0);
                 }
             }
         }
@@ -173,8 +179,8 @@ namespace BlasServer
 
                     // Send that the other player is in this player's scene & the other player's position/animation
                     Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                    sendPlayerPostition(connectedPlayers[ip]);
-                    sendPlayerAnimation(connectedPlayers[ip]);
+                    Send(currentIp, getPositionBytes(connectedPlayers[ip]), 0);
+                    // Send animation data
                 }
             }
         }
