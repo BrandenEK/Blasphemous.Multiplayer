@@ -19,6 +19,7 @@ namespace BlasClient
         private int frameDelay = 20;
         private int currentFrame = 0;
 
+        private bool inLevel;
         private Vector2 lastPosition;
         private string lastAnimation;
 
@@ -36,7 +37,9 @@ namespace BlasClient
 
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
-            if (client != null && client.connected)
+            inLevel = newLevel.LevelName != "MainMenu";
+
+            if (client != null && client.connected && inLevel)
             {
                 // Entered a new scene
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
@@ -47,12 +50,14 @@ namespace BlasClient
 
         private void onLevelUnloaded(Level oldLevel, Level newLevel)
         {
-            if (client != null && client.connected)
+            if (client != null && client.connected && inLevel)
             {
                 // Left a scene
                 Main.UnityLog("Leaving scene: " + oldLevel.LevelName);
                 client.sendPlayerLeaveScene();
             }
+
+            inLevel = false;
         }
 
         public void update()
@@ -66,7 +71,7 @@ namespace BlasClient
 
             }
 
-            if (client != null && client.connected)
+            if (client != null && client.connected && inLevel)
             {
                 Transform penitent = Core.Logic.Penitent.transform;
                 if (penitent.position.x != lastPosition.x || penitent.position.y != lastPosition.y)
@@ -75,6 +80,7 @@ namespace BlasClient
                     Main.UnityLog("Sending new player position");
                     bool dir = !Core.Logic.Penitent.SpriteRenderer.flipX;
                     client.sendPlayerPostition(penitent.position.x, penitent.position.y, dir);
+                    lastPosition = new Vector2(penitent.position.x, penitent.position.y);
                 }
                 // Logic to check if animation clip is different
 
@@ -89,9 +95,12 @@ namespace BlasClient
             }
 
             // temp
-            Sprite s = Core.Logic.Penitent.SpriteRenderer.sprite;
-            if (!playerControl.sprites.ContainsKey(s.name))
-                playerControl.sprites.Add(s.name, s);
+            if (Core.Logic.Penitent != null)
+            {
+                Sprite s = Core.Logic.Penitent.SpriteRenderer.sprite;
+                if (!playerControl.sprites.ContainsKey(s.name))
+                    playerControl.sprites.Add(s.name, s);
+            }
         }
 
         // Temp

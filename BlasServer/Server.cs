@@ -107,7 +107,7 @@ namespace BlasServer
             // Noitification for leave
         }
 
-        // Send functions
+        #region Send functions
 
         // Send a player's updated position
         public void sendPlayerPostition(byte[] data)
@@ -141,7 +141,9 @@ namespace BlasServer
             Send(currentIp, allPlayers.ToArray(), 1);
         }
 
-        // Receive functions
+        #endregion Send functions
+
+        #region Receive functions
 
         // Received a player's updated position
         public void receivePlayerPostition(byte[] data)
@@ -188,5 +190,7 @@ namespace BlasServer
             Core.displayMessage("Sending other player statuses");
             sendPlayerUpdate();
         }
+
+        #endregion Receive functions
     }
 }

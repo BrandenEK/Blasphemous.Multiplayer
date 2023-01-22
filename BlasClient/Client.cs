@@ -96,7 +96,7 @@ namespace BlasClient
             return nameLength + 1;
         }
 
-        // Send functions
+        #region Send functions
 
         // Send this player's updated position
         public void sendPlayerPostition(float xPos, float yPos, bool facingDirection)
@@ -137,7 +137,9 @@ namespace BlasClient
             Send(status.loadStatus(), 1);
         }
 
-        // Receive functions
+        #endregion Send functions
+
+        #region Receive functions
 
         // Received a player's updated position
         public void receivePlayerPostition(byte[] data)
@@ -184,7 +186,7 @@ namespace BlasClient
             Main.Multiplayer.updatePlayers(players);
         }
 
-        
+        #endregion Receive functions
 
 
         //private void clientConnected(object sender, ClientConnectedEventArgs e)
