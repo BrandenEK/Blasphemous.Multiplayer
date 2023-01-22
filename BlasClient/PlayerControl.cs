@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Framework.Managers;
 
@@ -12,10 +11,21 @@ namespace BlasClient
         private string[] animNames = new string[] { "Idle", "Falling", "Run", "Jump" };
         public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
-        public void newScene()
+        public void loadScene(string scene)
         {
-            playerHolder = new GameObject("Player Holder").transform;
+            if (scene != "MainMenu")
+            {
+                playerHolder = new GameObject("Player Holder").transform;
+            }
             //createNewPlayer(Main.Multiplayer.getCurrentStatus());
+        }
+
+        public void unloadScene()
+        {
+            if (playerHolder != null)
+            {
+                Object.DestroyImmediate(playerHolder.gameObject);
+            }
         }
 
         // Creates a new player when either one enters the same room

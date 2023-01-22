@@ -43,7 +43,7 @@ namespace BlasClient
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
             inLevel = newLevel.LevelName != "MainMenu";
-            playerControl.newScene();   
+            playerControl.loadScene(newLevel.LevelName);   
 
             if (shouldSendData)
             {
@@ -63,6 +63,7 @@ namespace BlasClient
             }
 
             inLevel = false;
+            playerControl.unloadScene();
         }
 
         public void update()
