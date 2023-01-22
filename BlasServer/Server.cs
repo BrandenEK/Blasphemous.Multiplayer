@@ -111,6 +111,15 @@ namespace BlasServer
             // Noitification for leave
         }
 
+        private PlayerStatus getCurrentPlayer()
+        {
+            if (connectedPlayers.ContainsKey(currentIp))
+                return connectedPlayers[currentIp];
+
+            Core.displayError("Data for " + currentIp + " has not been created yet!");
+            return new PlayerStatus();
+        }
+
         #region Send functions
 
         // Send a player's updated position
@@ -152,7 +161,22 @@ namespace BlasServer
         // Received a player's updated position
         public void receivePlayerPostition(byte[] data)
         {
-            // Send this to all players in the same scene as this player
+            PlayerStatus current = getCurrentPlayer();
+            current.xPos = BitConverter.ToSingle(data, 0);
+            current.yPos = BitConverter.ToSingle(data, 4);
+            current.facingDirection = BitConverter.ToBoolean(data, 8);
+
+            List<byte> bytes = new List<byte>(Encoding.UTF8.GetBytes(current.name));
+            bytes.AddRange(data);
+
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (current.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send this player's updated position
+                    Send(ip, bytes.ToArray(), 0);
+                }
+            }
         }
 
         // Recieved a player's updated animation
@@ -164,13 +188,33 @@ namespace BlasServer
         // Received that a player entered a scene
         public void receivePlayerEnterScene(byte[] data)
         {
-            // Update this players scene and send message to all players in the same scene
+            PlayerStatus current = getCurrentPlayer();
+            current.sceneName = Encoding.UTF8.GetString(data);
+
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (current.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send that this player has entered their scene
+                    Send(ip, Encoding.UTF8.GetBytes(current.name), 2);
+                }
+            }
         }
 
         // Received that a player left a scene
         public void receivePlayerLeaveScene(byte[] data)
         {
-            // Update this players scene and send message to all players in the same scene
+            PlayerStatus current = getCurrentPlayer();
+
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (current.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send that this player has left their scene
+                    Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
+                }
+            }
+            current.sceneName = "";
         }
 
         // Right after client connects, they send their name
