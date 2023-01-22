@@ -6,6 +6,8 @@ namespace BlasClient
 {
     public class PlayerControl
     {
+        private bool currentlyInUse;
+
         private Transform playerHolder;
 
         private string[] animNames = new string[] { "Idle", "Falling", "Run", "Jump" };
@@ -55,32 +57,49 @@ namespace BlasClient
         // When a player leaves a scene, destroy the player object
         public void removePlayer(string name)
         {
+            if (currentlyInUse)
+            {
+                Main.UnityLog("PlayerControl was already in use!");
+                return;
+            }
+            currentlyInUse = true;
+
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
-                UnityEngine.Object.Destroy(player);
+                Object.Destroy(player);
                 Main.UnityLog("Removed player object for " + name);
-                return;
             }
-
-            Main.UnityLog("Error: Can't remove player object for " + name);
+            else
+            {
+                Main.UnityLog("Error: Can't remove player object for " + name);
+            }
+            currentlyInUse = false;
         }
 
         // When receiving a player position update, find the player and change its position
         public void updatePlayerPosition(string name, Vector2 position, bool facingDirection)
         {
+            if (currentlyInUse)
+            {
+                Main.UnityLog("PlayerControl was already in use!");
+                return;
+            }
+            currentlyInUse = true;
+
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
                 player.transform.position = new Vector3(position.x, position.y, 0);
                 Main.UnityLog("Updating player object position for " + name);
-                return;
 
                 // Separate thing for changing direction - doesnt happen all the time
             }
-
-            // Error - player object doesn't exist
-            Main.UnityLog("Error: Can't find player object for " + name);
+            else
+            {
+                Main.UnityLog("Error: Can't find player object for " + name);
+            }
+            currentlyInUse = false;
         }
 
         // When receiving a player position update, find the player and change its position
