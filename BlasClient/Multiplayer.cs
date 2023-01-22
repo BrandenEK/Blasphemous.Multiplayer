@@ -119,7 +119,12 @@ namespace BlasClient
         {
             if (inLevel)
             {
+                Main.UnityLog("Updating position of player " + playerName);
                 playerControl.updatePlayerPosition(playerName, new Vector2(xPos, yPos), facingDirection);
+            }
+            else
+            {
+                Main.UnityLog("Won't receive position of player " + playerName);
             }
         }
 
@@ -128,7 +133,12 @@ namespace BlasClient
         {
             if (inLevel)
             {
+                Main.UnityLog("Updating animation of player " + playerName);
                 playerControl.updatePlayerAnimation(playerName, animation);
+            }
+            else
+            {
+                Main.UnityLog("Won't receive animation of player " + playerName);
             }
         }
 
@@ -137,7 +147,12 @@ namespace BlasClient
         {
             if (inLevel)
             {
+                Main.UnityLog("Adding player " + playerName + " to scene");
                 playerControl.addPlayer(playerName);
+            }
+            else
+            {
+                Main.UnityLog("Won't receive new scene of player " + playerName);
             }
         }
 
@@ -146,7 +161,12 @@ namespace BlasClient
         {
             if (inLevel)
             {
+                Main.UnityLog("Removing player " + playerName+ " from scene");
                 playerControl.removePlayer(playerName);
+            }
+            else
+            {
+                Main.UnityLog("Won't receive old scene of player " + playerName);
             }
         }
 

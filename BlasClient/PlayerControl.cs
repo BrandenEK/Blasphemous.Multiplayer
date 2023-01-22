@@ -38,7 +38,8 @@ namespace BlasClient
             SpriteRenderer render = player.GetComponent<SpriteRenderer>();
             //temp
             render.sprite = Core.Logic.Penitent.SpriteRenderer.sprite;
-            //render.sortingLayerName = Core.Logic.Penitent.SpriteRenderer.sortingLayerName;
+            render.sortingLayerName = "Player";
+            Main.UnityLog("Created new player object for " + name);
         }
 
         // When a player leaves a scene, destroy the player object
@@ -48,11 +49,11 @@ namespace BlasClient
             if (player != null)
             {
                 UnityEngine.Object.Destroy(player);
+                Main.UnityLog("Removed player object for " + name);
                 return;
             }
 
-            // Error - player object doesn't exist
-            Main.Multiplayer.displayNotification("Error - cant remove player");
+            Main.UnityLog("Error: Can't remove player object for " + name);
         }
 
         // When receiving a player position update, find the player and change its position
@@ -62,12 +63,14 @@ namespace BlasClient
             if (player != null)
             {
                 player.transform.position = new Vector3(position.x, position.y, 0);
+                Main.UnityLog("Updating player object position for " + name);
+                return;
 
                 // Separate thing for changing direction - doesnt happen all the time
             }
 
             // Error - player object doesn't exist
-            Main.Multiplayer.displayNotification("Error - cant update player position");
+            Main.UnityLog("Error: Can't find player object for " + name);
         }
 
         // When receiving a player position update, find the player and change its position

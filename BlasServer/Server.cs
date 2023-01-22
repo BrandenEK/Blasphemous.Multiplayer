@@ -121,6 +121,20 @@ namespace BlasServer
             return new PlayerStatus();
         }
 
+        private byte[] addPlayerNameToData(string name)
+        {
+            byte[] nameBytes = Encoding.UTF8.GetBytes(name);
+
+            byte[] data = new byte[nameBytes.Length + 1];
+            data[0] = (byte)nameBytes.Length;
+
+            for (int i = 0; i < nameBytes.Length; i++)
+            {
+                data[i + 1] = nameBytes[i];
+            }
+            return data;
+        }
+
         #region Send functions
 
         // Send a player's updated position
@@ -167,7 +181,7 @@ namespace BlasServer
             current.yPos = BitConverter.ToSingle(data, 4);
             current.facingDirection = BitConverter.ToBoolean(data, 8);
 
-            List<byte> bytes = new List<byte>(Encoding.UTF8.GetBytes(current.name));
+            List<byte> bytes = new List<byte>(addPlayerNameToData(current.name));
             bytes.AddRange(data);
 
             foreach (string ip in connectedPlayers.Keys)
