@@ -43,6 +43,7 @@ namespace BlasClient
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
             inLevel = newLevel.LevelName != "MainMenu";
+            playerControl.newScene();   
 
             if (shouldSendData)
             {
@@ -50,7 +51,6 @@ namespace BlasClient
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
                 client.sendPlayerEnterScene(newLevel.LevelName);
             }
-            playerControl.newScene();   
         }
 
         private void onLevelUnloaded(Level oldLevel, Level newLevel)

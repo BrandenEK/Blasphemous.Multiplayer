@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using Framework.Managers;
 
@@ -23,7 +21,7 @@ namespace BlasClient
         // Creates a new player when either one enters the same room
         private void createNewPlayer(PlayerStatus status)
         {
-            GameObject obj = new GameObject(status.name, typeof(SpriteRenderer), typeof(Animator));
+            GameObject obj = new GameObject(status.name, typeof(SpriteRenderer), typeof(Animator)); // old
             obj.transform.parent = playerHolder;
 
             SpriteRenderer render = obj.GetComponent<SpriteRenderer>();
@@ -31,25 +29,70 @@ namespace BlasClient
             setPlayerStatus(status, obj);
         }
 
+        // When a player enters a scene, create a new player object
+        public void addPlayer(string name)
+        {
+            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator));
+            player.transform.parent = playerHolder;
+
+            SpriteRenderer render = player.GetComponent<SpriteRenderer>();
+            //temp
+            render.sprite = Core.Logic.Penitent.SpriteRenderer.sprite;
+            //render.sortingLayerName = Core.Logic.Penitent.SpriteRenderer.sortingLayerName;
+        }
+
+        // When a player leaves a scene, destroy the player object
+        public void removePlayer(string name)
+        {
+            GameObject player = getPlayerObject(name);
+            if (player != null)
+            {
+                UnityEngine.Object.Destroy(player);
+                return;
+            }
+
+            // Error - player object doesn't exist
+            Main.Multiplayer.displayNotification("Error - cant remove player");
+        }
+
+        // When receiving a player position update, find the player and change its position
+        public void updatePlayerPosition(string name, Vector2 position, bool facingDirection)
+        {
+            GameObject player = getPlayerObject(name);
+            if (player != null)
+            {
+                player.transform.position = new Vector3(position.x, position.y, 0);
+
+                // Separate thing for changing direction - doesnt happen all the time
+            }
+
+            // Error - player object doesn't exist
+            Main.Multiplayer.displayNotification("Error - cant update player position");
+        }
+
+        // When receiving a player position update, find the player and change its position
+        public void updatePlayerAnimation(string name, string animation)
+        {
+            
+        }
+
+        // Finds a specified player in the scene
+        private GameObject getPlayerObject(string name)
+        {
+            foreach (Transform child in playerHolder)
+            {
+                if (child.name == name)
+                    return child.gameObject;
+            }
+            return null;
+        }
+
         // Updates the player status whenever it receives their new data
-        public void setPlayerStatus(PlayerStatus status, GameObject player = null)
+        public void setPlayerStatus(PlayerStatus status, GameObject player = null) // old
         {
             if (player == null)
             {
-                // Must first find player
-                foreach (Transform child in playerHolder)
-                {
-                    if (child.name == status.name)
-                    {
-                        player = child.gameObject;
-                        break;
-                    }
-                }
-                if (player == null)
-                {
-                    // Error - this player hasn't been created yet
-                    return;
-                }
+                player = getPlayerObject(status.name);
             }
 
             player.transform.position = new Vector3(status.xPos, status.yPos, 0);
