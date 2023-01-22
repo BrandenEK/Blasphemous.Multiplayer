@@ -29,6 +29,18 @@ namespace BlasClient
         }
     }
 
+    // Allow access to console
+    [HarmonyPatch(typeof(ConsoleWidget), "Update")]
+    public class ConsoleWidget_Patch
+    {
+        public static void Postfix(ConsoleWidget __instance, bool ___isEnabled)
+        {
+            if (Input.GetKeyDown(KeyCode.Backslash))
+            {
+                __instance.SetEnabled(!___isEnabled);
+            }
+        }
+    }
     // Add multiplayer commands to console
     [HarmonyPatch(typeof(ConsoleWidget), "InitializeCommands")]
     public class Console_Patch
