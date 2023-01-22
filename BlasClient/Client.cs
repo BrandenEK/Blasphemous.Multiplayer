@@ -53,29 +53,6 @@ namespace BlasClient
             }
         }
 
-        public void sendPlayerName(string name)
-        {
-            Send(Encoding.UTF8.GetBytes(name), 0);
-        }
-
-        public void sendPlayerUpdate(PlayerStatus status)
-        {
-            Send(status.loadStatus(), 1);
-        }
-
-        private void receivePlayerUpdate(byte[] data)
-        {
-            List<PlayerStatus> players = new List<PlayerStatus>();
-            int startIdx = 0;
-            while (startIdx < data.Length)
-            {
-                PlayerStatus status = new PlayerStatus();
-                startIdx = status.updateStatus(data, startIdx);
-                players.Add(status);
-            }
-            Main.Multiplayer.updatePlayers(players);
-        }
-
         // Data should be formatted as length length type data
         private void Receive(object sender, DataReceivedEventArgs message)
         {
@@ -95,20 +72,98 @@ namespace BlasClient
             }
             if (startIdx != message.data.Length)
                 Console.WriteLine("Received data was formatted incorrectly");
-        }
 
-        private void processDataReceived(byte type, byte[] data)
-        {
-            switch (type)
+            // Determines which received function to call based on the type
+            void processDataReceived(byte type, byte[] data)
             {
-                case 0:
-                    break;
-                case 1:
-                    receivePlayerUpdate(data); break;
-                default:
-                    Console.WriteLine($"Data type '{type}' is not valid"); break;
+                switch (type)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        receivePlayerUpdate(data); break;
+                    default:
+                        Console.WriteLine($"Data type '{type}' is not valid"); break;
+                }
             }
         }
+
+        // Send functions
+
+        // Send this player's updated position
+        public void sendPlayerPostition(float xPos, float yPos, bool facingDirection)
+        {
+
+        }
+
+        // Send this player's updated animation
+        public void sendPlayerAnimation(string animation)
+        {
+
+        }
+
+        // Send that this player left a scene
+        public void sendPlayerLeaveScene()
+        {
+
+        }
+
+        // Send that this player entered a scene
+        public void scenePlayerEnterScene(string scene)
+        {
+
+        }
+
+        public void sendPlayerName(string name) // old
+        {
+            Send(Encoding.UTF8.GetBytes(name), 0);
+        }
+
+        public void sendPlayerUpdate(PlayerStatus status) // old
+        {
+            Send(status.loadStatus(), 1);
+        }
+
+        // Receive functions
+
+        // Received a player's updated position
+        public void receivePlayerPostition(byte[] data)
+        {
+
+        }
+
+        // Recieved a player's updated animation
+        public void receivePlayerAnimation(byte[] data)
+        {
+
+        }
+
+        // Received that a player left a scene
+        public void receivePlayerLeaveScene(byte[] data)
+        {
+
+        }
+
+        // Received that a player entered a scene
+        public void receivePlayerEnterScene(byte[] data)
+        {
+
+        }
+
+        private void receivePlayerUpdate(byte[] data) // old
+        {
+            List<PlayerStatus> players = new List<PlayerStatus>();
+            int startIdx = 0;
+            while (startIdx < data.Length)
+            {
+                PlayerStatus status = new PlayerStatus();
+                startIdx = status.updateStatus(data, startIdx);
+                players.Add(status);
+            }
+            Main.Multiplayer.updatePlayers(players);
+        }
+
+        
 
 
         //private void clientConnected(object sender, ClientConnectedEventArgs e)
