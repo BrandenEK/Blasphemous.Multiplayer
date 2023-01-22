@@ -17,7 +17,7 @@ namespace BlasClient
         public void newScene()
         {
             playerHolder = new GameObject("Player Holder").transform;
-            createNewPlayer(Main.Multiplayer.getCurrentStatus());
+            //createNewPlayer(Main.Multiplayer.getCurrentStatus());
         }
 
         // Creates a new player when either one enters the same room

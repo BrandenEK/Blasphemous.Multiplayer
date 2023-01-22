@@ -171,7 +171,7 @@ namespace BlasServer
 
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (current.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && current.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated position
                     Send(ip, bytes.ToArray(), 0);
@@ -193,10 +193,12 @@ namespace BlasServer
 
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (current.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && current.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send that this player has entered their scene
                     Send(ip, Encoding.UTF8.GetBytes(current.name), 2);
+                    // Send that the other player is in this player's scene
+                    Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
                 }
             }
         }
@@ -208,7 +210,7 @@ namespace BlasServer
 
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (current.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && current.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send that this player has left their scene
                     Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
