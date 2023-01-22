@@ -13,7 +13,7 @@ namespace BlasClient
     public class Multiplayer
     {
         private Client client;
-        public PlayerControl playerControl;
+        private PlayerControl playerControl;
         private string playerName;
 
         private int frameDelay = 20;
@@ -105,6 +105,42 @@ namespace BlasClient
                 Sprite s = Core.Logic.Penitent.SpriteRenderer.sprite;
                 if (!playerControl.sprites.ContainsKey(s.name))
                     playerControl.sprites.Add(s.name, s);
+            }
+        }
+
+        // Received position data from server
+        public void playerPositionUpdated(string playerName, float xPos, float yPos, bool facingDirection)
+        {
+            if (inLevel)
+            {
+                playerControl.updatePlayerPosition(playerName, new Vector2(xPos, yPos), facingDirection);
+            }
+        }
+
+        // Received animation data from server
+        public void playerAnimationUpdated(string playerName, string animation)
+        {
+            if (inLevel)
+            {
+                playerControl.updatePlayerAnimation(playerName, animation);
+            }
+        }
+
+        // Received enterScene data from server
+        public void playerEnteredScene(string playerName)
+        {
+            if (inLevel)
+            {
+                playerControl.addPlayer(playerName);
+            }
+        }
+
+        // Received leftScene data from server
+        public void playerLeftScene(string playerName)
+        {
+            if (inLevel)
+            {
+                playerControl.removePlayer(playerName);
             }
         }
 
