@@ -1,9 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using HarmonyLib;
 using Framework.Managers;
+using Gameplay.UI.Widgets;
+using Gameplay.UI.Console;
+using Gameplay.UI.Others;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace BlasClient
 {
@@ -23,6 +26,44 @@ namespace BlasClient
         public static void Postfix()
         {
             Main.Multiplayer.Dispose();
+        }
+    }
+
+    // Add multiplayer commands to console
+    [HarmonyPatch(typeof(ConsoleWidget), "InitializeCommands")]
+    public class Console_Patch
+    {
+        public static void Postfix(List<ConsoleCommand> ___commands)
+        {
+            ___commands.Add(new MultiplayerCommand());
+        }
+    }
+    // Allow console commands on the main menu
+    [HarmonyPatch(typeof(KeepFocus), "Update")]
+    public class KeepFocus_Patch
+    {
+        public static bool Prefix()
+        {
+            return ConsoleWidget.Instance == null || !ConsoleWidget.Instance.IsEnabled();
+        }
+    }
+    [HarmonyPatch(typeof(ConsoleWidget), "SetEnabled")]
+    public class ConsoleWidgetDisable_Patch
+    {
+        public static void Postfix(bool enabled)
+        {
+            if (!enabled && Core.LevelManager.currentLevel.LevelName == "MainMenu")
+            {
+                Button[] buttons = Object.FindObjectsOfType<Button>();
+                foreach (Button b in buttons)
+                {
+                    if (b.name == "Continue")
+                    {
+                        EventSystem.current.SetSelectedGameObject(b.gameObject);
+                        return;
+                    }
+                }
+            }
         }
     }
 }

@@ -36,5 +36,8 @@
     <Reference Include="Sirenix.Serialization">
       <HintPath>..\lib\Sirenix.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\BlasphemousRandomizer\lib\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

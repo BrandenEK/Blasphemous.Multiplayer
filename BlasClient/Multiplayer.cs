@@ -69,7 +69,7 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                Connect();
+                
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
@@ -192,6 +192,15 @@ namespace BlasClient
                     playerControl.setPlayerStatus(statuses[i]);
                 }
             }
+        }
+
+        public string tryConnect(string ip, string name, string password)
+        {
+            playerName = name;
+            client = new Client(ip);
+            bool result = client.Connect();
+
+            return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
         }
 
         public void Connect()
