@@ -79,9 +79,13 @@ namespace BlasClient
                 switch (type)
                 {
                     case 0:
-                        break;
+                        receivePlayerPostition(data); break;
                     case 1:
-                        receivePlayerUpdate(data); break;
+                        receivePlayerAnimation(data); break;
+                    case 2:
+                        receivePlayerEnterScene(data); break;
+                    case 3:
+                        receivePlayerLeaveScene(data); break;
                     default:
                         Console.WriteLine($"Data type '{type}' is not valid"); break;
                 }

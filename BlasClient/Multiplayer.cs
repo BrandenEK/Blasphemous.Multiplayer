@@ -79,13 +79,13 @@ namespace BlasClient
             if (shouldSendData)
             {
                 Transform penitent = Core.Logic.Penitent.transform;
-                if (penitent.position.x != lastPosition.x || penitent.position.y != lastPosition.y)
+                if (positionHasChanged(penitent.position))
                 {
                     // Position has been updated
                     Main.UnityLog("Sending new player position");
                     bool dir = !Core.Logic.Penitent.SpriteRenderer.flipX;
                     client.sendPlayerPostition(penitent.position.x, penitent.position.y, dir);
-                    lastPosition = new Vector2(penitent.position.x, penitent.position.y);
+                    lastPosition = penitent.position;
                 }
                 // Logic to check if animation clip is different
 
@@ -106,6 +106,12 @@ namespace BlasClient
                 if (!playerControl.sprites.ContainsKey(s.name))
                     playerControl.sprites.Add(s.name, s);
             }
+        }
+
+        private bool positionHasChanged(Vector2 currentPosition)
+        {
+            float cutoff = 0.03f;
+            return Mathf.Abs(currentPosition.x - lastPosition.x) > cutoff || Mathf.Abs(currentPosition.y - lastPosition.y) > cutoff;
         }
 
         // Received position data from server
