@@ -113,11 +113,23 @@ namespace BlasServer
             return new PlayerStatus();
         }
 
-        private byte[] getPositionBytes(PlayerStatus player)
+        private byte[] getPositionPacket(PlayerStatus player)
         {
             List<byte> bytes = addPlayerNameToData(player.name);
             bytes.AddRange(BitConverter.GetBytes(player.xPos));
             bytes.AddRange(BitConverter.GetBytes(player.yPos));
+            return bytes.ToArray();
+        }
+        private byte[] getAnimationPacket(PlayerStatus player)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.Add(player.animation);
+            return bytes.ToArray();
+        }
+        private byte[] getDirectionPacket(PlayerStatus player)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
             return bytes.ToArray();
         }
 
@@ -141,7 +153,7 @@ namespace BlasServer
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated position
-                    Send(ip, getPositionBytes(player), 0);
+                    Send(ip, getPositionPacket(player), 0);
                 }
             }
         }
@@ -154,9 +166,7 @@ namespace BlasServer
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated animation
-                    List<byte> bytes = addPlayerNameToData(player.name);
-                    bytes.Add(player.animation);
-                    Send(ip, bytes.ToArray(), 1);
+                    Send(ip, getAnimationPacket(player), 1);
                 }
             }
         }
@@ -168,13 +178,17 @@ namespace BlasServer
             {
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
-                    // Send that this player has entered their scene
+                    // Send that this player has entered their scene & this player's position/animation/direction
                     Send(ip, Encoding.UTF8.GetBytes(player.name), 2);
+                    Send(ip, getPositionPacket(player), 0);
+                    Send(ip, getAnimationPacket(player), 1);
+                    Send(ip, getDirectionPacket(player), 4);
 
-                    // Send that the other player is in this player's scene & the other player's position/animation
+                    // Send that the other player is in this player's scene & the other player's position/animation/direction
                     Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                    Send(currentIp, getPositionBytes(connectedPlayers[ip]), 0);
-                    // Send animation data
+                    Send(currentIp, getPositionPacket(connectedPlayers[ip]), 0);
+                    Send(currentIp, getAnimationPacket(connectedPlayers[ip]), 1);
+                    Send(currentIp, getDirectionPacket(connectedPlayers[ip]), 4);
                 }
             }
         }
@@ -200,9 +214,7 @@ namespace BlasServer
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated direction
-                    List<byte> bytes = addPlayerNameToData(player.name);
-                    bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
-                    Send(ip, bytes.ToArray(), 4);
+                    Send(ip, getDirectionPacket(player), 4);
                 }
             }
         }
@@ -217,7 +229,6 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer();
             current.xPos = BitConverter.ToSingle(data, 0);
             current.yPos = BitConverter.ToSingle(data, 4);
-            current.facingDirection = BitConverter.ToBoolean(data, 8);
 
             sendPlayerPostition(current);
         }
@@ -259,12 +270,12 @@ namespace BlasServer
         }
 
         // Right after client connects, they send their name
-        void receivePlayerName(byte[] data)
-        {
-            string name = Encoding.UTF8.GetString(data);
-            connectedPlayers[currentIp].name = name;
-            // Notification for join
-        }
+        //void receivePlayerName(byte[] data)
+        //{
+        //    string name = Encoding.UTF8.GetString(data);
+        //    connectedPlayers[currentIp].name = name;
+        //    // Notification for join
+        //}
 
         #endregion Receive functions
     }

@@ -49,7 +49,7 @@ namespace BlasClient
                 List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
                 list.Add(dataType);
                 list.AddRange(data);
-                Main.UnityLog($"Sending {list.Count} bytes");
+                //Main.UnityLog($"Sending {list.Count} bytes");
                 client.Write(list.ToArray());
             }
         }
@@ -57,7 +57,7 @@ namespace BlasClient
         // Data should be formatted as length length type data
         private void Receive(object sender, DataReceivedEventArgs message)
         {
-            Main.UnityLog("Bytes received: " + message.data.Length);
+            //Main.UnityLog("Bytes received: " + message.data.Length);
 
             int startIdx = 0;
             while (startIdx < message.data.Length - 3)
@@ -116,9 +116,9 @@ namespace BlasClient
         }
 
         // Send this player's updated animation
-        public void sendPlayerAnimation(byte animationId)
+        public void sendPlayerAnimation(byte animation)
         {
-            Send(new byte[] { animationId }, 1);
+            Send(new byte[] { animation }, 1);
         }
 
         // Send that this player entered a scene
@@ -139,10 +139,10 @@ namespace BlasClient
             Send(BitConverter.GetBytes(direction), 4);
         }
 
-        public void sendPlayerName(string name) // old
-        {
-            Send(Encoding.UTF8.GetBytes(name), 0);
-        }
+        //public void sendPlayerName(string name) // old
+        //{
+        //    Send(Encoding.UTF8.GetBytes(name), 0);
+        //}
 
         #endregion Send functions
 
