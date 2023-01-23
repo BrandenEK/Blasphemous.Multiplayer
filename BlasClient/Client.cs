@@ -48,7 +48,7 @@ namespace BlasClient
                 List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
                 list.Add(dataType);
                 list.AddRange(data);
-                Console.WriteLine($"Sending {list.Count} bytes");
+                Main.UnityLog($"Sending {list.Count} bytes");
                 client.Write(list.ToArray());
             }
         }
@@ -56,7 +56,7 @@ namespace BlasClient
         // Data should be formatted as length length type data
         private void Receive(object sender, DataReceivedEventArgs message)
         {
-            Console.WriteLine("Bytes received: " + message.data.Length);
+            Main.UnityLog("Bytes received: " + message.data.Length);
 
             int startIdx = 0;
             while (startIdx < message.data.Length - 3)
@@ -71,7 +71,7 @@ namespace BlasClient
                 startIdx += 3 + length;
             }
             if (startIdx != message.data.Length)
-                Console.WriteLine("Received data was formatted incorrectly");
+                Main.UnityLog("Received data was formatted incorrectly");
 
             // Determines which received function to call based on the type
             void processDataReceived(byte type, byte[] data)
@@ -87,7 +87,7 @@ namespace BlasClient
                     case 3:
                         receivePlayerLeaveScene(data); break;
                     default:
-                        Console.WriteLine($"Data type '{type}' is not valid"); break;
+                        Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
             }
         }
@@ -136,11 +136,6 @@ namespace BlasClient
             Send(Encoding.UTF8.GetBytes(name), 0);
         }
 
-        public void sendPlayerUpdate(PlayerStatus status) // old
-        {
-            Send(status.loadStatus(), 1);
-        }
-
         #endregion Send functions
 
         #region Receive functions
@@ -179,19 +174,6 @@ namespace BlasClient
         {
             // Remove the player object
             Main.Multiplayer.playerLeftScene(Encoding.UTF8.GetString(data));
-        }
-
-        private void receivePlayerUpdate(byte[] data) // old
-        {
-            List<PlayerStatus> players = new List<PlayerStatus>();
-            int startIdx = 0;
-            while (startIdx < data.Length)
-            {
-                PlayerStatus status = new PlayerStatus();
-                startIdx = status.updateStatus(data, startIdx);
-                players.Add(status);
-            }
-            Main.Multiplayer.updatePlayers(players);
         }
 
         #endregion Receive functions

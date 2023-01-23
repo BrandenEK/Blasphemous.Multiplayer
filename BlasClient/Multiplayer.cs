@@ -16,12 +16,12 @@ namespace BlasClient
         private PlayerControl playerControl;
         private string playerName;
 
-        private int frameDelay = 20;
-        private int currentFrame = 0;
-
         private bool inLevel;
         private Vector2 lastPosition;
         private string lastAnimation;
+
+        private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
+        private static readonly object playerLock = new object();
 
         private bool shouldSendData
         {
@@ -55,10 +55,11 @@ namespace BlasClient
 
         private void onLevelUnloaded(Level oldLevel, Level newLevel)
         {
+            playerControl.checkHolder();
             if (shouldSendData)
             {
                 // Left a scene
-                Main.UnityLog("Leaving scene: " + oldLevel.LevelName);
+                Main.UnityLog("Leaving old scene");
                 client.sendPlayerLeaveScene();
             }
 
@@ -74,32 +75,34 @@ namespace BlasClient
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-
+                
             }
 
+            // Check & send updated position
             if (shouldSendData)
             {
                 Transform penitent = Core.Logic.Penitent.transform;
                 if (positionHasChanged(penitent.position))
                 {
                     // Position has been updated
-                    Main.UnityLog("Sending new player position");
+                    //Main.UnityLog("Sending new player position");
                     bool dir = !Core.Logic.Penitent.SpriteRenderer.flipX;
                     client.sendPlayerPostition(penitent.position.x, penitent.position.y, dir);
                     lastPosition = penitent.position;
                 }
                 // Logic to check if animation clip is different
-
-                //currentFrame++;
-                //if (currentFrame > frameDelay)
-                //{
-                //    // Send player status
-                //    Main.UnityLog("Sending player status");
-                //    client.sendPlayerUpdate(getCurrentStatus());
-                //    currentFrame = 0;
-                //}
             }
 
+            // Update other player's data
+            lock (playerLock)
+            {
+                foreach (string playerName in queuedPositions.Keys)
+                {
+                    playerControl.updatePlayerPosition(playerName, queuedPositions[playerName], true);
+                }
+                queuedPositions.Clear();
+            }
+            
             // temp
             if (Core.Logic.Penitent != null)
             {
@@ -115,13 +118,25 @@ namespace BlasClient
             return Mathf.Abs(currentPosition.x - lastPosition.x) > cutoff || Mathf.Abs(currentPosition.y - lastPosition.y) > cutoff;
         }
 
+        private void queuePosition(string name, Vector2 pos)
+        {
+            lock (playerLock)
+            {
+                if (queuedPositions.ContainsKey(name))
+                    queuedPositions[name] = pos;
+                else
+                    queuedPositions.Add(name, pos);
+            }
+        }
+
         // Received position data from server
         public void playerPositionUpdated(string playerName, float xPos, float yPos, bool facingDirection)
         {
             if (inLevel)
             {
                 Main.UnityLog("Updating position of player " + playerName);
-                playerControl.updatePlayerPosition(playerName, new Vector2(xPos, yPos), facingDirection);
+                queuePosition(playerName, new Vector2(xPos, yPos));
+                //playerControl.updatePlayerPosition(playerName, new Vector2(xPos, yPos), facingDirection);
             }
             else
             {
@@ -203,24 +218,6 @@ namespace BlasClient
             return status;
         }
 
-        // old
-        public void updatePlayers(List<PlayerStatus> statuses)
-        {
-            // Skip updating players if not loaded into a real level
-            if (Core.LevelManager.InsideChangeLevel || Core.LevelManager.currentLevel == null || Core.LevelManager.currentLevel.LevelName == "MainMenu")
-                return;
-
-            string currentScene = Core.LevelManager.currentLevel.LevelName;
-            for (int i = 0; i < statuses.Count; i++)
-            {
-                if (statuses[i].sceneName == currentScene)
-                {
-                    // Move this check to inside the server to only send new player data if in same scene
-                    playerControl.setPlayerStatus(statuses[i]);
-                }
-            }
-        }
-
         public string tryConnect(string ip, string name, string password)
         {
             playerName = name;
@@ -228,13 +225,6 @@ namespace BlasClient
             bool result = client.Connect();
 
             return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
-        }
-
-        public void Connect()
-        {
-            playerName = "Test";
-            client = new Client("localhost");
-            client.Connect();
         }
 
         public void displayNotification(string message)
