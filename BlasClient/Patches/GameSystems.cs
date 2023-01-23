@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using HarmonyLib;
+﻿using HarmonyLib;
+using System.Collections.Generic;
 using Framework.Managers;
 using Gameplay.UI.Widgets;
 using Gameplay.UI.Console;
@@ -41,6 +41,7 @@ namespace BlasClient
             }
         }
     }
+
     // Add multiplayer commands to console
     [HarmonyPatch(typeof(ConsoleWidget), "InitializeCommands")]
     public class Console_Patch

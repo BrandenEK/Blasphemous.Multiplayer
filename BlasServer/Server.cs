@@ -179,7 +179,7 @@ namespace BlasServer
 
                     // Send that the other player is in this player's scene & the other player's position/animation
                     Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                    //Send(currentIp, getPositionBytes(connectedPlayers[ip]), 0);
+                    Send(currentIp, getPositionBytes(connectedPlayers[ip]), 0);
                     // Send animation data
                 }
             }

@@ -55,7 +55,6 @@ namespace BlasClient
 
         private void onLevelUnloaded(Level oldLevel, Level newLevel)
         {
-            playerControl.checkHolder();
             if (shouldSendData)
             {
                 // Left a scene
@@ -71,11 +70,11 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                
+                playerControl.updatePlayerAnimation("1", "Run");
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                
+                playerControl.updatePlayerAnimation("1", "Dash");
             }
 
             // Check & send updated position

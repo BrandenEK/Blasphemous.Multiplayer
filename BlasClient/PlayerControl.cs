@@ -24,13 +24,18 @@ namespace BlasClient
         // When a player enters a scene, create a new player object
         public void addPlayer(string name)
         {
-            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator));
+            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator));
             players.Add(player);
 
+            // Set up sprite rendering
             SpriteRenderer render = player.GetComponent<SpriteRenderer>();
-            //temp
-            render.sprite = Core.Logic.Penitent.SpriteRenderer.sprite;
             render.sortingLayerName = "Player";
+            render.sprite = Core.Logic.Penitent.SpriteRenderer.sprite; // temp
+            
+            // Set up animations
+            Animator anim = player.GetComponent<Animator>();
+            anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+
             Main.UnityLog("Created new player object for " + name);
         }
 
@@ -70,7 +75,25 @@ namespace BlasClient
         // When receiving a player position update, find the player and change its position
         public void updatePlayerAnimation(string name, string animation)
         {
-            
+            GameObject player = getPlayerObject(name);
+            if (player != null)
+            {
+                Animator anim = player.GetComponent<Animator>();
+                if (animation == "Run")
+                {
+                    anim.SetBool("RUNNING", true);
+                    anim.SetBool("GROUNDED", true);
+                }
+                else if (animation == "Dash")
+                {
+                    anim.SetBool("GROUNDED", true);
+                }
+                anim.Play(animation);
+            }
+            else
+            {
+                Main.UnityLog("Error: Can't find player object for " + name);
+            }
         }
 
         // Finds a specified player in the scene
