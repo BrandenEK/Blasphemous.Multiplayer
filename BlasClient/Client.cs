@@ -26,6 +26,7 @@ namespace BlasClient
                 //client.Events.Connected += clientConnected;
                 //client.Events.Disconnected += clientDisconnected;
                 client.DataReceived += Receive;
+                client.TcpClient.NoDelay = true;
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -114,9 +115,9 @@ namespace BlasClient
         }
 
         // Send this player's updated animation
-        public void sendPlayerAnimation(string animation)
+        public void sendPlayerAnimation(byte animationId)
         {
-            Send(Encoding.UTF8.GetBytes(animation), 1);
+            Send(new byte[] { animationId }, 1);
         }
 
         // Send that this player entered a scene
@@ -156,7 +157,7 @@ namespace BlasClient
         public void receivePlayerAnimation(byte[] data)
         {
             int startIdx = getPlayerNameFromData(data, out string playerName);
-            string animation = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
+            byte animation = data[startIdx];
 
             // Update specified player with new data
             Main.Multiplayer.playerAnimationUpdated(playerName, animation);

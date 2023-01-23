@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using Gameplay.UI;
 using Framework.Managers;
@@ -18,7 +16,7 @@ namespace BlasClient
 
         private bool inLevel;
         private Vector2 lastPosition;
-        private string lastAnimation;
+        private byte lastAnimation;
 
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private static readonly object playerLock = new object();
@@ -70,26 +68,42 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                playerControl.updatePlayerAnimation("1", "Run");
+                //playerControl.updatePlayerAnimation("1", "Run");
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                playerControl.updatePlayerAnimation("1", "Dash");
+                //playerControl.updatePlayerAnimation("1", "Dash");
             }
 
-            // Check & send updated position
-            if (shouldSendData)
+            if (shouldSendData && Core.Logic.Penitent != null)
             {
-                Transform penitent = Core.Logic.Penitent.transform;
-                if (positionHasChanged(penitent.position))
+                // Check & send updated position
+                Transform penitentTransform = Core.Logic.Penitent.transform;
+                if (positionHasChanged(penitentTransform.position))
                 {
                     // Position has been updated
-                    //Main.UnityLog("Sending new player position");
+                    Main.UnityLog("Sending new player position");
                     bool dir = !Core.Logic.Penitent.SpriteRenderer.flipX;
-                    client.sendPlayerPostition(penitent.position.x, penitent.position.y, dir);
-                    lastPosition = penitent.position;
+                    client.sendPlayerPostition(penitentTransform.position.x, penitentTransform.position.y, dir);
+                    lastPosition = penitentTransform.position;
                 }
-                // Logic to check if animation clip is different
+
+                // Check & send updated animation clip
+                Animator penitentAnimator = Core.Logic.Penitent.Animator;
+                AnimatorStateInfo state = penitentAnimator.GetCurrentAnimatorStateInfo(0);
+                if (animationHasChanged(state))
+                {
+                    // Animation has been updated
+                    Main.UnityLog("Sending new player animation");
+                    for (byte i = 0; i < PlayerAnimator.animations.Length; i++)
+                    {
+                        if (state.IsName(PlayerAnimator.animations[i].name))
+                        {
+                            client.sendPlayerAnimation(i);
+                            lastAnimation = i;
+                        }
+                    }
+                }
             }
 
             // Update other player's data
@@ -115,6 +129,11 @@ namespace BlasClient
         {
             float cutoff = 0.03f;
             return Mathf.Abs(currentPosition.x - lastPosition.x) > cutoff || Mathf.Abs(currentPosition.y - lastPosition.y) > cutoff;
+        }
+
+        private bool animationHasChanged(AnimatorStateInfo state)
+        {
+            return !state.IsName(PlayerAnimator.animations[lastAnimation].name);
         }
 
         private void queuePosition(string name, Vector2 pos)
@@ -144,7 +163,7 @@ namespace BlasClient
         }
 
         // Received animation data from server
-        public void playerAnimationUpdated(string playerName, string animation)
+        public void playerAnimationUpdated(string playerName, byte animation)
         {
             if (inLevel)
             {

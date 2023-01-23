@@ -73,22 +73,29 @@ namespace BlasClient
         }
 
         // When receiving a player position update, find the player and change its position
-        public void updatePlayerAnimation(string name, string animation)
+        public void updatePlayerAnimation(string name, byte animation)
         {
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
                 Animator anim = player.GetComponent<Animator>();
-                if (animation == "Run")
+                for (int i = 0; i < PlayerAnimator.animations[animation].parameterNames.Length; i++)
                 {
-                    anim.SetBool("RUNNING", true);
-                    anim.SetBool("GROUNDED", true);
+                    anim.SetBool(PlayerAnimator.animations[animation].parameterNames[i], PlayerAnimator.animations[animation].parameterValues[i]);
                 }
-                else if (animation == "Dash")
-                {
-                    anim.SetBool("GROUNDED", true);
-                }
-                anim.Play(animation);
+                anim.Play(PlayerAnimator.animations[animation].name);
+                Main.UnityLog("Updating player object animation for " + name);
+
+
+                //if (animation == "Run")
+                //{
+                //    anim.SetBool("RUNNING", true);
+                //    anim.SetBool("GROUNDED", true);
+                //}
+                //else if (animation == "Dash")
+                //{
+                //    anim.SetBool("GROUNDED", true);
+                //}
             }
             else
             {

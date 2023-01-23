@@ -11,11 +11,11 @@ namespace BlasServer
         public float xPos;
         public float yPos;
         public bool facingDirection;
-        public string animation;
+        public byte animation;
 
         public string sceneName;
 
-        public void updateStatus(byte[] data)
+        public void updateStatus(byte[] data) // old
         {
             int startIdx = 0, length = 0;
 
@@ -33,7 +33,7 @@ namespace BlasServer
             length = data[startIdx]; startIdx++;
             if (length != 0)
             {
-                animation = Encoding.UTF8.GetString(data, startIdx, length);
+                //animation = Encoding.UTF8.GetString(data, startIdx, length);
                 startIdx += length;
             }
 
@@ -45,7 +45,7 @@ namespace BlasServer
             }
         }
 
-        public byte[] loadStatus()
+        public byte[] loadStatus() // old
         {
             List<byte> data = new List<byte>();
 
@@ -63,15 +63,15 @@ namespace BlasServer
             data.AddRange(BitConverter.GetBytes(yPos));
             data.AddRange(BitConverter.GetBytes(facingDirection));
 
-            if (animation == null)
-            {
-                data.Add(0);
-            }
-            else
-            {
-                data.Add((byte)animation.Length);
-                data.AddRange(Encoding.UTF8.GetBytes(animation));
-            }
+            //if (animation == null)
+            //{
+            //    data.Add(0);
+            //}
+            //else
+            //{
+            //    //data.Add((byte)animation.Length);
+            //    //data.AddRange(Encoding.UTF8.GetBytes(animation));
+            //}
 
             if (sceneName == null)
             {

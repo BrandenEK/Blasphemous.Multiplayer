@@ -149,14 +149,12 @@ namespace BlasServer
         // Send a player's updated position
         public void sendPlayerPostition(PlayerStatus player)
         {
-            byte[] positionBytes = getPositionBytes(player);
-
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated position
-                    Send(ip, positionBytes, 0);
+                    Send(ip, getPositionBytes(player), 0);
                 }
             }
         }
@@ -164,7 +162,14 @@ namespace BlasServer
         // Send a player's updated animation
         public void sendPlayerAnimation(PlayerStatus player)
         {
-            
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send this player's updated animation
+                    Send(ip, new byte[] { player.animation }, 1);
+                }
+            }
         }
 
         // Send that a player entered a scene
@@ -224,7 +229,10 @@ namespace BlasServer
         // Recieved a player's updated animation
         public void receivePlayerAnimation(byte[] data)
         {
-            // Send this to all players in the same scene as this player
+            PlayerStatus current = getCurrentPlayer();
+            current.animation = data[0];
+
+            sendPlayerAnimation(current);
         }
 
         // Received that a player entered a scene
