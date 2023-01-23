@@ -28,7 +28,7 @@ namespace BlasServer
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
                 server.Start(25565);
-                Core.displayMessage("Disabel delay: " + server.disableDelay());
+                Core.displayMessage("Disable delay: " + server.DisableDelay());
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -168,7 +168,9 @@ namespace BlasServer
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated animation
-                    Send(ip, new byte[] { player.animation }, 1);
+                    List<byte> bytes = new List<byte>(addPlayerNameToData(player.name));
+                    bytes.Add(player.animation);
+                    Send(ip, bytes.ToArray(), 1);
                 }
             }
         }
