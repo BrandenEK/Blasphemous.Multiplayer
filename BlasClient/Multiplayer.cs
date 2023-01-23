@@ -94,15 +94,17 @@ namespace BlasClient
                 if (animationHasChanged(state))
                 {
                     // Animation has been updated
-                    Main.UnityLog("Sending new player animation");
+                    //Main.UnityLog("Sending new player animation");
                     for (byte i = 0; i < PlayerAnimator.animations.Length; i++)
                     {
                         if (state.IsName(PlayerAnimator.animations[i].name))
                         {
+                            Main.UnityLog("New anim: " + PlayerAnimator.animations[i].name);
                             client.sendPlayerAnimation(i);
                             lastAnimation = i;
                         }
                     }
+                    // Check if animation wasn't found
                 }
             }
 
