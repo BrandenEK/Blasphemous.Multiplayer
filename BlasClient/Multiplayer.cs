@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Gameplay.UI;
+﻿using UnityEngine;
 using Framework.Managers;
 using Framework.FrameworkCore;
-using Gameplay.GameControllers.Penitent;
 
 namespace BlasClient
 {
@@ -17,9 +13,6 @@ namespace BlasClient
         private bool inLevel;
         private Vector2 lastPosition;
         private byte lastAnimation;
-
-        private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
-        private static readonly object playerLock = new object();
 
         private bool shouldSendData
         {
@@ -36,6 +29,15 @@ namespace BlasClient
         {
             LevelManager.OnLevelLoaded -= onLevelLoaded;
             LevelManager.OnBeforeLevelLoad -= onLevelUnloaded;
+        }
+
+        public string tryConnect(string ip, string name, string password)
+        {
+            playerName = name;
+            client = new Client(ip);
+            bool result = client.Connect();
+
+            return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
         }
 
         private void onLevelLoaded(Level oldLevel, Level newLevel)
@@ -68,11 +70,11 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                //playerControl.updatePlayerAnimation("1", "Run");
+                
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                //playerControl.updatePlayerAnimation("1", "Dash");
+                
             }
 
             if (shouldSendData && Core.Logic.Penitent != null)
@@ -109,22 +111,7 @@ namespace BlasClient
             }
 
             // Update other player's data
-            lock (playerLock)
-            {
-                foreach (string playerName in queuedPositions.Keys)
-                {
-                    playerControl.updatePlayerPosition(playerName, queuedPositions[playerName], true);
-                }
-                queuedPositions.Clear();
-            }
-            
-            // temp
-            if (Core.Logic.Penitent != null)
-            {
-                Sprite s = Core.Logic.Penitent.SpriteRenderer.sprite;
-                if (!playerControl.sprites.ContainsKey(s.name))
-                    playerControl.sprites.Add(s.name, s);
-            }
+            playerControl.updatePlayers();
         }
 
         private bool positionHasChanged(Vector2 currentPosition)
@@ -138,118 +125,32 @@ namespace BlasClient
             return !state.IsName(PlayerAnimator.animations[lastAnimation].name);
         }
 
-        private void queuePosition(string name, Vector2 pos)
-        {
-            lock (playerLock)
-            {
-                if (queuedPositions.ContainsKey(name))
-                    queuedPositions[name] = pos;
-                else
-                    queuedPositions.Add(name, pos);
-            }
-        }
-
         // Received position data from server
         public void playerPositionUpdated(string playerName, float xPos, float yPos, bool facingDirection)
         {
             if (inLevel)
-            {
-                Main.UnityLog("Updating position of player " + playerName);
-                queuePosition(playerName, new Vector2(xPos, yPos));
-                //playerControl.updatePlayerPosition(playerName, new Vector2(xPos, yPos), facingDirection);
-            }
-            else
-            {
-                Main.UnityLog("Won't receive position of player " + playerName);
-            }
+                playerControl.queuePosition(playerName, new Vector2(xPos, yPos));
         }
 
         // Received animation data from server
         public void playerAnimationUpdated(string playerName, byte animation)
         {
             if (inLevel)
-            {
-                Main.UnityLog("Updating animation of player " + playerName);
-                playerControl.updatePlayerAnimation(playerName, animation);
-            }
-            else
-            {
-                Main.UnityLog("Won't receive animation of player " + playerName);
-            }
+                playerControl.queueAnimation(playerName, animation);
         }
 
         // Received enterScene data from server
         public void playerEnteredScene(string playerName)
         {
             if (inLevel)
-            {
-                Main.UnityLog("Adding player " + playerName + " to scene");
                 playerControl.addPlayer(playerName);
-            }
-            else
-            {
-                Main.UnityLog("Won't receive new scene of player " + playerName);
-            }
         }
 
         // Received leftScene data from server
         public void playerLeftScene(string playerName)
         {
             if (inLevel)
-            {
-                Main.UnityLog("Removing player " + playerName+ " from scene");
                 playerControl.removePlayer(playerName);
-            }
-            else
-            {
-                Main.UnityLog("Won't receive old scene of player " + playerName);
-            }
-        }
-
-        // Temp
-        public PlayerStatus getCurrentStatus()
-        {
-            PlayerStatus status = new PlayerStatus();
-            status.name = playerName;
-
-            Penitent penitent = Core.Logic.Penitent;
-            if (penitent != null)
-            {
-                status.xPos = penitent.transform.position.x;
-                status.yPos = penitent.transform.position.y;
-                status.facingDirection = penitent.GetOrientation() == EntityOrientation.Right ? true : false;
-
-                status.animation = penitent.SpriteRenderer.sprite.name;
-
-                //Animator anim = penitent.Animator;
-                //for (int i = 0; i < animNames.Length; i++)
-                //{
-                //    if (anim.GetCurrentAnimatorStateInfo(0).IsName(animNames[i]))
-                //    {
-                //        status.animation = animNames[i];
-                //        break;
-                //    }
-                //}
-            }
-            if (Core.LevelManager.currentLevel != null && Core.LevelManager.currentLevel.LevelName != "MainMenu")
-            {
-                status.sceneName = Core.LevelManager.currentLevel.LevelName;
-            }
-            return status;
-        }
-
-        public string tryConnect(string ip, string name, string password)
-        {
-            playerName = name;
-            client = new Client(ip);
-            bool result = client.Connect();
-
-            return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
-        }
-
-        public void displayNotification(string message)
-        {
-            UIController.instance.ShowPopUp(message, "", 0, false);
         }
     }
 }

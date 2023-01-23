@@ -8,8 +8,13 @@ namespace BlasClient
     {
         private List<GameObject> players = new List<GameObject>();
 
-        private string[] animNames = new string[] { "Idle", "Falling", "Run", "Jump" };
-        public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+        private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
+        private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
+        private Dictionary<string, bool> queuedDirections = new Dictionary<string, bool>();
+
+        private static readonly object positionLock = new object();
+        private static readonly object animationLock = new object();
+        private static readonly object directionLock = new object();
 
         public void loadScene(string scene)
         {
@@ -21,6 +26,31 @@ namespace BlasClient
             
         }
 
+        public void updatePlayers()
+        {
+            // Update any player's new position
+            lock (positionLock)
+            {
+                foreach (string name in queuedPositions.Keys)
+                    updatePlayerPosition(name, queuedPositions[name]);
+                queuedPositions.Clear();
+            }
+            // Update any player's new animation
+            lock (positionLock)
+            {
+                foreach (string name in queuedAnimations.Keys)
+                    updatePlayerAnimation(name, queuedAnimations[name]);
+                queuedPositions.Clear();
+            }
+            // Update any player's new direction
+            lock (positionLock)
+            {
+                foreach (string name in queuedDirections.Keys)
+                    updatePlayerDirection(name, queuedDirections[name]);
+                queuedPositions.Clear();
+            }
+        }
+
         // When a player enters a scene, create a new player object
         public void addPlayer(string name)
         {
@@ -30,7 +60,6 @@ namespace BlasClient
             // Set up sprite rendering
             SpriteRenderer render = player.GetComponent<SpriteRenderer>();
             render.sortingLayerName = "Player";
-            render.sprite = Core.Logic.Penitent.SpriteRenderer.sprite; // temp
             
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
@@ -56,15 +85,13 @@ namespace BlasClient
         }
 
         // When receiving a player position update, find the player and change its position
-        public void updatePlayerPosition(string name, Vector2 position, bool facingDirection)
+        private void updatePlayerPosition(string name, Vector2 position)
         {
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
                 player.transform.position = position;
                 Main.UnityLog("Updating player object position for " + name);
-
-                // Separate thing for changing direction - doesnt happen all the time
             }
             else
             {
@@ -73,7 +100,7 @@ namespace BlasClient
         }
 
         // When receiving a player position update, find the player and change its position
-        public void updatePlayerAnimation(string name, byte animation)
+        private void updatePlayerAnimation(string name, byte animation)
         {
             GameObject player = getPlayerObject(name);
             if (player != null)
@@ -85,22 +112,17 @@ namespace BlasClient
                 }
                 anim.Play(PlayerAnimator.animations[animation].name);
                 Main.UnityLog("Updating player object animation for " + name);
-
-
-                //if (animation == "Run")
-                //{
-                //    anim.SetBool("RUNNING", true);
-                //    anim.SetBool("GROUNDED", true);
-                //}
-                //else if (animation == "Dash")
-                //{
-                //    anim.SetBool("GROUNDED", true);
-                //}
             }
             else
             {
                 Main.UnityLog("Error: Can't find player object for " + name);
             }
+        }
+
+        // When receiving a player direction update, find the player and change its direction
+        private void updatePlayerDirection(string name, bool direction)
+        {
+
         }
 
         // Finds a specified player in the scene
@@ -112,6 +134,39 @@ namespace BlasClient
                     return players[i];
             }
             return null;
+        }
+
+        public void queuePosition(string playerName, Vector2 position)
+        {
+            lock (positionLock)
+            {
+                if (queuedPositions.ContainsKey(playerName))
+                    queuedPositions[playerName] = position;
+                else
+                    queuedPositions.Add(playerName, position);
+            }
+        }
+
+        public void queueAnimation(string playerName, byte animation)
+        {
+            lock (animationLock)
+            {
+                if (queuedAnimations.ContainsKey(playerName))
+                    queuedAnimations[playerName] = animation;
+                else
+                    queuedAnimations.Add(playerName, animation);
+            }
+        }
+
+        public void queueDirection(string playerName, bool direction)
+        {
+            lock (directionLock)
+            {
+                if (queuedDirections.ContainsKey(playerName))
+                    queuedDirections[playerName] = direction;
+                else
+                    queuedDirections.Add(playerName, direction);
+            }
         }
     }
 }
