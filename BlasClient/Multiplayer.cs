@@ -13,6 +13,7 @@ namespace BlasClient
         private bool inLevel;
         private Vector2 lastPosition;
         private byte lastAnimation;
+        private bool lastDirection;
 
         private bool shouldSendData
         {
@@ -83,10 +84,8 @@ namespace BlasClient
                 Transform penitentTransform = Core.Logic.Penitent.transform;
                 if (positionHasChanged(penitentTransform.position))
                 {
-                    // Position has been updated
                     Main.UnityLog("Sending new player position");
-                    bool dir = !Core.Logic.Penitent.SpriteRenderer.flipX;
-                    client.sendPlayerPostition(penitentTransform.position.x, penitentTransform.position.y, dir);
+                    client.sendPlayerPostition(penitentTransform.position.x, penitentTransform.position.y);
                     lastPosition = penitentTransform.position;
                 }
 
@@ -96,7 +95,7 @@ namespace BlasClient
                 if (animationHasChanged(state))
                 {
                     // Animation has been updated
-                    //Main.UnityLog("Sending new player animation");
+                    //Main.UnityLog("Sending new player animation"); // bring back once all animations are added
                     for (byte i = 0; i < PlayerAnimator.animations.Length; i++)
                     {
                         if (state.IsName(PlayerAnimator.animations[i].name))
@@ -107,6 +106,15 @@ namespace BlasClient
                         }
                     }
                     // Check if animation wasn't found
+                }
+
+                // Check & send updated facing direction
+                SpriteRenderer penitentRenderer = Core.Logic.Penitent.SpriteRenderer;
+                if (directionHasChanged(penitentRenderer.flipX))
+                {
+                    Main.UnityLog("Sending new player direction");
+                    client.sendPlayerDirection(penitentRenderer.flipX);
+                    lastDirection = penitentRenderer.flipX;
                 }
             }
 
@@ -120,13 +128,18 @@ namespace BlasClient
             return Mathf.Abs(currentPosition.x - lastPosition.x) > cutoff || Mathf.Abs(currentPosition.y - lastPosition.y) > cutoff;
         }
 
-        private bool animationHasChanged(AnimatorStateInfo state)
+        private bool animationHasChanged(AnimatorStateInfo currentState)
         {
-            return !state.IsName(PlayerAnimator.animations[lastAnimation].name);
+            return !currentState.IsName(PlayerAnimator.animations[lastAnimation].name);
+        }
+
+        private bool directionHasChanged(bool currentDirection)
+        {
+            return currentDirection != lastDirection;
         }
 
         // Received position data from server
-        public void playerPositionUpdated(string playerName, float xPos, float yPos, bool facingDirection)
+        public void playerPositionUpdated(string playerName, float xPos, float yPos)
         {
             if (inLevel)
                 playerControl.queuePosition(playerName, new Vector2(xPos, yPos));
@@ -137,6 +150,13 @@ namespace BlasClient
         {
             if (inLevel)
                 playerControl.queueAnimation(playerName, animation);
+        }
+
+        // Received direction data from server
+        public void playerDirectionUpdated(string playerName, bool direction)
+        {
+            if (inLevel)
+                playerControl.queueDirection(playerName, direction);
         }
 
         // Received enterScene data from server

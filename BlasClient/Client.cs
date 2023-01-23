@@ -87,6 +87,8 @@ namespace BlasClient
                         receivePlayerEnterScene(data); break;
                     case 3:
                         receivePlayerLeaveScene(data); break;
+                    case 4:
+                        receivePlayerDirection(data); break;
                     default:
                         Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
@@ -104,12 +106,11 @@ namespace BlasClient
         #region Send functions
 
         // Send this player's updated position
-        public void sendPlayerPostition(float xPos, float yPos, bool facingDirection)
+        public void sendPlayerPostition(float xPos, float yPos)
         {
             List<byte> bytes = new List<byte>();
             bytes.AddRange(BitConverter.GetBytes(xPos));
             bytes.AddRange(BitConverter.GetBytes(yPos));
-            bytes.AddRange(BitConverter.GetBytes(facingDirection));
 
             Send(bytes.ToArray(), 0);
         }
@@ -132,6 +133,12 @@ namespace BlasClient
             Send(new byte[] { 0 }, 3);
         }
 
+        // Send this player's updated direction
+        public void sendPlayerDirection(bool direction)
+        {
+            Send(BitConverter.GetBytes(direction), 4);
+        }
+
         public void sendPlayerName(string name) // old
         {
             Send(Encoding.UTF8.GetBytes(name), 0);
@@ -142,19 +149,18 @@ namespace BlasClient
         #region Receive functions
 
         // Received a player's updated position
-        public void receivePlayerPostition(byte[] data)
+        private void receivePlayerPostition(byte[] data)
         {
             int startIdx = getPlayerNameFromData(data, out string playerName);
             float xPos = BitConverter.ToSingle(data, startIdx);
             float yPos = BitConverter.ToSingle(data, startIdx + 4);
-            bool facingDirection = BitConverter.ToBoolean(data, startIdx + 8);
 
             // Update specified player with new data
-            Main.Multiplayer.playerPositionUpdated(playerName, xPos, yPos, facingDirection);
+            Main.Multiplayer.playerPositionUpdated(playerName, xPos, yPos);
         }
 
         // Recieved a player's updated animation
-        public void receivePlayerAnimation(byte[] data)
+        private void receivePlayerAnimation(byte[] data)
         {
             int startIdx = getPlayerNameFromData(data, out string playerName);
             byte animation = data[startIdx];
@@ -164,17 +170,27 @@ namespace BlasClient
         }
 
         // Received that a player entered a scene
-        public void receivePlayerEnterScene(byte[] data)
+        private void receivePlayerEnterScene(byte[] data)
         {
             // Create the new player object
             Main.Multiplayer.playerEnteredScene(Encoding.UTF8.GetString(data));
         }
 
         // Received that a player left a scene
-        public void receivePlayerLeaveScene(byte[] data)
+        private void receivePlayerLeaveScene(byte[] data)
         {
             // Remove the player object
             Main.Multiplayer.playerLeftScene(Encoding.UTF8.GetString(data));
+        }
+
+        // Received a player's updated direction
+        private void receivePlayerDirection(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            bool direction = BitConverter.ToBoolean(data, startIdx);
+
+            // Update specified player with new data
+            Main.Multiplayer.playerDirectionUpdated(playerName, direction);
         }
 
         #endregion Receive functions

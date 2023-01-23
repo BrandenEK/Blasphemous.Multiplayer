@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Text;
 using SimpleTCP;
 
@@ -28,7 +27,7 @@ namespace BlasServer
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
                 server.Start(25565);
-                Core.displayMessage("Disable delay: " + server.DisableDelay());
+                server.DisableDelay();
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -37,16 +36,6 @@ namespace BlasServer
 
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             return true;
-        }
-
-        private async Task GameLoop()
-        {
-            while (true)
-            {
-                //Core.displayMessage("Game loop tick");
-
-                await Task.Delay(100);
-            }
         }
 
         private void Send(string ip, byte[] data, byte dataType)
@@ -93,6 +82,8 @@ namespace BlasServer
                         receivePlayerEnterScene(data); break;
                     case 3:
                         receivePlayerLeaveScene(data); break;
+                    case 4:
+                        receivePlayerDirection(data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -124,24 +115,19 @@ namespace BlasServer
 
         private byte[] getPositionBytes(PlayerStatus player)
         {
-            List<byte> bytes = new List<byte>(addPlayerNameToData(player.name));
+            List<byte> bytes = addPlayerNameToData(player.name);
             bytes.AddRange(BitConverter.GetBytes(player.xPos));
             bytes.AddRange(BitConverter.GetBytes(player.yPos));
-            bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
             return bytes.ToArray();
         }
 
-        private byte[] addPlayerNameToData(string name)
+        private List<byte> addPlayerNameToData(string name)
         {
             byte[] nameBytes = Encoding.UTF8.GetBytes(name);
 
-            byte[] data = new byte[nameBytes.Length + 1];
-            data[0] = (byte)nameBytes.Length;
-
-            for (int i = 0; i < nameBytes.Length; i++)
-            {
-                data[i + 1] = nameBytes[i];
-            }
+            List<byte> data = new List<byte>();
+            data.Add((byte)nameBytes.Length);
+            data.AddRange(nameBytes);
             return data;
         }
 
@@ -168,7 +154,7 @@ namespace BlasServer
                 if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
                 {
                     // Send this player's updated animation
-                    List<byte> bytes = new List<byte>(addPlayerNameToData(player.name));
+                    List<byte> bytes = addPlayerNameToData(player.name);
                     bytes.Add(player.animation);
                     Send(ip, bytes.ToArray(), 1);
                 }
@@ -206,12 +192,19 @@ namespace BlasServer
             }
         }
 
-        void sendPlayerUpdate() // old
+        // Send a player's updated direction
+        public void sendPlayerDirection(PlayerStatus player)
         {
-            List<byte> allPlayers = new List<byte>();
-            foreach (PlayerStatus status in connectedPlayers.Values)
-                allPlayers.AddRange(status.loadStatus());
-            Send(currentIp, allPlayers.ToArray(), 1);
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                {
+                    // Send this player's updated direction
+                    List<byte> bytes = addPlayerNameToData(player.name);
+                    bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
+                    Send(ip, bytes.ToArray(), 4);
+                }
+            }
         }
 
         #endregion Send functions
@@ -256,26 +249,21 @@ namespace BlasServer
             current.sceneName = "";
         }
 
+        // Recieved a player's updated direction
+        public void receivePlayerDirection(byte[] data)
+        {
+            PlayerStatus current = getCurrentPlayer();
+            current.facingDirection = BitConverter.ToBoolean(data);
+
+            sendPlayerDirection(current);
+        }
+
         // Right after client connects, they send their name
         void receivePlayerName(byte[] data)
         {
             string name = Encoding.UTF8.GetString(data);
             connectedPlayers[currentIp].name = name;
             // Notification for join
-        }
-
-        // Every certain number of frames, a client will send data about position, orientation, sprite, etc.
-        void receivePlayerUpdate(byte[] data)
-        {
-            PlayerStatus status = new PlayerStatus();
-            status.updateStatus(data);
-            connectedPlayers[currentIp] = status;
-
-            Core.displayMessage("Received status from " + status.name);
-            Core.displayMessage(status.ToString());
-
-            Core.displayMessage("Sending other player statuses");
-            sendPlayerUpdate();
         }
 
         #endregion Receive functions

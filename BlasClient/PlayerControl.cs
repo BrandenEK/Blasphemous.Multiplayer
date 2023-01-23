@@ -14,7 +14,7 @@ namespace BlasClient
 
         private static readonly object positionLock = new object();
         private static readonly object animationLock = new object();
-        private static readonly object directionLock = new object();
+        private static readonly object directionLock = new object(); // Might also need to lock players list when adding/removing
 
         public void loadScene(string scene)
         {
@@ -26,6 +26,7 @@ namespace BlasClient
             
         }
 
+        // Should be optimized to not use dictionaries
         public void updatePlayers()
         {
             // Update any player's new position
@@ -36,18 +37,18 @@ namespace BlasClient
                 queuedPositions.Clear();
             }
             // Update any player's new animation
-            lock (positionLock)
+            lock (animationLock)
             {
                 foreach (string name in queuedAnimations.Keys)
                     updatePlayerAnimation(name, queuedAnimations[name]);
-                queuedPositions.Clear();
+                queuedAnimations.Clear();
             }
             // Update any player's new direction
-            lock (positionLock)
+            lock (directionLock)
             {
                 foreach (string name in queuedDirections.Keys)
                     updatePlayerDirection(name, queuedDirections[name]);
-                queuedPositions.Clear();
+                queuedDirections.Clear();
             }
         }
 
@@ -122,7 +123,17 @@ namespace BlasClient
         // When receiving a player direction update, find the player and change its direction
         private void updatePlayerDirection(string name, bool direction)
         {
-
+            GameObject player = getPlayerObject(name);
+            if (player != null)
+            {
+                SpriteRenderer render = player.GetComponent<SpriteRenderer>();
+                render.flipX = direction;
+                Main.UnityLog("Updating player object direction for " + name);
+            }
+            else
+            {
+                Main.UnityLog("Error: Can't find player object for " + name);
+            }
         }
 
         // Finds a specified player in the scene
