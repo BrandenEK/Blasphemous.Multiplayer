@@ -71,11 +71,12 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                
+                playerControl.addPlayer("Test");
+                playerControl.queuePosition("Test", Core.Logic.Penitent.transform.position);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                
+                playerControl.queuePosition("Test", Core.Logic.Penitent.transform.position + Vector3.right * 3);
             }
 
             if (shouldSendData && Core.Logic.Penitent != null)
@@ -119,7 +120,8 @@ namespace BlasClient
             }
 
             // Update other player's data
-            playerControl.updatePlayers();
+            if (playerControl != null && inLevel)
+                playerControl.updatePlayers();
         }
 
         private bool positionHasChanged(Vector2 currentPosition)

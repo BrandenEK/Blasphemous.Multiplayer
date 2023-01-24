@@ -39,28 +39,31 @@ namespace BlasClient
         }
 
         // Recursive method that returns the entire hierarchy of an object
-        public static string displayHierarchy(UnityEngine.Transform transform, string output, int level, bool components)
+        public static string displayHierarchy(UnityEngine.Transform transform, string output, int currentLevel, int maxLevel, bool components)
         {
             // Indent
-            for (int i = 0; i < level; i++)
+            for (int i = 0; i < currentLevel; i++)
                 output += "\t";
 
             // Add this object
             output += transform.name;
 
             // Add components
-            //if (components)
-            //{
-            //    output += " (";
-            //    foreach (Component c in transform.GetComponents<Component>())
-            //        output += c.ToString() + ", ";
-            //    output = output.Substring(0, output.Length - 2) + ")";
-            //}
+            if (components)
+            {
+                output += " (";
+                foreach (UnityEngine.Component c in transform.GetComponents<UnityEngine.Component>())
+                    output += c.ToString() + ", ";
+                output = output.Substring(0, output.Length - 2) + ")";
+            }
             output += "\n";
 
             // Add children
-            for (int i = 0; i < transform.childCount; i++)
-                output = displayHierarchy(transform.GetChild(i), output, level + 1, components);
+            if (currentLevel < maxLevel)
+            {
+                for (int i = 0; i < transform.childCount; i++)
+                    output = displayHierarchy(transform.GetChild(i), output, currentLevel + 1, maxLevel, components);
+            }
 
             // Return output
             return output;

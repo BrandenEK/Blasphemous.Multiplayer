@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-namespace BlasClient
+namespace BlasClient.Patches
 {
     // Initialize Multiplayer class
     [HarmonyPatch(typeof(AchievementsManager), "AllInitialized")]

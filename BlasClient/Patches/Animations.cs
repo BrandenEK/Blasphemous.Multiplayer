@@ -2,7 +2,7 @@
 using UnityEngine;
 using HarmonyLib;
 
-namespace BlasClient
+namespace BlasClient.Patches
 {
     // Dashing
     [HarmonyPatch(typeof(DashBehaviour), "OnStateEnter")]

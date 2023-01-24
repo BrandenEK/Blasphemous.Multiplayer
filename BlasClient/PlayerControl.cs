@@ -1,12 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Framework.Managers;
+using Gameplay.UI.Others.UIGameLogic;
 
 namespace BlasClient
 {
     public class PlayerControl
     {
         private List<GameObject> players = new List<GameObject>();
+        private List<Text> nametags = new List<Text>();
+
+        private Transform canvas;
+        private GameObject textPrefab;
 
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
@@ -18,7 +24,24 @@ namespace BlasClient
 
         public void loadScene(string scene)
         {
+            // Remove all existing player objects and nametags
+            for (int i = 0; i < players.Count; i++)
+                Object.Destroy(players[i]);
             players.Clear();
+            for (int i = 0; i < nametags.Count; i++)
+                Object.Destroy(nametags[i].gameObject);
+            nametags.Clear();
+
+            // Find textPrefab
+            foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
+            {
+                if (obj.name == "PurgePoints") { textPrefab = obj.transform.GetChild(1).gameObject; break; }
+            }
+            // Find canvas parent
+            foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
+            {
+                if (c.name == "Game UI") { canvas = c.transform; break; }
+            }
         }
 
         public void unloadScene()
@@ -50,21 +73,53 @@ namespace BlasClient
                     updatePlayerDirection(name, queuedDirections[name]);
                 queuedDirections.Clear();
             }
+
+            // Update position of all name tags
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                RectTransform nametag = nametags[i].transform as RectTransform;
+                GameObject player = getPlayerObject(nametag.name);
+                
+                if (player != null)
+                {
+                    Vector3 viewPosition = Camera.main.WorldToViewportPoint(player.transform.position + Vector3.up * 3.1f);
+                    nametag.anchorMin = viewPosition;
+                    nametag.anchorMax = viewPosition;
+                    nametag.anchoredPosition = Vector2.zero;
+                }
+            }
         }
 
         // When a player enters a scene, create a new player object
         public void addPlayer(string name)
         {
-            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator));
+            // Create base object
+            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator));  // Change to create prefab at initialization, and instantiate a new instance
             players.Add(player);
 
             // Set up sprite rendering
             SpriteRenderer render = player.GetComponent<SpriteRenderer>();
             render.sortingLayerName = "Player";
-            
+
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
             anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+
+            // Set up name tag
+            if (canvas != null && textPrefab != null)
+            {
+                Text nametag = Object.Instantiate(textPrefab, canvas).GetComponent<Text>();
+                nametag.rectTransform.sizeDelta = new Vector2(100, 50);
+                nametag.rectTransform.SetAsFirstSibling();
+                nametag.name = name;
+                nametag.text = name;
+                nametag.alignment = TextAnchor.LowerCenter;
+                nametags.Add(nametag);
+            }
+            else
+            {
+                Main.UnityLog("Error: Failed to create nametag for " + name);
+            }
 
             Main.UnityLog("Created new player object for " + name);
         }
@@ -82,6 +137,13 @@ namespace BlasClient
             else
             {
                 Main.UnityLog("Error: Can't remove player object for " + name);
+            }
+            Text nametag = getPlayerNametag(name);
+            if (nametag != null)
+            {
+                nametags.Remove(nametag);
+                Object.Destroy(nametag);
+                Main.UnityLog("Removed nametag for " + name);
             }
         }
 
@@ -143,6 +205,17 @@ namespace BlasClient
             {
                 if (players[i].name == name)
                     return players[i];
+            }
+            return null;
+        }
+
+        // Find a specified player's nametag
+        private Text getPlayerNametag(string name)
+        {
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                if (nametags[i].name == name)
+                    return nametags[i];
             }
             return null;
         }
