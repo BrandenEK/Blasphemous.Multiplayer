@@ -43,6 +43,13 @@ namespace BlasClient
             return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
         }
 
+        public void onDisconnect(string reason)
+        {
+            displayNotification(reason);
+            playerControl.destroyPlayers();
+            playerName = "";
+        }
+
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
             inLevel = newLevel.LevelName != "MainMenu";
@@ -201,17 +208,14 @@ namespace BlasClient
                 return;
             }
 
-            playerName = "";
-            if (response == 1)
-            {
-                // Duplicate name
-                displayNotification("Disconnected: Player name is already taken!");
-            }
-            else
-            {
-                // Unkwown reason
-                displayNotification("Disconnected: Unknown reason!");
-            }
+            // Failed to connect
+            string reason;
+            if (response == 1) reason = "Disconnected: Player name is already taken!"; // Duplicate name
+            // Player limit reached
+            // Banned from server
+            else reason = "Disconnected: Unknown reason!"; // Unknown reason
+
+            onDisconnect(reason);
         }
 
         public void displayNotification(string message)

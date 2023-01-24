@@ -18,10 +18,9 @@ namespace BlasClient
             {
                 client = new SimpleTcpClient();
                 client.Connect(ipAddress, 25565);
-                //client.Events.Connected += clientConnected;
-                //client.Events.Disconnected += clientDisconnected;
                 client.DataReceived += Receive;
                 client.TcpClient.NoDelay = true;
+                connected = true;
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -44,8 +43,19 @@ namespace BlasClient
                 List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
                 list.Add(dataType);
                 list.AddRange(data);
-                //Main.UnityLog($"Sending {list.Count} bytes");
-                client.Write(list.ToArray());
+
+                try
+                {
+                    //Main.UnityLog($"Sending {list.Count} bytes");
+                    client.Write(list.ToArray());
+                }
+                catch (System.IO.IOException)
+                {
+                    Main.UnityLog("Error: Disconnected from server");
+                    connected = false;
+                    client = null;
+                    Main.Multiplayer.onDisconnect("Disconnected: Lost connection to server!");
+                }
             }
         }
 

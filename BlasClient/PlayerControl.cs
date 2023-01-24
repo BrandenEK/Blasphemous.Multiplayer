@@ -32,12 +32,7 @@ namespace BlasClient
         public void loadScene(string scene)
         {
             // Remove all existing player objects and nametags
-            for (int i = 0; i < players.Count; i++)
-                Object.Destroy(players[i]);
-            players.Clear();
-            for (int i = 0; i < nametags.Count; i++)
-                Object.Destroy(nametags[i].gameObject);
-            nametags.Clear();
+            destroyPlayers();
 
             // Find textPrefab
             foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
@@ -100,6 +95,17 @@ namespace BlasClient
                     nametag.anchoredPosition = Vector2.zero;
                 }
             }
+        }
+
+        // When disconnected from server or loading new scene, remove all players
+        public void destroyPlayers()
+        {
+            for (int i = 0; i < players.Count; i++)
+                Object.Destroy(players[i]);
+            players.Clear();
+            for (int i = 0; i < nametags.Count; i++)
+                Object.Destroy(nametags[i].gameObject);
+            nametags.Clear();
         }
 
         // When a player enters a scene, create a new player object
