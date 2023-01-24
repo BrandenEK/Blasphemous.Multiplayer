@@ -166,7 +166,7 @@ namespace BlasServer
         {
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated position
                     Send(ip, getPositionPacket(player), 0);
@@ -179,7 +179,7 @@ namespace BlasServer
         {
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated animation
                     Send(ip, getAnimationPacket(player), 1);
@@ -192,7 +192,7 @@ namespace BlasServer
         {
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send that this player has entered their scene & this player's position/animation/direction
                     Send(ip, Encoding.UTF8.GetBytes(player.name), 2);
@@ -214,7 +214,7 @@ namespace BlasServer
         {
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send that this player has left their scene
                     Send(ip, Encoding.UTF8.GetBytes(player.name), 3);
@@ -227,7 +227,7 @@ namespace BlasServer
         {
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.sceneName == connectedPlayers[ip].sceneName)
+                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated direction
                     Send(ip, getDirectionPacket(player), 4);

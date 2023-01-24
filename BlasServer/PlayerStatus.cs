@@ -23,6 +23,11 @@ namespace BlasServer
             skin = "";
         }
 
+        public bool isInSameScene(PlayerStatus player)
+        {
+            return sceneName != "" && sceneName == player.sceneName;
+        }
+
         public void updateStatus(byte[] data) // old
         {
             int startIdx = 0, length = 0;
