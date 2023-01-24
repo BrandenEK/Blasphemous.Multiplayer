@@ -217,7 +217,7 @@ namespace BlasClient
             // Failed to connect
             string reason;
             if (response == 1) reason = "Disconnected: Player name is already taken!"; // Duplicate name
-            // Player limit reached
+            else if (response == 2) reason = "Disconnected: Server is full!"; // Max player limit
             // Banned from server
             else reason = "Disconnected: Unknown reason!"; // Unknown reason
 

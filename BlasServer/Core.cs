@@ -4,6 +4,9 @@ namespace BlasServer
 {
     class Core
     {
+        // Move to config file
+        public static int maxPlayers = 8;
+
         static void Main(string[] args)
         {
             // Title

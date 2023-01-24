@@ -261,6 +261,10 @@ namespace BlasServer
         {
             Send(currentIp, getIntroPacket(response), 6);
 
+            // Only send rest of data if successful connection
+            if (response > 0)
+                return;
+
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (currentIp != ip)
@@ -332,21 +336,31 @@ namespace BlasServer
         // Received a player's introductory data
         private void receivePlayerIntro(byte[] data)
         {
-            // Validate name
+            // Ensure there are no duplicate names
             string playerName = Encoding.UTF8.GetString(data);
             foreach (PlayerStatus player in connectedPlayers.Values)
             {
                 if (player.name == playerName)
                 {
-                    // Don't connect this player because of duplicate name
+                    Core.displayMessage("Player connection rejected: Duplicate name");
                     sendPlayerIntro(1);
                     return;
                 }
             }
 
-            // Additional checks to make sure they are not banned or over max player limit
+            // Ensure the server doesn't have max number of players
+            if (connectedPlayers.Count >= Core.maxPlayers)
+            {
+                Core.displayMessage("Player connection rejected: Player limit reached");
+                sendPlayerIntro(2);
+                return;
+            }
+
+            // Ensure this ip address is not banned
+
 
             // Add new connected player
+            Core.displayMessage("Player connection accepted");
             PlayerStatus newPlayer = new PlayerStatus(playerName);
             connectedPlayers.Add(currentIp, newPlayer);
             sendPlayerIntro(0);
