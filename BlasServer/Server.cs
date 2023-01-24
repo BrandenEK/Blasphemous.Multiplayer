@@ -39,8 +39,16 @@ namespace BlasServer
                 List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
                 list.Add(dataType);
                 list.AddRange(data);
-                Core.displayMessage($"Sending {list.Count} bytes");
-                server.Send(ip, list.ToArray());
+
+                try
+                {
+                    Core.displayMessage($"Sending {list.Count} bytes");
+                    server.Send(ip, list.ToArray());
+                }
+                catch (Exception)
+                {
+                    Core.displayError("Couldn't send data to " + ip + "!");
+                }
             }
         }
 
