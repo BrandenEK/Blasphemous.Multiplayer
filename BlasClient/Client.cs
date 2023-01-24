@@ -105,6 +105,8 @@ namespace BlasClient
                         receivePlayerSkin(data); break;
                     case 6:
                         receivePlayerIntro(data); break;
+                    case 7:
+                        receiveNotification(data); break;
                     default:
                         Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
@@ -245,6 +247,14 @@ namespace BlasClient
             }
 
             Main.Multiplayer.playerIntroReceived(response);
+        }
+
+        // Received a notification
+        private void receiveNotification(byte[] data)
+        {
+            string message = Encoding.UTF8.GetString(data);
+
+            Main.Multiplayer.displayNotification(message);
         }
 
         #endregion Receive functions

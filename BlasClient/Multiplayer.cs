@@ -226,6 +226,7 @@ namespace BlasClient
 
         public void displayNotification(string message)
         {
+            Main.UnityLog("Notification: " + message);
             UIController.instance.ShowPopUp(message, "", 0, false);
         }
     }

@@ -160,6 +160,10 @@ namespace BlasServer
         {
             return new byte[] { response };
         }
+        private byte[] getNotificationPacket(string message)
+        {
+            return Encoding.UTF8.GetBytes(message);
+        }
 
         private List<byte> addPlayerNameToData(string name)
         {
@@ -274,6 +278,26 @@ namespace BlasServer
                 if (currentIp != ip)
                 {
                     Send(currentIp, getSkinPacket(connectedPlayers[ip]), 5);
+                }
+            }
+        }
+
+        // Send a notification to current player or all other players
+        private void sendNotification(string message, bool onlyCurrent)
+        {
+            if (onlyCurrent)
+            {
+                // Send message to only current ip
+                Send(currentIp, getNotificationPacket(message), 7);
+                return;
+            }
+
+            // Send message to all other connected ips
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip)
+                {
+                    Send(ip, getNotificationPacket(message), 7);
                 }
             }
         }
