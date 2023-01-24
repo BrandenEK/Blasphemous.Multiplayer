@@ -12,6 +12,7 @@ namespace BlasServer
         public float yPos;
         public bool facingDirection;
         public byte animation;
+        public string skin;
 
         public string sceneName;
 

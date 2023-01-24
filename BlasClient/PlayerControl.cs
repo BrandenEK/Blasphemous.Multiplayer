@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
+using Gameplay.GameControllers.Effects.Player.Recolor;
 
 namespace BlasClient
 {
@@ -13,6 +14,12 @@ namespace BlasClient
 
         private Transform canvas;
         private GameObject textPrefab;
+
+        // Stores the skin of each player and is updated when receiving a skin change from the server
+        // A player is added to this list when first sending their skin upon connecting
+        // This is only temporary until all player data is probably stored in a dict on the client
+        // Once thats doen will also remove from the list when a player disconnects
+        private Dictionary<string, string> playerSkins = new Dictionary<string, string>();
 
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
@@ -99,16 +106,20 @@ namespace BlasClient
         public void addPlayer(string name)
         {
             // Create base object
-            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator));  // Change to create prefab at initialization, and instantiate a new instance
+            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator), typeof(ColorPaletteSwapper));  // Change to create prefab at initialization, and instantiate a new instance
             players.Add(player);
 
             // Set up sprite rendering
             SpriteRenderer render = player.GetComponent<SpriteRenderer>();
+            render.material = Core.Logic.Penitent.SpriteRenderer.material;
             render.sortingLayerName = "Player";
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
             anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+
+            // Set up skin
+            setSkinTexture(name, render);
 
             // Set up name tag
             createNameTag(name);
@@ -190,6 +201,16 @@ namespace BlasClient
             }
         }
 
+        // When receiving a player skin update, change the value in the skin list
+        // Should maybe be locked, but shouldn't occur frequently enough for this
+        public void updatePlayerSkin(string name, string skin)
+        {
+            if (playerSkins.ContainsKey(name))
+                playerSkins[name] = skin;
+            else
+                playerSkins.Add(name, skin);
+        }
+
         // Instantiates a nametag object
         private void createNameTag(string name)
         {
@@ -206,6 +227,22 @@ namespace BlasClient
             nametag.text = name;
             nametag.alignment = TextAnchor.LowerCenter;
             nametags.Add(nametag);
+        }
+
+        // Sets the skin texture of a player's object
+        private void setSkinTexture(string name, SpriteRenderer render)
+        {
+            if (!playerSkins.TryGetValue(name, out string skin))
+            {
+                Main.UnityLog("Error: Couldn't find skin for " + name);
+                return;
+            }
+
+            Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);
+            if (palette != null)
+            {
+                render.material.SetTexture("_PaletteTex", palette.texture);
+            }
         }
 
         // Finds a specified player in the scene

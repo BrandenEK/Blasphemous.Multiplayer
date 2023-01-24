@@ -164,6 +164,13 @@ namespace BlasClient
                 playerControl.queueDirection(playerName, direction);
         }
 
+        // Received skin data from server
+        public void playerSkinUpdated(string playerName, string skin)
+        {
+            // As soon as received, will update skin - This isn't locked
+            playerControl.updatePlayerSkin(playerName, skin);
+        }
+
         // Received enterScene data from server
         public void playerEnteredScene(string playerName)
         {

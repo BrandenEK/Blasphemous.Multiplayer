@@ -84,6 +84,8 @@ namespace BlasServer
                         receivePlayerLeaveScene(data); break;
                     case 4:
                         receivePlayerDirection(data); break;
+                    case 5:
+                        receivePlayerSkin(data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -132,6 +134,12 @@ namespace BlasServer
             bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
             return bytes.ToArray();
         }
+        private byte[] getSkinPacket(PlayerStatus player)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.AddRange(Encoding.UTF8.GetBytes(player.skin));
+            return bytes.ToArray();
+        }
 
         private List<byte> addPlayerNameToData(string name)
         {
@@ -146,7 +154,7 @@ namespace BlasServer
         #region Send functions
 
         // Send a player's updated position
-        public void sendPlayerPostition(PlayerStatus player)
+        private void sendPlayerPostition(PlayerStatus player)
         {
             foreach (string ip in connectedPlayers.Keys)
             {
@@ -159,7 +167,7 @@ namespace BlasServer
         }
 
         // Send a player's updated animation
-        public void sendPlayerAnimation(PlayerStatus player)
+        private void sendPlayerAnimation(PlayerStatus player)
         {
             foreach (string ip in connectedPlayers.Keys)
             {
@@ -172,7 +180,7 @@ namespace BlasServer
         }
 
         // Send that a player entered a scene
-        public void sendPlayerEnterScene(PlayerStatus player)
+        private void sendPlayerEnterScene(PlayerStatus player)
         {
             foreach (string ip in connectedPlayers.Keys)
             {
@@ -194,7 +202,7 @@ namespace BlasServer
         }
 
         // Send that a player left a scene
-        public void sendPlayerLeaveScene(PlayerStatus player)
+        private void sendPlayerLeaveScene(PlayerStatus player)
         {
             foreach (string ip in connectedPlayers.Keys)
             {
@@ -207,7 +215,7 @@ namespace BlasServer
         }
 
         // Send a player's updated direction
-        public void sendPlayerDirection(PlayerStatus player)
+        private void sendPlayerDirection(PlayerStatus player)
         {
             foreach (string ip in connectedPlayers.Keys)
             {
@@ -215,6 +223,19 @@ namespace BlasServer
                 {
                     // Send this player's updated direction
                     Send(ip, getDirectionPacket(player), 4);
+                }
+            }
+        }
+
+        // Send's a player's updated skin
+        private void sendPlayerSkin(PlayerStatus player)
+        {
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip)
+                {
+                    // Send this player's updated direction
+                    Send(ip, getSkinPacket(player), 5);
                 }
             }
         }
@@ -267,6 +288,15 @@ namespace BlasServer
             current.facingDirection = BitConverter.ToBoolean(data);
 
             sendPlayerDirection(current);
+        }
+
+        // Received a player's updated skin
+        public void receivePlayerSkin(byte[] data)
+        {
+            PlayerStatus current = getCurrentPlayer();
+            current.skin = Encoding.UTF8.GetString(data);
+
+            sendPlayerSkin(current);
         }
 
         // Right after client connects, they send their name

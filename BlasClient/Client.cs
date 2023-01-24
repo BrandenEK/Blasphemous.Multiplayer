@@ -89,6 +89,8 @@ namespace BlasClient
                         receivePlayerLeaveScene(data); break;
                     case 4:
                         receivePlayerDirection(data); break;
+                    case 5:
+                        receivePlayerSkin(data); break;
                     default:
                         Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
@@ -137,6 +139,12 @@ namespace BlasClient
         public void sendPlayerDirection(bool direction)
         {
             Send(BitConverter.GetBytes(direction), 4);
+        }
+
+        // Send this player's updated skin
+        public void sendPlayerSkin(string skin)
+        {
+            Send(Encoding.UTF8.GetBytes(skin), 5);
         }
 
         //public void sendPlayerName(string name) // old
@@ -191,6 +199,16 @@ namespace BlasClient
 
             // Update specified player with new data
             Main.Multiplayer.playerDirectionUpdated(playerName, direction);
+        }
+
+        // Received a player's updated skin
+        private void receivePlayerSkin(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            string skin = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
+
+            // Update specified player with new data
+            Main.Multiplayer.playerSkinUpdated(playerName, skin);
         }
 
         #endregion Receive functions
