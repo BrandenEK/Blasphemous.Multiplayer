@@ -91,13 +91,23 @@ namespace BlasServer
         private void clientConnected(object sender, ClientConnectionEventArgs e)
         {
             Core.displayMessage("Client connected at " + e.ip);
+            currentIp = e.ip;
         }
 
         private void clientDisconnected(object sender, ClientConnectionEventArgs e)
         {
             Core.displayMessage("Client disconnected at " + e.ip);
+            currentIp = e.ip;
+
+            // For now, just send playerLeft packet to remove the player from the scene
+            // Later will need a special packet to also remove the player from the client's list
+            // Client's skin list will currently still keep this player in it
+            PlayerStatus player = getCurrentPlayer();
+            sendPlayerLeaveScene(player);
+            // Send disconnect notification to other players
+
+            // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
-            // Notification for leaving
         }
 
         private PlayerStatus getCurrentPlayer()

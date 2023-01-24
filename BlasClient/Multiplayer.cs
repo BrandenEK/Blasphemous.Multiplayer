@@ -204,7 +204,13 @@ namespace BlasClient
             // Connected succesfully
             if (response == 0)
             {
+                // Send skin
                 client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+
+                // If already in game, send enter scene data
+                if (inLevel)
+                    client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
+
                 return;
             }
 
