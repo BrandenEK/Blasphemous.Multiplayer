@@ -107,6 +107,10 @@ namespace BlasServer
             Core.displayMessage("Client disconnected at " + e.ip);
             currentIp = e.ip;
 
+            // Make sure this client was actually connected, not just rejected from server
+            if (!connectedPlayers.ContainsKey(e.ip))
+                return;
+
             // For now, just send playerLeft packet to remove the player from the scene
             // Later will need a special packet to also remove the player from the client's list
             // Client's skin list will currently still keep this player in it

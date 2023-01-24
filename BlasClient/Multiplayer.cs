@@ -19,7 +19,7 @@ namespace BlasClient
 
         private bool shouldSendData
         {
-            get { return inLevel && client != null && client.connected; }
+            get { return inLevel && client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
 
         public void Initialize()

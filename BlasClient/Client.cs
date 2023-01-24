@@ -7,12 +7,19 @@ namespace BlasClient
 {
     public class Client
     {
-        public bool connected { get; private set; }
+        public enum ConnectionStatus { Disconnnected, Attempting, Connected }
+        public ConnectionStatus connectionStatus { get; private set; }
         private SimpleTcpClient client;
+
+        public Client()
+        {
+            // Start out as disconnected
+            connectionStatus = ConnectionStatus.Disconnnected;
+        }
 
         public bool Connect(string playerName, string ipAddress)
         {
-            if (connected) return false;
+            if (connectionStatus != ConnectionStatus.Disconnnected) return false;
 
             try
             {
@@ -20,7 +27,7 @@ namespace BlasClient
                 client.Connect(ipAddress, 25565);
                 client.DataReceived += Receive;
                 client.TcpClient.NoDelay = true;
-                connected = true;
+                connectionStatus = ConnectionStatus.Attempting;
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -38,7 +45,7 @@ namespace BlasClient
 
         private void Send(byte[] data, byte dataType)
         {
-            if (connected && data != null && data.Length > 0)
+            if (data != null && data.Length > 0 && (connectionStatus == ConnectionStatus.Attempting || connectionStatus == ConnectionStatus.Connected))
             {
                 List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
                 list.Add(dataType);
@@ -52,7 +59,7 @@ namespace BlasClient
                 catch (System.IO.IOException)
                 {
                     Main.UnityLog("Error: Disconnected from server");
-                    connected = false;
+                    connectionStatus = ConnectionStatus.Disconnnected;
                     client = null;
                     Main.Multiplayer.onDisconnect("Disconnected: Lost connection to server!");
                 }
@@ -227,12 +234,12 @@ namespace BlasClient
             if (response == 0)
             {
                 // Successfully connected and can sync data now
-                connected = true;
+                connectionStatus = ConnectionStatus.Connected;
             }
             else
             {
                 // Rejected from server
-                connected = false;
+                connectionStatus = ConnectionStatus.Disconnnected;
                 client.Disconnect();
                 client = null;
             }
