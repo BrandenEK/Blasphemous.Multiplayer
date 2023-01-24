@@ -19,7 +19,7 @@ namespace BlasClient
         // A player is added to this list when first sending their skin upon connecting
         // This is only temporary until all player data is probably stored in a dict on the client
         // Once thats doen will also remove from the list when a player disconnects
-        private Dictionary<string, string> playerSkins = new Dictionary<string, string>();
+        private Dictionary<string, SkinStatus> playerSkins = new Dictionary<string, SkinStatus>();
 
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
@@ -79,6 +79,23 @@ namespace BlasClient
                 queuedDirections.Clear();
             }
 
+            // Check status of player skins and potentially update the textures
+            foreach (string name in playerSkins.Keys)
+            {
+                SkinStatus player = playerSkins[name];
+                if (player.updateStatus == 2)
+                {
+                    // Set that one update cycle has passed
+                    player.updateStatus = 1;
+                }
+                else if (player.updateStatus == 1)
+                {
+                    // Set the player texture
+                    setSkinTexture(name, player.skinName);
+                    player.updateStatus = 0;
+                }
+            }
+
             // Update position of all name tags
             for (int i = 0; i < nametags.Count; i++)
             {
@@ -120,12 +137,20 @@ namespace BlasClient
             render.material = Core.Logic.Penitent.SpriteRenderer.material;
             render.sortingLayerName = "Player";
 
+            // Hide player object until skin texture is set - must be delayed
+            if (playerSkins.ContainsKey(name))
+            {
+                playerSkins[name].updateStatus = 2;
+                render.enabled = false;
+            }
+            else
+            {
+                Main.UnityLog("Error: Couldn't find skin for " + name);
+            }
+
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
             anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
-
-            // Set up skin
-            setSkinTexture(name, render);
 
             // Set up name tag
             createNameTag(name);
@@ -212,9 +237,9 @@ namespace BlasClient
         public void updatePlayerSkin(string name, string skin)
         {
             if (playerSkins.ContainsKey(name))
-                playerSkins[name] = skin;
+                playerSkins[name].skinName = skin;
             else
-                playerSkins.Add(name, skin);
+                playerSkins.Add(name, new SkinStatus(skin));
             Main.UnityLog("Updating player skin for " + name);
         }
 
@@ -236,20 +261,31 @@ namespace BlasClient
             nametags.Add(nametag);
         }
 
-        // Sets the skin texture of a player's object
-        private void setSkinTexture(string name, SpriteRenderer render)
+        // Sets the skin texture of a player's object - must be delayed until after object creation
+        private void setSkinTexture(string name, string skin)
         {
-            if (!playerSkins.TryGetValue(name, out string skin))
+            // Get player object with this name
+            GameObject player = getPlayerObject(name);
+            if (player == null)
             {
-                Main.UnityLog("Error: Couldn't find skin for " + name);
-                skin = "PENITENT_DEFAULT";
+                Main.UnityLog("Error: Can't find player object for " + name);
+                return;
             }
 
+            // Make player visible
+            SpriteRenderer render = player.GetComponent<SpriteRenderer>();
+            render.enabled = true;
+
+            // Get skin texture for this player
             Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);
-            if (palette != null)
+            if (palette == null)
             {
-                render.material.SetTexture("_PaletteTex", palette.texture);
+                Main.UnityLog("Error: Couldn't find skin named " + skin);
+                return;
             }
+
+            Main.UnityLog("Setting skin texture for " + name);
+            render.material.SetTexture("_PaletteTex", palette.texture);
         }
 
         // Finds a specified player in the scene
