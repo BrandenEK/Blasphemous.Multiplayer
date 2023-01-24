@@ -94,7 +94,7 @@ namespace BlasServer
         {
             Core.displayMessage("Client connected at " + e.ip);
             connectedPlayers.Add(e.ip, new PlayerStatus());
-            connectedPlayers[e.ip].name = connectedPlayers.Count.ToString(); // temp
+            connectedPlayers[e.ip].name = "Player " + connectedPlayers.Count.ToString(); // temp
         }
 
         private void clientDisconnected(object sender, ClientConnectionEventArgs e)

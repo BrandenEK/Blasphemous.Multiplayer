@@ -42,6 +42,9 @@ namespace BlasClient
             {
                 if (c.name == "Game UI") { canvas = c.transform; break; }
             }
+
+            // Create main player's nametag
+            createNameTag(Main.Multiplayer.playerName);
         }
 
         public void unloadScene()
@@ -78,8 +81,10 @@ namespace BlasClient
             for (int i = 0; i < nametags.Count; i++)
             {
                 RectTransform nametag = nametags[i].transform as RectTransform;
-                GameObject player = getPlayerObject(nametag.name);
-                
+                string name = nametags[i].name;
+
+                // Get player with this name
+                GameObject player = name == Main.Multiplayer.playerName ? Core.Logic.Penitent.gameObject : getPlayerObject(name);
                 if (player != null)
                 {
                     Vector3 viewPosition = Camera.main.WorldToViewportPoint(player.transform.position + Vector3.up * 3.1f);
@@ -106,20 +111,7 @@ namespace BlasClient
             anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Set up name tag
-            if (canvas != null && textPrefab != null)
-            {
-                Text nametag = Object.Instantiate(textPrefab, canvas).GetComponent<Text>();
-                nametag.rectTransform.sizeDelta = new Vector2(100, 50);
-                nametag.rectTransform.SetAsFirstSibling();
-                nametag.name = name;
-                nametag.text = name;
-                nametag.alignment = TextAnchor.LowerCenter;
-                nametags.Add(nametag);
-            }
-            else
-            {
-                Main.UnityLog("Error: Failed to create nametag for " + name);
-            }
+            createNameTag(name);
 
             Main.UnityLog("Created new player object for " + name);
         }
@@ -196,6 +188,24 @@ namespace BlasClient
             {
                 Main.UnityLog("Error: Can't find player object for " + name);
             }
+        }
+
+        // Instantiates a nametag object
+        private void createNameTag(string name)
+        {
+            if (canvas == null || textPrefab == null)
+            {
+                Main.UnityLog("Error: Failed to create nametag for " + name);
+                return;
+            }
+
+            Text nametag = Object.Instantiate(textPrefab, canvas).GetComponent<Text>();
+            nametag.rectTransform.sizeDelta = new Vector2(100, 50);
+            nametag.rectTransform.SetAsFirstSibling();
+            nametag.name = name;
+            nametag.text = name;
+            nametag.alignment = TextAnchor.LowerCenter;
+            nametags.Add(nametag);
         }
 
         // Finds a specified player in the scene

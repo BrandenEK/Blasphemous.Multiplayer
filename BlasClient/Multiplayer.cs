@@ -8,7 +8,8 @@ namespace BlasClient
     {
         private Client client;
         private PlayerControl playerControl;
-        private string playerName;
+
+        public string playerName { get; private set; }
 
         private bool inLevel;
         private Vector2 lastPosition;
@@ -25,6 +26,8 @@ namespace BlasClient
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
             playerControl = new PlayerControl();
+            // temp
+            playerName = "Player 1";
         }
         public void Dispose()
         {
@@ -71,12 +74,12 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                playerControl.addPlayer("Test");
-                playerControl.queuePosition("Test", Core.Logic.Penitent.transform.position);
+                playerControl.addPlayer("Player 2");
+                playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                playerControl.queuePosition("Test", Core.Logic.Penitent.transform.position + Vector3.right * 3);
+                playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
             }
 
             if (shouldSendData && Core.Logic.Penitent != null)
