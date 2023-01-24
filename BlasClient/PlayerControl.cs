@@ -209,6 +209,7 @@ namespace BlasClient
                 playerSkins[name] = skin;
             else
                 playerSkins.Add(name, skin);
+            Main.UnityLog("Updating player skin for " + name);
         }
 
         // Instantiates a nametag object

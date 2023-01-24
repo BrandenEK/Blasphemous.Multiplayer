@@ -143,6 +143,13 @@ namespace BlasClient
             return currentDirection != lastDirection;
         }
 
+        // Changed skin from menu selector
+        public void changeSkin(string skin)
+        {
+            Main.UnityLog("Sending new player skin");
+            client.sendPlayerSkin(skin);
+        }
+
         // Received position data from server
         public void playerPositionUpdated(string playerName, float xPos, float yPos)
         {
