@@ -16,6 +16,13 @@ namespace BlasServer
 
         public string sceneName;
 
+        public PlayerStatus(string name)
+        {
+            this.name = name;
+            sceneName = "";
+            skin = "";
+        }
+
         public void updateStatus(byte[] data) // old
         {
             int startIdx = 0, length = 0;

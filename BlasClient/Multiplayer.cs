@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Framework.Managers;
 using Framework.FrameworkCore;
+using Gameplay.UI;
 
 namespace BlasClient
 {
@@ -26,8 +27,8 @@ namespace BlasClient
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
             playerControl = new PlayerControl();
-            // temp
-            playerName = "Player 1";
+            client = new Client();
+            playerName = "";
         }
         public void Dispose()
         {
@@ -38,9 +39,7 @@ namespace BlasClient
         public string tryConnect(string ip, string name, string password)
         {
             playerName = name;
-            client = new Client(ip);
-            bool result = client.Connect();
-
+            bool result = client.Connect(name, ip);
             return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
         }
 
@@ -190,6 +189,34 @@ namespace BlasClient
         {
             if (inLevel)
                 playerControl.removePlayer(playerName);
+        }
+
+        // Received introResponse data from server
+        public void playerIntroReceived(byte response)
+        {
+            // Connected succesfully
+            if (response == 0)
+            {
+                client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+                return;
+            }
+
+            playerName = "";
+            if (response == 1)
+            {
+                // Duplicate name
+                displayNotification("Disconnected: Player name is already taken!");
+            }
+            else
+            {
+                // Unkwown reason
+                displayNotification("Disconnected: Unknown reason!");
+            }
+        }
+
+        public void displayNotification(string message)
+        {
+            UIController.instance.ShowPopUp(message, "", 0, false);
         }
     }
 }

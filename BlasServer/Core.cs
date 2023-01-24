@@ -11,20 +11,20 @@ namespace BlasServer
             displayCustom("Blasphemous Multiplayer Server\n", ConsoleColor.Cyan);
 
             // Get ip address
-            displayMessage("Enter the ip address of the server:");
-            Console.ForegroundColor = ConsoleColor.Green;
-            string ip = Console.ReadLine();
+            //displayMessage("Enter the ip address of the server:");
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //string ip = Console.ReadLine();
 
             // Create server
-            Server server = new Server(ip);
+            Server server = new Server();
             if (server.Start())
             {
-                displayMessage($"\nServer has been started at '{ip}'");
+                displayMessage("Server has been started at this machine's local ip address");
                 CommandLoop();
             }
             else
             {
-                displayError($"\nServer failed to start at '{ip}'");
+                displayError("Server failed to start at this machine's local ip address");
             }
 
             // Exit

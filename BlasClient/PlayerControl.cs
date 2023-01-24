@@ -236,7 +236,7 @@ namespace BlasClient
             if (!playerSkins.TryGetValue(name, out string skin))
             {
                 Main.UnityLog("Error: Couldn't find skin for " + name);
-                return;
+                skin = "PENITENT_DEFAULT";
             }
 
             Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);

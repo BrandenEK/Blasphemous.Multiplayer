@@ -8,17 +8,12 @@ namespace BlasClient
     public class Client
     {
         public bool connected { get; private set; }
-
-        private string ipAddress;
         private SimpleTcpClient client;
 
-        public Client(string ip)
+        public bool Connect(string playerName, string ipAddress)
         {
-            ipAddress = ip;
-        }
+            if (connected) return false;
 
-        public bool Connect()
-        {
             try
             {
                 client = new SimpleTcpClient();
@@ -38,7 +33,7 @@ namespace BlasClient
             //    Program.EndProgram();
             //}
 
-            connected = true;
+            sendPlayerIntro(playerName);
             return true;
         }
 
@@ -91,6 +86,8 @@ namespace BlasClient
                         receivePlayerDirection(data); break;
                     case 5:
                         receivePlayerSkin(data); break;
+                    case 6:
+                        receivePlayerIntro(data); break;
                     default:
                         Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
@@ -147,10 +144,11 @@ namespace BlasClient
             Send(Encoding.UTF8.GetBytes(skin), 5);
         }
 
-        //public void sendPlayerName(string name) // old
-        //{
-        //    Send(Encoding.UTF8.GetBytes(name), 0);
-        //}
+        // Send this player's introductory data
+        public void sendPlayerIntro(string name)
+        {
+            Send(Encoding.UTF8.GetBytes(name), 6);
+        }
 
         #endregion Send functions
 
@@ -209,6 +207,27 @@ namespace BlasClient
 
             // Update specified player with new data
             Main.Multiplayer.playerSkinUpdated(playerName, skin);
+        }
+
+        // Received their intro response
+        private void receivePlayerIntro(byte[] data)
+        {
+            byte response = data[0];
+
+            if (response == 0)
+            {
+                // Successfully connected and can sync data now
+                connected = true;
+            }
+            else
+            {
+                // Rejected from server
+                connected = false;
+                client.Disconnect();
+                client = null;
+            }
+
+            Main.Multiplayer.playerIntroReceived(response);
         }
 
         #endregion Receive functions
