@@ -26,7 +26,7 @@ namespace BlasClient
                 client = new SimpleTcpClient();
                 client.Connect(ipAddress, 25565);
                 client.DataReceived += Receive;
-                //client.TcpClient.NoDelay = true;
+                client.TcpClient.NoDelay = true;
                 connectionStatus = ConnectionStatus.Attempting;
             }
             catch (System.Net.Sockets.SocketException)
@@ -258,16 +258,5 @@ namespace BlasClient
         }
 
         #endregion Receive functions
-
-
-        //private void clientConnected(object sender, ClientConnectedEventArgs e)
-        //{
-        //    Console.WriteLine("Successfully connected to the server at " + e.IpPort);
-        //}
-
-        //private void clientDisconnected(object sender, ClientDisconnectedEventArgs e)
-        //{
-        //    Console.WriteLine("Disconnected from the server at " + e.IpPort);
-        //}
     }
 }

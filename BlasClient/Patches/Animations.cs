@@ -167,11 +167,6 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(Animator animator) { return animator.name == "Body"; }
     }
-    [HarmonyPatch(typeof(GuardToIdleBehaviour), "OnStateUpdate")]
-    public class GuardToIdleBehaviourUpdate_Patch
-    {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
-    }
     [HarmonyPatch(typeof(GuardToIdleBehaviour), "OnStateExit")]
     public class GuardToIdleBehaviourExit_Patch
     {

@@ -21,7 +21,7 @@ namespace BlasServer
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
                 server.Start(25565);
-                //server.DisableDelay();
+                server.DisableDelay();
             }
             catch (System.Net.Sockets.SocketException)
             {

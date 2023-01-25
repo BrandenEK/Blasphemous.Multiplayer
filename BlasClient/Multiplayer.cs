@@ -115,7 +115,7 @@ namespace BlasClient
                     {
                         if (state.IsName(PlayerAnimations.animations[i].name))
                         {
-                            Main.UnityLog("Sending new player animation");
+                            //Main.UnityLog("Sending new player animation");
                             client.sendPlayerAnimation(i);
                             lastAnimation = i;
                             animationExists = true;
