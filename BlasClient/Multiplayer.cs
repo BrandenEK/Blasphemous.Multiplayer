@@ -86,12 +86,12 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                playerControl.addPlayer("Player 2");
-                playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position);
+                //playerControl.addPlayer("Player 2");
+                //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
+                //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
             }
 
             if (shouldSendData && Core.Logic.Penitent != null)

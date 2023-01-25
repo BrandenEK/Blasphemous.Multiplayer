@@ -8,12 +8,12 @@ namespace BlasClient
     public class NotificationManager
     {
         private RectTransform messageBox;
-        private Text[] lines;
+        private Text[] textLines;
 
-        private Vector2 boxSize = new Vector2(220, 100);
         private int maxLines = 5;
+        private int lineHeight = 20;
         private float timeDisplayed = 4f;
-        private float timeBeforeFade = 3f;
+        private float timeBeforeFade = 2f;
 
         private List<NotificationLine> currentMessages = new List<NotificationLine>();
         private static readonly object notificationLock = new object();
@@ -25,20 +25,61 @@ namespace BlasClient
             {
                 // Add new line to list
                 NotificationLine line = new NotificationLine(notification, timeDisplayed);
-                currentMessages.Add(line);
+                currentMessages.Insert(0, line);
 
                 // Remove first one if overfull
                 if (currentMessages.Count > maxLines)
-                    currentMessages.RemoveAt(0);
+                    currentMessages.RemoveAt(currentMessages.Count - 1);
             }
         }
 
         // Update the order, text, and fade of all notification lines and box size
         public void updateNotifications()
         {
+            if (messageBox == null) return;
+
             lock (notificationLock)
             {
+                // Loop over each line of text
+                float maxWidth = 0;
+                for (int i = 0; i < textLines.Length; i++)
+                {
+                    // There aren't this many notifications
+                    if (i >= currentMessages.Count)
+                    {
+                        textLines[i].text = "";
+                        continue;
+                    }
 
+                    // Update text
+                    NotificationLine currentLine = currentMessages[i];
+                    textLines[i].text = currentLine.text;
+                    if (textLines[i].preferredWidth > maxWidth)
+                        maxWidth = textLines[i].preferredWidth;
+
+                    // Decrease the amount of time left on this notification line
+                    currentLine.timeLeft -= Time.deltaTime;
+                    if (currentLine.timeLeft <= 0)
+                    {
+                        // Time is over, remove this message
+                        currentMessages.RemoveAt(i);
+                    }
+                    else if (currentLine.timeLeft <= timeBeforeFade)
+                    {
+                        // Enough time has passed, fade this text away
+                        textLines[i].color = new Color(1, 1, 1, currentLine.timeLeft / timeBeforeFade);
+                    }
+                    else
+                    {
+                        // This text line is pretty new, keep at full opacity
+                        textLines[i].color = Color.white;
+                    }
+                }
+
+                // Set size of message box based on notifications
+                if (maxWidth > 0)
+                    maxWidth += 10;
+                messageBox.sizeDelta = new Vector2(maxWidth, currentMessages.Count * lineHeight);
             }
         }
 
@@ -69,26 +110,26 @@ namespace BlasClient
             RectTransform rect = obj.GetComponent<RectTransform>();
             rect.SetParent(parent, false);
             setOrientation(rect);
-            rect.sizeDelta = boxSize;
+            rect.sizeDelta = new Vector2(0, 0);
 
             // Set image color
             Image image = obj.GetComponent<Image>();
             image.color = new Color(0.24f, 0.24f, 0.24f, 0.8f);
 
             // Create text lines
-            lines = new Text[maxLines];
+            textLines = new Text[maxLines];
             for (int i = 0; i < maxLines; i++)
             {
                 Text line = Object.Instantiate(textObject, rect).GetComponent<Text>();
                 setOrientation(line.rectTransform);
                 line.rectTransform.sizeDelta = new Vector2(100, 20);
-                line.rectTransform.anchoredPosition = new Vector2(5, 3 + i * 20);
+                line.rectTransform.anchoredPosition = new Vector2(5, 2.5f + i * 20);
                 line.raycastTarget = false;
-                line.text = "This is a test line of text";
+                line.text = "";
                 line.horizontalOverflow = HorizontalWrapMode.Overflow;
                 line.alignment = TextAnchor.LowerLeft;
                 line.color = Color.white;
-                lines[i] = line;
+                textLines[i] = line;
             }
 
             messageBox = rect;
@@ -104,7 +145,7 @@ namespace BlasClient
         }
     }
 
-    public class NotificationLine
+    class NotificationLine
     {
         public string text;
         public float timeLeft;
