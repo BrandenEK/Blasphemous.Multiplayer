@@ -100,7 +100,7 @@ namespace BlasClient
                 Transform penitentTransform = Core.Logic.Penitent.transform;
                 if (positionHasChanged(penitentTransform.position))
                 {
-                    Main.UnityLog("Sending new player position");
+                    //Main.UnityLog("Sending new player position");
                     client.sendPlayerPostition(penitentTransform.position.x, penitentTransform.position.y);
                     lastPosition = penitentTransform.position;
                 }
@@ -128,7 +128,7 @@ namespace BlasClient
                 SpriteRenderer penitentRenderer = Core.Logic.Penitent.SpriteRenderer;
                 if (directionHasChanged(penitentRenderer.flipX))
                 {
-                    Main.UnityLog("Sending new player direction");
+                    //Main.UnityLog("Sending new player direction");
                     client.sendPlayerDirection(penitentRenderer.flipX);
                     lastDirection = penitentRenderer.flipX;
                 }

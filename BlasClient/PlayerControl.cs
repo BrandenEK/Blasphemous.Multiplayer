@@ -129,7 +129,7 @@ namespace BlasClient
         public void addPlayer(string name)
         {
             // Create base object
-            GameObject player = new GameObject(name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator), typeof(ColorPaletteSwapper));  // Change to create prefab at initialization, and instantiate a new instance
+            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator), typeof(ColorPaletteSwapper));  // Change to create prefab at initialization, and instantiate a new instance
             players.Add(player);
 
             // Set up sprite rendering
@@ -188,7 +188,7 @@ namespace BlasClient
             if (player != null)
             {
                 player.transform.position = position;
-                Main.UnityLog("Updating player object position for " + name);
+                //Main.UnityLog("Updating player object position for " + name);
             }
             else
             {
@@ -202,13 +202,18 @@ namespace BlasClient
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
+                // Set a few always needed parameters
                 Animator anim = player.GetComponent<Animator>();
+                anim.SetBool("IS_CROUCH", false);
+                //anim.SetBool("IS_DEAD") might need one for vertical attack
+
+                // Set required parameters to keep player onject in this animation
                 for (int i = 0; i < PlayerAnimator.animations[animation].parameterNames.Length; i++)
                 {
                     anim.SetBool(PlayerAnimator.animations[animation].parameterNames[i], PlayerAnimator.animations[animation].parameterValues[i]);
                 }
                 anim.Play(PlayerAnimator.animations[animation].name);
-                Main.UnityLog("Updating player object animation for " + name);
+                //Main.UnityLog("Updating player object animation for " + name);
             }
             else
             {
@@ -224,7 +229,7 @@ namespace BlasClient
             {
                 SpriteRenderer render = player.GetComponent<SpriteRenderer>();
                 render.flipX = direction;
-                Main.UnityLog("Updating player object direction for " + name);
+                //Main.UnityLog("Updating player object direction for " + name);
             }
             else
             {
@@ -293,7 +298,7 @@ namespace BlasClient
         {
             for (int i = 0; i < players.Count; i++)
             {
-                if (players[i].name == name)
+                if (players[i].name == "_" + name)
                     return players[i];
             }
             return null;

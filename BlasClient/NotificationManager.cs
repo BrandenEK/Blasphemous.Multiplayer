@@ -114,7 +114,7 @@ namespace BlasClient
 
             // Set image color
             Image image = obj.GetComponent<Image>();
-            image.color = new Color(0.24f, 0.24f, 0.24f, 0.8f);
+            image.color = new Color(0.17f, 0.17f, 0.17f, 0.8f);
 
             // Create text lines
             textLines = new Text[maxLines];

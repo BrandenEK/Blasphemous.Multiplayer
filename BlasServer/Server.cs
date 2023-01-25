@@ -42,7 +42,7 @@ namespace BlasServer
 
                 try
                 {
-                    Core.displayMessage($"Sending {list.Count} bytes");
+                    //Core.displayMessage($"Sending {list.Count} bytes");
                     server.Send(ip, list.ToArray());
                 }
                 catch (Exception)
@@ -55,7 +55,7 @@ namespace BlasServer
         // Data should be formatted as length length type data
         private void Receive(object sender, DataReceivedEventArgs e)
         {
-            Core.displayMessage("Bytes received: " + e.data.Length);
+            //Core.displayMessage("Bytes received: " + e.data.Length);
             currentIp = e.ip;
 
             int startIdx = 0;
