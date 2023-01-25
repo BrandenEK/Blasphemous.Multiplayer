@@ -66,21 +66,21 @@ namespace BlasClient.Patches
         public static bool Prefix(Animator animator) { return animator.name == "Body"; }
     }
     // Grab ladder down
-    //[HarmonyPatch(typeof(), "OnStateEnter")]
-    //public class Enter_Patch
-    //{
-    //    public static bool Prefix(Animator animator) { return animator.name == "Body"; }
-    //}
-    //[HarmonyPatch(typeof(), "OnStateUpdate")]
-    //public class Update_Patch
-    //{
-    //    public static bool Prefix(Animator animator) { return animator.name == "Body"; }
-    //}
-    //[HarmonyPatch(typeof(), "OnStateExit")]
-    //public class Exit_Patch
-    //{
-    //    public static bool Prefix(Animator animator) { return animator.name == "Body"; }
-    //}
+    [HarmonyPatch(typeof(GrabLadderDownBehaviour), "OnStateEnter")]
+    public class GrabLadderDownBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GrabLadderDownBehaviour), "OnStateUpdate")]
+    public class GrabLadderDownBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GrabLadderDownBehaviour), "OnStateExit")]
+    public class GrabLadderDownBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
     // Ladder go up
     [HarmonyPatch(typeof(LadderGoingUpBehaviour), "OnStateEnter")]
     public class LadderGoingUpBehaviourEnter_Patch
@@ -243,6 +243,304 @@ namespace BlasClient.Patches
     }
 
 
+    // Death
+    [HarmonyPatch(typeof(PlayerDeathAnimationBehaviour), "OnStateEnter")]
+    public class PlayerDeathAnimationBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(PlayerDeathAnimationBehaviour), "OnStateUpdate")]
+    public class PlayerDeathAnimationBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Death by fall
+    [HarmonyPatch(typeof(PlayerDeathFallBehaviour), "OnStateEnter")]
+    public class PlayerDeathFallBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Death by spike
+    [HarmonyPatch(typeof(PlayerDeathSpikeBehaviour), "OnStateEnter")]
+    public class PlayerDeathSpikeBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+
+
+    // Healing
+    [HarmonyPatch(typeof(HealingBehaviour), "OnStateEnter")]
+    public class HealingBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(HealingBehaviour), "OnStateExit")]
+    public class HealingBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Ground hurt
+    [HarmonyPatch(typeof(GroundHurtBehaviour), "OnStateEnter")]
+    public class GroundHurtBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GroundHurtBehaviour), "OnStateUpdate")]
+    public class GroundHurtBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GroundHurtBehaviour), "OnStateExit")]
+    public class GroundHurtBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Air hurt
+    [HarmonyPatch(typeof(AirHurtBehaviour), "OnStateEnter")]
+    public class AirHurtBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(AirHurtBehaviour), "OnStateUpdate")]
+    public class AirHurtBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Grounding over
+    [HarmonyPatch(typeof(GroundingOverBehaviour), "OnStateEnter")]
+    public class GroundingOverBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GroundingOverBehaviour), "OnStateUpdate")]
+    public class GroundingOverBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GroundingOverBehaviour), "OnStateExit")]
+    public class GroundingOverBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Falling over
+    [HarmonyPatch(typeof(FallingOverBehaviour), "OnStateEnter")]
+    public class FallingOverBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(FallingOverBehaviour), "OnStateUpdate")]
+    public class FallingOverBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+
+
+    // Jump
+    [HarmonyPatch(typeof(JumpBehaviour), "OnStateEnter")]
+    public class JumpBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Jump forward
+    [HarmonyPatch(typeof(JumpForwardBehaviour), "OnStateEnter")]
+    public class JumpForwardBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(JumpForwardBehaviour), "OnStateExit")]
+    public class JumpForwardBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Jump off
+    [HarmonyPatch(typeof(JumpOffBehaviour), "OnStateEnter")]
+    public class JumpOffBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(JumpOffBehaviour), "OnStateUpdate")]
+    public class JumpOffBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(JumpOffBehaviour), "OnStateExit")]
+    public class JumpOffBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Falling
+    [HarmonyPatch(typeof(FallingBehaviour), "OnStateEnter")]
+    public class FallingBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(FallingBehaviour), "OnStateUpdate")]
+    public class FallingBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Falling forward
+    [HarmonyPatch(typeof(FallingForwardBehaviour), "OnStateEnter")]
+    public class FallingForwardBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(FallingForwardBehaviour), "OnStateUpdate")]
+    public class FallingForwardBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(FallingForwardBehaviour), "OnStateExit")]
+    public class FallingForwardBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Landing
+    [HarmonyPatch(typeof(LandingBehaviour), "OnStateEnter")]
+    public class LandingBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(LandingBehaviour), "OnStateUpdate")]
+    public class LandingBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(LandingBehaviour), "OnStateExit")]
+    public class LandingBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Landing running
+    [HarmonyPatch(typeof(LandingRunningBehaviour), "OnStateEnter")]
+    public class LandingRunningBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(LandingRunningBehaviour), "OnStateExit")]
+    public class LandingRunningBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Hard landing
+    [HarmonyPatch(typeof(HardLandingBehaviour), "OnStateEnter")]
+    public class HardLandingBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(HardLandingBehaviour), "OnStateUpdate")]
+    public class HardLandingBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(HardLandingBehaviour), "OnStateExit")]
+    public class HardLandingBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Wall contact
+    [HarmonyPatch(typeof(WallJumpContactBehaviour), "OnStateEnter")]
+    public class WallJumpContactBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+
+
+    // Aura transform
+    [HarmonyPatch(typeof(AuraTransformBehaviour), "OnStateEnter")]
+    public class AuraTransformBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(AuraTransformBehaviour), "OnStateExit")]
+    public class AuraTransformBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // High wills respawn
+    [HarmonyPatch(typeof(HighWillsRespawnBehaviour), "OnStateEnter")]
+    public class HighWillsRespawnBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(HighWillsRespawnBehaviour), "OnStateExit")]
+    public class HighWillsRespawnBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Return to port
+    [HarmonyPatch(typeof(PR202TeleportBehaviour), "OnStateEnter")]
+    public class PR202TeleportBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(PR202TeleportBehaviour), "OnStateExit")]
+    public class PR202TeleportBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+
+
+    // Ground range attack
+    [HarmonyPatch(typeof(GroundRangeAttackBehaviour), "OnStateEnter")]
+    public class GroundRangeAttackBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GroundRangeAttackBehaviour), "OnStateUpdate")]
+    public class GroundRangeAttackBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(GroundRangeAttackBehaviour), "OnStateExit")]
+    public class GroundRangeAttackBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Mid air range attack
+    [HarmonyPatch(typeof(MidAirRangeAttackBehaviour), "OnStateEnter")]
+    public class MidAirRangeAttackBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(MidAirRangeAttackBehaviour), "OnStateUpdate")]
+    public class MidAirRangeAttackBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(MidAirRangeAttackBehaviour), "OnStateExit")]
+    public class MidAirRangeAttackBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+
+
+    // Idle
+    [HarmonyPatch(typeof(IdleAnimatonBehaviour), "OnStateEnter")]
+    public class IdleAnimatonBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(IdleAnimatonBehaviour), "OnStateExit")]
+    public class IdleAnimatonBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Move
+    [HarmonyPatch(typeof(MoveAnimationBehaviour), "OnStateEnter")]
+    public class MoveAnimationBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Run
+    [HarmonyPatch(typeof(RunStartBehaviour), "OnStateEnter")]
+    public class RunStartBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+
+
+
 
     // Sub states
 
@@ -268,6 +566,25 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(Animator animator) { return animator.name == "Body"; }
     }
+    // Hurt
+    [HarmonyPatch(typeof(HurtSubStateBehaviour), "OnStateEnter")]
+    public class HurtSubStateBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(HurtSubStateBehaviour), "OnStateUpdate")]
+    public class HurtSubStateBehaviourUpdate_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    [HarmonyPatch(typeof(HurtSubStateBehaviour), "OnStateExit")]
+    public class HurtSubStateBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+    }
+    // Ground attack
+    // Air attack
+    // Charge attack
 
 
     /*

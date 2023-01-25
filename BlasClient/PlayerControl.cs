@@ -206,6 +206,7 @@ namespace BlasClient
                 Animator anim = player.GetComponent<Animator>();
                 anim.SetBool("IS_CROUCH", false);
                 //anim.SetBool("IS_DEAD") might need one for vertical attack
+                // If anim is ladder climbing, set speed to 0
 
                 // Set required parameters to keep player onject in this animation
                 for (int i = 0; i < PlayerAnimator.animations[animation].parameterNames.Length; i++)
