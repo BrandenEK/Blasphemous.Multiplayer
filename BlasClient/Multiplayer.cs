@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using Framework.Managers;
 using Framework.FrameworkCore;
-using Gameplay.UI;
 
 namespace BlasClient
 {
@@ -111,17 +110,23 @@ namespace BlasClient
                 if (animationHasChanged(state))
                 {
                     // Animation has been updated
-                    //Main.UnityLog("Sending new player animation"); // bring back once all animations are added
-                    for (byte i = 0; i < PlayerAnimator.animations.Length; i++)
+                    bool animationExists = false;
+                    for (byte i = 0; i < PlayerAnimations.animations.Length; i++)
                     {
-                        if (state.IsName(PlayerAnimator.animations[i].name))
+                        if (state.IsName(PlayerAnimations.animations[i].name))
                         {
-                            Main.UnityLog("New anim: " + PlayerAnimator.animations[i].name);
+                            Main.UnityLog("Sending new player animation");
                             client.sendPlayerAnimation(i);
                             lastAnimation = i;
+                            animationExists = true;
+                            break;
                         }
                     }
-                    // Check if animation wasn't found
+                    if (!animationExists)
+                    {
+                        // This animation could not be found
+                        Main.UnityLog("Error: Animation doesn't exist!");
+                    }
                 }
 
                 // Check & send updated facing direction
@@ -150,7 +155,7 @@ namespace BlasClient
 
         private bool animationHasChanged(AnimatorStateInfo currentState)
         {
-            return !currentState.IsName(PlayerAnimator.animations[lastAnimation].name);
+            return !currentState.IsName(PlayerAnimations.animations[lastAnimation].name);
         }
 
         private bool directionHasChanged(bool currentDirection)

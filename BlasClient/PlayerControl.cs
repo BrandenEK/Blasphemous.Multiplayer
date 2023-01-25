@@ -129,7 +129,7 @@ namespace BlasClient
         public void addPlayer(string name)
         {
             // Create base object
-            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(PlayerAnimator), typeof(ColorPaletteSwapper));  // Change to create prefab at initialization, and instantiate a new instance
+            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator));  // Change to create prefab at initialization, and instantiate a new instance
             players.Add(player);
 
             // Set up sprite rendering
@@ -209,11 +209,11 @@ namespace BlasClient
                 // If anim is ladder climbing, set speed to 0
 
                 // Set required parameters to keep player onject in this animation
-                for (int i = 0; i < PlayerAnimator.animations[animation].parameterNames.Length; i++)
+                for (int i = 0; i < PlayerAnimations.animations[animation].parameterNames.Length; i++)
                 {
-                    anim.SetBool(PlayerAnimator.animations[animation].parameterNames[i], PlayerAnimator.animations[animation].parameterValues[i]);
+                    anim.SetBool(PlayerAnimations.animations[animation].parameterNames[i], PlayerAnimations.animations[animation].parameterValues[i]);
                 }
-                anim.Play(PlayerAnimator.animations[animation].name);
+                anim.Play(PlayerAnimations.animations[animation].name);
                 //Main.UnityLog("Updating player object animation for " + name);
             }
             else
