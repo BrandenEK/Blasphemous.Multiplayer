@@ -107,12 +107,16 @@ namespace BlasServer
             Core.displayMessage("Client disconnected at " + e.ip);
             currentIp = e.ip;
 
+            // Make sure this client was actually connected, not just rejected from server
+            if (!connectedPlayers.ContainsKey(e.ip))
+                return;
+
             // For now, just send playerLeft packet to remove the player from the scene
             // Later will need a special packet to also remove the player from the client's list
             // Client's skin list will currently still keep this player in it
             PlayerStatus player = getCurrentPlayer();
             sendPlayerLeaveScene(player);
-            // Send disconnect notification to other players
+            sendNotification(player.name + " has left the server!", false);
 
             // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
@@ -155,6 +159,10 @@ namespace BlasServer
         private byte[] getIntroPacket(byte response)
         {
             return new byte[] { response };
+        }
+        private byte[] getNotificationPacket(string message)
+        {
+            return Encoding.UTF8.GetBytes(message);
         }
 
         private List<byte> addPlayerNameToData(string name)
@@ -274,6 +282,26 @@ namespace BlasServer
             }
         }
 
+        // Send a notification to current player or all other players
+        private void sendNotification(string message, bool onlyCurrent)
+        {
+            if (onlyCurrent)
+            {
+                // Send message to only current ip
+                Send(currentIp, getNotificationPacket(message), 7);
+                return;
+            }
+
+            // Send message to all other connected ips
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip)
+                {
+                    Send(ip, getNotificationPacket(message), 7);
+                }
+            }
+        }
+
         #endregion Send functions
 
         #region Receive functions
@@ -361,11 +389,10 @@ namespace BlasServer
 
             // Add new connected player
             Core.displayMessage("Player connection accepted");
+            sendNotification(playerName + " has joined the server!", false);
             PlayerStatus newPlayer = new PlayerStatus(playerName);
             connectedPlayers.Add(currentIp, newPlayer);
             sendPlayerIntro(0);
-
-            // Notification for joining
         } 
 
         #endregion Receive functions

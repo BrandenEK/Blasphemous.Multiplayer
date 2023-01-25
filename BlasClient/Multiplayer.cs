@@ -9,6 +9,7 @@ namespace BlasClient
     {
         private Client client;
         private PlayerControl playerControl;
+        private NotificationManager notificationManager;
 
         public string playerName { get; private set; }
 
@@ -19,7 +20,7 @@ namespace BlasClient
 
         private bool shouldSendData
         {
-            get { return inLevel && client != null && client.connected; }
+            get { return inLevel && client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
 
         public void Initialize()
@@ -27,6 +28,7 @@ namespace BlasClient
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
             playerControl = new PlayerControl();
+            notificationManager = new NotificationManager();
             client = new Client();
             playerName = "";
         }
@@ -40,12 +42,15 @@ namespace BlasClient
         {
             playerName = name;
             bool result = client.Connect(name, ip);
-            return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
+            if (result)
+                displayNotification("Connected to server!");
+
+            return result ? $"Successfully connected to {ip}" : $"Failed to connect to {ip}";
         }
 
-        public void onDisconnect(string reason)
+        public void onDisconnect()
         {
-            displayNotification(reason);
+            displayNotification("Disconnected from server!");
             playerControl.destroyPlayers();
             playerName = "";
         }
@@ -53,7 +58,8 @@ namespace BlasClient
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
             inLevel = newLevel.LevelName != "MainMenu";
-            playerControl.loadScene(newLevel.LevelName);   
+            notificationManager.createMessageBox();
+            playerControl.loadScene(newLevel.LevelName);
 
             if (shouldSendData)
             {
@@ -80,12 +86,12 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                playerControl.addPlayer("Player 2");
-                playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position);
+                //playerControl.addPlayer("Player 2");
+                //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
+                //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
             }
 
             if (shouldSendData && Core.Logic.Penitent != null)
@@ -131,6 +137,9 @@ namespace BlasClient
             // Update other player's data
             if (playerControl != null && inLevel)
                 playerControl.updatePlayers();
+            // Update notifications
+            if (notificationManager != null)
+                notificationManager.updateNotifications();
         }
 
         private bool positionHasChanged(Vector2 currentPosition)
@@ -215,18 +224,19 @@ namespace BlasClient
             }
 
             // Failed to connect
+            onDisconnect();
             string reason;
-            if (response == 1) reason = "Disconnected: Player name is already taken!"; // Duplicate name
-            else if (response == 2) reason = "Disconnected: Server is full!"; // Max player limit
+            if (response == 1) reason = "Player name is already taken"; // Duplicate name
+            else if (response == 2) reason = "Server is full"; // Max player limit
+            else reason = "Unknown reason"; // Unknown reason
             // Banned from server
-            else reason = "Disconnected: Unknown reason!"; // Unknown reason
-
-            onDisconnect(reason);
+            displayNotification($"({reason})");
         }
 
         public void displayNotification(string message)
         {
-            UIController.instance.ShowPopUp(message, "", 0, false);
+            Main.UnityLog("Notification: " + message);
+            notificationManager.showNotification(message);
         }
     }
 }
