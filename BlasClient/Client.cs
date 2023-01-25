@@ -26,7 +26,7 @@ namespace BlasClient
                 client = new SimpleTcpClient();
                 client.Connect(ipAddress, 25565);
                 client.DataReceived += Receive;
-                client.TcpClient.NoDelay = true;
+                //client.TcpClient.NoDelay = true;
                 connectionStatus = ConnectionStatus.Attempting;
             }
             catch (System.Net.Sockets.SocketException)
