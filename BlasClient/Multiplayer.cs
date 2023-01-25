@@ -9,6 +9,7 @@ namespace BlasClient
     {
         private Client client;
         private PlayerControl playerControl;
+        private NotificationManager notificationManager;
 
         public string playerName { get; private set; }
 
@@ -27,6 +28,7 @@ namespace BlasClient
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
             playerControl = new PlayerControl();
+            notificationManager = new NotificationManager();
             client = new Client();
             playerName = "";
         }
@@ -56,7 +58,8 @@ namespace BlasClient
         private void onLevelLoaded(Level oldLevel, Level newLevel)
         {
             inLevel = newLevel.LevelName != "MainMenu";
-            playerControl.loadScene(newLevel.LevelName);   
+            notificationManager.createMessageBox();
+            playerControl.loadScene(newLevel.LevelName);
 
             if (shouldSendData)
             {
@@ -134,6 +137,9 @@ namespace BlasClient
             // Update other player's data
             if (playerControl != null && inLevel)
                 playerControl.updatePlayers();
+            // Update notifications
+            if (notificationManager != null)
+                notificationManager.updateNotifications();
         }
 
         private bool positionHasChanged(Vector2 currentPosition)
@@ -230,7 +236,7 @@ namespace BlasClient
         public void displayNotification(string message)
         {
             Main.UnityLog("Notification: " + message);
-            UIController.instance.ShowPopUp(message, "", 0, false);
+            notificationManager.showNotification(message);
         }
     }
 }

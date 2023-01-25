@@ -12,7 +12,7 @@ namespace BlasClient
         private List<GameObject> players = new List<GameObject>();
         private List<Text> nametags = new List<Text>();
 
-        private Transform canvas;
+        private Transform canvas; // Optimize to not have to find these every scene change
         private GameObject textPrefab;
 
         // Stores the skin of each player and is updated when receiving a skin change from the server
