@@ -17,9 +17,9 @@ namespace BlasClient
         private byte lastAnimation;
         private bool lastDirection;
 
-        private bool shouldSendData
+        private bool connectedToServer
         {
-            get { return inLevel && client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
+            get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
 
         public void Initialize()
@@ -60,7 +60,7 @@ namespace BlasClient
             notificationManager.createMessageBox();
             playerControl.loadScene(newLevel.LevelName);
 
-            if (shouldSendData)
+            if (inLevel && connectedToServer)
             {
                 // Entered a new scene
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
@@ -70,7 +70,7 @@ namespace BlasClient
 
         private void onLevelUnloaded(Level oldLevel, Level newLevel)
         {
-            if (shouldSendData)
+            if (inLevel && connectedToServer)
             {
                 // Left a scene
                 Main.UnityLog("Leaving old scene");
@@ -93,7 +93,7 @@ namespace BlasClient
                 //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
             }
 
-            if (shouldSendData && Core.Logic.Penitent != null)
+            if (inLevel && connectedToServer && Core.Logic.Penitent != null)
             {
                 // Check & send updated position
                 Transform penitentTransform = Core.Logic.Penitent.transform;
@@ -166,8 +166,21 @@ namespace BlasClient
         // Changed skin from menu selector
         public void changeSkin(string skin)
         {
-            Main.UnityLog("Sending new player skin");
-            client.sendPlayerSkin(skin);
+            if (connectedToServer)
+            {
+                Main.UnityLog("Sending new player skin");
+                client.sendPlayerSkin(skin);
+            }
+        }
+
+        // Obtained new item, upgraded stat, set flag, etc...
+        public void obtainedGameProgress(string progressId, byte progressType, byte progressValue)
+        {
+            if (connectedToServer)
+            {
+                Main.UnityLog("Sending new game progress");
+                client.sendPlayerProgress(progressType, progressValue, progressId);
+            }
         }
 
         // Received position data from server
@@ -242,6 +255,13 @@ namespace BlasClient
         {
             Main.UnityLog("Notification: " + message);
             notificationManager.showNotification(message);
+        }
+
+        public void gameProgressReceived(string player, string progressId, byte progressType, byte progressValue)
+        {
+            // Calculate & display notification with player name & item's notification value
+            // Determine what type of item it is
+            // Queue the received item in the progress manager
         }
     }
 }

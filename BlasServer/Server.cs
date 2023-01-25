@@ -90,6 +90,8 @@ namespace BlasServer
                         receivePlayerSkin(data); break;
                     case 6:
                         receivePlayerIntro(data); break;
+                    case 8:
+                        receivePlayerProgress(data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -302,6 +304,22 @@ namespace BlasServer
             }
         }
 
+        // Send a player progress update
+        private void sendPlayerProgress(byte[] data) // Taking in a byte[] is probably only temporary
+        {
+            PlayerStatus current = getCurrentPlayer();
+
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (currentIp != ip)
+                {
+                    List<byte> bytes = new List<byte>(Encoding.UTF8.GetBytes(current.name));
+                    bytes.AddRange(data);
+                    Send(ip, bytes.ToArray(), 8);
+                }
+            }
+        }
+
         #endregion Send functions
 
         #region Receive functions
@@ -393,7 +411,15 @@ namespace BlasServer
             PlayerStatus newPlayer = new PlayerStatus(playerName);
             connectedPlayers.Add(currentIp, newPlayer);
             sendPlayerIntro(0);
-        } 
+        }
+
+        // Received a player progress update
+        private void receivePlayerProgress(byte[] data)
+        {
+            // Get the progress item from the data & add this to the game list
+            // Send the data back to other players
+            sendPlayerProgress(data);
+        }
 
         #endregion Receive functions
     }
