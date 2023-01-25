@@ -192,7 +192,7 @@ namespace BlasClient
             }
             else
             {
-                Main.UnityLog("Error: Can't find player object for " + name);
+                Main.UnityLog("Error: Can't update object position for " + name);
             }
         }
 
@@ -212,7 +212,7 @@ namespace BlasClient
             }
             else
             {
-                Main.UnityLog("Error: Can't find player object for " + name);
+                Main.UnityLog("Error: Can't update object animation for " + name);
             }
         }
 
@@ -228,7 +228,7 @@ namespace BlasClient
             }
             else
             {
-                Main.UnityLog("Error: Can't find player object for " + name);
+                Main.UnityLog("Error: Can't update object direction for " + name);
             }
         }
 
@@ -268,7 +268,7 @@ namespace BlasClient
             GameObject player = getPlayerObject(name);
             if (player == null)
             {
-                Main.UnityLog("Error: Can't find player object for " + name);
+                Main.UnityLog("Error: Can't update object skin for " + name);
                 return;
             }
 

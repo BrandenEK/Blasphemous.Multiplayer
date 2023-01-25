@@ -10,7 +10,7 @@ namespace BlasClient
         private RectTransform messageBox;
         private Text[] textLines;
 
-        private int maxLines = 5;
+        private int maxLines = 4;
         private int lineHeight = 20;
         private float timeDisplayed = 4f;
         private float timeBeforeFade = 2f;
