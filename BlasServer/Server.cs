@@ -116,7 +116,7 @@ namespace BlasServer
             // Client's skin list will currently still keep this player in it
             PlayerStatus player = getCurrentPlayer();
             sendPlayerLeaveScene(player);
-            // Send disconnect notification to other players
+            sendNotification(player.name + " has left the server!", false);
 
             // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
@@ -389,11 +389,10 @@ namespace BlasServer
 
             // Add new connected player
             Core.displayMessage("Player connection accepted");
+            sendNotification(playerName + " has joined the server!", false);
             PlayerStatus newPlayer = new PlayerStatus(playerName);
             connectedPlayers.Add(currentIp, newPlayer);
             sendPlayerIntro(0);
-
-            // Notification for joining
         } 
 
         #endregion Receive functions

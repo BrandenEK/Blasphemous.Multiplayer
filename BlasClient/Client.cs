@@ -61,7 +61,7 @@ namespace BlasClient
                     Main.UnityLog("Error: Disconnected from server");
                     connectionStatus = ConnectionStatus.Disconnnected;
                     client = null;
-                    Main.Multiplayer.onDisconnect("Disconnected: Lost connection to server!");
+                    Main.Multiplayer.onDisconnect();
                 }
             }
         }

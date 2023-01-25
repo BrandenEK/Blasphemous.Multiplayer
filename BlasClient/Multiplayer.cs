@@ -40,12 +40,15 @@ namespace BlasClient
         {
             playerName = name;
             bool result = client.Connect(name, ip);
-            return result ? "Successfully connected to " + ip : "Failed to connect to " + ip;
+            if (result)
+                displayNotification("Connected to server!");
+
+            return result ? $"Successfully connected to {ip}" : $"Failed to connect to {ip}";
         }
 
-        public void onDisconnect(string reason)
+        public void onDisconnect()
         {
-            displayNotification(reason);
+            displayNotification("Disconnected from server!");
             playerControl.destroyPlayers();
             playerName = "";
         }
@@ -215,13 +218,13 @@ namespace BlasClient
             }
 
             // Failed to connect
+            onDisconnect();
             string reason;
-            if (response == 1) reason = "Disconnected: Player name is already taken!"; // Duplicate name
-            else if (response == 2) reason = "Disconnected: Server is full!"; // Max player limit
+            if (response == 1) reason = "Player name is already taken"; // Duplicate name
+            else if (response == 2) reason = "Server is full"; // Max player limit
+            else reason = "Unknown reason"; // Unknown reason
             // Banned from server
-            else reason = "Disconnected: Unknown reason!"; // Unknown reason
-
-            onDisconnect(reason);
+            displayNotification($"({reason})");
         }
 
         public void displayNotification(string message)
