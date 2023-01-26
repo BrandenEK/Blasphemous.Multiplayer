@@ -8,7 +8,7 @@ namespace BlasClient.Patches
 {
     // Inventory items
 
-    [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))]
+    [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))] // TODO - Change this to use the AddBaseObject method
     public class InventoryBead_Patch
     {
         public static void Postfix(RosaryBead rosaryBead)

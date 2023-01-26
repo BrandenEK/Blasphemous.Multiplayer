@@ -34,9 +34,16 @@ namespace BlasClient
         }
 
         // Add a new notification for a progress update, but calculates it first
-        public void showProgressNotification(string playerName, string progressId)
+        public void showProgressNotification(string playerName, byte progressType, string progressId)
         {
             // Search dictionary for main notification, and add player name to beginning of it (If this update requires a notification)
+
+            // Switch statement based on type
+            // Case 0-5: name + " has obtained " + itemName;
+            // Case 6-12: name + " has upgraded " + statName;
+            // Case flag: Check list for specific notification
+            // Case skill: name + " has unlocked " + skillName;
+            // Case map/persist/teleports: nothing
             showNotification(playerName + " has obtained the " + progressId);
         }
 
