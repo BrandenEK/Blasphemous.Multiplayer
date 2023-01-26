@@ -40,7 +40,9 @@ namespace BlasClient
             }
         }
 
-        private void applyProgress(ProgressUpdate progress) // TODO - Check for value to determine whether to remove or add
+        // TODO - Check for value to determine whether to remove or add
+        // TODO - For stats - value will contain the current level of the stat
+        private void applyProgress(ProgressUpdate progress)
         {
             switch (progress.type)
             {
@@ -57,8 +59,22 @@ namespace BlasClient
                 case 5:
                     Core.InventoryManager.AddQuestItem(progress.id); return;
                 case 6:
-                    return;
+                    Core.Logic.Penitent.Stats.Life.Upgrade();
+                    Core.Logic.Penitent.Stats.Life.SetToCurrentMax(); return;
                 case 7:
+                    Core.Logic.Penitent.Stats.Fervour.Upgrade();
+                    Core.Logic.Penitent.Stats.Fervour.SetToCurrentMax(); return;
+                case 8:
+                    Core.Logic.Penitent.Stats.Strength.Upgrade(); return;
+                case 9:
+                    Core.Logic.Penitent.Stats.MeaCulpa.Upgrade(); return;
+                case 10:
+                    Core.Logic.Penitent.Stats.BeadSlots.Upgrade(); return;
+                case 11:
+                    Core.Logic.Penitent.Stats.Flask.Upgrade();
+                    Core.Logic.Penitent.Stats.Flask.SetToCurrentMax(); return;
+                case 12:
+                    Core.Logic.Penitent.Stats.FlaskHealth.Upgrade(); return;
 
                 // Flags 
                 // Persistent objects
@@ -66,6 +82,7 @@ namespace BlasClient
                 // Activated prie dieus
                 // Church donations
                 // Unlocked skills
+                // Map
                 default:
                     Main.UnityLog("Error: Progress type doesn't exist: " + progress.type); return;
             }
