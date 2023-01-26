@@ -37,6 +37,7 @@ namespace BlasClient
         public void showProgressNotification(string playerName, string progressId)
         {
             // Search dictionary for main notification, and add player name to beginning of it (If this update requires a notification)
+            showNotification(playerName + " has obtained the " + progressId);
         }
 
         // Update the order, text, and fade of all notification lines and box size

@@ -12,8 +12,8 @@ namespace BlasClient
         private NotificationManager notificationManager;
 
         public string playerName { get; private set; }
+        public bool inLevel { get; private set; }
 
-        private bool inLevel;
         private Vector2 lastPosition;
         private byte lastAnimation;
         private bool lastDirection;

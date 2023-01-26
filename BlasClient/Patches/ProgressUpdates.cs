@@ -37,6 +37,17 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(InventoryManager), "AddSword", typeof(Sword))]
+    public class InventorySwordPatch
+    {
+        public static void Prefix(Sword sword)
+        {
+            if (!ProgressManager.updatingProgress)
+            {
+                Main.Multiplayer.obtainedGameProgress(sword.id, 2, 0);
+            }
+        }
+    }
     [HarmonyPatch(typeof(InventoryManager), "AddCollectibleItem", typeof(Framework.Inventory.CollectibleItem))]
     public class InventoryCollectiblePatch
     {

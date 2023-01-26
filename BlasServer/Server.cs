@@ -313,7 +313,7 @@ namespace BlasServer
             {
                 if (currentIp != ip)
                 {
-                    List<byte> bytes = new List<byte>(Encoding.UTF8.GetBytes(current.name));
+                    List<byte> bytes = addPlayerNameToData(current.name);
                     bytes.AddRange(data);
                     Send(ip, bytes.ToArray(), 8);
                 }
