@@ -8,6 +8,7 @@ namespace BlasClient
     {
         private Client client;
         private PlayerControl playerControl;
+        private ProgressManager progressManager;
         private NotificationManager notificationManager;
 
         public string playerName { get; private set; }
@@ -27,6 +28,7 @@ namespace BlasClient
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
             playerControl = new PlayerControl();
+            progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
             client = new Client();
             playerName = "";
@@ -139,6 +141,9 @@ namespace BlasClient
                 }
             }
 
+            // Update game progress
+            if (progressManager != null)
+                progressManager.updateProgress();
             // Update other player's data
             if (playerControl != null && inLevel)
                 playerControl.updatePlayers();
@@ -259,9 +264,11 @@ namespace BlasClient
 
         public void gameProgressReceived(string player, string progressId, byte progressType, byte progressValue)
         {
-            // Calculate & display notification with player name & item's notification value
-            // Determine what type of item it is
-            // Queue the received item in the progress manager
+            // Apply the progress update
+            progressManager.receiveProgress(progressId, progressType, progressValue);
+
+            // Show notification for new progress
+            notificationManager.showProgressNotification(player, progressId);
         }
     }
 }

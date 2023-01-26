@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
-using Gameplay.GameControllers.Effects.Player.Recolor;
+using BlasClient.Structures;
 
 namespace BlasClient
 {

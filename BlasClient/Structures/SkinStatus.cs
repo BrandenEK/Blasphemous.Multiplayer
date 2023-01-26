@@ -1,4 +1,4 @@
-﻿namespace BlasClient
+﻿namespace BlasClient.Structures
 {
     public class SkinStatus
     {
