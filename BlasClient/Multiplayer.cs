@@ -113,9 +113,9 @@ namespace BlasClient
                 {
                     // Animation has been updated
                     bool animationExists = false;
-                    for (byte i = 0; i < PlayerAnimations.animations.Length; i++)
+                    for (byte i = 0; i < StaticObjects.animations.Length; i++)
                     {
-                        if (state.IsName(PlayerAnimations.animations[i].name))
+                        if (state.IsName(StaticObjects.animations[i].name))
                         {
                             //Main.UnityLog("Sending new player animation");
                             client.sendPlayerAnimation(i);
@@ -163,7 +163,7 @@ namespace BlasClient
 
         private bool animationHasChanged(AnimatorStateInfo currentState)
         {
-            return !currentState.IsName(PlayerAnimations.animations[lastAnimation].name);
+            return !currentState.IsName(StaticObjects.animations[lastAnimation].name);
         }
 
         private bool directionHasChanged(bool currentDirection)

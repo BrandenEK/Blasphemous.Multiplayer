@@ -47,63 +47,66 @@ namespace BlasClient
                 case 0:
                     RosaryBead bead = Core.InventoryManager.GetRosaryBead(progressId);
                     if (bead != null)
-                        notification = " has obtained the " + bead.caption;
+                        notification = "has obtained the " + bead.caption;
                     break;
                 case 1:
                     Prayer prayer = Core.InventoryManager.GetPrayer(progressId);
                     if (prayer != null)
-                        notification = " has obtained the " + prayer.caption;
+                        notification = "has obtained the " + prayer.caption;
                     break;
                 case 2:
                     Relic relic = Core.InventoryManager.GetRelic(progressId);
                     if (relic != null)
-                        notification = " has obtained the " + relic.caption;
+                        notification = "has obtained the " + relic.caption;
                     break;
                 case 3:
                     Sword sword = Core.InventoryManager.GetSword(progressId);
                     if (sword != null)
-                        notification = " has obtained the " + sword.caption;
+                        notification = "has obtained the " + sword.caption;
                     break;
                 case 4:
                     Framework.Inventory.CollectibleItem collectible = Core.InventoryManager.GetCollectibleItem(progressId);
                     if (collectible != null)
-                        notification = " has obtained the " + collectible.caption;
+                        notification = "has obtained the " + collectible.caption;
                     break;
                 case 5:
                     QuestItem quest = Core.InventoryManager.GetQuestItem(progressId);
                     if (quest != null)
-                        notification = " has obtained the " + quest.caption;
+                        notification = "has obtained the " + quest.caption;
                     break;
                 case 6:
-                    notification = " has upgraded the maximum health";
+                    notification = "has upgraded the maximum health";
                     break;
                 case 7:
-                    notification = " has upgraded the maximum fervour";
+                    notification = "has upgraded the maximum fervour";
                     break;
                 case 8:
-                    notification = " has upgraded the mea culpa strength";
+                    notification = "has upgraded the mea culpa strength";
                     break;
                 case 9:
-                    notification = " has upgraded the mea culpa tier";
+                    notification = "has upgraded the mea culpa tier";
                     break;
                 case 10:
-                    notification = " has upgraded the maximum bead slots";
+                    notification = "has upgraded the maximum bead slots";
                     break;
                  case 11:
-                    notification = " has upgraded the maximum flasks";
+                    notification = "has upgraded the maximum flasks";
                     break;
                 case 12:
-                    notification = " has upgraded the flasks strength";
+                    notification = "has upgraded the flasks strength";
                     break;
                 case 13:
                     UnlockableSkill skill = Core.SkillManager.GetSkill(progressId);
                     if (skill != null)
-                        notification = " has unlocked the " + skill.caption;
+                        notification = "has unlocked the " + skill.caption;
+                    break;
+                case 14:
+                    FlagState flag = StaticObjects.getFlagState(progressId);
+                    if (flag != null)
+                        notification = flag.notification;
                     break;
 
-                // Case flag: Check list for specific notification
 
-                // Flags 
                 // Persistent objects
                 // Unlocked teleports
                 // Activated prie dieus
@@ -113,7 +116,7 @@ namespace BlasClient
             }
 
             if (notification != null)
-                showNotification(playerName + notification);
+                showNotification(playerName + " " + notification);
         }
 
         // Update the order, text, and fade of all notification lines and box size

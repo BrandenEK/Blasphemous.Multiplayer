@@ -209,11 +209,11 @@ namespace BlasClient
                 // If anim is ladder climbing, set speed to 0
 
                 // Set required parameters to keep player onject in this animation
-                for (int i = 0; i < PlayerAnimations.animations[animation].parameterNames.Length; i++)
+                for (int i = 0; i < StaticObjects.animations[animation].parameterNames.Length; i++)
                 {
-                    anim.SetBool(PlayerAnimations.animations[animation].parameterNames[i], PlayerAnimations.animations[animation].parameterValues[i]);
+                    anim.SetBool(StaticObjects.animations[animation].parameterNames[i], StaticObjects.animations[animation].parameterValues[i]);
                 }
-                anim.Play(PlayerAnimations.animations[animation].name);
+                anim.Play(StaticObjects.animations[animation].name);
                 //Main.UnityLog("Updating player object animation for " + name);
             }
             else

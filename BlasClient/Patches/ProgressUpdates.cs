@@ -122,4 +122,18 @@ namespace BlasClient.Patches
             }
         }
     }
+
+    // Game flags
+
+    [HarmonyPatch(typeof(EventManager), "SetFlag")]
+    public class EventManager_Patch
+    {
+        public static void Postfix(string id, bool b)
+        {
+            if (!ProgressManager.updatingProgress && StaticObjects.getFlagState(id) != null)
+            {
+                Main.Multiplayer.obtainedGameProgress(id, 14, (byte)(b ? 0 : 1));
+            }
+        }
+    }
 }

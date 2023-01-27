@@ -77,8 +77,9 @@ namespace BlasClient
                     Core.Logic.Penitent.Stats.FlaskHealth.Upgrade(); return;
                 case 13:
                     Core.SkillManager.UnlockSkill(progress.id); return;
+                case 14:
+                    Core.Events.SetFlag(progress.id, true, false); return;
 
-                // Flags 
                 // Persistent objects
                 // Unlocked teleports
                 // Activated prie dieus
