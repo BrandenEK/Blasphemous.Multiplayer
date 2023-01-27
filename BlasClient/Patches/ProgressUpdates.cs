@@ -5,6 +5,7 @@ using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
 using System.Collections.Generic;
+using BlasClient.Managers;
 
 namespace BlasClient.Patches
 {

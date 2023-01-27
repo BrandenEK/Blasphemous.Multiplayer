@@ -2,7 +2,7 @@
 using Framework.Managers;
 using BlasClient.Structures;
 
-namespace BlasClient
+namespace BlasClient.Managers
 {
     public class ProgressManager
     {

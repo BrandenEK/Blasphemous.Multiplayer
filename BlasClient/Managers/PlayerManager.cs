@@ -5,7 +5,7 @@ using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using BlasClient.Structures;
 
-namespace BlasClient
+namespace BlasClient.Managers
 {
     public class PlayerManager
     {

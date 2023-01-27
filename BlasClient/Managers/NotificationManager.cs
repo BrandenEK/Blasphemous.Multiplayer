@@ -6,7 +6,7 @@ using Framework.Managers;
 using Framework.Inventory;
 using Framework.FrameworkCore;
 
-namespace BlasClient
+namespace BlasClient.Managers
 {
     public class NotificationManager
     {

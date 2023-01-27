@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Framework.Managers;
 using Framework.FrameworkCore;
+using BlasClient.Managers;
 
 namespace BlasClient
 {
