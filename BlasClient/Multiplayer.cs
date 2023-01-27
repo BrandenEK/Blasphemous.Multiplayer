@@ -139,6 +139,9 @@ namespace BlasClient
                     client.sendPlayerDirection(penitentRenderer.flipX);
                     lastDirection = penitentRenderer.flipX;
                 }
+
+                // Once all three of these updates are added, send the queue
+                client.SendQueue();
             }
 
             // Update game progress
