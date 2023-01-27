@@ -128,11 +128,12 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(EventManager), "SetFlag")]
     public class EventManager_Patch
     {
-        public static void Postfix(string id, bool b)
+        public static void Postfix(EventManager __instance, string id, bool b)
         {
-            if (!ProgressManager.updatingProgress && StaticObjects.getFlagState(id) != null)
+            string formatted = __instance.GetFormattedId(id);
+            if (!ProgressManager.updatingProgress && StaticObjects.getFlagState(formatted) != null)
             {
-                Main.Multiplayer.obtainedGameProgress(id, 14, (byte)(b ? 0 : 1));
+                Main.Multiplayer.obtainedGameProgress(formatted, 14, (byte)(b ? 0 : 1));
             }
         }
     }
