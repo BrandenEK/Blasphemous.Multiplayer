@@ -138,6 +138,26 @@
             new FlagState("OSSUARY_REWARD_*", null)
         };
 
+        public static PersistenceState[] persistentObjects = new PersistenceState[]
+        {
+            // Brotherhood
+            new PersistenceState("47db0007-4175-4379-8b5c-f37441f6315b", "D17Z01S05", 0), // PD
+
+            // Holy Line
+            new PersistenceState("3c6d3c9c-44c2-41cd-9c11-7c9f923680b9", "D01Z01S07", 0), // PD
+            new PersistenceState("5710974d-771c-4907-8f1b-b318516ec0db", "D01Z01S02", 1), // CI
+            new PersistenceState("9082d3bd-0568-4908-9e5f-00044182cbc4", "D01Z01S02", 1),
+            new PersistenceState("e21c696e-61f5-4ef2-808a-cd0ccf852c0c", "D01Z01S03", 1),
+
+            // Albero
+            new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D01Z02S01", 0), // PD
+
+            // Mercy Dreams
+            new PersistenceState("0c160f00-3901-4bf2-b67f-99c2830819cf", "D01Z04S03", 0), // PD
+
+            //new PersistenceState("", "", 0),
+        };
+
         // Gets a certain flag only if it should be synced
         public static FlagState getFlagState(string id)
         {
@@ -163,6 +183,17 @@
             }
 
             // This flag should not be synced
+            return null;
+        }
+
+        // Gets a certain persistent object data only if it should be synced
+        public static PersistenceState GetPersistenceState(string id)
+        {
+            for (int i = 0; i < persistentObjects.Length; i++)
+            {
+                if (id == persistentObjects[i].id)
+                    return persistentObjects[i];
+            }
             return null;
         }
     }
@@ -200,11 +231,13 @@
     {
         public string id;
         public string scene;
+        public byte type;
 
-        public PersistenceState(string id, string scene)
+        public PersistenceState(string id, string scene, byte type)
         {
             this.id = id;
             this.scene = scene;
+            this.type = type;
         }
     }
 }

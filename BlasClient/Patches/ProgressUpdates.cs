@@ -7,6 +7,7 @@ using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
 using Tools.Level;
+using Tools.Level.Interactables;
 using BlasClient.Managers;
 
 namespace BlasClient.Patches
@@ -157,24 +158,38 @@ namespace BlasClient.Patches
 
     // Persistent objects
 
-    [HarmonyPatch(typeof(Interactable), "Use")]
+    [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class Interactable_Patch
     {
         public static void Postfix(Interactable __instance)
         {
-            if (!ProgressManager.updatingProgress)
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Using object: " + persistentId + ", type: " + __instance.GetType().ToString()); // temp
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
             {
-                // First check if this object should be synced
-                // Don't send if already obtained
-                Main.UnityLog("Using object: " + __instance.GetPersistenID() + ", type: " + __instance.GetType().ToString());
                 // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(__instance.GetPersistenID());
-                Main.Multiplayer.obtainedGameProgress(__instance.GetPersistenID(), 15, 0);
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
             }
         }
     }
 
-    // Collectible item load data
+    // PrieDieu load
+    [HarmonyPatch(typeof(PrieDieu), "SetCurrentPersistentState")]
+    public class PrieDieu_Patch
+    {
+        public static bool Prefix(PrieDieu __instance)
+        {
+            if (Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID()))
+            {
+                __instance.Ligthed = true;
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Collectible item load
     [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
     public class CollectibleItem_Patch
     {

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
+using System.Collections.Generic;
 using Framework.Managers;
 using BlasClient.Structures;
+using Tools.Level.Interactables;
 
 namespace BlasClient.Managers
 {
@@ -92,12 +94,42 @@ namespace BlasClient.Managers
             }
         }
 
+        // When receiving a pers. object update, the object is immediately updated
+        // Their setPersState() is also overriden to update them on scene load
         private void updatePersistentObject(string persistentId)
         {
             Main.Multiplayer.addPersistentObject(persistentId);
-            // Find which StaticObject data this is
-            // If in the same scene as this object, use it and set its value
-            // Also override their setPersState to use save data value instead of persData
+
+            PersistenceState persistence = StaticObjects.GetPersistenceState(persistentId);
+            if (persistence != null && Core.LevelManager.currentLevel.LevelName == persistence.scene)
+            {
+                // Player just received a pers. object in the same scene - find it and set value immediately
+                switch (persistence.type)
+                {
+                    case 0: // Prie Dieu
+                        foreach (PrieDieu priedieu in Object.FindObjectsOfType<PrieDieu>())
+                        {
+                            if (priedieu.GetPersistenID() == persistentId)
+                            {
+                                // Maybe play activation animation
+                                priedieu.Ligthed = true;
+                                break;
+                            }
+                        }
+                        return;
+                    case 1: // Collectible item
+                        foreach (CollectibleItem item in Object.FindObjectsOfType<CollectibleItem>())
+                        {
+                            if (item.GetPersistenID() == persistentId)
+                            {
+                                item.Consumed = true;
+                                item.transform.GetChild(2).gameObject.SetActive(false);
+                                break;
+                            }
+                        }
+                        return;
+                }
+            }
         }
     }
 }
