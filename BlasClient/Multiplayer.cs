@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
 using BlasClient.Managers;
 
 namespace BlasClient
 {
-    public class Multiplayer
+    public class Multiplayer : PersistentInterface
     {
         private Client client;
         private PlayerManager playerManager;
@@ -14,6 +15,8 @@ namespace BlasClient
 
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
+
+        private List<string> interactedPersistenceObjects;
 
         private Vector2 lastPosition;
         private byte lastAnimation;
@@ -33,6 +36,7 @@ namespace BlasClient
             notificationManager = new NotificationManager();
             client = new Client();
             playerName = "";
+            interactedPersistenceObjects = new List<string>();
         }
         public void Dispose()
         {
@@ -273,5 +277,29 @@ namespace BlasClient
             // Show notification for new progress
             notificationManager.showProgressNotification(player, progressType, progressId);
         }
+
+        // Save list of interacted persistent objects
+        public PersistentManager.PersistentData GetCurrentPersistentState(string dataPath, bool fullSave)
+        {
+            MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
+            multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
+            return multiplayerData;
+        }
+
+        // Load list of interacted persistent objects
+        public void SetCurrentPersistentState(PersistentManager.PersistentData data, bool isloading, string dataPath)
+        {
+            MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
+            interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
+        }
+
+        // Reset list of interacted persitent objects
+        public void ResetPersistence()
+        {
+            interactedPersistenceObjects = new List<string>();
+        }
+
+        public string GetPersistenID() { return "ID_MULTIPLAYER"; }
+        public int GetOrder() { return 0; }
     }
 }

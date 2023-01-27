@@ -167,6 +167,7 @@
         }
     }
 
+    [System.Serializable]
     public class PlayerAnimState
     {
         public string name;
@@ -181,6 +182,7 @@
         }
     }
 
+    [System.Serializable]
     public class FlagState
     {
         public string id;
@@ -190,6 +192,19 @@
         {
             this.id = id;
             this.notification = notification;
+        }
+    }
+
+    [System.Serializable]
+    public class PersistenceState
+    {
+        public string id;
+        public string scene;
+
+        public PersistenceState(string id, string scene)
+        {
+            this.id = id;
+            this.scene = scene;
         }
     }
 }
