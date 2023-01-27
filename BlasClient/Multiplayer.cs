@@ -258,7 +258,6 @@ namespace BlasClient
 
         public void displayNotification(string message)
         {
-            Main.UnityLog("Notification: " + message);
             notificationManager.showNotification(message);
         }
 

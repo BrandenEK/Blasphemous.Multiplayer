@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Gameplay.UI.Others.UIGameLogic;
+using Framework.Managers;
+using Framework.Inventory;
 
 namespace BlasClient
 {
@@ -23,6 +25,8 @@ namespace BlasClient
         {
             lock (notificationLock)
             {
+                Main.UnityLog("Notification: " + notification);
+
                 // Add new line to list
                 NotificationLine line = new NotificationLine(notification, timeDisplayed);
                 currentMessages.Insert(0, line);
@@ -38,13 +42,74 @@ namespace BlasClient
         {
             // Search dictionary for main notification, and add player name to beginning of it (If this update requires a notification)
 
-            // Switch statement based on type
-            // Case 0-5: name + " has obtained " + itemName;
-            // Case 6-12: name + " has upgraded " + statName;
-            // Case flag: Check list for specific notification
-            // Case skill: name + " has unlocked " + skillName;
-            // Case map/persist/teleports: nothing
-            showNotification(playerName + " has obtained the " + progressId);
+            string notification = null;
+            switch (progressType)
+            {
+                case 0:
+                    RosaryBead bead = Core.InventoryManager.GetRosaryBead(progressId);
+                    if (bead != null)
+                        notification = " has obtained the " + bead.name;
+                    break;
+                case 1:
+                    Prayer prayer = Core.InventoryManager.GetPrayer(progressId);
+                    if (prayer != null)
+                        notification = " has obtained the " + prayer.name;
+                    break;
+                case 2:
+                    Relic relic = Core.InventoryManager.GetRelic(progressId);
+                    if (relic != null)
+                        notification = " has obtained the " + relic.name;
+                    break;
+                case 3:
+                    Sword sword = Core.InventoryManager.GetSword(progressId);
+                    if (sword != null)
+                        notification = " has obtained the " + sword.name;
+                    break;
+                case 4:
+                    Framework.Inventory.CollectibleItem collectible = Core.InventoryManager.GetCollectibleItem(progressId);
+                    if (collectible != null)
+                        notification = " has obtained the " + collectible.name;
+                    break;
+                case 5:
+                    QuestItem quest = Core.InventoryManager.GetQuestItem(progressId);
+                    if (quest != null)
+                        notification = " has obtained the " + quest.name;
+                    break;
+                case 6:
+                    notification = " has upgraded the maximum health";
+                    break;
+                case 7:
+                    notification = " has upgraded the maximum fervour";
+                    break;
+                case 8:
+                    notification = " has upgraded the mea culpa strength";
+                    break;
+                case 9:
+                    notification = " has upgraded the mea culpa tier";
+                    break;
+                case 10:
+                    notification = " has upgraded the maximum bead slots";
+                    break;
+                 case 11:
+                    notification = " has upgraded the maximum flasks";
+                    break;
+                case 12:
+                    notification = " has upgraded the flasks strength";
+                    break;
+                // Case flag: Check list for specific notification
+                // Case skill: name + " has unlocked " + skillName;
+
+                // Flags 
+                // Persistent objects
+                // Unlocked teleports
+                // Activated prie dieus
+                // Church donations
+                // Unlocked skills
+                // Map
+            }
+
+            if (notification != null)
+                showNotification(playerName + notification);
         }
 
         // Update the order, text, and fade of all notification lines and box size
