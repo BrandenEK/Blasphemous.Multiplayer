@@ -278,6 +278,19 @@ namespace BlasClient
             notificationManager.showProgressNotification(player, progressType, progressId);
         }
 
+        // Add a new persistent object that has been interacted with
+        public void addPersistentObject(string persistentId)
+        {
+            if (!interactedPersistenceObjects.Contains(persistentId))
+                interactedPersistenceObjects.Add(persistentId);
+        }
+
+        // Checks whether or not a persistent object has been interacted with
+        public bool checkPersistentObject(string persistentId)
+        {
+            return interactedPersistenceObjects.Contains(persistentId);
+        }
+
         // Save list of interacted persistent objects
         public PersistentManager.PersistentData GetCurrentPersistentState(string dataPath, bool fullSave)
         {
@@ -296,7 +309,7 @@ namespace BlasClient
         // Reset list of interacted persitent objects
         public void ResetPersistence()
         {
-            interactedPersistenceObjects = new List<string>();
+            interactedPersistenceObjects.Clear();
         }
 
         public string GetPersistenID() { return "ID_MULTIPLAYER"; }

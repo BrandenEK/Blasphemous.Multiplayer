@@ -79,8 +79,9 @@ namespace BlasClient.Managers
                     Core.SkillManager.UnlockSkill(progress.id); return;
                 case 14:
                     Core.Events.SetFlag(progress.id, true, false); return;
+                case 15:
+                    updatePersistentObject(progress.id); return;
 
-                // Persistent objects
                 // Unlocked teleports
                 // Activated prie dieus
                 // Church donations
@@ -88,6 +89,14 @@ namespace BlasClient.Managers
                 default:
                     Main.UnityLog("Error: Progress type doesn't exist: " + progress.type); return;
             }
+        }
+
+        private void updatePersistentObject(string persistentId)
+        {
+            // Add this object to save data
+            // Find which StaticObject data this is
+            // If in the same scene as this object, use it and set its value
+            // Also override their setPersState to use save data value instead of persData
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using HarmonyLib;
+using System.Collections.Generic;
 using Framework.Managers;
 using Framework.Inventory;
 using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
-using System.Collections.Generic;
+using Tools.Level;
 using BlasClient.Managers;
 
 namespace BlasClient.Patches
@@ -135,6 +136,24 @@ namespace BlasClient.Patches
             if (!ProgressManager.updatingProgress && StaticObjects.getFlagState(formatted) != null)
             {
                 Main.Multiplayer.obtainedGameProgress(formatted, 14, (byte)(b ? 0 : 1));
+            }
+        }
+    }
+
+    // Persistent objects
+
+    [HarmonyPatch(typeof(Interactable), "Use")]
+    public class Interactable_Patch
+    {
+        public static void Postfix(Interactable __instance)
+        {
+            if (!ProgressManager.updatingProgress)
+            {
+                // First check if this object should be synced
+                Main.UnityLog("Using object: " + __instance.GetPersistenID() + ", type: " + __instance.GetType().ToString());
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(__instance.GetPersistenID());
+                Main.Multiplayer.obtainedGameProgress(__instance.GetPersistenID(), 15, 0);
             }
         }
     }
