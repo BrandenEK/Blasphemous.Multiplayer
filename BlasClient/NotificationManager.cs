@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using Gameplay.UI.Others.UIGameLogic;
 using Framework.Managers;
 using Framework.Inventory;
@@ -41,8 +41,6 @@ namespace BlasClient
         // Add a new notification for a progress update, but calculates it first
         public void showProgressNotification(string playerName, byte progressType, string progressId)
         {
-            // Search dictionary for main notification, and add player name to beginning of it (If this update requires a notification)
-
             string notification = null;
             switch (progressType)
             {

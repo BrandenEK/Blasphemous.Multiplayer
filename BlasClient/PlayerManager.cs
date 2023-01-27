@@ -7,7 +7,7 @@ using BlasClient.Structures;
 
 namespace BlasClient
 {
-    public class PlayerControl
+    public class PlayerManager
     {
         private List<GameObject> players = new List<GameObject>();
         private List<Text> nametags = new List<Text>();

@@ -7,7 +7,7 @@ namespace BlasClient
     public class Multiplayer
     {
         private Client client;
-        private PlayerControl playerControl;
+        private PlayerManager playerManager;
         private ProgressManager progressManager;
         private NotificationManager notificationManager;
 
@@ -27,7 +27,7 @@ namespace BlasClient
         {
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
-            playerControl = new PlayerControl();
+            playerManager = new PlayerManager();
             progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
             client = new Client();
@@ -52,7 +52,7 @@ namespace BlasClient
         public void onDisconnect()
         {
             displayNotification("Disconnected from server!");
-            playerControl.destroyPlayers();
+            playerManager.destroyPlayers();
             playerName = "";
         }
 
@@ -60,7 +60,7 @@ namespace BlasClient
         {
             inLevel = newLevel.LevelName != "MainMenu";
             notificationManager.createMessageBox();
-            playerControl.loadScene(newLevel.LevelName);
+            playerManager.loadScene(newLevel.LevelName);
 
             if (inLevel && connectedToServer)
             {
@@ -80,7 +80,7 @@ namespace BlasClient
             }
 
             inLevel = false;
-            playerControl.unloadScene();
+            playerManager.unloadScene();
         }
 
         public void update()
@@ -145,8 +145,8 @@ namespace BlasClient
             if (progressManager != null)
                 progressManager.updateProgress();
             // Update other player's data
-            if (playerControl != null && inLevel)
-                playerControl.updatePlayers();
+            if (playerManager != null && inLevel)
+                playerManager.updatePlayers();
             // Update notifications
             if (notificationManager != null)
                 notificationManager.updateNotifications();
@@ -192,42 +192,42 @@ namespace BlasClient
         public void playerPositionUpdated(string playerName, float xPos, float yPos)
         {
             if (inLevel)
-                playerControl.queuePosition(playerName, new Vector2(xPos, yPos));
+                playerManager.queuePosition(playerName, new Vector2(xPos, yPos));
         }
 
         // Received animation data from server
         public void playerAnimationUpdated(string playerName, byte animation)
         {
             if (inLevel)
-                playerControl.queueAnimation(playerName, animation);
+                playerManager.queueAnimation(playerName, animation);
         }
 
         // Received direction data from server
         public void playerDirectionUpdated(string playerName, bool direction)
         {
             if (inLevel)
-                playerControl.queueDirection(playerName, direction);
+                playerManager.queueDirection(playerName, direction);
         }
 
         // Received skin data from server
         public void playerSkinUpdated(string playerName, string skin)
         {
             // As soon as received, will update skin - This isn't locked
-            playerControl.updatePlayerSkin(playerName, skin);
+            playerManager.updatePlayerSkin(playerName, skin);
         }
 
         // Received enterScene data from server
         public void playerEnteredScene(string playerName)
         {
             if (inLevel)
-                playerControl.addPlayer(playerName);
+                playerManager.addPlayer(playerName);
         }
 
         // Received leftScene data from server
         public void playerLeftScene(string playerName)
         {
             if (inLevel)
-                playerControl.removePlayer(playerName);
+                playerManager.removePlayer(playerName);
         }
 
         // Received introResponse data from server
