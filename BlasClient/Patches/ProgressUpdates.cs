@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 using System.Collections.Generic;
 using Framework.Managers;
 using Framework.Inventory;
@@ -150,11 +151,31 @@ namespace BlasClient.Patches
             if (!ProgressManager.updatingProgress)
             {
                 // First check if this object should be synced
+                // Don't send if already obtained
                 Main.UnityLog("Using object: " + __instance.GetPersistenID() + ", type: " + __instance.GetType().ToString());
                 // Update save game data & send this object
                 Main.Multiplayer.addPersistentObject(__instance.GetPersistenID());
                 Main.Multiplayer.obtainedGameProgress(__instance.GetPersistenID(), 15, 0);
             }
+        }
+    }
+
+    // Collectible item load data
+    [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
+    public class CollectibleItem_Patch
+    {
+        public static bool Prefix(CollectibleItem __instance, Animator ___interactableAnimator)
+        {
+            if (Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID()))
+            {
+                // This object has been interacted with but might not be saved
+                __instance.Consumed = true;
+                ___interactableAnimator.gameObject.SetActive(false);
+                return false;
+            }
+
+            // This object either shouldn't be synced or hasn't been interacted with yet
+            return true;
         }
     }
 }

@@ -82,8 +82,8 @@ namespace BlasClient.Managers
                 case 15:
                     updatePersistentObject(progress.id); return;
 
-                // Unlocked teleports
-                // Activated prie dieus
+                // Unlocked teleports - flags ?
+                // Activated prie dieus - Spawn manager
                 // Church donations
                 // Map
                 default:
@@ -93,7 +93,7 @@ namespace BlasClient.Managers
 
         private void updatePersistentObject(string persistentId)
         {
-            // Add this object to save data
+            Main.Multiplayer.addPersistentObject(persistentId);
             // Find which StaticObject data this is
             // If in the same scene as this object, use it and set its value
             // Also override their setPersState to use save data value instead of persData
