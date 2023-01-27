@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Gameplay.UI.Others.UIGameLogic;
 using Framework.Managers;
 using Framework.Inventory;
+using Framework.FrameworkCore;
 
 namespace BlasClient
 {
@@ -48,32 +49,32 @@ namespace BlasClient
                 case 0:
                     RosaryBead bead = Core.InventoryManager.GetRosaryBead(progressId);
                     if (bead != null)
-                        notification = " has obtained the " + bead.name;
+                        notification = " has obtained the " + bead.caption;
                     break;
                 case 1:
                     Prayer prayer = Core.InventoryManager.GetPrayer(progressId);
                     if (prayer != null)
-                        notification = " has obtained the " + prayer.name;
+                        notification = " has obtained the " + prayer.caption;
                     break;
                 case 2:
                     Relic relic = Core.InventoryManager.GetRelic(progressId);
                     if (relic != null)
-                        notification = " has obtained the " + relic.name;
+                        notification = " has obtained the " + relic.caption;
                     break;
                 case 3:
                     Sword sword = Core.InventoryManager.GetSword(progressId);
                     if (sword != null)
-                        notification = " has obtained the " + sword.name;
+                        notification = " has obtained the " + sword.caption;
                     break;
                 case 4:
                     Framework.Inventory.CollectibleItem collectible = Core.InventoryManager.GetCollectibleItem(progressId);
                     if (collectible != null)
-                        notification = " has obtained the " + collectible.name;
+                        notification = " has obtained the " + collectible.caption;
                     break;
                 case 5:
                     QuestItem quest = Core.InventoryManager.GetQuestItem(progressId);
                     if (quest != null)
-                        notification = " has obtained the " + quest.name;
+                        notification = " has obtained the " + quest.caption;
                     break;
                 case 6:
                     notification = " has upgraded the maximum health";
@@ -96,8 +97,13 @@ namespace BlasClient
                 case 12:
                     notification = " has upgraded the flasks strength";
                     break;
+                case 13:
+                    UnlockableSkill skill = Core.SkillManager.GetSkill(progressId);
+                    if (skill != null)
+                        notification = " has unlocked the " + skill.caption;
+                    break;
+
                 // Case flag: Check list for specific notification
-                // Case skill: name + " has unlocked " + skillName;
 
                 // Flags 
                 // Persistent objects
@@ -137,7 +143,7 @@ namespace BlasClient
                         maxWidth = textLines[i].preferredWidth;
 
                     // Decrease the amount of time left on this notification line
-                    currentLine.timeLeft -= Time.deltaTime;
+                    currentLine.timeLeft -= Time.unscaledDeltaTime;
                     if (currentLine.timeLeft <= 0)
                     {
                         // Time is over, remove this message

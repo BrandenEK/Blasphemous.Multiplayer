@@ -1,8 +1,10 @@
 ﻿using HarmonyLib;
 using Framework.Managers;
 using Framework.Inventory;
+using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
+using System.Collections.Generic;
 
 namespace BlasClient.Patches
 {
@@ -48,7 +50,7 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress)
             {
-                Main.Multiplayer.obtainedGameProgress(sword.id, 2, 0);
+                Main.Multiplayer.obtainedGameProgress(sword.id, 3, 0);
             }
         }
     }
@@ -96,6 +98,28 @@ namespace BlasClient.Patches
 
             if (type != 255)
                 Main.Multiplayer.obtainedGameProgress("Stat", type, 0);
+        }
+    }
+
+    // Sword skills
+
+    [HarmonyPatch(typeof(SkillManager), "UnlockSkill")]
+    public class SkilManager_Patch
+    {
+        public static bool Prefix(string skill, Dictionary<string, UnlockableSkill> ___allSkills)
+        {
+            if (ProgressManager.updatingProgress)
+            {
+                // Just received this skill from another player, skip checks & cost
+                ___allSkills[skill].unlocked = true;
+                return false;
+            }
+            else
+            {
+                // Actually obtaining item, send to other players
+                Main.Multiplayer.obtainedGameProgress(skill, 13, 0);
+                return true;
+            }
         }
     }
 }

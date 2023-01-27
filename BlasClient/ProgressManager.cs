@@ -75,13 +75,14 @@ namespace BlasClient
                     Core.Logic.Penitent.Stats.Flask.SetToCurrentMax(); return;
                 case 12:
                     Core.Logic.Penitent.Stats.FlaskHealth.Upgrade(); return;
+                case 13:
+                    Core.SkillManager.UnlockSkill(progress.id); return;
 
                 // Flags 
                 // Persistent objects
                 // Unlocked teleports
                 // Activated prie dieus
                 // Church donations
-                // Unlocked skills
                 // Map
                 default:
                     Main.UnityLog("Error: Progress type doesn't exist: " + progress.type); return;
