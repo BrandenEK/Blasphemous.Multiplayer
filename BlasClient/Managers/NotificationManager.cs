@@ -109,7 +109,6 @@ namespace BlasClient.Managers
 
                 // Persistent objects
                 // Unlocked teleports
-                // Activated prie dieus
                 // Church donations
                 // Unlocked skills
                 // Map

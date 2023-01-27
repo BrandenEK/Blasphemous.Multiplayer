@@ -141,6 +141,20 @@ namespace BlasClient.Patches
         }
     }
 
+    // Prie Dieu teleports
+
+    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
+    public class SpawnManager_Patch
+    {
+        public static void Postfix(string teleportId)
+        {
+            if (!ProgressManager.updatingProgress)
+            {
+                Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
+            }
+        }
+    }
+
     // Persistent objects
 
     [HarmonyPatch(typeof(Interactable), "Use")]

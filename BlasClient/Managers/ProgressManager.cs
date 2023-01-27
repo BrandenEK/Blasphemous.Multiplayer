@@ -81,9 +81,10 @@ namespace BlasClient.Managers
                     Core.Events.SetFlag(progress.id, true, false); return;
                 case 15:
                     updatePersistentObject(progress.id); return;
+                case 16:
+                    Core.SpawnManager.SetTeleportActive(progress.id, true); return;
 
                 // Unlocked teleports - flags ?
-                // Activated prie dieus - Spawn manager
                 // Church donations
                 // Map
                 default:
