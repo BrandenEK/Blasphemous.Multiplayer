@@ -85,6 +85,9 @@ namespace BlasClient.Managers
                     updatePersistentObject(progress.id); return;
                 case 16:
                     Core.SpawnManager.SetTeleportActive(progress.id, true); return;
+                case 17:
+                    Vector2 position = getVectorFromMapData(progress.id);
+                    Core.NewMapManager.RevealCellInPosition(position); return;
 
                 // Unlocked teleports - flags ?
                 // Church donations
@@ -130,6 +133,14 @@ namespace BlasClient.Managers
                         return;
                 }
             }
+        }
+
+        private Vector2 getVectorFromMapData(string positionString)
+        {
+            int commaIdx = positionString.IndexOf(',');
+            string x = positionString.Substring(0, commaIdx);
+            string y = positionString.Substring(commaIdx + 1, positionString.Length - commaIdx - 1);
+            return new Vector2(float.Parse(x), float.Parse(y));
         }
     }
 }

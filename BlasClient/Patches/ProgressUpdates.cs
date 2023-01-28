@@ -6,6 +6,7 @@ using Framework.Inventory;
 using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
+using Framework.Map;
 using Tools.Level;
 using Tools.Level.Interactables;
 using BlasClient.Managers;
@@ -142,19 +143,47 @@ namespace BlasClient.Patches
         }
     }
 
-    // Prie Dieu teleports
+    // Map cells
 
-    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
-    public class SpawnManager_Patch
+    [HarmonyPatch(typeof(NewMapManager), "RevealCellInPosition")]
+    public class NewMapManager_Patch
     {
-        public static void Postfix(string teleportId)
+        public static bool Prefix(Vector2 position, MapData ___CurrentMap)
         {
+            Main.UnityLog("reveal new cell");
             if (!ProgressManager.updatingProgress)
             {
-                Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
+                // Actually revealed this new cell
+                string posString = position.x.ToString() + "," + position.y.ToString();
+                Main.Multiplayer.obtainedGameProgress(posString, 17, 0);
+                return true;
+            }
+            else
+            {
+                // Received this new cell from other player, skip other stuff
+                foreach (CellData data in ___CurrentMap.Cells)
+                {
+                    if (data.Bounding.Contains(position))
+                        data.Revealed = true;
+                }
+                return false;
             }
         }
     }
+
+    // Prie Dieu teleports
+
+    //[HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
+    //public class SpawnManager_Patch
+    //{
+    //    public static void Postfix(string teleportId)
+    //    {
+    //        if (!ProgressManager.updatingProgress)
+    //        {
+    //            Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
+    //        }
+    //    }
+    //}
 
     // Persistent objects
 
