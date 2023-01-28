@@ -8,6 +8,7 @@ using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
 using Framework.Map;
 using Tools.Level;
+using Tools.Level.Actionables;
 using Tools.Level.Interactables;
 using BlasClient.Managers;
 
@@ -192,6 +193,7 @@ namespace BlasClient.Patches
 
     // Persistent objects
 
+    // Interactables (PrieDieus, ColelctibleItems)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class Interactable_Patch
     {
@@ -205,6 +207,26 @@ namespace BlasClient.Patches
                 Main.Multiplayer.addPersistentObject(persistentId);
                 Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
             }
+        }
+    }
+
+    // Cherub captors
+    [HarmonyPatch(typeof(CherubCaptorPersistentObject), "OnCherubKilled")]
+    public class CherubCaptor_Patch
+    {
+        public static void Postfix(CherubCaptorPersistentObject __instance)
+        {
+            Main.UnityLog("Cherub killed: " + __instance.GetPersistenID());
+        }
+    }
+
+    // Breakable objects
+    [HarmonyPatch(typeof(PersistentBreakableObject), "SetDestroyedState")]
+    public class BreakableObject_Patch
+    {
+        public static void Postfix(PersistentBreakableObject __instance)
+        {
+            Main.UnityLog("Broke object: " + __instance.GetPersistenID());
         }
     }
 
@@ -236,6 +258,17 @@ namespace BlasClient.Patches
                 return false;
             }
             return true;
+        }
+    }
+
+    // Temporarily allow teleportation
+    [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]
+    public class AlmsManager_Patch
+    {
+        public static bool Prefix(ref int __result)
+        {
+            __result = 3;
+            return false;
         }
     }
 }
