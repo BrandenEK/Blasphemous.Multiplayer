@@ -133,7 +133,7 @@ namespace BlasClient.Managers
         public void addPlayer(string name)
         {
             // Create base object
-            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator));  // Change to create prefab at initialization, and instantiate a new instance
+            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
             players.Add(player);
 
             // Set up sprite rendering
@@ -342,11 +342,23 @@ namespace BlasClient.Managers
                 if (priedieu == null)
                     return false;
 
-                anim.runtimeAnimatorController = priedieu.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
+                anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
                 anim.SetTrigger(type == 243 ? "ACTIVATION" : "KNEE_START");
             }
+            else
+            {
+                return false;
+            }
+            // Altar
+            // Lever
 
             return true;
+        }
+
+        // Finishes playing a special animation and returns to idle
+        public void finishSpecialAnimation(string playerName)
+        {
+            updatePlayerAnimation(playerName, 0);
         }
 
         // Finds a specified player in the scene

@@ -210,6 +210,16 @@ namespace BlasClient
             }
         }
 
+        // A player finished their special animation
+        public void finishedSpecialAnimation(string playerName)
+        {
+            if (inLevel)
+            {
+                Main.UnityLog("Finished special animation");
+                playerManager.finishSpecialAnimation(playerName);
+            }
+        }
+
         // Received position data from server
         public void playerPositionUpdated(string playerName, float xPos, float yPos)
         {
