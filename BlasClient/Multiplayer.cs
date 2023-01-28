@@ -298,7 +298,6 @@ namespace BlasClient
         // Save list of interacted persistent objects
         public PersistentManager.PersistentData GetCurrentPersistentState(string dataPath, bool fullSave)
         {
-            Main.UnityLog("Get pers");
             MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
             multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
             return multiplayerData;
@@ -307,7 +306,6 @@ namespace BlasClient
         // Load list of interacted persistent objects
         public void SetCurrentPersistentState(PersistentManager.PersistentData data, bool isloading, string dataPath)
         {
-            Main.UnityLog("Set pers");
             MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
             interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
         }
@@ -315,7 +313,6 @@ namespace BlasClient
         // Reset list of interacted persitent objects
         public void ResetPersistence()
         {
-            Main.UnityLog("Reset pers");
             interactedPersistenceObjects.Clear();
         }
 

@@ -148,23 +148,28 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(NewMapManager), "RevealCellInPosition")]
     public class NewMapManager_Patch
     {
-        public static bool Prefix(Vector2 position, MapData ___CurrentMap)
+        public static bool Prefix(NewMapManager __instance, Vector2 position, MapData ___CurrentMap)
         {
-            Main.UnityLog("reveal new cell");
             if (!ProgressManager.updatingProgress)
             {
-                // Actually revealed this new cell
-                string posString = position.x.ToString() + "," + position.y.ToString();
-                Main.Multiplayer.obtainedGameProgress(posString, 17, 0);
+                // Actually revealing a new cell
+                if (___CurrentMap == null || !___CurrentMap.CellsByZone.ContainsKey(__instance.CurrentScene))
+                    return false;
+
+                foreach (CellData cell in ___CurrentMap.CellsByZone[__instance.CurrentScene])
+                {
+                    if (cell.Bounding.Contains(position) && !cell.Revealed)
+                        Main.Multiplayer.obtainedGameProgress(___CurrentMap.Cells.IndexOf(cell).ToString(), 17, 0);
+                }
                 return true;
             }
             else
             {
                 // Received this new cell from other player, skip other stuff
-                foreach (CellData data in ___CurrentMap.Cells)
+                int cellIdx = Mathf.RoundToInt(position.x);
+                if (___CurrentMap != null && cellIdx >= 0 && cellIdx < ___CurrentMap.Cells.Count)
                 {
-                    if (data.Bounding.Contains(position))
-                        data.Revealed = true;
+                    ___CurrentMap.Cells[cellIdx].Revealed = true;
                 }
                 return false;
             }
@@ -209,7 +214,6 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PrieDieu __instance, PersistentManager.PersistentData data)
         {
-            Main.UnityLog("Set pers. of prie dieu - " + (data != null).ToString());
             if (data == null)
             {
                 __instance.Ligthed = true;
@@ -225,7 +229,6 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(CollectibleItem __instance, Animator ___interactableAnimator, PersistentManager.PersistentData data)
         {
-            Main.UnityLog("Set pers. of item - " + (data != null).ToString());
             if (data == null)
             {
                 __instance.Consumed = true;
