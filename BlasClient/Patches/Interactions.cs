@@ -24,4 +24,15 @@ namespace BlasClient.Patches
             Main.Multiplayer.usingSpecialAnimation(242);
         }
     }
+
+    // Prie Dieu animation
+    [HarmonyPatch(typeof(PrieDieu), "OnUse")]
+    public class PrieDieuUse_Patch
+    {
+        public static void Prefix(PrieDieu __instance)
+        {
+            Main.UnityLog("On use corroutine");
+            Main.Multiplayer.usingSpecialAnimation((byte)(__instance.Ligthed ? 244 : 243));
+        }
+    }
 }

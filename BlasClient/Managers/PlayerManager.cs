@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
+using Tools.Level.Interactables;
 using BlasClient.Structures;
 
 namespace BlasClient.Managers
@@ -14,7 +15,7 @@ namespace BlasClient.Managers
 
         private Transform canvas; // Optimize to not have to find these every scene change
         private GameObject textPrefab;
-        private RuntimeAnimatorController animatorController;
+        private RuntimeAnimatorController playerController;
 
         // Stores the status of each player and is updated when receiving a skin change from the server
         // A player is added to this list when first sending their skin upon connecting
@@ -46,7 +47,7 @@ namespace BlasClient.Managers
                 if (c.name == "Game UI") { canvas = c.transform; break; }
             }
             // Find animator controller
-            if (Core.Logic.Penitent != null) animatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+            if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Create main player's nametag
             createNameTag(Main.Multiplayer.playerName);
@@ -153,7 +154,7 @@ namespace BlasClient.Managers
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
-            anim.runtimeAnimatorController = animatorController;
+            anim.runtimeAnimatorController = playerController;
 
             // Set up name tag
             createNameTag(name);
@@ -209,9 +210,12 @@ namespace BlasClient.Managers
                 if (animation < 240)
                 {
                     // Regular animation
-
-                    // Remove flag for special animation
-                    // Set anim controller back
+                    if (connectedPlayers[name].specialAnimation)
+                    {
+                        // Change back to regular animations
+                        anim.runtimeAnimatorController = playerController;
+                        connectedPlayers[name].specialAnimation = false;
+                    }
                     anim.SetBool("IS_CROUCH", false);
                     //anim.SetBool("IS_DEAD") might need one for vertical attack
                     // If anim is ladder climbing, set speed to 0
@@ -227,11 +231,13 @@ namespace BlasClient.Managers
                 else
                 {
                     // Special animation
-                    Main.UnityLog("Playing special animation for " + name);
-                    
-                    // Find animator controller from object and set this to it
-                    // Play certain animation or set trigger
-                    // Set flag that we are in special animation
+                    if (playSpecialAnimation(anim, animation))
+                    {
+                        connectedPlayers[name].specialAnimation = true;
+                        Main.UnityLog("Playing special animation for " + name);
+                    }
+                    else
+                        Main.UnityLog("Failed to play special animation for " + name);
                 }
             }
             else
@@ -310,6 +316,37 @@ namespace BlasClient.Managers
 
             Main.UnityLog("Setting skin texture for " + name);
             render.material.SetTexture("_PaletteTex", palette.texture);
+        }
+
+        // Gets the animator controller of an interactable object in the scene & plays special animation
+        private bool playSpecialAnimation(Animator anim, byte type)
+        {
+            if (type == 240 || type == 241)
+            {
+                // Collectible item
+                CollectibleItem item = Object.FindObjectOfType<CollectibleItem>();
+                if (item == null)
+                    return false;
+
+                anim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
+                anim.Play(type == 240 ? "Floor Collection" : "Halfheight Collection");
+            }
+            else if (type == 242)
+            {
+                // Chest
+            }
+            else if (type == 243 || type == 244)
+            {
+                // Prie Dieu
+                PrieDieu priedieu = Object.FindObjectOfType<PrieDieu>();
+                if (priedieu == null)
+                    return false;
+
+                anim.runtimeAnimatorController = priedieu.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger(type == 243 ? "ACTIVATION" : "KNEE_START");
+            }
+
+            return true;
         }
 
         // Finds a specified player in the scene
