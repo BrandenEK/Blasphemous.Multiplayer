@@ -69,6 +69,7 @@ namespace BlasClient
             inLevel = newLevel.LevelName != "MainMenu";
             notificationManager.createMessageBox();
             playerManager.loadScene(newLevel.LevelName);
+            progressManager.sceneLoaded();
 
             if (inLevel && connectedToServer)
             {

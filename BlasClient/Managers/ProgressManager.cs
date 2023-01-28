@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Framework.Managers;
+using Framework.FrameworkCore;
 using BlasClient.Structures;
 using Tools.Level.Interactables;
 
@@ -13,6 +14,18 @@ namespace BlasClient.Managers
 
         private List<ProgressUpdate> queuedProgressUpdates = new List<ProgressUpdate>();
         private static readonly object progressLock = new object();
+
+        public void sceneLoaded()
+        {
+            foreach (PersistentObject persistence in Object.FindObjectsOfType<PersistentObject>())
+            {
+                if (Main.Multiplayer.checkPersistentObject(persistence.GetPersistenID()))
+                {
+                    // Calling setPersistence() with null data means that the object has been interacted with
+                    persistence.SetCurrentPersistentState(null, false, null);
+                }
+            }
+        }
 
         public void updateProgress()
         {

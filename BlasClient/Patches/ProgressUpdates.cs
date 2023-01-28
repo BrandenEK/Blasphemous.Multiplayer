@@ -207,9 +207,10 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(PrieDieu), "SetCurrentPersistentState")]
     public class PrieDieu_Patch
     {
-        public static bool Prefix(PrieDieu __instance)
+        public static bool Prefix(PrieDieu __instance, PersistentManager.PersistentData data)
         {
-            if (Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID()))
+            Main.UnityLog("Set pers. of prie dieu - " + (data != null).ToString());
+            if (data == null)
             {
                 __instance.Ligthed = true;
                 return false;
@@ -222,17 +223,15 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
     public class CollectibleItem_Patch
     {
-        public static bool Prefix(CollectibleItem __instance, Animator ___interactableAnimator)
+        public static bool Prefix(CollectibleItem __instance, Animator ___interactableAnimator, PersistentManager.PersistentData data)
         {
-            if (Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID()))
+            Main.UnityLog("Set pers. of item - " + (data != null).ToString());
+            if (data == null)
             {
-                // This object has been interacted with but might not be saved
                 __instance.Consumed = true;
                 ___interactableAnimator.gameObject.SetActive(false);
                 return false;
             }
-
-            // This object either shouldn't be synced or hasn't been interacted with yet
             return true;
         }
     }
