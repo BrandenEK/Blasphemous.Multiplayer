@@ -16,11 +16,11 @@ namespace BlasClient.Managers
         private GameObject textPrefab;
         private RuntimeAnimatorController animatorController;
 
-        // Stores the skin of each player and is updated when receiving a skin change from the server
+        // Stores the status of each player and is updated when receiving a skin change from the server
         // A player is added to this list when first sending their skin upon connecting
         // This is only temporary until all player data is probably stored in a dict on the client
         // Once thats doen will also remove from the list when a player disconnects
-        private Dictionary<string, SkinStatus> playerSkins = new Dictionary<string, SkinStatus>();
+        private Dictionary<string, PlayerStatus> connectedPlayers = new Dictionary<string, PlayerStatus>();
 
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
@@ -83,19 +83,19 @@ namespace BlasClient.Managers
             }
 
             // Check status of player skins and potentially update the textures
-            foreach (string name in playerSkins.Keys)
+            foreach (string name in connectedPlayers.Keys)
             {
-                SkinStatus player = playerSkins[name];
-                if (player.updateStatus == 2)
+                SkinStatus playerSkin = connectedPlayers[name].skin;
+                if (playerSkin.updateStatus == 2)
                 {
                     // Set that one update cycle has passed
-                    player.updateStatus = 1;
+                    playerSkin.updateStatus = 1;
                 }
-                else if (player.updateStatus == 1)
+                else if (playerSkin.updateStatus == 1)
                 {
                     // Set the player texture
-                    setSkinTexture(name, player.skinName);
-                    player.updateStatus = 0;
+                    setSkinTexture(name, playerSkin.skinName);
+                    playerSkin.updateStatus = 0;
                 }
             }
 
@@ -141,9 +141,9 @@ namespace BlasClient.Managers
             render.sortingLayerName = "Player";
 
             // Hide player object until skin texture is set - must be delayed
-            if (playerSkins.ContainsKey(name))
+            if (connectedPlayers.ContainsKey(name))
             {
-                playerSkins[name].updateStatus = 2;
+                connectedPlayers[name].skin.updateStatus = 2;
                 render.enabled = false;
             }
             else
@@ -260,10 +260,10 @@ namespace BlasClient.Managers
         // Should maybe be locked, but shouldn't occur frequently enough for this
         public void updatePlayerSkin(string name, string skin)
         {
-            if (playerSkins.ContainsKey(name))
-                playerSkins[name].skinName = skin;
+            if (connectedPlayers.ContainsKey(name))
+                connectedPlayers[name].skin.skinName = skin;
             else
-                playerSkins.Add(name, new SkinStatus(skin));
+                connectedPlayers.Add(name, new PlayerStatus(skin));
             Main.UnityLog("Updating player skin for " + name);
         }
 
