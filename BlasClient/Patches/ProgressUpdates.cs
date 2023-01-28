@@ -179,17 +179,18 @@ namespace BlasClient.Patches
 
     // Prie Dieu teleports
 
-    //[HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
-    //public class SpawnManager_Patch
-    //{
-    //    public static void Postfix(string teleportId)
-    //    {
-    //        if (!ProgressManager.updatingProgress)
-    //        {
-    //            Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
-    //        }
-    //    }
-    //}
+    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
+    public class SpawnManager_Patch
+    {
+        public static void Postfix(string teleportId)
+        {
+            Main.UnityLog("Unlocked teleport");
+            if (!ProgressManager.updatingProgress)
+            {
+                //Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
+            }
+        }
+    }
 
     // Persistent objects
 
@@ -220,13 +221,23 @@ namespace BlasClient.Patches
         }
     }
 
-    // Breakable objects
-    [HarmonyPatch(typeof(PersistentBreakableObject), "SetDestroyedState")]
-    public class BreakableObject_Patch
+    // Gates
+    [HarmonyPatch(typeof(Gate), "Use")]
+    public class Gate_Patch
     {
-        public static void Postfix(PersistentBreakableObject __instance)
+        public static void Postfix(Gate __instance)
         {
-            Main.UnityLog("Broke object: " + __instance.GetPersistenID());
+            Main.UnityLog("gate opened: " + __instance.GetPersistenID());
+        }
+    }
+
+    // Breakable walls
+    [HarmonyPatch(typeof(BreakableWall), "Damage")]
+    public class BreakableWall_Patch
+    {
+        public static void Postfix(BreakableWall __instance)
+        {
+            Main.UnityLog("Broke wall: " + __instance.GetPersistenID());
         }
     }
 

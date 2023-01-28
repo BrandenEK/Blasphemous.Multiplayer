@@ -200,6 +200,16 @@ namespace BlasClient
             }
         }
 
+        // Interacting with an object using a special animation
+        public void usingSpecialAnimation(byte animation)
+        {
+            if (connectedToServer)
+            {
+                Main.UnityLog("Sending special animation");
+                client.sendPlayerAnimation(animation);
+            }
+        }
+
         // Received position data from server
         public void playerPositionUpdated(string playerName, float xPos, float yPos)
         {

@@ -14,6 +14,7 @@ namespace BlasClient.Managers
 
         private Transform canvas; // Optimize to not have to find these every scene change
         private GameObject textPrefab;
+        private RuntimeAnimatorController animatorController;
 
         // Stores the skin of each player and is updated when receiving a skin change from the server
         // A player is added to this list when first sending their skin upon connecting
@@ -44,6 +45,8 @@ namespace BlasClient.Managers
             {
                 if (c.name == "Game UI") { canvas = c.transform; break; }
             }
+            // Find animator controller
+            if (Core.Logic.Penitent != null) animatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Create main player's nametag
             createNameTag(Main.Multiplayer.playerName);
@@ -150,7 +153,7 @@ namespace BlasClient.Managers
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
-            anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+            anim.runtimeAnimatorController = animatorController;
 
             // Set up name tag
             createNameTag(name);
@@ -202,19 +205,34 @@ namespace BlasClient.Managers
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
-                // Set a few always needed parameters
                 Animator anim = player.GetComponent<Animator>();
-                anim.SetBool("IS_CROUCH", false);
-                //anim.SetBool("IS_DEAD") might need one for vertical attack
-                // If anim is ladder climbing, set speed to 0
-
-                // Set required parameters to keep player onject in this animation
-                for (int i = 0; i < StaticObjects.animations[animation].parameterNames.Length; i++)
+                if (animation < 240)
                 {
-                    anim.SetBool(StaticObjects.animations[animation].parameterNames[i], StaticObjects.animations[animation].parameterValues[i]);
+                    // Regular animation
+
+                    // Remove flag for special animation
+                    // Set anim controller back
+                    anim.SetBool("IS_CROUCH", false);
+                    //anim.SetBool("IS_DEAD") might need one for vertical attack
+                    // If anim is ladder climbing, set speed to 0
+
+                    // Set required parameters to keep player onject in this animation
+                    for (int i = 0; i < StaticObjects.animations[animation].parameterNames.Length; i++)
+                    {
+                        anim.SetBool(StaticObjects.animations[animation].parameterNames[i], StaticObjects.animations[animation].parameterValues[i]);
+                    }
+                    anim.Play(StaticObjects.animations[animation].name);
+                    //Main.UnityLog("Updating player object animation for " + name);
                 }
-                anim.Play(StaticObjects.animations[animation].name);
-                //Main.UnityLog("Updating player object animation for " + name);
+                else
+                {
+                    // Special animation
+                    Main.UnityLog("Playing special animation for " + name);
+                    
+                    // Find animator controller from object and set this to it
+                    // Play certain animation or set trigger
+                    // Set flag that we are in special animation
+                }
             }
             else
             {
