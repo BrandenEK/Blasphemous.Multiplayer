@@ -6,8 +6,8 @@ namespace BlasClient
     {
         public void LaunchEvent(string eventName)
         {
-            Main.UnityLog("Event received - " + eventName);
-            Main.Multiplayer.finishedSpecialAnimation(gameObject.name.Substring(1));
+            if (eventName == "INTERACTION_END")
+                Main.Multiplayer.finishedSpecialAnimation(gameObject.name.Substring(1));
         }
     }
 }

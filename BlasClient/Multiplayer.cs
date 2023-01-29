@@ -22,8 +22,8 @@ namespace BlasClient
         private Vector2 lastPosition;
         private byte lastAnimation;
         private bool lastDirection;
-        private int frameDelayForSpecialAnimation = 10;
-        private int currentFramesBeforeAnimation = 0;
+        private float totalTimeBeforeSendAnimation = 500;
+        private float currentTimeBeforeSendAnimation = 0;
 
         // Save data
         private List<string> interactedPersistenceObjects;
@@ -134,7 +134,7 @@ namespace BlasClient
                             Main.UnityLog("Sending new player animation");
 
                             // Don't send new animations right after a special animation
-                            if (currentFramesBeforeAnimation <= 0)
+                            if (currentTimeBeforeSendAnimation <= 0)
                             {
                                 client.sendPlayerAnimation(i);
                             }
@@ -164,8 +164,8 @@ namespace BlasClient
             }
 
             // Decrease frame counter for special animation delay
-            if (currentFramesBeforeAnimation > 0)
-                currentFramesBeforeAnimation--;
+            if (currentTimeBeforeSendAnimation > 0)
+                currentTimeBeforeSendAnimation -= Time.deltaTime;
 
             // Update game progress
             if (progressManager != null)
@@ -220,7 +220,7 @@ namespace BlasClient
             if (connectedToServer)
             {
                 Main.UnityLog("Sending special animation");
-                currentFramesBeforeAnimation = frameDelayForSpecialAnimation;
+                currentTimeBeforeSendAnimation = totalTimeBeforeSendAnimation;
                 client.sendPlayerAnimation(animation);
             }
         }
