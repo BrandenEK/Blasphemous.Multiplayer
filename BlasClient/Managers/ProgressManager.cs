@@ -101,7 +101,6 @@ namespace BlasClient.Managers
                 case 17:
                     Core.NewMapManager.RevealCellInPosition(new Vector2(int.Parse(progress.id), 0)); return;
 
-                // Unlocked teleports - flags ?
                 // Church donations
                 default:
                     Main.UnityLog("Error: Progress type doesn't exist: " + progress.type); return;

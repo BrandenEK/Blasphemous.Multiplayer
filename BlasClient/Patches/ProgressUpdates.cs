@@ -144,6 +144,21 @@ namespace BlasClient.Patches
         }
     }
 
+    // Warp teleports
+
+    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
+    public class SpawnManager_Patch
+    {
+        public static void Postfix(string teleportId)
+        {
+            Main.UnityLog("Unlocked teleport");
+            if (!ProgressManager.updatingProgress)
+            {
+                Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
+            }
+        }
+    }
+
     // Map cells
 
     [HarmonyPatch(typeof(NewMapManager), "RevealCellInPosition")]
@@ -173,21 +188,6 @@ namespace BlasClient.Patches
                     ___CurrentMap.Cells[cellIdx].Revealed = true;
                 }
                 return false;
-            }
-        }
-    }
-
-    // Warp teleports
-
-    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
-    public class SpawnManager_Patch
-    {
-        public static void Postfix(string teleportId)
-        {
-            Main.UnityLog("Unlocked teleport");
-            if (!ProgressManager.updatingProgress)
-            {
-                //Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
             }
         }
     }

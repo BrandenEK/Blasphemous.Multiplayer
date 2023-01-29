@@ -110,6 +110,7 @@
         public static FlagState[] flags = new FlagState[]
         {
             new FlagState("RESCUED_CHERUB_*", "has freed a Child of Moonlight"),
+            new FlagState("TELEPORT_D*", null),
             new FlagState("CLAIMED_*", null),
             new FlagState("CONFESSOR_*", null),
 
