@@ -334,6 +334,12 @@ namespace BlasClient.Managers
             else if (type == 242)
             {
                 // Chest
+                Chest chest = Object.FindObjectOfType<Chest>();
+                if (chest == null)
+                    return false;
+
+                anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger("USED");
             }
             else if (type == 243 || type == 244)
             {
