@@ -194,7 +194,7 @@ namespace BlasClient.Patches
 
     // Persistent objects
 
-    // Interactables (PrieDieus, ColelctibleItems)
+    // Interactables (PrieDieus, CollectibleItems)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class Interactable_Patch
     {
@@ -243,7 +243,7 @@ namespace BlasClient.Patches
 
     // PrieDieu load
     [HarmonyPatch(typeof(PrieDieu), "SetCurrentPersistentState")]
-    public class PrieDieu_Patch
+    public class PrieDieuLoad_Patch
     {
         public static bool Prefix(PrieDieu __instance, PersistentManager.PersistentData data)
         {
@@ -258,7 +258,7 @@ namespace BlasClient.Patches
 
     // Collectible item load
     [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
-    public class CollectibleItem_Patch
+    public class CollectibleItemLoad_Patch
     {
         public static bool Prefix(CollectibleItem __instance, Animator ___interactableAnimator, PersistentManager.PersistentData data)
         {
@@ -266,6 +266,39 @@ namespace BlasClient.Patches
             {
                 __instance.Consumed = true;
                 ___interactableAnimator.gameObject.SetActive(false);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Chest load
+    [HarmonyPatch(typeof(Chest), "SetCurrentPersistentState")]
+    public class ChestLoad_Patch
+    {
+        public static bool Prefix(Chest __instance, Animator ___interactableAnimator, PersistentManager.PersistentData data)
+        {
+            if (data == null)
+            {
+                __instance.Consumed = true;
+                ___interactableAnimator.SetBool("NOANIMUSED", true);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Cherub load
+    [HarmonyPatch(typeof(CherubCaptorPersistentObject), "SetCurrentPersistentState")]
+    public class CherubLoad_Patch
+    {
+        public static bool Prefix(CherubCaptorPersistentObject __instance, PersistentManager.PersistentData data)
+        {
+            if (data == null)
+            {
+                __instance.destroyed = true;
+                __instance.spawner.DisableCherubSpawn();
+                __instance.spawner.DestroySpawnedCherub();
                 return false;
             }
             return true;

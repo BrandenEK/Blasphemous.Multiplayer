@@ -142,8 +142,29 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
-                    // Chest
-                    // Cherub
+                    case 2: // Chest
+                        foreach (Chest chest in Object.FindObjectsOfType<Chest>())
+                        {
+                            if (chest.GetPersistenID() == persistentId)
+                            {
+                                chest.Consumed = true;
+                                chest.transform.GetChild(2).GetComponent<Animator>().SetBool("USED", true);
+                                break;
+                            }
+                        }
+                        return;
+                    case 3: // Cherub
+                        foreach (CherubCaptorPersistentObject cherub in Object.FindObjectsOfType<CherubCaptorPersistentObject>())
+                        {
+                            if (cherub.GetPersistenID() == persistentId)
+                            {
+                                cherub.destroyed = true;
+                                cherub.spawner.DisableCherubSpawn();
+                                cherub.spawner.DestroySpawnedCherub();
+                                break;
+                            }
+                        }
+                        return;
                     // Lever
                     // Gate
                 }
