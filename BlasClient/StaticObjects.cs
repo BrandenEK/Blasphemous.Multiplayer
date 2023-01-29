@@ -157,7 +157,7 @@
             new FlagState("D17Z01S04_WALLDESTROYED", null), // Brotherhood
             new FlagState("D17Z01S04_SHORTCUT", null),
             new FlagState("D01Z05S12_SHORTCUTGATESEWERS", null), // Cistern
-            new FlagState("D03Z01S02_BELLCARRIER", null), // Mountains
+            //new FlagState("D03Z01S02_BELLCARRIER", null), // Mountains (Not until breakable wall also)
             new FlagState("BELL_PUZZLE1_ACTIVATED", "has broke the eastern bell"), // Jondo
             new FlagState("BELL_PUZZLE2_ACTIVATED", "has broke the western bell"),
             new FlagState("BELL_ACTIVATED", "has activated the bell"),
@@ -189,8 +189,8 @@
 
             // Wastelands
             new PersistenceState("4693a90e-fc42-4e0b-97b6-fa0f099fba03", "D01Z03S02", 1), // CI
-            new PersistenceState("08b24276-55e8-414c-9ca7-55490a87fcc0", "D01Z03S01", 0),
-            new PersistenceState("75914932-821e-402a-88ec-1209458f3f4b", "D01Z03S03", 0),
+            new PersistenceState("08b24276-55e8-414c-9ca7-55490a87fcc0", "D01Z03S01", 1),
+            new PersistenceState("75914932-821e-402a-88ec-1209458f3f4b", "D01Z03S03", 1),
 
             // Mercy Dreams
             new PersistenceState("0c160f00-3901-4bf2-b67f-99c2830819cf", "D01Z04S03", 0), // PD

@@ -148,7 +148,7 @@ namespace BlasClient.Managers
                             if (chest.GetPersistenID() == persistentId)
                             {
                                 chest.Consumed = true;
-                                chest.transform.GetChild(2).GetComponent<Animator>().SetBool("USED", true);
+                                chest.transform.GetChild(2).GetComponent<Animator>().SetBool("NOANIMUSED", true);
                                 break;
                             }
                         }

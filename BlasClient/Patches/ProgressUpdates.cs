@@ -177,7 +177,7 @@ namespace BlasClient.Patches
         }
     }
 
-    // Prie Dieu teleports
+    // Warp teleports
 
     [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
     public class SpawnManager_Patch
