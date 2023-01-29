@@ -194,7 +194,7 @@ namespace BlasClient.Patches
 
     // Persistent objects
 
-    // Interactables (PrieDieus, CollectibleItems)
+    // Interactable use (PrieDieus, CollectibleItems)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class Interactable_Patch
     {
@@ -211,13 +211,20 @@ namespace BlasClient.Patches
         }
     }
 
-    // Cherub captors
+    // Cherub use
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "OnCherubKilled")]
     public class CherubCaptor_Patch
     {
         public static void Postfix(CherubCaptorPersistentObject __instance)
         {
-            Main.UnityLog("Cherub killed: " + __instance.GetPersistenID());
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Cherub killed: " + persistentId);
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
+            {
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
+            }
         }
     }
 
