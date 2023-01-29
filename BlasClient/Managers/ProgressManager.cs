@@ -142,6 +142,10 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
+                    // Chest
+                    // Cherub
+                    // Lever
+                    // Gate
                 }
             }
         }
