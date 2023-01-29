@@ -8,19 +8,25 @@ namespace BlasClient
 {
     public class Multiplayer : PersistentInterface
     {
+        // Managers
         private Client client;
         private PlayerManager playerManager;
         private ProgressManager progressManager;
         private NotificationManager notificationManager;
 
+        // Game status
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
 
-        private List<string> interactedPersistenceObjects;
-
+        // Player status
         private Vector2 lastPosition;
         private byte lastAnimation;
         private bool lastDirection;
+        private int frameDelayForSpecialAnimation = 10;
+        private int currentFramesBeforeAnimation = 0;
+
+        // Save data
+        private List<string> interactedPersistenceObjects;
 
         private bool connectedToServer
         {
@@ -120,14 +126,18 @@ namespace BlasClient
                 AnimatorStateInfo state = penitentAnimator.GetCurrentAnimatorStateInfo(0);
                 if (animationHasChanged(state))
                 {
-                    // Animation has been updated
                     bool animationExists = false;
                     for (byte i = 0; i < StaticObjects.animations.Length; i++)
                     {
                         if (state.IsName(StaticObjects.animations[i].name))
                         {
-                            //Main.UnityLog("Sending new player animation");
-                            client.sendPlayerAnimation(i);
+                            Main.UnityLog("Sending new player animation");
+
+                            // Don't send new animations right after a special animation
+                            if (currentFramesBeforeAnimation <= 0)
+                            {
+                                client.sendPlayerAnimation(i);
+                            }
                             lastAnimation = i;
                             animationExists = true;
                             break;
@@ -152,6 +162,10 @@ namespace BlasClient
                 // Once all three of these updates are added, send the queue
                 client.SendQueue();
             }
+
+            // Decrease frame counter for special animation delay
+            if (currentFramesBeforeAnimation > 0)
+                currentFramesBeforeAnimation--;
 
             // Update game progress
             if (progressManager != null)
@@ -206,6 +220,7 @@ namespace BlasClient
             if (connectedToServer)
             {
                 Main.UnityLog("Sending special animation");
+                currentFramesBeforeAnimation = frameDelayForSpecialAnimation;
                 client.sendPlayerAnimation(animation);
             }
         }
