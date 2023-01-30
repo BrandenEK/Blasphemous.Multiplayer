@@ -195,7 +195,7 @@ namespace BlasClient.Patches
 
     // Persistent objects
 
-    // Interactable use (PrieDieus, CollectibleItems)
+    // Interactable use (PrieDieus, CollectibleItems, Chests, Levers)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class InteractableUse_Patch
     {
@@ -229,7 +229,7 @@ namespace BlasClient.Patches
         }
     }
 
-    // Gates
+    // Gate use
     [HarmonyPatch(typeof(Gate), "Use")]
     public class Gate_Patch
     {
@@ -237,7 +237,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("gate opened: " + persistentId);
-            if (!ProgressManager.updatingProgress && !Main.Multiplayer.checkPersistentObject(persistentId)) // Check if synced
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
             {
                 // Update save game data & send this object
                 Main.Multiplayer.addPersistentObject(persistentId);
@@ -246,7 +246,7 @@ namespace BlasClient.Patches
         }
     }
 
-    // Moving platforms
+    // Moving platform use
     [HarmonyPatch(typeof(StraightMovingPlatform), "Use")]
     public class MovingPlatformUse_Patch
     {
@@ -254,7 +254,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Activated platform: " + persistentId);
-            if (!ProgressManager.updatingProgress && !Main.Multiplayer.checkPersistentObject(persistentId)) // Check if synced
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
             {
                 // Update save game data & send this object
                 Main.Multiplayer.addPersistentObject(persistentId);
@@ -263,7 +263,7 @@ namespace BlasClient.Patches
         }
     }
 
-    // Slash triggers
+    // Slash trigger use
     [HarmonyPatch(typeof(TriggerReceiver), "Use")]
     public class SlashTriggerUse_Patch
     {
@@ -271,7 +271,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Trigger activated: " + persistentId);
-            if (!ProgressManager.updatingProgress && !Main.Multiplayer.checkPersistentObject(persistentId)) // Check if synced
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
             {
                 // Update save game data & send this object
                 Main.Multiplayer.addPersistentObject(persistentId);

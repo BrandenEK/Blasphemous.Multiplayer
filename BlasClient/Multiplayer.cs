@@ -22,7 +22,7 @@ namespace BlasClient
         private Vector2 lastPosition;
         private byte lastAnimation;
         private bool lastDirection;
-        private float totalTimeBeforeSendAnimation = 500;
+        private float totalTimeBeforeSendAnimation = 0.5f;
         private float currentTimeBeforeSendAnimation = 0;
 
         // Save data

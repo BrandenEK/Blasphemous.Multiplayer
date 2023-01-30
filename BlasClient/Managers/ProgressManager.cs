@@ -207,6 +207,8 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
+                    // Moving ladders
+                    // Breakable walls
                 }
             }
         }

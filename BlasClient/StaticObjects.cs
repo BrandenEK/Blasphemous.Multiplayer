@@ -134,6 +134,10 @@
             new FlagState("SANTOS_LAUDES_DEFEATED", "has defeated Laudes of the Amanecidas"),
 
             // Quests
+            new FlagState("BROTHERS_EVENTPERPETVA_COMPLETED", null),
+            new FlagState("BROTHERS_PERPETUA_DEFEATED", null),
+
+            // World states
             new FlagState("DAGGER_ENCOUNTER_*", null),
             new FlagState("BAPTISMAL_0*", null),
             new FlagState("SWORD_UPGRADED_MC0*", null),
@@ -158,6 +162,8 @@
             new FlagState("D17Z01S04_WALLDESTROYED", null), // Brotherhood
             new FlagState("D17Z01S04_SHORTCUT", null),
             new FlagState("D01Z05S12_SHORTCUTGATESEWERS", null), // Cistern
+            new FlagState("D01Z05S21_PUZZLESOLVED", null),
+            new FlagState("D01Z05S02_ELEVATORPATHOPENED", null),
             //new FlagState("D03Z01S02_BELLCARRIER", null), // Mountains (Not until breakable wall also)
             new FlagState("BELL_PUZZLE1_ACTIVATED", "has broke the eastern bell"), // Jondo
             new FlagState("BELL_PUZZLE2_ACTIVATED", "has broke the western bell"),
@@ -174,24 +180,38 @@
         {
             // Brotherhood
             new PersistenceState("47db0007-4175-4379-8b5c-f37441f6315b", "D17Z01S05", 0), // PD
+            new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D17Z01S13", 0),
             new PersistenceState("0f11c3cc-867e-47c3-a97c-983f2ef0b9ac", "D17BZ02S01", 1), // CI
+            new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D17Z01S14", 1),
+            new PersistenceState("d430347e-1b33-4a35-82fb-ac7d2e1b4a01", "D17Z01S01", 3), // CR
+            new PersistenceState("5add17e9-f2d9-416e-a0e9-925d32ac4798", "D17Z01S03", 5), // GT
+            new PersistenceState("0cca4185-35ae-4b75-b208-627f92ccfe29", "D17Z01S03", 7), // ST
 
             // Holy Line
             new PersistenceState("3c6d3c9c-44c2-41cd-9c11-7c9f923680b9", "D01Z01S07", 0), // PD
             new PersistenceState("5710974d-771c-4907-8f1b-b318516ec0db", "D01Z01S02", 1), // CI
             new PersistenceState("9082d3bd-0568-4908-9e5f-00044182cbc4", "D01Z01S02", 1),
             new PersistenceState("e21c696e-61f5-4ef2-808a-cd0ccf852c0c", "D01Z01S03", 1),
+            new PersistenceState("5082226e-fcc9-4d90-bed0-9f6d4775fd75", "D01Z01S03", 2),
+            new PersistenceState("c0cc4135-d795-48bd-879e-a30c6d80297c", "D01Z01S03", 3), // CR
 
             // Albero
             new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D01Z02S01", 0), // PD
             new PersistenceState("d402af99-cf62-4c4f-bc37-9a7d6f860a15", "D01Z02S02", 1), // CI
             new PersistenceState("fd9a8f43-cb35-4b4e-bc7b-27af46e5ced4", "D01Z02S04", 1),
             new PersistenceState("509072a9-0d58-4bcb-a025-3dadad6325e4", "D01Z02S05", 1),
+            new PersistenceState("b389b291-1fb6-4b26-8b48-10bda40ca9d0", "D01Z02S03", 3), // CR
 
             // Wastelands
             new PersistenceState("4693a90e-fc42-4e0b-97b6-fa0f099fba03", "D01Z03S02", 1), // CI
             new PersistenceState("08b24276-55e8-414c-9ca7-55490a87fcc0", "D01Z03S01", 1),
             new PersistenceState("75914932-821e-402a-88ec-1209458f3f4b", "D01Z03S03", 1),
+            new PersistenceState("d5d6022e-7bb2-44f9-bd7e-950d4044d8a1", "D01Z03S07", 1),
+            new PersistenceState("cad13f65-1ca8-48df-ada0-e146fd4d25c7", "D01Z03S05", 1),
+            new PersistenceState("06492b0b-12cc-4015-9227-a784b8fd1495", "D01Z03S03", 3), // CR
+            new PersistenceState("85357602-4c8f-4dfa-8799-51a6e81a657b", "D01Z03S07", 3),
+            new PersistenceState("6f7ed359-8963-451b-a503-cf60be7d7cbf", "D01Z03S02", 5), // GT
+            new PersistenceState("bbaf880a-88d1-40d1-a1e5-e6b558be5b1c", "D01Z03S02", 7), // ST
 
             // Mercy Dreams
             new PersistenceState("0c160f00-3901-4bf2-b67f-99c2830819cf", "D01Z04S03", 0), // PD
@@ -203,6 +223,10 @@
             new PersistenceState("83d661e0-0523-4dee-8302-aab6da79b6ee", "D01Z04S11", 1),
             new PersistenceState("a26f6067-cf09-4019-80ed-2741cb89de4e", "D01Z04S07", 2), // CH
             new PersistenceState("5cd7ab38-cfd1-43e4-a2c4-337bae10ee5d", "D01Z04S06", 3), // CR
+            new PersistenceState("1cbf1da0-c0b9-4745-bde0-77d41a27463b", "D01Z04S01", 5), // GT
+            new PersistenceState("41efe0c7-489f-4892-8857-202a7377807d", "D01Z04S15", 5),
+            new PersistenceState("2c7933eb-d922-4f5b-b2ec-ca6e6b4707bd", "D01Z04S01", 7), // ST
+            new PersistenceState("327ad0d9-79f8-426d-ad98-20371f0e2b79", "D01Z04S15", 7),
 
             // Desecrated Cistern
             new PersistenceState("8daf15d5-f87e-48c5-977f-ee5e8a012233", "D01Z05S19", 0), // PD
@@ -210,14 +234,29 @@
             new PersistenceState("b94e8f00-74c9-42c8-8fcf-cba780269b36", "D01Z05S05", 1),
             new PersistenceState("00ff856c-f1ce-4dc1-8c1d-fe8f1fc3bda8", "D01Z05S05", 1),
             new PersistenceState("7f7de558-3e8b-415e-a099-51dd2e95435b", "D01Z05S08", 1),
+            new PersistenceState("ae6ec466-5f49-4406-9090-af5cc3e053ab", "D01Z05S17", 1),
+            new PersistenceState("aa834763-1d11-4ea9-a9ca-6892b8e36bdc", "D01BZ05S01", 1),
+            new PersistenceState("f9a83a8a-700d-4d2e-9870-d2a2d0577e02", "D01Z05S25", 1),
             new PersistenceState("8ec65451-7b3c-4854-be2b-cb87b7dc0e88", "D01Z05S11", 2), // CH
             new PersistenceState("cbb342e7-3c07-4226-abc2-d8e75b9c4ce8", "D01Z05S06", 2),
             new PersistenceState("e841be55-228d-4766-80a3-ac2540cb5f55", "D01Z05S14", 3), // CR
             new PersistenceState("b7e6b472-3151-4a7a-a7ff-507fe3105141", "D01Z05S06", 3),
             new PersistenceState("7650b52f-4a21-479e-a416-d12ab6c60c3d", "D01Z05S08", 3),
+            new PersistenceState("862ba152-43d4-4373-978f-b203fed0c737", "D01Z05S13", 3),
+            new PersistenceState("fbacbeb4-4ec8-4c5c-aa33-2e78a0543aad", "D01Z05S25", 3),
+            new PersistenceState("9bf20c23-7ae6-4ce4-be36-7da66bcc942d", "D01Z05S20", 3),
             new PersistenceState("497ac572-6d89-49c1-a39c-833b5938b114", "D01Z05S12", 4), // LV
             new PersistenceState("340cde3b-c372-4edd-99db-82e5d46410f5", "D01Z05S02", 4),
             new PersistenceState("17328a8d-02ff-4b1b-b192-1e0d79744b67", "D01Z05S08", 4),
+            new PersistenceState("d9904d9e-5605-42a2-9d95-bf30073dd421", "D01Z05S13", 4),
+            new PersistenceState("a49afb93-6ecb-4ac6-8600-f55f35b093c3", "D01Z05S20", 4),
+            new PersistenceState("3092311f-ccc9-404f-92a5-fbbd43eaa1b1", "D01Z05S12", 5), // GT
+            new PersistenceState("e41733cf-c553-4d9f-8b3a-47799be40a15", "D01Z05S13", 5),
+            new PersistenceState("ff5594f9-4206-4ede-9f6c-fb3f9666fa15", "D01Z05S13", 5),
+            new PersistenceState("bb43b53c-3ee7-464e-9130-2cc318debec4", "D01Z05S02", 5),
+            new PersistenceState("57b57842-5b31-4d8f-99f3-b8ace711aa70", "D01Z05S08", 5),
+            new PersistenceState("682b61ba-cd0b-4752-a45f-273a89a63701", "D01Z05S25", 5),
+            new PersistenceState("47c07521-184d-46d5-9086-7ab68a939f9f", "D01Z05S25", 7), // ST
 
             // Mountaintops
             new PersistenceState("b28e1e56-7a43-4b3d-8571-e319ecd6afff", "D03Z01S02", 0), // PD
@@ -243,6 +282,25 @@
             new PersistenceState("94810715-042e-43d3-a22e-7497033d3594", "D03Z02S05", 3), // CR
             new PersistenceState("142ebf04-0993-4dea-ab37-f63e30e791c4", "D03Z02S11", 3),
             new PersistenceState("817c8120-68a2-4a83-9c94-cb725da8794d", "D03Z02S10", 3),
+            new PersistenceState("6c91560b-1f58-4de0-a037-ad9f81b7f921", "D03Z02S01", 4), // LV
+            new PersistenceState("cf89f21c-6d3d-4a3a-9c53-69b9709a2882", "D03Z02S02", 4),
+            new PersistenceState("168cb04f-b812-4426-98e5-0daedb36da82", "D03Z02S03", 4),
+            new PersistenceState("291ad3e5-693c-4dd8-a0fa-87890aefb456", "D03Z02S11", 4),
+            new PersistenceState("2d0ec12e-b183-49ac-bc26-a4c9706df99e", "D03Z02S11", 4),
+            new PersistenceState("7e52698a-57bb-40c1-868a-c65271eb996c", "D03Z02S08", 4),
+            new PersistenceState("11ffaece-ed38-4850-9702-15a2fcda3dc4", "D03Z02S02", 4),
+            new PersistenceState("52edfe26-7a19-4c1e-a202-71e8188b3dbc", "D03Z02S02", 5), // GT
+            new PersistenceState("f6050549-8c17-4654-94f4-69f7078c8429", "D03Z02S02", 6), // PF
+            new PersistenceState("9e65eb47-786a-4339-a906-f885e5c984fb", "D03Z02S05", 6),
+            new PersistenceState("f3013bb9-7450-4bb4-9840-f0f4ae4824ce", "D03Z02S03", 6),
+            new PersistenceState("f28481cf-502c-404a-a157-b156c77a3f2b", "D03Z02S01", 6),
+            new PersistenceState("bba9f987-f287-45e4-a885-e1f32d780e49", "D03Z02S01", 6),
+            new PersistenceState("425e822f-21f0-4d79-af02-92ac3093d856", "D03Z02S11", 6),
+            new PersistenceState("06c809e2-cf31-4566-9427-ef28050d3557", "D03Z02S11", 6),
+            new PersistenceState("9568cebf-5111-4d36-9255-b6452990e3a5", "D03Z02S11", 6),
+            new PersistenceState("3f39e3a4-8d4b-48ec-a067-c255f82b4e86", "D03Z02S11", 6),
+            new PersistenceState("c42d75b4-930c-4ffd-aac8-4c0df9366357", "D03Z02S11", 6),
+            new PersistenceState("87924c20-3624-4ce6-9179-0d9031b6821b", "D03Z02S02", 7), // ST
 
             //new PersistenceState("", "", 0),
         };
