@@ -42,4 +42,7 @@ namespace BlasClient.Patches
             Main.Multiplayer.usingSpecialAnimation(245);
         }
     }
+
+    // Altar animation
+    // Beginning animation
 }

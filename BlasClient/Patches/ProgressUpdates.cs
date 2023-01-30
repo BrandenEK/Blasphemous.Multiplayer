@@ -280,6 +280,23 @@ namespace BlasClient.Patches
         }
     }
 
+    // Moving ladder use
+    [HarmonyPatch(typeof(ActionableLadder), "Use")]
+    public class LadderUse_Patch
+    {
+        public static void Postfix(ActionableLadder __instance)
+        {
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Ladder activated: " + persistentId);
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
+            {
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
+            }
+        }
+    }
+
     // Breakable walls
     [HarmonyPatch(typeof(BreakableWall), "Damage")]
     public class BreakableWall_Patch
@@ -415,6 +432,22 @@ namespace BlasClient.Patches
                 __instance.animator.Play("USED");
                 Collider2D collider = __instance.GetComponent<Collider2D>();
                 if (collider != null) collider.enabled = false;
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Moving ladder load
+    [HarmonyPatch(typeof(ActionableLadder), "SetCurrentPersistentState")]
+    public class LadderLoad_Patch
+    {
+        public static bool Prefix(ref bool ___open, ActionableLadder __instance, bool ___persistState, PersistentManager.PersistentData data)
+        {
+            if (data == null && ___persistState)
+            {
+                ___open = false;
+                __instance.Use();
                 return false;
             }
             return true;

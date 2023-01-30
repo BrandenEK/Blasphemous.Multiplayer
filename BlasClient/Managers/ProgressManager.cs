@@ -207,8 +207,17 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
-                    // Moving ladders
-                    // Breakable walls
+                    case 8: // Moving ladder
+                        foreach (ActionableLadder ladder in Object.FindObjectsOfType<ActionableLadder>())
+                        {
+                            if (ladder.GetPersistenID() == persistentId)
+                            {
+                                ladder.Use();
+                                break;
+                            }
+                        }
+                        return;
+                        // Breakable walls
                 }
             }
         }
