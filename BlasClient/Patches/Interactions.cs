@@ -32,4 +32,14 @@ namespace BlasClient.Patches
             Main.Multiplayer.usingSpecialAnimation((byte)(__instance.Ligthed ? 244 : 243));
         }
     }
+
+    // Lever animation
+    [HarmonyPatch(typeof(Lever), "OnUse")]
+    public class LeverUse_Patch
+    {
+        public static void Prefix()
+        {
+            Main.Multiplayer.usingSpecialAnimation(245);
+        }
+    }
 }

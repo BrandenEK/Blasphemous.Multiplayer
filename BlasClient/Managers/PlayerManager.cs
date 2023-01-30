@@ -351,12 +351,24 @@ namespace BlasClient.Managers
                 anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
                 anim.SetTrigger(type == 243 ? "ACTIVATION" : "KNEE_START");
             }
+            else if (type == 245)
+            {
+                // Lever
+                Lever lever = Object.FindObjectOfType<Lever>();
+                if (lever == null)
+                    return false;
+
+                anim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger("DOWN");
+            }
+            else if (type == 246)
+            {
+                // Altar
+            }
             else
             {
                 return false;
             }
-            // Altar
-            // Lever
 
             return true;
         }
