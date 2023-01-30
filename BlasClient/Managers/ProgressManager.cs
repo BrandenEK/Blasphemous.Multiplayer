@@ -4,6 +4,8 @@ using Framework.Managers;
 using Framework.FrameworkCore;
 using BlasClient.Structures;
 using Tools.Level.Interactables;
+using Tools.Level.Actionables;
+using Gameplay.GameControllers.Environment.MovingPlatforms;
 
 namespace BlasClient.Managers
 {
@@ -165,12 +167,45 @@ namespace BlasClient.Managers
                         }
                         return;
                     case 4: // Lever
+                        foreach (Lever lever in Object.FindObjectsOfType<Lever>())
+                        {
+                            if (lever.GetPersistenID() == persistentId)
+                            {
+                                lever.Consumed = true;
+                                lever.transform.GetChild(1).GetComponent<Animator>().SetBool("ACTIVE", true);
+                                break;
+                            }
+                        }
                         return;
                     case 5: // Gate
+                        foreach (Gate gate in Object.FindObjectsOfType<Gate>())
+                        {
+                            if (gate.GetPersistenID() == persistentId)
+                            {
+                                gate.Use();
+                                break;
+                            }
+                        }
                         return;
                     case 6: // Moving platform
+                        foreach (StraightMovingPlatform platform in Object.FindObjectsOfType<StraightMovingPlatform>())
+                        {
+                            if (platform.GetPersistenID() == persistentId)
+                            {
+                                platform.Use();
+                                break;
+                            }
+                        }
                         return;
                     case 7: // Slash trigger
+                        foreach (TriggerReceiver trigger in Object.FindObjectsOfType<TriggerReceiver>())
+                        {
+                            if (trigger.GetPersistenID() == persistentId)
+                            {
+                                trigger.Use();
+                                break;
+                            }
+                        }
                         return;
                 }
             }
