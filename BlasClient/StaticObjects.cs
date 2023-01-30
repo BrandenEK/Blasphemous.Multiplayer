@@ -215,6 +215,9 @@
             new PersistenceState("e841be55-228d-4766-80a3-ac2540cb5f55", "D01Z05S14", 3), // CR
             new PersistenceState("b7e6b472-3151-4a7a-a7ff-507fe3105141", "D01Z05S06", 3),
             new PersistenceState("7650b52f-4a21-479e-a416-d12ab6c60c3d", "D01Z05S08", 3),
+            new PersistenceState("497ac572-6d89-49c1-a39c-833b5938b114", "D01Z05S12", 4), // LV
+            new PersistenceState("340cde3b-c372-4edd-99db-82e5d46410f5", "D01Z05S02", 4),
+            new PersistenceState("17328a8d-02ff-4b1b-b192-1e0d79744b67", "D01Z05S08", 4),
 
             // Mountaintops
             new PersistenceState("b28e1e56-7a43-4b3d-8571-e319ecd6afff", "D03Z01S02", 0), // PD
@@ -223,6 +226,7 @@
             new PersistenceState("ff8ff2a9-b4b2-48c9-a7a5-ea0b08d6c1eb", "D03Z01S03", 1),
             new PersistenceState("e4a343fd-16b1-4a0f-9a19-8a6e7a138a68", "D03Z01S04", 1),
             new PersistenceState("aec60464-8558-43bb-a23a-efebc104a2e0", "D03Z01S03", 3), // CR
+            new PersistenceState("2b3ad147-ab35-46fe-a3dc-f11b7f44117d", "D03Z01S03", 4), // LV
 
             // Jondo
             new PersistenceState("c2b08e13-dbb5-478f-985e-5f9657eedd46", "D03Z02S02", 0), // PD
