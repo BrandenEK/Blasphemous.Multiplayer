@@ -147,7 +147,7 @@ namespace BlasClient.Managers
                             if (chest.GetPersistenID() == persistentId)
                             {
                                 chest.Consumed = true;
-                                chest.transform.GetChild(1).GetComponent<Animator>().SetBool("NOANIMUSED", true);
+                                chest.transform.GetChild(1).GetComponent<Animator>().SetBool("USED", true);//NOANIMUSED
                                 break;
                             }
                         }
@@ -164,8 +164,14 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
-                    // Lever
-                    // Gate
+                    case 4: // Lever
+                        return;
+                    case 5: // Gate
+                        return;
+                    case 6: // Moving platform
+                        return;
+                    case 7: // Slash trigger
+                        return;
                 }
             }
         }

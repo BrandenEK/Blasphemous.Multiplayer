@@ -10,6 +10,7 @@ using Framework.Map;
 using Tools.Level;
 using Tools.Level.Actionables;
 using Tools.Level.Interactables;
+using Gameplay.GameControllers.Environment.MovingPlatforms;
 using BlasClient.Managers;
 
 namespace BlasClient.Patches
@@ -196,7 +197,7 @@ namespace BlasClient.Patches
 
     // Interactable use (PrieDieus, CollectibleItems)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
-    public class Interactable_Patch
+    public class InteractableUse_Patch
     {
         public static void Postfix(Interactable __instance)
         {
@@ -213,7 +214,7 @@ namespace BlasClient.Patches
 
     // Cherub use
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "OnCherubKilled")]
-    public class CherubCaptor_Patch
+    public class CherubCaptorUse_Patch
     {
         public static void Postfix(CherubCaptorPersistentObject __instance)
         {
@@ -234,7 +235,48 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Gate __instance)
         {
-            Main.UnityLog("gate opened: " + __instance.GetPersistenID());
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("gate opened: " + persistentId);
+            if (!ProgressManager.updatingProgress && !Main.Multiplayer.checkPersistentObject(persistentId)) // Check if synced
+            {
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
+            }
+        }
+    }
+
+    // Moving platforms
+    [HarmonyPatch(typeof(StraightMovingPlatform), "Use")]
+    public class MovingPlatformUse_Patch
+    {
+        public static void Postfix(StraightMovingPlatform __instance)
+        {
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Activated platform: " + persistentId);
+            if (!ProgressManager.updatingProgress && !Main.Multiplayer.checkPersistentObject(persistentId)) // Check if synced
+            {
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
+            }
+        }
+    }
+
+    // Slash triggers
+    [HarmonyPatch(typeof(TriggerReceiver), "Use")]
+    public class SlashTriggerUse_Patch
+    {
+        public static void Postfix(TriggerReceiver __instance)
+        {
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Trigger activated: " + persistentId);
+            if (!ProgressManager.updatingProgress && !Main.Multiplayer.checkPersistentObject(persistentId)) // Check if synced
+            {
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
+            }
         }
     }
 
@@ -306,6 +348,73 @@ namespace BlasClient.Patches
                 __instance.destroyed = true;
                 __instance.spawner.DisableCherubSpawn();
                 __instance.spawner.DestroySpawnedCherub();
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Lever load
+    [HarmonyPatch(typeof(Lever), "SetCurrentPersistentState")]
+    public class LeverLoad_Patch
+    {
+        public static bool Prefix(Lever __instance, PersistentManager.PersistentData data)
+        {
+            if (data == null)
+            {
+                __instance.Consumed = true;
+                __instance.SetLeverDownInstantly();
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Gate load
+    [HarmonyPatch(typeof(Gate), "SetCurrentPersistentState")]
+    public class GateLoad_Patch
+    {
+        public static bool Prefix(ref bool ___open, ref Animator ___animator, ref Collider2D ___collision, bool ___persistState, PersistentManager.PersistentData data)
+        {
+            if (data == null && ___persistState)
+            {
+                ___open = true;
+                ___collision.enabled = false;
+                ___animator.SetBool("INSTA_ACTION", true);
+                ___animator.SetBool("OPEN", true);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Moving platform load
+    [HarmonyPatch(typeof(StraightMovingPlatform), "SetCurrentPersistentState")]
+    public class MovingPlatformLoad_Patch
+    {
+        public static bool Prefix(bool ___persistState, ref bool ____running, string ___OnDestination, PersistentManager.PersistentData data)
+        {
+            if (data == null && ___persistState)
+            {
+                ____running = !Core.Events.GetFlag(___OnDestination);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Slash trigger load
+    [HarmonyPatch(typeof(TriggerReceiver), "SetCurrentPersistentState")]
+    public class SlashTriggerLoad_Patch
+    {
+        public static bool Prefix(TriggerReceiver __instance, ref bool ___alreadyUsed, PersistentManager.PersistentData data)
+        {
+            if (data == null)
+            {
+                ___alreadyUsed = true;
+                __instance.animator.Play("USED");
+                Collider2D collider = __instance.GetComponent<Collider2D>();
+                if (collider != null) collider.enabled = false;
                 return false;
             }
             return true;
