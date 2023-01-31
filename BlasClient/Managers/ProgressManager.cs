@@ -172,7 +172,7 @@ namespace BlasClient.Managers
                             if (lever.GetPersistenID() == persistentId)
                             {
                                 lever.Consumed = true;
-                                lever.transform.GetChild(1).GetComponent<Animator>().SetBool("ACTIVE", true);
+                                lever.SetLeverDownInstantly();
                                 break;
                             }
                         }
@@ -202,7 +202,7 @@ namespace BlasClient.Managers
                         {
                             if (trigger.GetPersistenID() == persistentId)
                             {
-                                trigger.Use();
+                                trigger.SetCurrentPersistentState(null, false, null);
                                 break;
                             }
                         }
