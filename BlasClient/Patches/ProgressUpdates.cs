@@ -280,6 +280,23 @@ namespace BlasClient.Patches
         }
     }
 
+    // Breakable wall use
+    [HarmonyPatch(typeof(BreakableWall), "Use")]
+    public class BreakableWall_Patch
+    {
+        public static void Postfix(BreakableWall __instance)
+        {
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Broke wall: " + persistentId);
+            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
+            {
+                // Update save game data & send this object
+                Main.Multiplayer.addPersistentObject(persistentId);
+                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
+            }
+        }
+    }
+
     // Moving ladder use
     [HarmonyPatch(typeof(ActionableLadder), "Use")]
     public class LadderUse_Patch
@@ -294,16 +311,6 @@ namespace BlasClient.Patches
                 Main.Multiplayer.addPersistentObject(persistentId);
                 Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
             }
-        }
-    }
-
-    // Breakable walls
-    [HarmonyPatch(typeof(BreakableWall), "Damage")]
-    public class BreakableWall_Patch
-    {
-        public static void Postfix(BreakableWall __instance)
-        {
-            Main.UnityLog("Broke wall: " + __instance.GetPersistenID());
         }
     }
 
@@ -432,6 +439,21 @@ namespace BlasClient.Patches
                 __instance.animator.Play("USED");
                 Collider2D collider = __instance.GetComponent<Collider2D>();
                 if (collider != null) collider.enabled = false;
+                return false;
+            }
+            return true;
+        }
+    }
+
+    // Breakable wall load
+    [HarmonyPatch(typeof(BreakableWall), "SetCurrentPersistentState")]
+    public class BreakableWallLoad_Patch
+    {
+        public static bool Prefix(BreakableWall __instance, PersistentManager.PersistentData data)
+        {
+            if (data == null)
+            {
+                __instance.Use();
                 return false;
             }
             return true;

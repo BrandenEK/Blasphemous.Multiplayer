@@ -194,6 +194,8 @@
             new PersistenceState("e21c696e-61f5-4ef2-808a-cd0ccf852c0c", "D01Z01S03", 1),
             new PersistenceState("5082226e-fcc9-4d90-bed0-9f6d4775fd75", "D01Z01S03", 2),
             new PersistenceState("c0cc4135-d795-48bd-879e-a30c6d80297c", "D01Z01S03", 3), // CR
+            new PersistenceState("unknown", "???", 8), // BW
+            new PersistenceState("unknown", "???", 8),
 
             // Albero
             new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D01Z02S01", 0), // PD
@@ -212,6 +214,10 @@
             new PersistenceState("85357602-4c8f-4dfa-8799-51a6e81a657b", "D01Z03S07", 3),
             new PersistenceState("6f7ed359-8963-451b-a503-cf60be7d7cbf", "D01Z03S02", 5), // GT
             new PersistenceState("bbaf880a-88d1-40d1-a1e5-e6b558be5b1c", "D01Z03S02", 7), // ST
+            new PersistenceState("b466739d-af3c-47ec-ae80-f9336b08479b", "D01Z03S02", 8), // BW
+            new PersistenceState("a1ea5a05-b583-4069-a889-41dd37907030", "D01Z03S01", 8),
+            new PersistenceState("3cad581c-ffdf-4f26-a6e7-08054d34cc0c", "D01Z03S06", 8),
+            new PersistenceState("28421a24-aaba-41aa-9b4f-a1d0a8ef41d4", "D01Z03S06", 8),
 
             // Mercy Dreams
             new PersistenceState("0c160f00-3901-4bf2-b67f-99c2830819cf", "D01Z04S03", 0), // PD
@@ -227,6 +233,9 @@
             new PersistenceState("41efe0c7-489f-4892-8857-202a7377807d", "D01Z04S15", 5),
             new PersistenceState("2c7933eb-d922-4f5b-b2ec-ca6e6b4707bd", "D01Z04S01", 7), // ST
             new PersistenceState("327ad0d9-79f8-426d-ad98-20371f0e2b79", "D01Z04S15", 7),
+            new PersistenceState("0f03dec1-275b-41c7-b8db-0fe5d326ae9c", "D01Z04S05", 8), // BW
+            new PersistenceState("2cee7762-f4d0-42c1-9d11-c535e204d879", "D01Z04S15", 8),
+            new PersistenceState("95132efb-6d33-497d-b4f3-c9086290e343", "D01Z04S10", 8),
 
             // Desecrated Cistern
             new PersistenceState("8daf15d5-f87e-48c5-977f-ee5e8a012233", "D01Z05S19", 0), // PD
@@ -257,6 +266,7 @@
             new PersistenceState("57b57842-5b31-4d8f-99f3-b8ace711aa70", "D01Z05S08", 5),
             new PersistenceState("682b61ba-cd0b-4752-a45f-273a89a63701", "D01Z05S25", 5),
             new PersistenceState("47c07521-184d-46d5-9086-7ab68a939f9f", "D01Z05S25", 7), // ST
+            new PersistenceState("f0e957d2-3313-4ae7-ba91-17f651f683d2", "D01Z05S03", 8), // BW
 
             // Mountaintops
             new PersistenceState("b28e1e56-7a43-4b3d-8571-e319ecd6afff", "D03Z01S02", 0), // PD

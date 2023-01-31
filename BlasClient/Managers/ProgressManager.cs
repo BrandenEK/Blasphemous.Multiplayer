@@ -207,7 +207,17 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
-                    case 8: // Moving ladder
+                    case 8: // Breakable wall
+                        foreach (BreakableWall wall in Object.FindObjectsOfType<BreakableWall>())
+                        {
+                            if (wall.GetPersistenID() == persistentId)
+                            {
+                                wall.Use();
+                                break;
+                            }
+                        }
+                        return;
+                    case 9: // Moving ladder
                         foreach (ActionableLadder ladder in Object.FindObjectsOfType<ActionableLadder>())
                         {
                             if (ladder.GetPersistenID() == persistentId)
@@ -217,7 +227,7 @@ namespace BlasClient.Managers
                             }
                         }
                         return;
-                        // Breakable walls
+                        // Unlocked/Opened doors
                 }
             }
         }
