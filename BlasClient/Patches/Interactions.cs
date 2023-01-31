@@ -19,6 +19,7 @@ namespace BlasClient.Patches
     {
         public static void Prefix()
         {
+            // Might need to check what type of chest this is, but probably not
             Main.Multiplayer.usingSpecialAnimation(242);
         }
     }
@@ -43,6 +44,9 @@ namespace BlasClient.Patches
         }
     }
 
+    // Pick gemino flower
+    // Place altasgracias item
+    // Door animation
     // Altar animation
     // Beginning animation
 }

@@ -281,7 +281,7 @@ namespace BlasClient.Patches
     }
 
     // Breakable wall use
-    [HarmonyPatch(typeof(BreakableWall), "Use")]
+    [HarmonyPatch(typeof(BreakableWall), "Damage")]
     public class BreakableWall_Patch
     {
         public static void Postfix(BreakableWall __instance)
