@@ -10,9 +10,9 @@ namespace BlasClient
     {
         // Managers
         private Client client;
-        private PlayerManager playerManager;
-        private ProgressManager progressManager;
-        private NotificationManager notificationManager;
+        public PlayerManager playerManager { get; private set; }
+        public ProgressManager progressManager { get; private set; }
+        public NotificationManager notificationManager { get; private set; }
 
         // Game status
         public string playerName { get; private set; }

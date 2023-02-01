@@ -207,13 +207,8 @@ namespace BlasClient.Patches
         public static void Postfix(Interactable __instance)
         {
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Using object: " + persistentId + ", type: " + __instance.GetType().ToString()); // temp
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.UnityLog($"Used {__instance.GetType()}: {persistentId}");
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
 
@@ -305,12 +300,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Cherub killed: " + persistentId);
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "GetCurrentPersistentState")]
@@ -375,13 +365,8 @@ namespace BlasClient.Patches
         public static void Postfix(Gate __instance)
         {
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("gate opened: " + persistentId);
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.UnityLog("Gate opened: " + persistentId);
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(Gate), "GetCurrentPersistentState")]
@@ -421,12 +406,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Activated platform: " + persistentId);
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(StraightMovingPlatform), "GetCurrentPersistentState")]
@@ -460,12 +440,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Trigger activated: " + persistentId);
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(TriggerReceiver), "GetCurrentPersistentState")]
@@ -505,12 +480,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Broke wall: " + persistentId);
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(BreakableWall), "GetCurrentPersistentState")]
@@ -544,12 +514,7 @@ namespace BlasClient.Patches
         {
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Ladder activated: " + persistentId);
-            if (!ProgressManager.updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(ActionableLadder), "GetCurrentPersistentState")]
