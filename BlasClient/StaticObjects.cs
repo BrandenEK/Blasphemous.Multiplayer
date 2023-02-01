@@ -176,6 +176,7 @@
             new FlagState("D17Z01S04_WALLDESTROYED", null), // Brotherhood
             new FlagState("D17Z01S04_SHORTCUT", null),
             new FlagState("D01Z02S07_TELEPORT_ALBERO", null), // Albero
+            new FlagState("Flag D01Z02S02_SECRETWALL", null),
             new FlagState("D01Z03S01_TREEPATH", null), // Wastelands
             new FlagState("D01Z05S12_SHORTCUTGATESEWERS", null), // Cistern
             new FlagState("D01Z05S21_PUZZLESOLVED", null),

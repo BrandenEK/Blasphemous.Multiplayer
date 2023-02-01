@@ -412,11 +412,12 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(StraightMovingPlatform), "GetCurrentPersistentState")]
     public class MovingPlatformReceive_Patch
     {
-        public static bool Prefix(string dataPath, ref bool ____running)
+        public static bool Prefix(string dataPath, StraightMovingPlatform __instance, ref bool ____running)
         {
             if (dataPath != "use") return true;
 
-            ____running = true;
+            ____running = false;
+            __instance.Use();
             return false;
         }
     }
@@ -578,6 +579,8 @@ namespace BlasClient.Patches
             return false;
         }
     }
+
+    // Hidden secrets
 
     // Temporarily allow teleportation
     [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]

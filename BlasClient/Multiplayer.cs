@@ -131,7 +131,7 @@ namespace BlasClient
                     {
                         if (state.IsName(StaticObjects.animations[i].name))
                         {
-                            Main.UnityLog("Sending new player animation");
+                            //Main.UnityLog("Sending new player animation");
 
                             // Don't send new animations right after a special animation
                             if (currentTimeBeforeSendAnimation <= 0)
