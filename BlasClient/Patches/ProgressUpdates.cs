@@ -212,7 +212,7 @@ namespace BlasClient.Patches
         }
     }
 
-    // PrieDieu
+    // Prie Dieu
     // Interactable use
     [HarmonyPatch(typeof(PrieDieu), "GetCurrentPersistentState")]
     public class PrieDieuReceive_Patch
@@ -542,7 +542,42 @@ namespace BlasClient.Patches
         }
     }
 
-    // Unlockable doors
+    // Door
+    [HarmonyPatch(typeof(Door), "EnterDoor")]
+    public class DoorUse_Patch
+    {
+        public static void Postfix(Door __instance)
+        {
+            string persistentId = __instance.GetPersistenID();
+            Main.UnityLog("Door opened: " + persistentId);
+            Main.Multiplayer.progressManager.usePersistentObject(persistentId);
+        }
+    }
+    [HarmonyPatch(typeof(Door), "GetCurrentPersistentState")]
+    public class DoorReceive_Patch
+    {
+        public static bool Prefix(string dataPath, Door __instance, ref bool ___objectUsed)
+        {
+            if (dataPath != "use") return true;
+
+            ___objectUsed = true;
+            __instance.Closed = false;
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(Door), "SetCurrentPersistentState")]
+    public class DoorLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, Door __instance, Animator ___interactableAnimator, ref bool ___objectUsed)
+        {
+            if (data != null) return true;
+
+            ___objectUsed = true;
+            __instance.Closed = false;
+            ___interactableAnimator.SetTrigger("INSTA_OPEN");
+            return false;
+        }
+    }
 
     // Temporarily allow teleportation
     [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]
