@@ -195,6 +195,11 @@ namespace BlasClient.Patches
 
     // Persistent objects
 
+    // Each type has three methods:
+    // 1. Use - When actually using an object it will send the data to other players
+    // 2. Receive - When receiving object data it will play the used animation
+    // 3. Load - When loading a new scene it will be automatically used
+
     // Interactable use (PrieDieus, CollectibleItems, Chests, Levers)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class InteractableUse_Patch
@@ -212,9 +217,89 @@ namespace BlasClient.Patches
         }
     }
 
-    // Cherub use
+    // PrieDieu
+    // Interactable use
+    [HarmonyPatch(typeof(PrieDieu), "GetCurrentPersistentState")]
+    public class PrieDieuReceive_Patch
+    {
+        public static bool Prefix(string dataPath, PrieDieu __instance)
+        {
+            if (dataPath != "use") return true;
+
+            // Maybe play activation animation
+            __instance.Ligthed = true;
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(PrieDieu), "SetCurrentPersistentState")]
+    public class PrieDieuLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, PrieDieu __instance)
+        {
+            if (data != null) return true;
+
+            __instance.Ligthed = true;
+            return false;
+        }
+    }
+
+    // Collectible item
+    // Interactable use
+    [HarmonyPatch(typeof(CollectibleItem), "GetCurrentPersistentState")]
+    public class CollectibleItemReceive_Patch
+    {
+        public static bool Prefix(string dataPath, CollectibleItem __instance, Animator ___interactableAnimator)
+        {
+            if (dataPath != "use") return true;
+
+            __instance.Consumed = true;
+            ___interactableAnimator.gameObject.SetActive(false);
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
+    public class CollectibleItemLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, CollectibleItem __instance, Animator ___interactableAnimator)
+        {
+            if (data != null) return true;
+
+            __instance.Consumed = true;
+            ___interactableAnimator.gameObject.SetActive(false);
+            return false;
+        }
+    }
+
+    // Chest
+    // Interactable use
+    [HarmonyPatch(typeof(Chest), "GetCurrentPersistentState")]
+    public class ChestReceive_Patch
+    {
+        public static bool Prefix(string dataPath, Chest __instance, Animator ___interactableAnimator)
+        {
+            if (dataPath != "use") return true;
+
+            __instance.Consumed = true;
+            ___interactableAnimator.SetBool("USED", true);
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(Chest), "SetCurrentPersistentState")]
+    public class ChestLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, Chest __instance, Animator ___interactableAnimator)
+        {
+            if (data != null) return true;
+
+            __instance.Consumed = true;
+            ___interactableAnimator.SetBool("NOANIMUSED", true);
+            return false;
+        }
+    }
+
+    // Cherub
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "OnCherubKilled")]
-    public class CherubCaptorUse_Patch
+    public class CherubUse_Patch
     {
         public static void Postfix(CherubCaptorPersistentObject __instance)
         {
@@ -228,10 +313,64 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(CherubCaptorPersistentObject), "GetCurrentPersistentState")]
+    public class CherubReceive_Patch
+    {
+        public static bool Prefix(string dataPath, CherubCaptorPersistentObject __instance)
+        {
+            if (dataPath != "use") return true;
 
-    // Gate use
+            // Play animation death
+            __instance.destroyed = true;
+            __instance.spawner.DisableCherubSpawn();
+            __instance.spawner.DestroySpawnedCherub();
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(CherubCaptorPersistentObject), "SetCurrentPersistentState")]
+    public class CherubLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, CherubCaptorPersistentObject __instance)
+        {
+            if (data != null) return true;
+
+            __instance.destroyed = true;
+            __instance.spawner.DisableCherubSpawn();
+            __instance.spawner.DestroySpawnedCherub();
+            return false;
+        }
+    }
+
+    // Lever
+    // Interactable use
+    [HarmonyPatch(typeof(Lever), "GetCurrentPersistentState")]
+    public class LeverReceive_Patch
+    {
+        public static bool Prefix(string dataPath, Lever __instance, Animator ___interactableAnimator)
+        {
+            if (dataPath != "use") return true;
+
+            __instance.Consumed = true;
+            ___interactableAnimator.SetBool("ACTIVE", true); // Might still activate other objects
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(Lever), "SetCurrentPersistentState")]
+    public class LeverLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, Lever __instance)
+        {
+            if (data != null) return true;
+
+            __instance.Consumed = true;
+            __instance.SetLeverDownInstantly();
+            return false;
+        }
+    }
+
+    // Gate
     [HarmonyPatch(typeof(Gate), "Use")]
-    public class Gate_Patch
+    public class GateUse_Patch
     {
         public static void Postfix(Gate __instance)
         {
@@ -245,8 +384,36 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(Gate), "GetCurrentPersistentState")]
+    public class GateReceive_Patch
+    {
+        public static bool Prefix(string dataPath, ref bool ___open, Animator ___animator, Collider2D ___collision)
+        {
+            if (dataPath != "use") return true;
 
-    // Moving platform use
+            ___open = true;
+            ___collision.enabled = false;
+            ___animator.SetBool("INSTA_ACTION", false);
+            ___animator.SetBool("OPEN", true);
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(Gate), "SetCurrentPersistentState")]
+    public class GateLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, bool ___persistState, ref bool ___open, Animator ___animator, Collider2D ___collision)
+        {
+            if (data != null || !___persistState) return true;
+
+            ___open = true;
+            ___collision.enabled = false;
+            ___animator.SetBool("INSTA_ACTION", true);
+            ___animator.SetBool("OPEN", true);
+            return false;
+        }
+    }
+
+    // Moving platform
     [HarmonyPatch(typeof(StraightMovingPlatform), "Use")]
     public class MovingPlatformUse_Patch
     {
@@ -262,8 +429,30 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(StraightMovingPlatform), "GetCurrentPersistentState")]
+    public class MovingPlatformReceive_Patch
+    {
+        public static bool Prefix(string dataPath, ref bool ____running)
+        {
+            if (dataPath != "use") return true;
 
-    // Slash trigger use
+            ____running = true;
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(StraightMovingPlatform), "SetCurrentPersistentState")]
+    public class MovingPlatformLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, bool ___persistState, ref bool ____running, string ___OnDestination)
+        {
+            if (data != null || !___persistState) return true;
+
+            ____running = !Core.Events.GetFlag(___OnDestination);
+            return false;
+        }
+    }
+
+    // Slash trigger
     [HarmonyPatch(typeof(TriggerReceiver), "Use")]
     public class SlashTriggerUse_Patch
     {
@@ -279,10 +468,38 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(TriggerReceiver), "GetCurrentPersistentState")]
+    public class SlashTriggerReceive_Patch
+    {
+        public static bool Prefix(string dataPath, TriggerReceiver __instance, ref bool ___alreadyUsed)
+        {
+            if (dataPath != "use") return true;
 
-    // Breakable wall use
+            ___alreadyUsed = true;
+            __instance.animator.SetTrigger("ACTIVATE");
+            Collider2D collider = __instance.GetComponent<Collider2D>();
+            if (collider != null) collider.enabled = false;
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(TriggerReceiver), "SetCurrentPersistentState")]
+    public class SlashTriggerLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, TriggerReceiver __instance, ref bool ___alreadyUsed)
+        {
+            if (data != null) return true;
+
+            ___alreadyUsed = true;
+            __instance.animator.Play("USED");
+            Collider2D collider = __instance.GetComponent<Collider2D>();
+            if (collider != null) collider.enabled = false;
+            return false;
+        }
+    }
+
+    // Breakable wall
     [HarmonyPatch(typeof(BreakableWall), "Damage")]
-    public class BreakableWall_Patch
+    public class BreakableWallUse_Patch
     {
         public static void Postfix(BreakableWall __instance)
         {
@@ -296,8 +513,30 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(BreakableWall), "GetCurrentPersistentState")]
+    public class BreakableWallReceive_Patch
+    {
+        public static bool Prefix(string dataPath, BreakableWall __instance)
+        {
+            if (dataPath != "use") return true;
 
-    // Moving ladder use
+            __instance.Use(); // Needs to be changed
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(BreakableWall), "SetCurrentPersistentState")]
+    public class BreakableWallLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, BreakableWall __instance)
+        {
+            if (data != null) return true;
+
+            __instance.Use(); // Needs to be changed
+            return false;
+        }
+    }
+
+    // Moving ladder
     [HarmonyPatch(typeof(ActionableLadder), "Use")]
     public class LadderUse_Patch
     {
@@ -313,168 +552,32 @@ namespace BlasClient.Patches
             }
         }
     }
-
-    // PrieDieu load
-    [HarmonyPatch(typeof(PrieDieu), "SetCurrentPersistentState")]
-    public class PrieDieuLoad_Patch
+    [HarmonyPatch(typeof(ActionableLadder), "GetCurrentPersistentState")]
+    public class LadderReceive_Patch
     {
-        public static bool Prefix(PrieDieu __instance, PersistentManager.PersistentData data)
+        public static bool Prefix(string dataPath, ActionableLadder __instance, ref bool ___open)
         {
-            if (data == null)
-            {
-                __instance.Ligthed = true;
-                return false;
-            }
-            return true;
+            if (dataPath != "use") return true;
+
+            ___open = false;
+            __instance.Use(); // Needs to be changed
+            return false;
         }
     }
-
-    // Collectible item load
-    [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
-    public class CollectibleItemLoad_Patch
-    {
-        public static bool Prefix(CollectibleItem __instance, Animator ___interactableAnimator, PersistentManager.PersistentData data)
-        {
-            if (data == null)
-            {
-                __instance.Consumed = true;
-                ___interactableAnimator.gameObject.SetActive(false);
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Chest load
-    [HarmonyPatch(typeof(Chest), "SetCurrentPersistentState")]
-    public class ChestLoad_Patch
-    {
-        public static bool Prefix(Chest __instance, Animator ___interactableAnimator, PersistentManager.PersistentData data)
-        {
-            if (data == null)
-            {
-                __instance.Consumed = true;
-                ___interactableAnimator.SetBool("NOANIMUSED", true);
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Cherub load
-    [HarmonyPatch(typeof(CherubCaptorPersistentObject), "SetCurrentPersistentState")]
-    public class CherubLoad_Patch
-    {
-        public static bool Prefix(CherubCaptorPersistentObject __instance, PersistentManager.PersistentData data)
-        {
-            if (data == null)
-            {
-                __instance.destroyed = true;
-                __instance.spawner.DisableCherubSpawn();
-                __instance.spawner.DestroySpawnedCherub();
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Lever load
-    [HarmonyPatch(typeof(Lever), "SetCurrentPersistentState")]
-    public class LeverLoad_Patch
-    {
-        public static bool Prefix(Lever __instance, PersistentManager.PersistentData data)
-        {
-            if (data == null)
-            {
-                __instance.Consumed = true;
-                __instance.SetLeverDownInstantly();
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Gate load
-    [HarmonyPatch(typeof(Gate), "SetCurrentPersistentState")]
-    public class GateLoad_Patch
-    {
-        public static bool Prefix(ref bool ___open, ref Animator ___animator, ref Collider2D ___collision, bool ___persistState, PersistentManager.PersistentData data)
-        {
-            if (data == null && ___persistState)
-            {
-                ___open = true;
-                ___collision.enabled = false;
-                ___animator.SetBool("INSTA_ACTION", true);
-                ___animator.SetBool("OPEN", true);
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Moving platform load
-    [HarmonyPatch(typeof(StraightMovingPlatform), "SetCurrentPersistentState")]
-    public class MovingPlatformLoad_Patch
-    {
-        public static bool Prefix(bool ___persistState, ref bool ____running, string ___OnDestination, PersistentManager.PersistentData data)
-        {
-            if (data == null && ___persistState)
-            {
-                ____running = !Core.Events.GetFlag(___OnDestination);
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Slash trigger load
-    [HarmonyPatch(typeof(TriggerReceiver), "SetCurrentPersistentState")]
-    public class SlashTriggerLoad_Patch
-    {
-        public static bool Prefix(TriggerReceiver __instance, ref bool ___alreadyUsed, PersistentManager.PersistentData data)
-        {
-            if (data == null)
-            {
-                ___alreadyUsed = true;
-                __instance.animator.Play("USED");
-                Collider2D collider = __instance.GetComponent<Collider2D>();
-                if (collider != null) collider.enabled = false;
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Breakable wall load
-    [HarmonyPatch(typeof(BreakableWall), "SetCurrentPersistentState")]
-    public class BreakableWallLoad_Patch
-    {
-        public static bool Prefix(BreakableWall __instance, PersistentManager.PersistentData data)
-        {
-            if (data == null)
-            {
-                __instance.Use();
-                return false;
-            }
-            return true;
-        }
-    }
-
-    // Moving ladder load
     [HarmonyPatch(typeof(ActionableLadder), "SetCurrentPersistentState")]
     public class LadderLoad_Patch
     {
-        public static bool Prefix(ref bool ___open, ActionableLadder __instance, bool ___persistState, PersistentManager.PersistentData data)
+        public static bool Prefix(PersistentManager.PersistentData data, bool ___persistState, ActionableLadder __instance, ref bool ___open)
         {
-            if (data == null && ___persistState)
-            {
-                ___open = false;
-                __instance.Use();
-                return false;
-            }
-            return true;
+            if (data != null || !___persistState) return true;
+
+            ___open = false;
+            __instance.Use(); // Needs to be changed
+            return false;
         }
     }
+
+    // Unlockable doors
 
     // Temporarily allow teleportation
     [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]

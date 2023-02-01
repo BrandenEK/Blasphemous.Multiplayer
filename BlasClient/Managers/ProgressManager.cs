@@ -15,15 +15,17 @@ namespace BlasClient.Managers
         public static bool updatingProgress;
 
         private List<ProgressUpdate> queuedProgressUpdates = new List<ProgressUpdate>();
+        private PersistentObject[] scenePersistentObjects = new PersistentObject[0];
         private static readonly object progressLock = new object();
 
         public void sceneLoaded()
         {
-            foreach (PersistentObject persistence in Object.FindObjectsOfType<PersistentObject>())
+            scenePersistentObjects = Object.FindObjectsOfType<PersistentObject>();
+            foreach (PersistentObject persistence in scenePersistentObjects)
             {
                 if (Main.Multiplayer.checkPersistentObject(persistence.GetPersistenID()))
                 {
-                    // Calling setPersistence() with null data means that the object has been interacted with
+                    // Calling setPersistence() with null data means to play instant animation
                     persistence.SetCurrentPersistentState(null, false, null);
                 }
             }
@@ -110,124 +112,21 @@ namespace BlasClient.Managers
         }
 
         // When receiving a pers. object update, the object is immediately updated
-        // Their setPersState() is also overriden to update them on scene load
         private void updatePersistentObject(string persistentId)
         {
             Main.Multiplayer.addPersistentObject(persistentId);
 
             PersistenceState persistence = StaticObjects.GetPersistenceState(persistentId);
-            if (persistence != null && Core.LevelManager.currentLevel.LevelName == persistence.scene)
+            if (persistence == null || Core.LevelManager.currentLevel.LevelName != persistence.scene)
+                return;
+
+            // Player just received a pers. object in the same scene - find it and set value immediately
+            foreach (PersistentObject persistentObject in scenePersistentObjects)
             {
-                // Player just received a pers. object in the same scene - find it and set value immediately
-                switch (persistence.type)
+                if (persistentObject.GetPersistenID() == persistentId)
                 {
-                    case 0: // Prie Dieu
-                        foreach (PrieDieu priedieu in Object.FindObjectsOfType<PrieDieu>())
-                        {
-                            if (priedieu.GetPersistenID() == persistentId)
-                            {
-                                // Maybe play activation animation
-                                priedieu.Ligthed = true;
-                                break;
-                            }
-                        }
-                        return;
-                    case 1: // Collectible item
-                        foreach (CollectibleItem item in Object.FindObjectsOfType<CollectibleItem>())
-                        {
-                            if (item.GetPersistenID() == persistentId)
-                            {
-                                item.Consumed = true;
-                                item.transform.GetChild(2).gameObject.SetActive(false);
-                                break;
-                            }
-                        }
-                        return;
-                    case 2: // Chest
-                        foreach (Chest chest in Object.FindObjectsOfType<Chest>())
-                        {
-                            if (chest.GetPersistenID() == persistentId)
-                            {
-                                chest.Consumed = true;
-                                chest.transform.GetChild(1).GetComponent<Animator>().SetBool("USED", true);//NOANIMUSED
-                                break;
-                            }
-                        }
-                        return;
-                    case 3: // Cherub
-                        foreach (CherubCaptorPersistentObject cherub in Object.FindObjectsOfType<CherubCaptorPersistentObject>())
-                        {
-                            if (cherub.GetPersistenID() == persistentId)
-                            {
-                                cherub.destroyed = true;
-                                cherub.spawner.DisableCherubSpawn();
-                                cherub.spawner.DestroySpawnedCherub();
-                                break;
-                            }
-                        }
-                        return;
-                    case 4: // Lever
-                        foreach (Lever lever in Object.FindObjectsOfType<Lever>())
-                        {
-                            if (lever.GetPersistenID() == persistentId)
-                            {
-                                lever.Consumed = true;
-                                lever.SetLeverDownInstantly();
-                                break;
-                            }
-                        }
-                        return;
-                    case 5: // Gate
-                        foreach (Gate gate in Object.FindObjectsOfType<Gate>())
-                        {
-                            if (gate.GetPersistenID() == persistentId)
-                            {
-                                gate.Use();
-                                break;
-                            }
-                        }
-                        return;
-                    case 6: // Moving platform
-                        foreach (StraightMovingPlatform platform in Object.FindObjectsOfType<StraightMovingPlatform>())
-                        {
-                            if (platform.GetPersistenID() == persistentId)
-                            {
-                                platform.Use();
-                                break;
-                            }
-                        }
-                        return;
-                    case 7: // Slash trigger
-                        foreach (TriggerReceiver trigger in Object.FindObjectsOfType<TriggerReceiver>())
-                        {
-                            if (trigger.GetPersistenID() == persistentId)
-                            {
-                                trigger.SetCurrentPersistentState(null, false, null);
-                                break;
-                            }
-                        }
-                        return;
-                    case 8: // Breakable wall
-                        foreach (BreakableWall wall in Object.FindObjectsOfType<BreakableWall>())
-                        {
-                            if (wall.GetPersistenID() == persistentId)
-                            {
-                                wall.Use();
-                                break;
-                            }
-                        }
-                        return;
-                    case 9: // Moving ladder
-                        foreach (ActionableLadder ladder in Object.FindObjectsOfType<ActionableLadder>())
-                        {
-                            if (ladder.GetPersistenID() == persistentId)
-                            {
-                                ladder.Use();
-                                break;
-                            }
-                        }
-                        return;
-                        // Unlocked/Opened doors
+                    // Calling getPersistence() with "use" means to play used animation
+                    persistentObject.GetCurrentPersistentState("use", false);
                 }
             }
         }

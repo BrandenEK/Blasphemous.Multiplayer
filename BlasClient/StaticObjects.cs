@@ -493,7 +493,7 @@
     {
         public string id;
         public string scene;
-        public byte type;
+        public byte type; // Might not need to store type anymore
 
         public PersistenceState(string id, string scene, byte type)
         {
