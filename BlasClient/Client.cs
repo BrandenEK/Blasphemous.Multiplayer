@@ -11,6 +11,8 @@ namespace BlasClient
         public ConnectionStatus connectionStatus { get; private set; }
         private SimpleTcpClient client;
 
+        private List<byte> queuedMessages = new List<byte>();
+
         public Client()
         {
             // Start out as disconnected
@@ -33,36 +35,55 @@ namespace BlasClient
             {
                 return false;
             }
-            //catch (TimeoutException)
-            //{
-            //    Output.error($"Client timed out attempting to connect to the server at {IpAddress}:{port}");
-            //    Program.EndProgram();
-            //}
 
             sendPlayerIntro(playerName);
             return true;
         }
 
-        private void Send(byte[] data, byte dataType)
+        // Only position, animation, & directions updates are queued because they are sent in update
+        public void SendQueue()
         {
-            if (data != null && data.Length > 0 && (connectionStatus == ConnectionStatus.Attempting || connectionStatus == ConnectionStatus.Connected))
-            {
-                List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
-                list.Add(dataType);
-                list.AddRange(data);
+            if (queuedMessages.Count == 0 || connectionStatus == ConnectionStatus.Disconnnected)
+                return;
 
-                try
-                {
-                    //Main.UnityLog($"Sending {list.Count} bytes");
-                    client.Write(list.ToArray());
-                }
-                catch (System.IO.IOException)
-                {
-                    Main.UnityLog("Error: Disconnected from server");
-                    connectionStatus = ConnectionStatus.Disconnnected;
-                    client = null;
-                    Main.Multiplayer.onDisconnect();
-                }
+            Send(queuedMessages.ToArray());
+            queuedMessages.Clear();
+        }
+
+        // Calculate the message and either immediately send it or queue it until the end of the frame
+        private void Send(byte[] data, byte dataType, bool queueMessage)
+        {
+            if (data == null || data.Length == 0 || connectionStatus == ConnectionStatus.Disconnnected)
+                return;
+
+            List<byte> bytes = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
+            bytes.Add(dataType);
+            bytes.AddRange(data);
+
+            if (queueMessage)
+            {
+                queuedMessages.AddRange(bytes.ToArray());
+            }
+            else
+            {
+                Send(bytes.ToArray());
+            }
+        }
+
+        // Actually send the byte array to the server
+        private void Send(byte[] data)
+        {
+            try
+            {
+                //Main.UnityLog($"Sending {data.length} bytes");
+                client.Write(data);
+            }
+            catch (System.IO.IOException)
+            {
+                Main.UnityLog("Error: Disconnected from server");
+                connectionStatus = ConnectionStatus.Disconnnected;
+                client = null;
+                Main.Multiplayer.onDisconnect();
             }
         }
 
@@ -107,6 +128,8 @@ namespace BlasClient
                         receivePlayerIntro(data); break;
                     case 7:
                         receiveNotification(data); break;
+                    case 8:
+                        receivePlayerProgress(data); break;
                     default:
                         Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
@@ -129,44 +152,53 @@ namespace BlasClient
             List<byte> bytes = new List<byte>();
             bytes.AddRange(BitConverter.GetBytes(xPos));
             bytes.AddRange(BitConverter.GetBytes(yPos));
-
-            Send(bytes.ToArray(), 0);
+            Send(bytes.ToArray(), 0, true);
         }
 
         // Send this player's updated animation
         public void sendPlayerAnimation(byte animation)
         {
-            Send(new byte[] { animation }, 1);
+            Send(new byte[] { animation }, 1, true);
         }
 
         // Send that this player entered a scene
         public void sendPlayerEnterScene(string scene)
         {
-            Send(Encoding.UTF8.GetBytes(scene), 2);
+            Send(Encoding.UTF8.GetBytes(scene), 2, false);
         }
 
         // Send that this player left a scene
         public void sendPlayerLeaveScene()
         {
-            Send(new byte[] { 0 }, 3);
+            Send(new byte[] { 0 }, 3, false);
         }
 
         // Send this player's updated direction
         public void sendPlayerDirection(bool direction)
         {
-            Send(BitConverter.GetBytes(direction), 4);
+            Send(BitConverter.GetBytes(direction), 4, true);
         }
 
         // Send this player's updated skin
         public void sendPlayerSkin(string skin)
         {
-            Send(Encoding.UTF8.GetBytes(skin), 5);
+            Send(Encoding.UTF8.GetBytes(skin), 5, false);
         }
 
         // Send this player's introductory data
         public void sendPlayerIntro(string name)
         {
-            Send(Encoding.UTF8.GetBytes(name), 6);
+            Send(Encoding.UTF8.GetBytes(name), 6, false);
+        }
+
+        // Send a new item/flag/stat/etc...
+        public void sendPlayerProgress(byte type, byte value, string id)
+        {
+            List<byte> bytes = new List<byte>();
+            bytes.Add(type);
+            bytes.Add(value);
+            bytes.AddRange(Encoding.UTF8.GetBytes(id));
+            Send(bytes.ToArray(), 8, false);
         }
 
         #endregion Send functions
@@ -255,6 +287,18 @@ namespace BlasClient
             string message = Encoding.UTF8.GetString(data);
 
             Main.Multiplayer.displayNotification(message);
+        }
+
+        // Received an item/flag/stat/etc..
+        private void receivePlayerProgress(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            byte type = data[startIdx];
+            byte value = data[startIdx + 1];
+            string id = Encoding.UTF8.GetString(data, startIdx + 2, data.Length - startIdx - 2);
+
+            // Give new progress update
+            Main.Multiplayer.gameProgressReceived(playerName, id, type, value);
         }
 
         #endregion Receive functions

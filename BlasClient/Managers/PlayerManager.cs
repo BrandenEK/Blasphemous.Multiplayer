@@ -3,23 +3,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
-using Gameplay.GameControllers.Effects.Player.Recolor;
+using Tools.Level.Interactables;
+using BlasClient.Structures;
 
-namespace BlasClient
+namespace BlasClient.Managers
 {
-    public class PlayerControl
+    public class PlayerManager
     {
         private List<GameObject> players = new List<GameObject>();
         private List<Text> nametags = new List<Text>();
 
         private Transform canvas; // Optimize to not have to find these every scene change
         private GameObject textPrefab;
+        private RuntimeAnimatorController playerController;
 
-        // Stores the skin of each player and is updated when receiving a skin change from the server
+        // Stores the status of each player and is updated when receiving a skin change from the server
         // A player is added to this list when first sending their skin upon connecting
         // This is only temporary until all player data is probably stored in a dict on the client
         // Once thats doen will also remove from the list when a player disconnects
-        private Dictionary<string, SkinStatus> playerSkins = new Dictionary<string, SkinStatus>();
+        private Dictionary<string, PlayerStatus> connectedPlayers = new Dictionary<string, PlayerStatus>();
 
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
@@ -44,6 +46,8 @@ namespace BlasClient
             {
                 if (c.name == "Game UI") { canvas = c.transform; break; }
             }
+            // Find animator controller
+            if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Create main player's nametag
             createNameTag(Main.Multiplayer.playerName);
@@ -80,19 +84,19 @@ namespace BlasClient
             }
 
             // Check status of player skins and potentially update the textures
-            foreach (string name in playerSkins.Keys)
+            foreach (string name in connectedPlayers.Keys)
             {
-                SkinStatus player = playerSkins[name];
-                if (player.updateStatus == 2)
+                SkinStatus playerSkin = connectedPlayers[name].skin;
+                if (playerSkin.updateStatus == 2)
                 {
                     // Set that one update cycle has passed
-                    player.updateStatus = 1;
+                    playerSkin.updateStatus = 1;
                 }
-                else if (player.updateStatus == 1)
+                else if (playerSkin.updateStatus == 1)
                 {
                     // Set the player texture
-                    setSkinTexture(name, player.skinName);
-                    player.updateStatus = 0;
+                    setSkinTexture(name, playerSkin.skinName);
+                    playerSkin.updateStatus = 0;
                 }
             }
 
@@ -129,7 +133,7 @@ namespace BlasClient
         public void addPlayer(string name)
         {
             // Create base object
-            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator));  // Change to create prefab at initialization, and instantiate a new instance
+            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
             players.Add(player);
 
             // Set up sprite rendering
@@ -138,9 +142,9 @@ namespace BlasClient
             render.sortingLayerName = "Player";
 
             // Hide player object until skin texture is set - must be delayed
-            if (playerSkins.ContainsKey(name))
+            if (connectedPlayers.ContainsKey(name))
             {
-                playerSkins[name].updateStatus = 2;
+                connectedPlayers[name].skin.updateStatus = 2;
                 render.enabled = false;
             }
             else
@@ -150,7 +154,7 @@ namespace BlasClient
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
-            anim.runtimeAnimatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+            anim.runtimeAnimatorController = playerController;
 
             // Set up name tag
             createNameTag(name);
@@ -202,19 +206,39 @@ namespace BlasClient
             GameObject player = getPlayerObject(name);
             if (player != null)
             {
-                // Set a few always needed parameters
                 Animator anim = player.GetComponent<Animator>();
-                anim.SetBool("IS_CROUCH", false);
-                //anim.SetBool("IS_DEAD") might need one for vertical attack
-                // If anim is ladder climbing, set speed to 0
-
-                // Set required parameters to keep player onject in this animation
-                for (int i = 0; i < PlayerAnimations.animations[animation].parameterNames.Length; i++)
+                if (animation < 240)
                 {
-                    anim.SetBool(PlayerAnimations.animations[animation].parameterNames[i], PlayerAnimations.animations[animation].parameterValues[i]);
+                    // Regular animation
+                    if (connectedPlayers[name].specialAnimation)
+                    {
+                        // Change back to regular animations
+                        anim.runtimeAnimatorController = playerController;
+                        connectedPlayers[name].specialAnimation = false;
+                    }
+                    anim.SetBool("IS_CROUCH", false);
+                    //anim.SetBool("IS_DEAD") might need one for vertical attack
+                    // If anim is ladder climbing, set speed to 0
+
+                    // Set required parameters to keep player onject in this animation
+                    for (int i = 0; i < StaticObjects.animations[animation].parameterNames.Length; i++)
+                    {
+                        anim.SetBool(StaticObjects.animations[animation].parameterNames[i], StaticObjects.animations[animation].parameterValues[i]);
+                    }
+                    anim.Play(StaticObjects.animations[animation].name);
+                    //Main.UnityLog("Updating player object animation for " + name);
                 }
-                anim.Play(PlayerAnimations.animations[animation].name);
-                //Main.UnityLog("Updating player object animation for " + name);
+                else
+                {
+                    // Special animation
+                    if (playSpecialAnimation(anim, animation))
+                    {
+                        connectedPlayers[name].specialAnimation = true;
+                        Main.UnityLog("Playing special animation for " + name);
+                    }
+                    else
+                        Main.UnityLog("Failed to play special animation for " + name);
+                }
             }
             else
             {
@@ -242,10 +266,10 @@ namespace BlasClient
         // Should maybe be locked, but shouldn't occur frequently enough for this
         public void updatePlayerSkin(string name, string skin)
         {
-            if (playerSkins.ContainsKey(name))
-                playerSkins[name].skinName = skin;
+            if (connectedPlayers.ContainsKey(name))
+                connectedPlayers[name].skin.skinName = skin;
             else
-                playerSkins.Add(name, new SkinStatus(skin));
+                connectedPlayers.Add(name, new PlayerStatus(skin));
             Main.UnityLog("Updating player skin for " + name);
         }
 
@@ -292,6 +316,67 @@ namespace BlasClient
 
             Main.UnityLog("Setting skin texture for " + name);
             render.material.SetTexture("_PaletteTex", palette.texture);
+        }
+
+        // Gets the animator controller of an interactable object in the scene & plays special animation
+        private bool playSpecialAnimation(Animator anim, byte type)
+        {
+            if (type == 240 || type == 241)
+            {
+                // Collectible item
+                CollectibleItem item = Object.FindObjectOfType<CollectibleItem>();
+                if (item == null)
+                    return false;
+
+                anim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
+                anim.Play(type == 240 ? "Floor Collection" : "Halfheight Collection");
+            }
+            else if (type == 242)
+            {
+                // Chest
+                Chest chest = Object.FindObjectOfType<Chest>();
+                if (chest == null)
+                    return false;
+
+                anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger("USED");
+            }
+            else if (type == 243 || type == 244)
+            {
+                // Prie Dieu
+                PrieDieu priedieu = Object.FindObjectOfType<PrieDieu>();
+                if (priedieu == null)
+                    return false;
+
+                anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger(type == 243 ? "ACTIVATION" : "KNEE_START");
+            }
+            else if (type == 245)
+            {
+                // Lever
+                Lever lever = Object.FindObjectOfType<Lever>();
+                if (lever == null)
+                    return false;
+
+                anim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger("DOWN");
+            }
+            else if (type == 246)
+            {
+                // Altar
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Finishes playing a special animation and returns to idle
+        public void finishSpecialAnimation(string playerName)
+        {
+            updatePlayerAnimation(playerName, 0);
         }
 
         // Finds a specified player in the scene

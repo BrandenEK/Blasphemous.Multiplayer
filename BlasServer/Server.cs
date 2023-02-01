@@ -10,7 +10,6 @@ namespace BlasServer
         private SimpleTcpServer server;
 
         private Dictionary<string, PlayerStatus> connectedPlayers;
-        private string currentIp;
 
         public bool Start()
         {
@@ -21,7 +20,7 @@ namespace BlasServer
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
                 server.Start(25565);
-                server.DisableDelay();
+                server.DisableDelay(); // Does this even work ??
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -56,7 +55,6 @@ namespace BlasServer
         private void Receive(object sender, DataReceivedEventArgs e)
         {
             //Core.displayMessage("Bytes received: " + e.data.Length);
-            currentIp = e.ip;
 
             int startIdx = 0;
             while (startIdx < e.data.Length - 3)
@@ -77,19 +75,21 @@ namespace BlasServer
                 switch (type)
                 {
                     case 0:
-                        receivePlayerPostition(data); break;
+                        receivePlayerPostition(e.ip, data); break;
                     case 1:
-                        receivePlayerAnimation(data); break;
+                        receivePlayerAnimation(e.ip, data); break;
                     case 2:
-                        receivePlayerEnterScene(data); break;
+                        receivePlayerEnterScene(e.ip, data); break;
                     case 3:
-                        receivePlayerLeaveScene(data); break;
+                        receivePlayerLeaveScene(e.ip, data); break;
                     case 4:
-                        receivePlayerDirection(data); break;
+                        receivePlayerDirection(e.ip, data); break;
                     case 5:
-                        receivePlayerSkin(data); break;
+                        receivePlayerSkin(e.ip, data); break;
                     case 6:
-                        receivePlayerIntro(data); break;
+                        receivePlayerIntro(e.ip, data); break;
+                    case 8:
+                        receivePlayerProgress(e.ip, data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -99,13 +99,11 @@ namespace BlasServer
         private void clientConnected(object sender, ClientConnectionEventArgs e)
         {
             Core.displayMessage("Client connected at " + e.ip);
-            currentIp = e.ip;
         }
 
         private void clientDisconnected(object sender, ClientConnectionEventArgs e)
         {
             Core.displayMessage("Client disconnected at " + e.ip);
-            currentIp = e.ip;
 
             // Make sure this client was actually connected, not just rejected from server
             if (!connectedPlayers.ContainsKey(e.ip))
@@ -114,20 +112,20 @@ namespace BlasServer
             // For now, just send playerLeft packet to remove the player from the scene
             // Later will need a special packet to also remove the player from the client's list
             // Client's skin list will currently still keep this player in it
-            PlayerStatus player = getCurrentPlayer();
-            sendPlayerLeaveScene(player);
-            sendNotification(player.name + " has left the server!", false);
+            PlayerStatus current = getCurrentPlayer(e.ip);
+            sendPlayerLeaveScene(e.ip);
+            sendNotification(e.ip, current.name + " has left the server!", false);
 
             // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
         }
 
-        private PlayerStatus getCurrentPlayer()
+        private PlayerStatus getCurrentPlayer(string ip)
         {
-            if (connectedPlayers.ContainsKey(currentIp))
-                return connectedPlayers[currentIp];
+            if (connectedPlayers.ContainsKey(ip))
+                return connectedPlayers[ip];
 
-            Core.displayError("Data for " + currentIp + " has not been created yet!");
+            Core.displayError("Data for " + ip + " has not been created yet!");
             return new PlayerStatus("");
         }
 
@@ -178,96 +176,102 @@ namespace BlasServer
         #region Send functions
 
         // Send a player's updated position
-        private void sendPlayerPostition(PlayerStatus player)
+        private void sendPlayerPostition(string playerIp)
         {
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated position
-                    Send(ip, getPositionPacket(player), 0);
+                    Send(ip, getPositionPacket(current), 0);
                 }
             }
         }
 
         // Send a player's updated animation
-        private void sendPlayerAnimation(PlayerStatus player)
+        private void sendPlayerAnimation(string playerIp)
         {
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated animation
-                    Send(ip, getAnimationPacket(player), 1);
+                    Send(ip, getAnimationPacket(current), 1);
                 }
             }
         }
 
         // Send that a player entered a scene
-        private void sendPlayerEnterScene(PlayerStatus player)
+        private void sendPlayerEnterScene(string playerIp) // Optimize these send functions to combine them together
         {
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send that this player has entered their scene & this player's position/animation/direction
-                    Send(ip, Encoding.UTF8.GetBytes(player.name), 2);
-                    Send(ip, getPositionPacket(player), 0);
-                    Send(ip, getAnimationPacket(player), 1);
-                    Send(ip, getDirectionPacket(player), 4);
+                    Send(ip, Encoding.UTF8.GetBytes(current.name), 2);
+                    Send(ip, getPositionPacket(current), 0);
+                    Send(ip, getAnimationPacket(current), 1);
+                    Send(ip, getDirectionPacket(current), 4);
 
                     // Send that the other player is in this player's scene & the other player's position/animation/direction
-                    Send(currentIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                    Send(currentIp, getPositionPacket(connectedPlayers[ip]), 0);
-                    Send(currentIp, getAnimationPacket(connectedPlayers[ip]), 1);
-                    Send(currentIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                    Send(playerIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
+                    Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
+                    Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
+                    Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
                 }
             }
         }
 
         // Send that a player left a scene
-        private void sendPlayerLeaveScene(PlayerStatus player)
+        private void sendPlayerLeaveScene(string playerIp)
         {
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send that this player has left their scene
-                    Send(ip, Encoding.UTF8.GetBytes(player.name), 3);
+                    Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
                 }
             }
         }
 
         // Send a player's updated direction
-        private void sendPlayerDirection(PlayerStatus player)
+        private void sendPlayerDirection(string playerIp)
         {
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip && player.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated direction
-                    Send(ip, getDirectionPacket(player), 4);
+                    Send(ip, getDirectionPacket(current), 4);
                 }
             }
         }
 
         // Send a player's updated skin
-        private void sendPlayerSkin(PlayerStatus player)
+        private void sendPlayerSkin(string playerIp)
         {
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip)
+                if (playerIp != ip)
                 {
                     // Send this player's updated skin
-                    Send(ip, getSkinPacket(player), 5);
+                    Send(ip, getSkinPacket(current), 5);
                 }
             }
         }
 
         // Send a player's intro response
-        private void sendPlayerIntro(byte response)
+        private void sendPlayerIntro(string playerIp, byte response)
         {
-            Send(currentIp, getIntroPacket(response), 6);
+            Send(playerIp, getIntroPacket(response), 6);
 
             // Only send rest of data if successful connection
             if (response > 0)
@@ -275,29 +279,44 @@ namespace BlasServer
 
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip)
+                if (playerIp != ip)
                 {
-                    Send(currentIp, getSkinPacket(connectedPlayers[ip]), 5);
+                    Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
                 }
             }
         }
 
         // Send a notification to current player or all other players
-        private void sendNotification(string message, bool onlyCurrent)
+        private void sendNotification(string playerIp, string message, bool onlyCurrent) // Remove notifications from server side
         {
             if (onlyCurrent)
             {
                 // Send message to only current ip
-                Send(currentIp, getNotificationPacket(message), 7);
+                Send(playerIp, getNotificationPacket(message), 7);
                 return;
             }
 
             // Send message to all other connected ips
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (currentIp != ip)
+                if (playerIp != ip)
                 {
                     Send(ip, getNotificationPacket(message), 7);
+                }
+            }
+        }
+
+        // Send a player progress update
+        private void sendPlayerProgress(string playerIp, byte[] data) // Taking in a byte[] is probably only temporary
+        {
+            PlayerStatus current = getCurrentPlayer(playerIp);
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (playerIp != ip)
+                {
+                    List<byte> bytes = addPlayerNameToData(current.name);
+                    bytes.AddRange(data);
+                    Send(ip, bytes.ToArray(), 8);
                 }
             }
         }
@@ -307,62 +326,62 @@ namespace BlasServer
         #region Receive functions
 
         // Received a player's updated position
-        private void receivePlayerPostition(byte[] data)
+        private void receivePlayerPostition(string playerIp, byte[] data)
         {
-            PlayerStatus current = getCurrentPlayer();
+            PlayerStatus current = getCurrentPlayer(playerIp);
             current.xPos = BitConverter.ToSingle(data, 0);
             current.yPos = BitConverter.ToSingle(data, 4);
 
-            sendPlayerPostition(current);
+            sendPlayerPostition(playerIp);
         }
 
         // Recieved a player's updated animation
-        private void receivePlayerAnimation(byte[] data)
+        private void receivePlayerAnimation(string playerIp, byte[] data)
         {
-            PlayerStatus current = getCurrentPlayer();
+            PlayerStatus current = getCurrentPlayer(playerIp);
             current.animation = data[0];
 
-            sendPlayerAnimation(current);
+            sendPlayerAnimation(playerIp);
         }
 
         // Received that a player entered a scene
-        private void receivePlayerEnterScene(byte[] data)
+        private void receivePlayerEnterScene(string playerIp, byte[] data)
         {
-            PlayerStatus current = getCurrentPlayer();
+            PlayerStatus current = getCurrentPlayer(playerIp);
             current.sceneName = Encoding.UTF8.GetString(data);
 
-            sendPlayerEnterScene(current);
+            sendPlayerEnterScene(playerIp);
         }
 
         // Received that a player left a scene
-        private void receivePlayerLeaveScene(byte[] data)
+        private void receivePlayerLeaveScene(string playerIp, byte[] data)
         {
-            PlayerStatus current = getCurrentPlayer();
+            PlayerStatus current = getCurrentPlayer(playerIp);
 
-            sendPlayerLeaveScene(current);
+            sendPlayerLeaveScene(playerIp);
             current.sceneName = "";
         }
 
         // Recieved a player's updated direction
-        private void receivePlayerDirection(byte[] data)
+        private void receivePlayerDirection(string playerIp, byte[] data)
         {
-            PlayerStatus current = getCurrentPlayer();
+            PlayerStatus current = getCurrentPlayer(playerIp);
             current.facingDirection = BitConverter.ToBoolean(data);
 
-            sendPlayerDirection(current);
+            sendPlayerDirection(playerIp);
         }
 
         // Received a player's updated skin
-        private void receivePlayerSkin(byte[] data)
+        private void receivePlayerSkin(string playerIp, byte[] data)
         {
-            PlayerStatus current = getCurrentPlayer();
+            PlayerStatus current = getCurrentPlayer(playerIp);
             current.skin = Encoding.UTF8.GetString(data);
 
-            sendPlayerSkin(current);
+            sendPlayerSkin(playerIp);
         }
 
         // Received a player's introductory data
-        private void receivePlayerIntro(byte[] data)
+        private void receivePlayerIntro(string playerIp, byte[] data)
         {
             // Ensure there are no duplicate names
             string playerName = Encoding.UTF8.GetString(data);
@@ -371,7 +390,7 @@ namespace BlasServer
                 if (player.name == playerName)
                 {
                     Core.displayMessage("Player connection rejected: Duplicate name");
-                    sendPlayerIntro(1);
+                    sendPlayerIntro(playerIp, 1);
                     return;
                 }
             }
@@ -380,7 +399,7 @@ namespace BlasServer
             if (connectedPlayers.Count >= Core.maxPlayers)
             {
                 Core.displayMessage("Player connection rejected: Player limit reached");
-                sendPlayerIntro(2);
+                sendPlayerIntro(playerIp, 2);
                 return;
             }
 
@@ -389,11 +408,20 @@ namespace BlasServer
 
             // Add new connected player
             Core.displayMessage("Player connection accepted");
-            sendNotification(playerName + " has joined the server!", false);
+            sendNotification(playerIp, playerName + " has joined the server!", false);
             PlayerStatus newPlayer = new PlayerStatus(playerName);
-            connectedPlayers.Add(currentIp, newPlayer);
-            sendPlayerIntro(0);
-        } 
+            connectedPlayers.Add(playerIp, newPlayer);
+            sendPlayerIntro(playerIp, 0);
+        }
+
+        // Received a player progress update
+        private void receivePlayerProgress(string playerIp, byte[] data)
+        {
+            // Get the progress item from the data & add this to the game list
+            // Send the data back to other players
+            PlayerStatus current = getCurrentPlayer(playerIp);
+            sendPlayerProgress(playerIp, data);
+        }
 
         #endregion Receive functions
     }
