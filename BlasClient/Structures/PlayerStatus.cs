@@ -11,10 +11,10 @@ namespace BlasClient.Structures
         public bool specialAnimation;
         public SkinStatus skin;
 
-        public PlayerStatus(string skinName)
+        public PlayerStatus()
         {
             currentScene = "";
-            skin = new SkinStatus(skinName);
+            skin = new SkinStatus("PENITENT_DEFAULT");
         }
     }
 }
