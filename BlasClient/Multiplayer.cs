@@ -277,17 +277,24 @@ namespace BlasClient
         }
 
         // Received enterScene data from server
-        public void playerEnteredScene(string playerName)
+        public void playerEnteredScene(string playerName, string scene)
         {
-            if (inLevel)
+            PlayerStatus playerStatus = getPlayerStatus(playerName);
+            playerStatus.currentScene = scene;
+
+            if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
                 playerManager.addPlayer(playerName);
         }
 
         // Received leftScene data from server
         public void playerLeftScene(string playerName)
         {
-            if (inLevel)
+            PlayerStatus playerStatus = getPlayerStatus(playerName);
+
+            if (inLevel && Core.LevelManager.currentLevel.LevelName == playerStatus.currentScene)
                 playerManager.removePlayer(playerName);
+
+            playerStatus.currentScene = "";
         }
 
         // Received introResponse data from server
@@ -323,18 +330,15 @@ namespace BlasClient
             if (connected)
             {
                 // Add this player to the list of connected players
-                PlayerStatus newPlayer = new PlayerStatus(); // Skin & current scene are currently not set
+                PlayerStatus newPlayer = new PlayerStatus();
                 connectedPlayers.Add(playerName, newPlayer);
-
-                // Maybe call enter scene ?
             }
             else
             {
                 // Remove this player from the list of connected players
+                playerLeftScene(playerName);
                 if (connectedPlayers.ContainsKey(playerName))
                     connectedPlayers.Remove(playerName);
-
-                // Maybe call leave scene ?
             }
             displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }

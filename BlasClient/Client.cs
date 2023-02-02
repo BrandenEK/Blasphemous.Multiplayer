@@ -229,8 +229,11 @@ namespace BlasClient
         // Received that a player entered a scene
         private void receivePlayerEnterScene(byte[] data)
         {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            string scene = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
+
             // Create the new player object
-            Main.Multiplayer.playerEnteredScene(Encoding.UTF8.GetString(data));
+            Main.Multiplayer.playerEnteredScene(playerName, scene);
         }
 
         // Received that a player left a scene

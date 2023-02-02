@@ -150,6 +150,12 @@ namespace BlasServer
             bytes.AddRange(Encoding.UTF8.GetBytes(player.skin));
             return bytes.ToArray();
         }
+        private byte[] getScenePacket(PlayerStatus player)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.AddRange(Encoding.UTF8.GetBytes(player.sceneName));
+            return bytes.ToArray();
+        }
         private byte[] getIntroPacket(byte response)
         {
             return new byte[] { response };
@@ -207,19 +213,22 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip)
                 {
-                    // Send that this player has entered their scene & this player's position/animation/direction
-                    Send(ip, Encoding.UTF8.GetBytes(current.name), 2);
-                    Send(ip, getPositionPacket(current), 0);
-                    Send(ip, getAnimationPacket(current), 1);
-                    Send(ip, getDirectionPacket(current), 4);
+                    // Send that this player has entered a new scene
+                    Send(ip, getScenePacket(current), 2);
 
-                    // Send that the other player is in this player's scene & the other player's position/animation/direction
-                    Send(playerIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                    Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
-                    Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
-                    Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                    if (current.isInSameScene(connectedPlayers[ip]))
+                    {
+                        // If in same scene, also send position data to each one
+                        Send(ip, getPositionPacket(current), 0);
+                        Send(ip, getAnimationPacket(current), 1);
+                        Send(ip, getDirectionPacket(current), 4);
+
+                        Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
+                        Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
+                        Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                    }
                 }
             }
         }
@@ -230,9 +239,9 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip)
                 {
-                    // Send that this player has left their scene
+                    // Send that this player has left their old scene
                     Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
                 }
             }

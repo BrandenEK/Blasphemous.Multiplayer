@@ -30,6 +30,13 @@ namespace BlasClient.Managers
         {
             // Remove all existing player objects and nametags
             destroyPlayers();
+            
+            // Create any players that are already in this scene
+            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+            {
+                if (Main.Multiplayer.connectedPlayers[playerName].currentScene == scene)
+                    addPlayer(playerName);
+            }
 
             // Find textPrefab
             foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
