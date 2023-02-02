@@ -109,10 +109,7 @@ namespace BlasServer
             if (!connectedPlayers.ContainsKey(e.ip))
                 return;
 
-            // For now, just send playerLeft packet to remove the player from the scene
-            // Later will need a special packet to also remove the player from the client's list
-            // Client's skin list will currently still keep this player in it
-            PlayerStatus current = getCurrentPlayer(e.ip);
+            // Send that this player has disconnected
             sendPlayerConnection(e.ip, false);
 
             // Remove this player from connected list
@@ -283,6 +280,7 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
+                    // Maybe send oter player's teams also
                 }
             }
         }

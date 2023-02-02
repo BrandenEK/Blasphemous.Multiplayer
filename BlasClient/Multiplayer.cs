@@ -67,8 +67,18 @@ namespace BlasClient
         public void onDisconnect()
         {
             displayNotification("Disconnected from server!");
+            connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
+        }
+
+        public PlayerStatus getPlayerStatus(string playerName)
+        {
+            if (connectedPlayers.ContainsKey(playerName))
+                return connectedPlayers[playerName];
+
+            Main.UnityLog("Error: Player is not in the server: " + playerName);
+            return new PlayerStatus();
         }
 
         private void onLevelLoaded(Level oldLevel, Level newLevel)
@@ -262,8 +272,8 @@ namespace BlasClient
         {
             // As soon as received, will update skin - This isn't locked
             Main.UnityLog("Updating player skin for " + playerName);
-            if (connectedPlayers.ContainsKey(playerName))
-                connectedPlayers[playerName].skin.skinName = skin;
+            PlayerStatus player = getPlayerStatus(playerName);
+            player.skin.skinName = skin;
         }
 
         // Received enterScene data from server
@@ -286,8 +296,9 @@ namespace BlasClient
             // Connected succesfully
             if (response == 0)
             {
-                // Send skin
+                // Send all initial data
                 client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+                // Send team (Maybe send this with intro data)
 
                 // If already in game, send enter scene data
                 if (inLevel)

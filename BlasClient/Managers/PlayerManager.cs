@@ -125,7 +125,7 @@ namespace BlasClient.Managers
         }
 
         // When a player enters a scene, create a new player object
-        public void addPlayer(string name)
+        public void addPlayer(string name) // Maybe take in playerstatus instead
         {
             // Create base object
             GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
@@ -137,15 +137,8 @@ namespace BlasClient.Managers
             render.sortingLayerName = "Player";
 
             // Hide player object until skin texture is set - must be delayed
-            if (Main.Multiplayer.connectedPlayers.ContainsKey(name))
-            {
-                Main.Multiplayer.connectedPlayers[name].skin.updateStatus = 2;
-                render.enabled = false;
-            }
-            else
-            {
-                Main.UnityLog("Error: Couldn't find skin for " + name);
-            }
+            Main.Multiplayer.getPlayerStatus(name).skin.updateStatus = 2;
+            render.enabled = false;
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
@@ -199,17 +192,18 @@ namespace BlasClient.Managers
         private void updatePlayerAnimation(string name, byte animation)
         {
             GameObject player = getPlayerObject(name);
+            PlayerStatus playerStatus = Main.Multiplayer.getPlayerStatus(name);
             if (player != null)
             {
                 Animator anim = player.GetComponent<Animator>();
                 if (animation < 240)
                 {
                     // Regular animation
-                    if (Main.Multiplayer.connectedPlayers[name].specialAnimation)
+                    if (playerStatus.specialAnimation)
                     {
                         // Change back to regular animations
                         anim.runtimeAnimatorController = playerController;
-                        Main.Multiplayer.connectedPlayers[name].specialAnimation = false;
+                        playerStatus.specialAnimation = false;
                     }
                     anim.SetBool("IS_CROUCH", false);
                     //anim.SetBool("IS_DEAD") might need one for vertical attack
@@ -228,7 +222,7 @@ namespace BlasClient.Managers
                     // Special animation
                     if (playSpecialAnimation(anim, animation))
                     {
-                        Main.Multiplayer.connectedPlayers[name].specialAnimation = true;
+                        playerStatus.specialAnimation = true;
                         Main.UnityLog("Playing special animation for " + name);
                     }
                     else
