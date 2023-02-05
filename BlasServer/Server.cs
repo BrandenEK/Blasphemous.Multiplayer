@@ -291,6 +291,10 @@ namespace BlasServer
                     // Send all other connected players and their important data
                     Send(playerIp, getConnectionPacket(connectedPlayers[ip], true), 7);
                     Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
+                    if (connectedPlayers[ip].sceneName != "")
+                    {
+                        Send(playerIp, getScenePacket(connectedPlayers[ip]), 2);
+                    }
                     // Maybe send oter player's teams also
                 }
             }
@@ -424,6 +428,46 @@ namespace BlasServer
             // Get the progress item from the data & add this to the game list
             // Send the data back to other players
             PlayerStatus current = getCurrentPlayer(playerIp);
+            byte progressType = data[0];
+            byte progressValue = data[1];
+            string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
+
+            if (progressType >= 0 && progressType <= 5)
+            {
+                // Item
+                Core.displayCustom($"Received new item from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType >= 6 && progressType <= 12)
+            {
+                // Stat
+                Core.displayCustom($"Received new stat upgrade from {current.name}", ConsoleColor.Green);
+            }
+            else if (progressType == 13)
+            {
+                // Skill
+                Core.displayCustom($"Received new skill from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 14)
+            {
+                // Flag
+                Core.displayCustom($"Received new flag from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 15)
+            {
+                // Pers. object
+                Core.displayCustom($"Received new pers. object from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 16)
+            {
+                // Teleport
+                Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 17)
+            {
+                // Map cell
+                Core.displayCustom($"Received new map cell from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+
             sendPlayerProgress(playerIp, data);
         }
 
