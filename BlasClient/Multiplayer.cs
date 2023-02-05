@@ -115,16 +115,24 @@ namespace BlasClient
             playerManager.unloadScene();
         }
 
+        private void testPlayers()
+        {
+            Main.UnityLog("Displaying players:");
+            foreach (string player in connectedPlayers.Keys)
+            {
+                Main.UnityLog($"{player} ({connectedPlayers[player].skin.skinName}) is in scene '{connectedPlayers[player].currentScene}'");
+            }
+        }
+
         public void update()
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                //playerControl.addPlayer("Player 2");
-                //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position);
+                testPlayers();
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                //playerControl.queuePosition("Player 2", Core.Logic.Penitent.transform.position + Vector3.right * 3);
+                
             }
 
             if (inLevel && connectedToServer && Core.Logic.Penitent != null)
@@ -317,6 +325,7 @@ namespace BlasClient
                 if (inLevel)
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
 
+                testPlayers();
                 return;
             }
 
@@ -333,11 +342,13 @@ namespace BlasClient
         // Received player connection status from server
         public void playerConnectionReceived(string playerName, bool connected)
         {
+            testPlayers();
             if (connected)
             {
                 // Add this player to the list of connected players
                 PlayerStatus newPlayer = new PlayerStatus();
                 connectedPlayers.Add(playerName, newPlayer);
+                testPlayers();
             }
             else
             {
@@ -345,6 +356,7 @@ namespace BlasClient
                 playerLeftScene(playerName);
                 if (connectedPlayers.ContainsKey(playerName))
                     connectedPlayers.Remove(playerName);
+                testPlayers();
             }
             displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }

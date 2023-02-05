@@ -235,6 +235,7 @@ namespace BlasClient.Patches
             if (data != null)
             {
                 // This method is being called normally - only execute if object hasn't been interacted with
+                Main.UnityLog(Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID()) ? "Skipping normal persistence load" : " Executing normal persistence load");
                 return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
             }
             Main.UnityLog("Executing custom persistence load");

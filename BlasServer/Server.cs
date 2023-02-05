@@ -288,6 +288,8 @@ namespace BlasServer
             {
                 if (playerIp != ip)
                 {
+                    // Send all other connected players and their important data
+                    Send(playerIp, getConnectionPacket(connectedPlayers[ip], true), 7);
                     Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
                     // Maybe send oter player's teams also
                 }
