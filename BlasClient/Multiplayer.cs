@@ -28,7 +28,7 @@ namespace BlasClient
         private float totalTimeBeforeSendAnimation = 0.5f;
         private float currentTimeBeforeSendAnimation = 0;
 
-        private bool connectedToServer
+        public bool connectedToServer
         {
             get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
@@ -54,7 +54,7 @@ namespace BlasClient
             LevelManager.OnBeforeLevelLoad -= onLevelUnloaded;
         }
 
-        public string tryConnect(string ip, string name, string password)
+        public string connectCommand(string ip, string name, string password)
         {
             playerName = name;
             bool result = client.Connect(name, ip);
@@ -62,6 +62,12 @@ namespace BlasClient
                 displayNotification("Connected to server!");
 
             return result ? $"Successfully connected to {ip}" : $"Failed to connect to {ip}";
+        }
+
+        public void disconnectCommand()
+        {
+            client.Disconnect();
+            onDisconnect();
         }
 
         public void onDisconnect()
@@ -355,6 +361,11 @@ namespace BlasClient
         public void displayNotification(string message)
         {
             notificationManager.showNotification(message);
+        }
+
+        public string getServerIp()
+        {
+            return client.serverIp;
         }
 
         // Add a new persistent object that has been interacted with

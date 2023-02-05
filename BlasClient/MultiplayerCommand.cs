@@ -28,20 +28,22 @@ namespace BlasClient
             if (command == "help" && ValidateParams(fullCommand, 0, parameters))
             {
                 Console.Write("Available MULTIPLAYER commands:");
-                //Console.Write("multiplayer status: Display connection status");
+                Console.Write("multiplayer status: Display connection status");
                 Console.Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
-                //Console.Write("multiplayer disconnect: Disconnect from current server");
-                //Console.Write("multiplayer deathlink: Toggles deathlink on/off");
-                //Console.Write("multiplayer players : List all players in this multiworld");
+                Console.Write("multiplayer disconnect: Disconnect from current server");
+                Console.Write("multiplayer players: List all connected players in the server");
             }
-            //else if (command == "status" && ValidateParams(fullCommand, 0, parameters))
-            //{
-            //    string server = Main.Multiworld.connection.getServer();
-            //    if (server == "")
-            //        Console.Write("Not connected to any server");
-            //    else
-            //        Console.Write($"Connected to {server}");
-            //}
+            else if (command == "status" && ValidateParams(fullCommand, 0, parameters))
+            {
+                if (Main.Multiplayer.connectedToServer)
+                {
+                    Console.Write($"Connected to {Main.Multiplayer.getServerIp()}");
+                }
+                else
+                {
+                    Console.Write("Not connected to a server!");
+                }
+            }
             else if (command == "connect")
             {
                 string password;
@@ -54,43 +56,34 @@ namespace BlasClient
                 }
 
                 Console.Write($"Attempting to connect to {parameters[0]} as {parameters[1]}...");
-                string result = Main.Multiplayer.tryConnect(parameters[0], parameters[1], password);
+                string result = Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
                 Console.Write(result);
             }
-            //else if (command == "disconnect" && ValidateParams(fullCommand, 0, parameters))
-            //{
-            //    if (Main.Multiworld.connection.connected)
-            //    {
-            //        Main.Multiworld.connection.Disconnect();
-            //        Console.Write("Disconnected from server");
-            //    }
-            //    else
-            //        Console.Write("Not connected to any server!");
-            //}
-            //else if (command == "deathlink" && ValidateParams(fullCommand, 0, parameters))
-            //{
-            //    if (Main.Multiworld.connection.connected)
-            //    {
-            //        bool enabled = Main.Multiworld.toggleDeathLink();
-            //        Console.Write("Deathlink has been " + (enabled ? "enabled" : "disabled"));
-            //    }
-            //    else
-            //        Console.Write("Not connected to any server!");
-            //}
-            //else if (command == "players" && ValidateParams(fullCommand, 0, parameters))
-            //{
-            //    string[] players = Main.Multiworld.connection.getPlayers();
-            //    if (players.Length == 0)
-            //    {
-            //        Console.Write("Not connected to any server!");
-            //        return;
-            //    }
+            else if (command == "disconnect" && ValidateParams(fullCommand, 0, parameters))
+            {
+                if (Main.Multiplayer.connectedToServer)
+                {
+                    Main.Multiplayer.disconnectCommand();
+                    Console.Write("Disconnected from server");
+                }
+                else
+                    Console.Write("Not connected to a server!");
+            }
+            else if (command == "players" && ValidateParams(fullCommand, 0, parameters))
+            {
+                if (!Main.Multiplayer.connectedToServer)
+                {
+                    Console.Write("Not connected to a server!");
+                    return;
+                }
 
-            //    string output = "Multiworld players: ";
-            //    foreach (string player in players)
-            //        output += player + ", ";
-            //    Console.Write(output.Substring(0, output.Length - 2));
-            //}
+                Console.Write("Connected players:");
+                Console.Write(Main.Multiplayer.playerName);
+                foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+                {
+                    Console.Write(playerName);
+                }
+            }
         }
 
         public override List<string> GetNames()

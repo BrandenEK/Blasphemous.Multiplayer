@@ -9,6 +9,7 @@ namespace BlasClient
     {
         public enum ConnectionStatus { Disconnnected, Attempting, Connected }
         public ConnectionStatus connectionStatus { get; private set; }
+        public string serverIp { get; private set; }
         private SimpleTcpClient client;
 
         private List<byte> queuedMessages = new List<byte>();
@@ -17,6 +18,7 @@ namespace BlasClient
         {
             // Start out as disconnected
             connectionStatus = ConnectionStatus.Disconnnected;
+            serverIp = string.Empty;
         }
 
         public bool Connect(string playerName, string ipAddress)
@@ -30,6 +32,7 @@ namespace BlasClient
                 client.DataReceived += Receive;
                 client.TcpClient.NoDelay = true;
                 connectionStatus = ConnectionStatus.Attempting;
+                serverIp = ipAddress;
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -38,6 +41,14 @@ namespace BlasClient
 
             sendPlayerIntro(playerName);
             return true;
+        }
+
+        public void Disconnect()
+        {
+            Main.UnityLog("Error: Disconnected from server");
+            connectionStatus = ConnectionStatus.Disconnnected;
+            serverIp = string.Empty;
+            client = null;
         }
 
         // Only position, animation, & directions updates are queued because they are sent in update
@@ -80,9 +91,7 @@ namespace BlasClient
             }
             catch (System.IO.IOException)
             {
-                Main.UnityLog("Error: Disconnected from server");
-                connectionStatus = ConnectionStatus.Disconnnected;
-                client = null;
+                Disconnect();
                 Main.Multiplayer.onDisconnect();
             }
         }
