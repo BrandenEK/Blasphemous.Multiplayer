@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
 using BlasClient.Managers;
+using BlasClient.Structures;
 
 namespace BlasClient
 {
@@ -15,6 +16,8 @@ namespace BlasClient
         public NotificationManager notificationManager { get; private set; }
 
         // Game status
+        public Dictionary<string, PlayerStatus> connectedPlayers { get; private set; }
+        private List<string> interactedPersistenceObjects;
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
 
@@ -24,9 +27,6 @@ namespace BlasClient
         private bool lastDirection;
         private float totalTimeBeforeSendAnimation = 0.5f;
         private float currentTimeBeforeSendAnimation = 0;
-
-        // Save data
-        private List<string> interactedPersistenceObjects;
 
         private bool connectedToServer
         {
@@ -44,6 +44,7 @@ namespace BlasClient
             client = new Client();
 
             Core.Persistence.AddPersistentManager(this);
+            connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
         }
@@ -66,8 +67,18 @@ namespace BlasClient
         public void onDisconnect()
         {
             displayNotification("Disconnected from server!");
+            connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
+        }
+
+        public PlayerStatus getPlayerStatus(string playerName)
+        {
+            if (connectedPlayers.ContainsKey(playerName))
+                return connectedPlayers[playerName];
+
+            Main.UnityLog("Error: Player is not in the server: " + playerName);
+            return new PlayerStatus();
         }
 
         private void onLevelLoaded(Level oldLevel, Level newLevel)
@@ -260,21 +271,30 @@ namespace BlasClient
         public void playerSkinUpdated(string playerName, string skin)
         {
             // As soon as received, will update skin - This isn't locked
-            playerManager.updatePlayerSkin(playerName, skin);
+            Main.UnityLog("Updating player skin for " + playerName);
+            PlayerStatus player = getPlayerStatus(playerName);
+            player.skin.skinName = skin;
         }
 
         // Received enterScene data from server
-        public void playerEnteredScene(string playerName)
+        public void playerEnteredScene(string playerName, string scene)
         {
-            if (inLevel)
+            PlayerStatus playerStatus = getPlayerStatus(playerName);
+            playerStatus.currentScene = scene;
+
+            if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
                 playerManager.addPlayer(playerName);
         }
 
         // Received leftScene data from server
         public void playerLeftScene(string playerName)
         {
-            if (inLevel)
+            PlayerStatus playerStatus = getPlayerStatus(playerName);
+
+            if (inLevel && Core.LevelManager.currentLevel.LevelName == playerStatus.currentScene)
                 playerManager.removePlayer(playerName);
+
+            playerStatus.currentScene = "";
         }
 
         // Received introResponse data from server
@@ -283,8 +303,9 @@ namespace BlasClient
             // Connected succesfully
             if (response == 0)
             {
-                // Send skin
+                // Send all initial data
                 client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+                // Send team (Maybe send this with intro data)
 
                 // If already in game, send enter scene data
                 if (inLevel)
@@ -303,18 +324,37 @@ namespace BlasClient
             displayNotification($"({reason})");
         }
 
-        public void displayNotification(string message)
+        // Received player connection status from server
+        public void playerConnectionReceived(string playerName, bool connected)
         {
-            notificationManager.showNotification(message);
+            if (connected)
+            {
+                // Add this player to the list of connected players
+                PlayerStatus newPlayer = new PlayerStatus();
+                connectedPlayers.Add(playerName, newPlayer);
+            }
+            else
+            {
+                // Remove this player from the list of connected players
+                playerLeftScene(playerName);
+                if (connectedPlayers.ContainsKey(playerName))
+                    connectedPlayers.Remove(playerName);
+            }
+            displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }
 
-        public void gameProgressReceived(string player, string progressId, byte progressType, byte progressValue)
+        public void playerProgressReceived(string player, string progressId, byte progressType, byte progressValue)
         {
             // Apply the progress update
             progressManager.receiveProgress(progressId, progressType, progressValue);
 
             // Show notification for new progress
             notificationManager.showProgressNotification(player, progressType, progressId);
+        }
+
+        public void displayNotification(string message)
+        {
+            notificationManager.showNotification(message);
         }
 
         // Add a new persistent object that has been interacted with

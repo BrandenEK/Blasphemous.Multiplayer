@@ -127,7 +127,7 @@ namespace BlasClient
                     case 6:
                         receivePlayerIntro(data); break;
                     case 7:
-                        receiveNotification(data); break;
+                        receivePlayerConnection(data); break;
                     case 8:
                         receivePlayerProgress(data); break;
                     default:
@@ -229,8 +229,11 @@ namespace BlasClient
         // Received that a player entered a scene
         private void receivePlayerEnterScene(byte[] data)
         {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            string scene = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
+
             // Create the new player object
-            Main.Multiplayer.playerEnteredScene(Encoding.UTF8.GetString(data));
+            Main.Multiplayer.playerEnteredScene(playerName, scene);
         }
 
         // Received that a player left a scene
@@ -281,12 +284,14 @@ namespace BlasClient
             Main.Multiplayer.playerIntroReceived(response);
         }
 
-        // Received a notification
-        private void receiveNotification(byte[] data)
+        // Received that a player connected or disconnected
+        private void receivePlayerConnection(byte[] data)
         {
-            string message = Encoding.UTF8.GetString(data);
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            bool connected = BitConverter.ToBoolean(data, startIdx);
 
-            Main.Multiplayer.displayNotification(message);
+            // Update player list with new/removed player
+            Main.Multiplayer.playerConnectionReceived(playerName, connected);
         }
 
         // Received an item/flag/stat/etc..
@@ -298,7 +303,7 @@ namespace BlasClient
             string id = Encoding.UTF8.GetString(data, startIdx + 2, data.Length - startIdx - 2);
 
             // Give new progress update
-            Main.Multiplayer.gameProgressReceived(playerName, id, type, value);
+            Main.Multiplayer.playerProgressReceived(playerName, id, type, value);
         }
 
         #endregion Receive functions

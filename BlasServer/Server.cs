@@ -109,12 +109,8 @@ namespace BlasServer
             if (!connectedPlayers.ContainsKey(e.ip))
                 return;
 
-            // For now, just send playerLeft packet to remove the player from the scene
-            // Later will need a special packet to also remove the player from the client's list
-            // Client's skin list will currently still keep this player in it
-            PlayerStatus current = getCurrentPlayer(e.ip);
-            sendPlayerLeaveScene(e.ip);
-            sendNotification(e.ip, current.name + " has left the server!", false);
+            // Send that this player has disconnected
+            sendPlayerConnection(e.ip, false);
 
             // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
@@ -154,13 +150,21 @@ namespace BlasServer
             bytes.AddRange(Encoding.UTF8.GetBytes(player.skin));
             return bytes.ToArray();
         }
+        private byte[] getScenePacket(PlayerStatus player)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.AddRange(Encoding.UTF8.GetBytes(player.sceneName));
+            return bytes.ToArray();
+        }
         private byte[] getIntroPacket(byte response)
         {
             return new byte[] { response };
         }
-        private byte[] getNotificationPacket(string message)
+        private byte[] getConnectionPacket(PlayerStatus player, bool connected)
         {
-            return Encoding.UTF8.GetBytes(message);
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.AddRange(BitConverter.GetBytes(connected));
+            return bytes.ToArray();
         }
 
         private List<byte> addPlayerNameToData(string name)
@@ -209,19 +213,22 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip)
                 {
-                    // Send that this player has entered their scene & this player's position/animation/direction
-                    Send(ip, Encoding.UTF8.GetBytes(current.name), 2);
-                    Send(ip, getPositionPacket(current), 0);
-                    Send(ip, getAnimationPacket(current), 1);
-                    Send(ip, getDirectionPacket(current), 4);
+                    // Send that this player has entered a new scene
+                    Send(ip, getScenePacket(current), 2);
 
-                    // Send that the other player is in this player's scene & the other player's position/animation/direction
-                    Send(playerIp, Encoding.UTF8.GetBytes(connectedPlayers[ip].name), 2);
-                    Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
-                    Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
-                    Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                    if (current.isInSameScene(connectedPlayers[ip]))
+                    {
+                        // If in same scene, also send position data to each one
+                        Send(ip, getPositionPacket(current), 0);
+                        Send(ip, getAnimationPacket(current), 1);
+                        Send(ip, getDirectionPacket(current), 4);
+
+                        Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
+                        Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
+                        Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                    }
                 }
             }
         }
@@ -232,9 +239,9 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
+                if (playerIp != ip)
                 {
-                    // Send that this player has left their scene
+                    // Send that this player has left their old scene
                     Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
                 }
             }
@@ -282,26 +289,21 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
+                    // Maybe send oter player's teams also
                 }
             }
         }
 
-        // Send a notification to current player or all other players
-        private void sendNotification(string playerIp, string message, bool onlyCurrent) // Remove notifications from server side
+        // Send that a player connected or disconnected
+        private void sendPlayerConnection(string playerIp, bool connected)
         {
-            if (onlyCurrent)
-            {
-                // Send message to only current ip
-                Send(playerIp, getNotificationPacket(message), 7);
-                return;
-            }
-
             // Send message to all other connected ips
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (playerIp != ip)
                 {
-                    Send(ip, getNotificationPacket(message), 7);
+                    Send(ip, getConnectionPacket(current, connected), 7);
                 }
             }
         }
@@ -408,9 +410,9 @@ namespace BlasServer
 
             // Add new connected player
             Core.displayMessage("Player connection accepted");
-            sendNotification(playerIp, playerName + " has joined the server!", false);
             PlayerStatus newPlayer = new PlayerStatus(playerName);
             connectedPlayers.Add(playerIp, newPlayer);
+            sendPlayerConnection(playerIp, true);
             sendPlayerIntro(playerIp, 0);
         }
 

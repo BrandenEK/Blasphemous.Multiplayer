@@ -17,12 +17,7 @@ namespace BlasClient.Managers
         private GameObject textPrefab;
         private RuntimeAnimatorController playerController;
 
-        // Stores the status of each player and is updated when receiving a skin change from the server
-        // A player is added to this list when first sending their skin upon connecting
-        // This is only temporary until all player data is probably stored in a dict on the client
-        // Once thats doen will also remove from the list when a player disconnects
-        private Dictionary<string, PlayerStatus> connectedPlayers = new Dictionary<string, PlayerStatus>();
-
+        // Queued player updates
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
         private Dictionary<string, bool> queuedDirections = new Dictionary<string, bool>();
@@ -35,6 +30,13 @@ namespace BlasClient.Managers
         {
             // Remove all existing player objects and nametags
             destroyPlayers();
+            
+            // Create any players that are already in this scene
+            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+            {
+                if (Main.Multiplayer.connectedPlayers[playerName].currentScene == scene)
+                    addPlayer(playerName);
+            }
 
             // Find textPrefab
             foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
@@ -84,9 +86,9 @@ namespace BlasClient.Managers
             }
 
             // Check status of player skins and potentially update the textures
-            foreach (string name in connectedPlayers.Keys)
+            foreach (string name in Main.Multiplayer.connectedPlayers.Keys)
             {
-                SkinStatus playerSkin = connectedPlayers[name].skin;
+                SkinStatus playerSkin = Main.Multiplayer.connectedPlayers[name].skin;
                 if (playerSkin.updateStatus == 2)
                 {
                     // Set that one update cycle has passed
@@ -130,7 +132,7 @@ namespace BlasClient.Managers
         }
 
         // When a player enters a scene, create a new player object
-        public void addPlayer(string name)
+        public void addPlayer(string name) // Maybe take in playerstatus instead
         {
             // Create base object
             GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
@@ -142,15 +144,8 @@ namespace BlasClient.Managers
             render.sortingLayerName = "Player";
 
             // Hide player object until skin texture is set - must be delayed
-            if (connectedPlayers.ContainsKey(name))
-            {
-                connectedPlayers[name].skin.updateStatus = 2;
-                render.enabled = false;
-            }
-            else
-            {
-                Main.UnityLog("Error: Couldn't find skin for " + name);
-            }
+            Main.Multiplayer.getPlayerStatus(name).skin.updateStatus = 2;
+            render.enabled = false;
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
@@ -204,17 +199,18 @@ namespace BlasClient.Managers
         private void updatePlayerAnimation(string name, byte animation)
         {
             GameObject player = getPlayerObject(name);
+            PlayerStatus playerStatus = Main.Multiplayer.getPlayerStatus(name);
             if (player != null)
             {
                 Animator anim = player.GetComponent<Animator>();
                 if (animation < 240)
                 {
                     // Regular animation
-                    if (connectedPlayers[name].specialAnimation)
+                    if (playerStatus.specialAnimation)
                     {
                         // Change back to regular animations
                         anim.runtimeAnimatorController = playerController;
-                        connectedPlayers[name].specialAnimation = false;
+                        playerStatus.specialAnimation = false;
                     }
                     anim.SetBool("IS_CROUCH", false);
                     //anim.SetBool("IS_DEAD") might need one for vertical attack
@@ -233,7 +229,7 @@ namespace BlasClient.Managers
                     // Special animation
                     if (playSpecialAnimation(anim, animation))
                     {
-                        connectedPlayers[name].specialAnimation = true;
+                        playerStatus.specialAnimation = true;
                         Main.UnityLog("Playing special animation for " + name);
                     }
                     else
@@ -260,17 +256,6 @@ namespace BlasClient.Managers
             {
                 Main.UnityLog("Error: Can't update object direction for " + name);
             }
-        }
-
-        // When receiving a player skin update, change the value in the skin list
-        // Should maybe be locked, but shouldn't occur frequently enough for this
-        public void updatePlayerSkin(string name, string skin)
-        {
-            if (connectedPlayers.ContainsKey(name))
-                connectedPlayers[name].skin.skinName = skin;
-            else
-                connectedPlayers.Add(name, new PlayerStatus(skin));
-            Main.UnityLog("Updating player skin for " + name);
         }
 
         // Instantiates a nametag object
