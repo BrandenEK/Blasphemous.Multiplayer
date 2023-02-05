@@ -33,9 +33,6 @@ namespace BlasClient.Managers
 
         public void updateProgress()
         {
-            if (!Main.Multiplayer.inLevel)
-                return;
-
             lock (progressLock)
             {
                 updatingProgress = true;

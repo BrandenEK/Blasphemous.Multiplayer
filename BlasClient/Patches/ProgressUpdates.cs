@@ -231,7 +231,13 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, PrieDieu __instance)
         {
-            if (data != null) return true;
+            Main.UnityLog("Executing normal persistence load");
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
+            Main.UnityLog("Executing custom persistence load");
 
             __instance.Ligthed = true;
             return false;
@@ -257,7 +263,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, CollectibleItem __instance, Animator ___interactableAnimator)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             __instance.Consumed = true;
             ___interactableAnimator.gameObject.SetActive(false);
@@ -284,7 +294,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, Chest __instance, Animator ___interactableAnimator)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             __instance.Consumed = true;
             ___interactableAnimator.SetBool("NOANIMUSED", true);
@@ -322,7 +336,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, CherubCaptorPersistentObject __instance)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             __instance.destroyed = true;
             __instance.spawner.DisableCherubSpawn();
@@ -350,7 +368,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, Lever __instance)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             __instance.Consumed = true;
             __instance.SetLeverDownInstantly();
@@ -386,9 +408,13 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(Gate), "SetCurrentPersistentState")]
     public class GateLoad_Patch
     {
-        public static bool Prefix(PersistentManager.PersistentData data, bool ___persistState, ref bool ___open, Animator ___animator, Collider2D ___collision)
+        public static bool Prefix(PersistentManager.PersistentData data, Gate __instance, ref bool ___open, Animator ___animator, Collider2D ___collision)
         {
-            if (data != null || !___persistState) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             ___open = true;
             ___collision.enabled = false;
@@ -424,9 +450,13 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(StraightMovingPlatform), "SetCurrentPersistentState")]
     public class MovingPlatformLoad_Patch
     {
-        public static bool Prefix(PersistentManager.PersistentData data, bool ___persistState, ref bool ____running, string ___OnDestination)
+        public static bool Prefix(PersistentManager.PersistentData data, StraightMovingPlatform __instance, ref bool ____running, string ___OnDestination)
         {
-            if (data != null || !___persistState) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             ____running = !Core.Events.GetFlag(___OnDestination);
             return false;
@@ -463,7 +493,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, TriggerReceiver __instance, ref bool ___alreadyUsed)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             ___alreadyUsed = true;
             __instance.animator.Play("USED");
@@ -500,7 +534,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, BreakableWall __instance)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             __instance.Use(); // Needs to be changed
             return false;
@@ -533,9 +571,13 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(ActionableLadder), "SetCurrentPersistentState")]
     public class LadderLoad_Patch
     {
-        public static bool Prefix(PersistentManager.PersistentData data, bool ___persistState, ActionableLadder __instance, ref bool ___open)
+        public static bool Prefix(PersistentManager.PersistentData data, ActionableLadder __instance, ref bool ___open)
         {
-            if (data != null || !___persistState) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             ___open = false;
             __instance.Use(); // Needs to be changed
@@ -571,7 +613,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, Door __instance, Animator ___interactableAnimator, ref bool ___objectUsed)
         {
-            if (data != null) return true;
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
 
             ___objectUsed = true;
             __instance.Closed = false;

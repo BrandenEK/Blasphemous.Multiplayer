@@ -168,7 +168,7 @@ namespace BlasClient
                 currentTimeBeforeSendAnimation -= Time.deltaTime;
 
             // Update game progress
-            if (progressManager != null)
+            if (progressManager != null && inLevel)
                 progressManager.updateProgress();
             // Update other player's data
             if (playerManager != null && inLevel)
