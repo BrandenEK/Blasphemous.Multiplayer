@@ -34,17 +34,29 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
 ## Requirements
 
-### Client:
-Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
-
 ### Server:
 Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
+
+### Client:
+Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
 
 <br/>
 
 ## How to use
 
+### Server:
+1. Unzip the BlasServer.zip file anywhere on the host machine
+2. Run the BlasServer.exe program
 
+### Client:
+1. Unzip the BlasClient.zip file into the game's root folder
+2. Run the game and verify on the title screen that the mod has been loaded
+3. Press the 'backslash' key to open the debug console
+4. Run the command "multiplayer connect SERVER NAME [PASSWORD]"
+  - SERVER --> The ip address of the machine running the server application
+  - NAME --> The player name you wish to use
+  - PASSWORD --> The password to the server (Optional)
+  - Run the command "multiplayer help" to list additional commands
 
 <br/>
 
