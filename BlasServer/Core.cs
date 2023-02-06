@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace BlasServer
 {
     class Core
     {
-        // Move to config file
-        public static int maxPlayers = 8;
+        public static Config config;
 
         static void Main(string[] args)
         {
@@ -13,10 +14,20 @@ namespace BlasServer
             Console.Title = "Blasphemous Multiplayer";
             displayCustom("Blasphemous Multiplayer Server\n", ConsoleColor.Cyan);
 
-            // Get ip address
-            //displayMessage("Enter the ip address of the server:");
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //string ip = Console.ReadLine();
+            // Load config from file
+            string configPath = Environment.CurrentDirectory + "/multiplayer.cfg";
+            if (File.Exists(configPath))
+            {
+                string json = File.ReadAllText(configPath);
+                config = JsonConvert.DeserializeObject<Config>(json);
+                displayMessage("Loaded config from " + configPath);
+            }
+            else
+            {
+                config = new Config();
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(config));
+                displayMessage("Creating new config at " + configPath);
+            }
 
             // Create server
             Server server = new Server();

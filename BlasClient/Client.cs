@@ -28,7 +28,7 @@ namespace BlasClient
             try
             {
                 client = new SimpleTcpClient();
-                client.Connect(ipAddress, 25565);
+                client.Connect(ipAddress, Main.Multiplayer.config.serverPort);
                 client.DataReceived += Receive;
                 client.TcpClient.NoDelay = true;
                 connectionStatus = ConnectionStatus.Attempting;

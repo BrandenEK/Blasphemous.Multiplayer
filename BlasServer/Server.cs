@@ -19,7 +19,7 @@ namespace BlasServer
                 server.ClientConnected += clientConnected;
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
-                server.Start(25565);
+                server.Start(Core.config.serverPort);
                 server.DisableDelay(); // Does this even work ??
             }
             catch (System.Net.Sockets.SocketException)
@@ -404,7 +404,7 @@ namespace BlasServer
             }
 
             // Ensure the server doesn't have max number of players
-            if (connectedPlayers.Count >= Core.maxPlayers)
+            if (connectedPlayers.Count >= Core.config.maxPlayers)
             {
                 Core.displayMessage("Player connection rejected: Player limit reached");
                 sendPlayerIntro(playerIp, 2);

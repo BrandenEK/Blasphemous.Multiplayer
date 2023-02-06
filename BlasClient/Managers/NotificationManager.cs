@@ -15,8 +15,6 @@ namespace BlasClient.Managers
 
         private int maxLines = 4;
         private int lineHeight = 20;
-        private float timeDisplayed = 4f;
-        private float timeBeforeFade = 2f;
 
         private List<NotificationLine> currentMessages = new List<NotificationLine>();
         private static readonly object notificationLock = new object();
@@ -29,7 +27,7 @@ namespace BlasClient.Managers
                 Main.UnityLog("Notification: " + notification);
 
                 // Add new line to list
-                NotificationLine line = new NotificationLine(notification, timeDisplayed);
+                NotificationLine line = new NotificationLine(notification, Main.Multiplayer.config.notificationDisplaySeconds);
                 currentMessages.Insert(0, line);
 
                 // Remove first one if overfull
@@ -127,6 +125,8 @@ namespace BlasClient.Managers
             {
                 // Loop over each line of text
                 float maxWidth = 0;
+                float timeBeforeFade = Main.Multiplayer.config.notificationDisplaySeconds / 2;
+
                 for (int i = 0; i < textLines.Length; i++)
                 {
                     // There aren't this many notifications

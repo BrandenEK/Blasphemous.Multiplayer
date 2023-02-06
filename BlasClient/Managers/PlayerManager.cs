@@ -52,7 +52,8 @@ namespace BlasClient.Managers
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Create main player's nametag
-            createNameTag(Main.Multiplayer.playerName);
+            if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
+                createNameTag(Main.Multiplayer.playerName);
         }
 
         public void unloadScene()
@@ -152,7 +153,8 @@ namespace BlasClient.Managers
             anim.runtimeAnimatorController = playerController;
 
             // Set up name tag
-            createNameTag(name);
+            if (Main.Multiplayer.config.displayNametags)
+                createNameTag(name);
 
             Main.UnityLog("Created new player object for " + name);
         }

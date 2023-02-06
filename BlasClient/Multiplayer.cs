@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+using System.IO;
+using BepInEx;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
@@ -9,8 +12,11 @@ namespace BlasClient
 {
     public class Multiplayer : PersistentInterface
     {
-        // Managers
+        // Application status
         private Client client;
+        public Config config { get; private set; }
+
+        // Managers
         public PlayerManager playerManager { get; private set; }
         public ProgressManager progressManager { get; private set; }
         public NotificationManager notificationManager { get; private set; }
@@ -38,11 +44,28 @@ namespace BlasClient
             LevelManager.OnLevelLoaded += onLevelLoaded;
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
 
+            // Load config from file
+            string configPath = Paths.GameRootPath + "/multiplayer.cfg";
+            if (File.Exists(configPath))
+            {
+                string json = File.ReadAllText(configPath);
+                config = JsonConvert.DeserializeObject<Config>(json);
+                Main.UnityLog("Loaded config from " + configPath);
+            }
+            else
+            {
+                config = new Config();
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(config));
+                Main.UnityLog("Creating new config at " + configPath);
+            }
+
+            // Create managers
             playerManager = new PlayerManager();
             progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
             client = new Client();
 
+            // Initialize data
             Core.Persistence.AddPersistentManager(this);
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
