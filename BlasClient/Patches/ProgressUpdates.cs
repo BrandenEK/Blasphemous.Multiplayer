@@ -231,14 +231,11 @@ namespace BlasClient.Patches
     {
         public static bool Prefix(PersistentManager.PersistentData data, PrieDieu __instance)
         {
-            Main.UnityLog("Executing normal persistence load");
             if (data != null)
             {
                 // This method is being called normally - only execute if object hasn't been interacted with
-                Main.UnityLog(Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID()) ? "Skipping normal persistence load" : " Executing normal persistence load");
                 return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
             }
-            Main.UnityLog("Executing custom persistence load");
 
             __instance.Ligthed = true;
             return false;
