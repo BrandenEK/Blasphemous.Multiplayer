@@ -11,6 +11,8 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - [Coming soon] Compatible with randomizer
 - [Coming soon] Enable PvP to fight other players
 
+<br/>
+
 ## Things that sync
 
 - All inventory items (Beads / Relics / Prayers / Hearts / Collectibles / Quest items)
@@ -28,6 +30,22 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
 - Enemies & bosses (This is a huge task and not really feasible)
 
+<br/>
+
+## Requirements
+
+### Client:
+Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
+
+### Server:
+Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
+
+<br/>
+
 ## How to use
+
+
+
+<br/>
 
 ## Configuration settings
