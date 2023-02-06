@@ -55,6 +55,12 @@ namespace BlasClient
                     return;
                 }
 
+                if (parameters[1].Length > 16)
+                {
+                    Console.Write("Player name can not be more than 16 characters");
+                    return;
+                }
+
                 Console.Write($"Attempting to connect to {parameters[0]} as {parameters[1]}...");
                 string result = Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
                 Console.Write(result);
