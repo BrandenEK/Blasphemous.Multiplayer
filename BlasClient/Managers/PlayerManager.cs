@@ -280,7 +280,7 @@ namespace BlasClient.Managers
         // Creates a nametag specifically for the main player
         public void createPlayerNameTag()
         {
-            if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
+            if (Main.Multiplayer.config.displayOwnNametag)
                 createNameTag(Main.Multiplayer.playerName);
         }
 
