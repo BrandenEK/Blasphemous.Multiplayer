@@ -35,10 +35,10 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 ## Requirements
 
 ### Server:
-Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
+- Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
 
 ### Client:
-Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
+- Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
 
 <br/>
 
@@ -61,3 +61,18 @@ Most recent version of the Blasphemous game (https://store.steampowered.com/app/
 <br/>
 
 ## Configuration settings
+- These settings can be modified in the 'multiplayer.cfg' file generated in the same folder as the application
+
+### Server:
+
+- serverPort --> The port to start the server on
+- maxPlayers --> The maximum number of players to allow on the server
+
+### Client:
+
+- serverPort --> The port that the server is running on
+- notificationDisplaySeconds --> The time that a notification will remain on screen
+- displayNametags --> Whether or not to show a nametag for other players
+- displayOwnNametag --> Whether or not to show a nametag for this player
+- team --> The id of the team to play on
+- syncSettings --> Which types of progression will be sent & received to/from the server
