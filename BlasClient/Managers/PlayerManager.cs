@@ -52,8 +52,7 @@ namespace BlasClient.Managers
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Create main player's nametag
-            if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
-                createNameTag(Main.Multiplayer.playerName);
+            createPlayerNameTag();
         }
 
         public void unloadScene()
@@ -276,6 +275,13 @@ namespace BlasClient.Managers
             nametag.text = name;
             nametag.alignment = TextAnchor.LowerCenter;
             nametags.Add(nametag);
+        }
+
+        // Creates a nametag specifically for the main player
+        public void createPlayerNameTag()
+        {
+            if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
+                createNameTag(Main.Multiplayer.playerName);
         }
 
         // Sets the skin texture of a player's object - must be delayed until after object creation

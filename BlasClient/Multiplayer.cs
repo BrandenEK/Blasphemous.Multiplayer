@@ -346,7 +346,10 @@ namespace BlasClient
 
                 // If already in game, send enter scene data
                 if (inLevel)
+                {
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
+                    playerManager.createPlayerNameTag();
+                }
 
                 testPlayers();
                 return;
