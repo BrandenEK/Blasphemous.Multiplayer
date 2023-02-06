@@ -45,6 +45,12 @@ namespace BlasClient
 
         public void Disconnect()
         {
+            client.Disconnect();
+            onDisconnect();
+        }
+
+        private void onDisconnect()
+        {
             Main.UnityLog("Error: Disconnected from server");
             connectionStatus = ConnectionStatus.Disconnnected;
             serverIp = string.Empty;
@@ -91,7 +97,7 @@ namespace BlasClient
             }
             catch (System.IO.IOException)
             {
-                Disconnect();
+                onDisconnect();
                 Main.Multiplayer.onDisconnect();
             }
         }

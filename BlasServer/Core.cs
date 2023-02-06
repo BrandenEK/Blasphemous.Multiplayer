@@ -15,7 +15,7 @@ namespace BlasServer
             displayCustom("Blasphemous Multiplayer Server\n", ConsoleColor.Cyan);
 
             // Load config from file
-            string configPath = Environment.CurrentDirectory + "/multiplayer.cfg";
+            string configPath = Environment.CurrentDirectory + "\\multiplayer.cfg";
             if (File.Exists(configPath))
             {
                 string json = File.ReadAllText(configPath);
@@ -25,7 +25,7 @@ namespace BlasServer
             else
             {
                 config = new Config();
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(config));
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
                 displayMessage("Creating new config at " + configPath);
             }
 

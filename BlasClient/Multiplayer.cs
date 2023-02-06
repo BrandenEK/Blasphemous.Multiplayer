@@ -45,7 +45,7 @@ namespace BlasClient
             LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
 
             // Load config from file
-            string configPath = Paths.GameRootPath + "/multiplayer.cfg";
+            string configPath = Paths.GameRootPath + "\\multiplayer.cfg";
             if (File.Exists(configPath))
             {
                 string json = File.ReadAllText(configPath);
@@ -55,7 +55,7 @@ namespace BlasClient
             else
             {
                 config = new Config();
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(config));
+                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
                 Main.UnityLog("Creating new config at " + configPath);
             }
 
