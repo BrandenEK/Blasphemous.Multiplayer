@@ -22,7 +22,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(RosaryBead rosaryBead)
         {
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(rosaryBead.id, 0, 0);
             }
@@ -33,7 +33,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Prayer prayer)
         {
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(prayer.id, 1, 0);
             }
@@ -44,7 +44,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Relic relic)
         {
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(relic.id, 2, 0);
             }
@@ -55,7 +55,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Sword sword)
         {
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(sword.id, 3, 0);
             }
@@ -66,7 +66,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Framework.Inventory.CollectibleItem collectibleItem)
         {
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(collectibleItem.id, 4, 0);
             }
@@ -77,7 +77,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(QuestItem questItem)
         {
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(questItem.id, 5, 0);
             }
@@ -103,7 +103,7 @@ namespace BlasClient.Patches
             else if (__instance.GetType() == typeof(Flask)) type = 11;
             else if (__instance.GetType() == typeof(FlaskHealth)) type = 12;
 
-            if (type != 255)
+            if (type != 255 && Main.Multiplayer.config.syncSettings.playerStats)
                 Main.Multiplayer.obtainedGameProgress("Stat", type, 0);
         }
     }
@@ -124,7 +124,8 @@ namespace BlasClient.Patches
             else
             {
                 // Actually obtaining item, send to other players
-                Main.Multiplayer.obtainedGameProgress(skill, 13, 0);
+                if (Main.Multiplayer.config.syncSettings.swordSkills)
+                    Main.Multiplayer.obtainedGameProgress(skill, 13, 0);
                 return true;
             }
         }
@@ -138,7 +139,7 @@ namespace BlasClient.Patches
         public static void Postfix(EventManager __instance, string id, bool b)
         {
             string formatted = __instance.GetFormattedId(id);
-            if (!ProgressManager.updatingProgress && StaticObjects.getFlagState(formatted) != null)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState && StaticObjects.getFlagState(formatted) != null)
             {
                 Main.Multiplayer.obtainedGameProgress(formatted, 14, (byte)(b ? 0 : 1));
             }
@@ -153,7 +154,7 @@ namespace BlasClient.Patches
         public static void Postfix(string teleportId)
         {
             Main.UnityLog("Unlocked teleport");
-            if (!ProgressManager.updatingProgress)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
             {
                 Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
             }
@@ -172,6 +173,9 @@ namespace BlasClient.Patches
                 // Actually revealing a new cell
                 if (___CurrentMap == null || !___CurrentMap.CellsByZone.ContainsKey(__instance.CurrentScene))
                     return false;
+                // Not syncing map cells
+                if (!Main.Multiplayer.config.syncSettings.mapCells)
+                    return true;
 
                 foreach (CellData cell in ___CurrentMap.CellsByZone[__instance.CurrentScene])
                 {
