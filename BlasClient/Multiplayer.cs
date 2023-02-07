@@ -20,6 +20,7 @@ namespace BlasClient
         public PlayerManager playerManager { get; private set; }
         public ProgressManager progressManager { get; private set; }
         public NotificationManager notificationManager { get; private set; }
+        public MapScreenManager mapScreenManager { get; private set; }
 
         // Game status
         public Dictionary<string, PlayerStatus> connectedPlayers { get; private set; }
@@ -63,6 +64,7 @@ namespace BlasClient
             playerManager = new PlayerManager();
             progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
+            mapScreenManager = new MapScreenManager();
             client = new Client();
 
             // Initialize data

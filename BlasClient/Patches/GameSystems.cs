@@ -29,19 +29,6 @@ namespace BlasClient.Patches
         }
     }
 
-    // Add multiplayer version to main menu
-    [HarmonyPatch(typeof(VersionNumber), "Start")]
-    public class VersionNumber_Patch
-    {
-        public static void Postfix(VersionNumber __instance)
-        {
-            Text version = __instance.GetComponent<Text>();
-            if (version.text.Contains("v."))
-                version.text = "";
-            version.text += "Multiplayer v" + PluginInfo.PLUGIN_VERSION + "\n";
-        }
-    }
-
     // Allow access to console
     [HarmonyPatch(typeof(ConsoleWidget), "Update")]
     public class ConsoleWidget_Patch
