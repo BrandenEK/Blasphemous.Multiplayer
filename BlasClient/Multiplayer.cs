@@ -144,7 +144,9 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                
+                PlayerStatus test = new PlayerStatus();
+                test.currentScene = "D17Z01S01";
+                connectedPlayers.Add("Test", test);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {

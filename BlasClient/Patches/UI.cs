@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.Map;
 using Framework.Managers;
+using Gameplay.UI.Others.MenuLogic;
 
 namespace BlasClient.Patches
 {
@@ -23,35 +24,11 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(MapRenderer), "UpdateMarks")]
     public class MapRenderer_Patch
     {
-        public static void Postfix(MapRenderer __instance, RectTransform ___markRoot, float ___CellSizeX, float ___CellSizeY)
+        public static void Postfix(float ___CellSizeX, float ___CellSizeY)
         {
-            // Only add marks for other players if config enabled
-            if (!Main.Multiplayer.config.showPlayersOnMap)
-                return;
-            // Make sure sprite is valid
-            if (!__instance.Config.Marks.TryGetValue(MapData.MarkType.Blue, out Sprite sprite) || sprite == null)
-                return;
-
-            // For each player, add a mark to their scene
-            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
-            {
-                // Calling this function with -1000 will calculate the center position of the scene
-                Core.NewMapManager.GetCellKeyFromPosition(Main.Multiplayer.connectedPlayers[playerName].currentScene, new Vector2(-1000, 0));
-                Vector2 cellPosition = Main.Multiplayer.mapScreenManager.getActivePlayerPosition();
-                if (cellPosition.x < 0 || cellPosition.y < 0)
-                    return;
-
-                // Create new image for this player
-                GameObject obj = new GameObject(playerName, typeof(RectTransform));
-                RectTransform rect = obj.GetComponent<RectTransform>();
-                rect.SetParent(___markRoot);
-                rect.localRotation = Quaternion.identity;
-                rect.localScale = Vector3.one;
-                rect.localPosition = new Vector2(___CellSizeX * cellPosition.x, ___CellSizeY * cellPosition.y);
-                rect.sizeDelta = new Vector2(sprite.rect.width, sprite.rect.height);
-                rect.gameObject.AddComponent<Image>().sprite = sprite;
-                Main.UnityLog($"Creating mark at " + rect.localPosition);
-            }
+            Main.Multiplayer.mapScreenManager.setMapCellSize(___CellSizeX, ___CellSizeY);
+            Main.Multiplayer.mapScreenManager.createPlayerMarks();
+            //Main.UnityLog(Main.displayHierarchy(Object.FindObjectOfType<NewMapMenuWidget>().transform.Find("Background/Map/MapMask/MapRoot"), "", 0, 3, true));
         }
     }
 
