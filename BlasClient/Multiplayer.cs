@@ -217,6 +217,9 @@ namespace BlasClient
             // Update notifications
             if (notificationManager != null)
                 notificationManager.updateNotifications();
+            // Update map screen
+            if (mapScreenManager != null)
+                mapScreenManager.updateMap();
         }
 
         private bool positionHasChanged(Vector2 currentPosition)
@@ -314,6 +317,7 @@ namespace BlasClient
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
                 playerManager.addPlayer(playerName);
+            mapScreenManager.queueMapUpdate();
         }
 
         // Received leftScene data from server
@@ -325,6 +329,7 @@ namespace BlasClient
                 playerManager.removePlayer(playerName);
 
             playerStatus.currentScene = "";
+            mapScreenManager.queueMapUpdate();
         }
 
         // Received introResponse data from server
