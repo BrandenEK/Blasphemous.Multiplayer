@@ -140,20 +140,11 @@ namespace BlasClient
             playerManager.unloadScene();
         }
 
-        private void testPlayers()
-        {
-            Main.UnityLog("Displaying players:");
-            foreach (string player in connectedPlayers.Keys)
-            {
-                Main.UnityLog($"{player} ({connectedPlayers[player].skin.skinName}) is in scene '{connectedPlayers[player].currentScene}'");
-            }
-        }
-
         public void update()
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                testPlayers();
+                
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
@@ -353,7 +344,6 @@ namespace BlasClient
                     playerManager.createPlayerNameTag();
                 }
 
-                testPlayers();
                 return;
             }
 
@@ -370,13 +360,11 @@ namespace BlasClient
         // Received player connection status from server
         public void playerConnectionReceived(string playerName, bool connected)
         {
-            testPlayers();
             if (connected)
             {
                 // Add this player to the list of connected players
                 PlayerStatus newPlayer = new PlayerStatus();
                 connectedPlayers.Add(playerName, newPlayer);
-                testPlayers();
             }
             else
             {
@@ -384,7 +372,6 @@ namespace BlasClient
                 playerLeftScene(playerName);
                 if (connectedPlayers.ContainsKey(playerName))
                     connectedPlayers.Remove(playerName);
-                testPlayers();
             }
             displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }

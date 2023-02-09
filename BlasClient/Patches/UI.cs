@@ -25,8 +25,9 @@ namespace BlasClient.Patches
     {
         public static void Postfix(MapRenderer __instance, RectTransform ___markRoot, float ___CellSizeX, float ___CellSizeY)
         {
-            Main.UnityLog("Updating marks!");
-
+            // Only add marks for other players if config enabled
+            if (!Main.Multiplayer.config.showPlayersOnMap)
+                return;
             // Make sure sprite is valid
             if (!__instance.Config.Marks.TryGetValue(MapData.MarkType.Blue, out Sprite sprite) || sprite == null)
                 return;
@@ -62,27 +63,29 @@ namespace BlasClient.Patches
         {
             if (position.x > -999f) return true;
 
-            ZoneKey zone = new ZoneKey(scene.Substring(0, 3), scene.Substring(3, 3), scene.Substring(6, 3));
-            if (___CurrentMap.CellsByZone.ContainsKey(zone))
+            if (scene != "" && scene.Length == 9)
             {
-                // Loop through each cell and find average position
-                Vector2 totalPosition = Vector2.zero;
-                foreach (CellData cell in ___CurrentMap.CellsByZone[zone])
+                ZoneKey zone = new ZoneKey(scene.Substring(0, 3), scene.Substring(3, 3), scene.Substring(6, 3));
+                if (___CurrentMap.CellsByZone.ContainsKey(zone))
                 {
-                    totalPosition += new Vector2(cell.CellKey.X, cell.CellKey.Y);
-                }
+                    // Loop through each cell and find average position
+                    Vector2 totalPosition = Vector2.zero;
+                    foreach (CellData cell in ___CurrentMap.CellsByZone[zone])
+                    {
+                        totalPosition += new Vector2(cell.CellKey.X, cell.CellKey.Y);
+                    }
 
-                // Calculate average position and send it to map manager
-                int totalCells = ___CurrentMap.CellsByZone[zone].Count;
-                Vector2 averagePosition = new Vector2(totalPosition.x / totalCells, totalPosition.y / totalCells);
-                Main.Multiplayer.mapScreenManager.setActivePlayerPosition(averagePosition);
-                Main.UnityLog("Average position for scene " + scene + " is " + averagePosition);
+                    // Calculate average position and send it to map manager
+                    int totalCells = ___CurrentMap.CellsByZone[zone].Count;
+                    Vector2 averagePosition = new Vector2(totalPosition.x / totalCells, totalPosition.y / totalCells);
+                    Main.Multiplayer.mapScreenManager.setActivePlayerPosition(averagePosition);
+                    return false;
+                }
             }
-            else
-            {
-                Main.Multiplayer.mapScreenManager.setActivePlayerPosition(new Vector2(-1, -1));
-                Main.UnityLog("Player zone " + scene + " does not exist!");
-            }
+
+            // Scene is not a valid one on the map
+            Main.Multiplayer.mapScreenManager.setActivePlayerPosition(new Vector2(-1, -1));
+            Main.UnityLog("Player zone '" + scene + "' does not exist!");
             return false;
         }
     }
