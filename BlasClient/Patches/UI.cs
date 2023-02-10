@@ -21,14 +21,12 @@ namespace BlasClient.Patches
     }
 
     // Show other players on map screen
-    [HarmonyPatch(typeof(MapRenderer), "UpdateMarks")]
-    public class MapRenderer_Patch
+    [HarmonyPatch(typeof(NewMapMenuWidget), "OnShow")]
+    public class MapMenuWidget_Patch
     {
-        public static void Postfix(float ___CellSizeX, float ___CellSizeY)
+        public static void Postfix()
         {
-            Main.Multiplayer.mapScreenManager.setMapCellSize(___CellSizeX, ___CellSizeY);
-            Main.Multiplayer.mapScreenManager.createPlayerMarks();
-            //Main.UnityLog(Main.displayHierarchy(Object.FindObjectOfType<NewMapMenuWidget>().transform.Find("Background/Map/MapMask/MapRoot"), "", 0, 3, true));
+            Main.Multiplayer.mapScreenManager.createPlayerMarks(true);
         }
     }
 

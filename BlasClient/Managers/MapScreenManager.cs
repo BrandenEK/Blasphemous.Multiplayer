@@ -13,7 +13,6 @@ namespace BlasClient.Managers
 
         private Transform playerMarks;
         private Sprite playerSprite;
-        private Vector2 cellSize;
 
         // Temporarily holds the most recent player map position
         public void setActivePlayerPosition(Vector2 position)
@@ -25,11 +24,6 @@ namespace BlasClient.Managers
         public Vector2 getActivePlayerPosition()
         {
             return activePlayerPosition;
-        }
-
-        public void setMapCellSize(float x, float y)
-        {
-            cellSize = new Vector2(x, y);
         }
 
         public void queueMapUpdate()
@@ -45,24 +39,29 @@ namespace BlasClient.Managers
                 NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
                 if (widget != null && widget.CherubsText.isActiveAndEnabled)
                 {
-                    Main.UnityLog("Updating map!");
-                    createPlayerMarks();
+                    createPlayerMarks(false);
                 }
             }
             mapUpdateQueued = false;
         }
 
-        public void createPlayerMarks()
+        public void createPlayerMarks(bool forceRecalculate)
         {
             // Only add marks for other players if config enabled
             if (!Main.Multiplayer.config.showPlayersOnMap)
                 return;
-            Main.UnityLog("Adding player marks to map");
+            Main.UnityLog("Updating map with new player marks!");
+
+            // Destroy old holder to put players on top of other marks
+            if (forceRecalculate && playerMarks != null)
+            {
+                Object.Destroy(playerMarks.gameObject);
+                playerMarks = null;
+            }
 
             // If holder doesn't exist yet, create it
             if (playerMarks == null || playerSprite == null)
             {
-                Main.UnityLog("Creating holder for player marks!");
                 NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
                 if (widget == null) return;
                 Transform rootRenderer = widget.transform.Find("Background/Map/MapMask/MapRoot/RootRenderer_0");
@@ -101,7 +100,6 @@ namespace BlasClient.Managers
                 rect.gameObject.AddComponent<Image>().sprite = playerSprite;
                 Main.UnityLog($"Creating mark at " + rect.localPosition);
             }
-            Main.UnityLog("Finished adding marks to map");
         }
     }
 }
