@@ -25,14 +25,14 @@ namespace BlasClient.Patches
     }
 
     // Prie Dieu animation
-    [HarmonyPatch(typeof(PrieDieu), "OnUse")]
-    public class PrieDieuUse_Patch
-    {
-        public static void Prefix(PrieDieu __instance)
-        {
-            Main.Multiplayer.usingSpecialAnimation((byte)(__instance.Ligthed ? 244 : 243));
-        }
-    }
+    //[HarmonyPatch(typeof(PrieDieu), "OnUse")]
+    //public class PrieDieuUse_Patch
+    //{
+    //    public static void Prefix(PrieDieu __instance)
+    //    {
+    //        Main.Multiplayer.usingSpecialAnimation((byte)(__instance.Ligthed ? 244 : 243));
+    //    }
+    //}
 
     // Lever animation
     [HarmonyPatch(typeof(Lever), "OnUse")]

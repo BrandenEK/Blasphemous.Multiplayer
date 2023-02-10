@@ -52,6 +52,19 @@ namespace BlasClient.Managers
             // Find animator controller
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
+            // Add special animation checker to pds
+            foreach (PrieDieu pd in Object.FindObjectsOfType<PrieDieu>())
+            {
+                foreach (Transform child in pd.transform)
+                {
+                    if (child.name.ToLower().Contains("interactor"))
+                    {
+                        child.gameObject.AddComponent<SpecialAnimationChecker>();
+                        break;
+                    }
+                }
+            }
+
             // Create main player's nametag
             createPlayerNameTag();
         }
@@ -316,7 +329,38 @@ namespace BlasClient.Managers
         // Gets the animator controller of an interactable object in the scene & plays special animation
         private bool playSpecialAnimation(Animator anim, byte type)
         {
-            if (type == 240 || type == 241)
+            if (type == 240 || type == 241 || type == 242)
+            {
+                // Prie Dieu
+                PrieDieu priedieu = Object.FindObjectOfType<PrieDieu>();
+                if (priedieu == null)
+                    return false;
+
+                anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
+                if (type == 240)
+                {
+                    anim.SetTrigger("ACTIVATION");
+                }
+                else if (type == 241)
+                {
+                    anim.SetTrigger("KNEE_START");
+                }
+                else
+                {
+                    anim.Play("Stand Up");
+                }
+            }
+            //else if (type == 242)
+            //{
+            //    // Chest
+            //    Chest chest = Object.FindObjectOfType<Chest>();
+            //    if (chest == null)
+            //        return false;
+
+            //    anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+            //    anim.SetTrigger("USED");
+            //}
+            else if (type == 243 || type == 244)
             {
                 // Collectible item
                 CollectibleItem item = Object.FindObjectOfType<CollectibleItem>();
@@ -325,26 +369,6 @@ namespace BlasClient.Managers
 
                 anim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
                 anim.Play(type == 240 ? "Floor Collection" : "Halfheight Collection");
-            }
-            else if (type == 242)
-            {
-                // Chest
-                Chest chest = Object.FindObjectOfType<Chest>();
-                if (chest == null)
-                    return false;
-
-                anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
-                anim.SetTrigger("USED");
-            }
-            else if (type == 243 || type == 244)
-            {
-                // Prie Dieu
-                PrieDieu priedieu = Object.FindObjectOfType<PrieDieu>();
-                if (priedieu == null)
-                    return false;
-
-                anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
-                anim.SetTrigger(type == 243 ? "ACTIVATION" : "KNEE_START");
             }
             else if (type == 245)
             {
