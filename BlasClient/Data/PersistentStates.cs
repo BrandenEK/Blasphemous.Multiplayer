@@ -52,8 +52,8 @@ namespace BlasClient.Data
                 new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D17Z01S13", 0),
                 new PersistenceState("0f11c3cc-867e-47c3-a97c-983f2ef0b9ac", "D17BZ02S01", 1), // CI
                 new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D17Z01S14", 1),
-                // Main room fall
-                // Relic room
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D17Z01S01", 1),
+                new PersistenceState("635603b6-07d5-471d-a49f-51c558d89362", "D17BZ01S01", 2), // CH
                 new PersistenceState("d430347e-1b33-4a35-82fb-ac7d2e1b4a01", "D17Z01S01", 3), // CR
                 new PersistenceState("5add17e9-f2d9-416e-a0e9-925d32ac4798", "D17Z01S03", 5), // GT
                 new PersistenceState("0cca4185-35ae-4b75-b208-627f92ccfe29", "D17Z01S03", 7), // ST
@@ -61,7 +61,7 @@ namespace BlasClient.Data
                 new PersistenceState("a7b15297-fb7a-42bc-a7f1-30294e246308", "D17Z01S04", 8), // BW
                 new PersistenceState("5a77ada7-bb7c-43f7-8d37-e6fd6f50d663", "D17Z01S04", 9), // LD
                 new PersistenceState("7dd8b178-e2d5-4f3c-8a38-ce1312acd3fe", "D17Z01S04", 10), // DR
-                // elder brother door
+                new PersistenceState("ef833003-56b4-4f34-9530-16c88e6a4d66", "D17Z01S03", 10),
 
                 // Holy Line
                 new PersistenceState("3c6d3c9c-44c2-41cd-9c11-7c9f923680b9", "D01Z01S07", 0), // PD
@@ -70,8 +70,8 @@ namespace BlasClient.Data
                 new PersistenceState("e21c696e-61f5-4ef2-808a-cd0ccf852c0c", "D01Z01S03", 1),
                 new PersistenceState("5082226e-fcc9-4d90-bed0-9f6d4775fd75", "D01Z01S03", 2), // CH
                 new PersistenceState("c0cc4135-d795-48bd-879e-a30c6d80297c", "D01Z01S03", 3), // CR
-                new PersistenceState("unknown", "???", 8), // BW
-                new PersistenceState("unknown", "???", 8),
+                new PersistenceState("e4653878-1824-4b4b-b57c-e9685fe0964a", "D01Z01S01", 8), // BW
+                new PersistenceState("e4653878-1824-4b4b-b57c-e9685fe0964a", "D01Z01S03", 8),
 
                 // Albero
                 new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D01Z02S01", 0), // PD
@@ -151,6 +151,9 @@ namespace BlasClient.Data
                 new PersistenceState("682b61ba-cd0b-4752-a45f-273a89a63701", "D01Z05S25", 5),
                 new PersistenceState("47c07521-184d-46d5-9086-7ab68a939f9f", "D01Z05S25", 7), // ST
                 new PersistenceState("f0e957d2-3313-4ae7-ba91-17f651f683d2", "D01Z05S03", 8), // BW
+
+                // Petrous
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D01Z06S01", 1), // CI
 
                 // Olive Trees
                 new PersistenceState("d3e2f04e-0d36-4b65-8a84-df8f22818707", "D02Z01S01", 0), // PD
