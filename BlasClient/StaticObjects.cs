@@ -541,6 +541,75 @@
             new PersistenceState("d609740f-16a0-4a1b-a794-bf22dfc9f0d3", "D05Z02S11", 5), // GT
             new PersistenceState("bedf4186-c007-4b10-9123-54b4b2437561", "D05Z02S11", 7), // ST
 
+            // Rooftops
+            new PersistenceState("56b997a9-f708-4e44-80a1-f4cc051dfb30", "D06Z01S06", 0), // PD
+            new PersistenceState("a14685d6-1b1d-455c-b597-08881e21afc2", "D06Z01S23", 0),
+            new PersistenceState("68efcdb9-3e13-41a5-b7ce-920b478eac81", "D06Z01S09", 0),
+            new PersistenceState("c0619612-370d-4d55-b55f-0a2c82af05d3", "D06Z01S22", 1), // CI
+            new PersistenceState("30dbe500-8629-4fe0-97e1-36e9b838c818", "D06Z01S15", 1),
+            new PersistenceState("2cbb1ea6-4841-4d4d-b913-47ff3530f27f", "D06Z01S12", 1),
+            new PersistenceState("91f372e4-1028-4299-919a-b42aceea01f4", "D06Z01S12", 2), // CH
+            new PersistenceState("b92a8ae8-3997-4339-906f-81c4fbe6ed16", "D06Z01S12", 3), // CR
+            new PersistenceState("7ee1df26-25ab-4a30-9ffa-1274694d163f", "D06Z01S23", 4), // LV
+            new PersistenceState("2ac29ac0-4bda-4a14-9364-be3e95d9d24a", "D06Z01S04", 5), // GT
+            new PersistenceState("8cca34d9-036f-4280-96bd-9013991eadb3", "D06Z01S15", 5),
+            new PersistenceState("1cce891a-cca8-4cbe-aa7a-618fb633066b", "D06Z01S12", 6), // PT
+            new PersistenceState("b3bbc9c2-88d8-4873-947b-e08eb36c51b6", "D06Z01S12", 6),
+            new PersistenceState("b09391c4-d58a-4c85-b322-16cec63a1637", "D06Z01S08", 6),
+            new PersistenceState("017636b1-71b4-4c2c-b73a-13136f9d6211", "D06Z01S04", 7), // ST
+            new PersistenceState("d8592ac2-4762-4aa8-b6d9-a1032cc581f3", "D06Z01S15", 7),
+            new PersistenceState("79150270-4197-4a3b-af41-d82fd23d9606", "D06Z01S12", 7),
+            new PersistenceState("4c8752f6-5cf1-4762-a51d-019eec45f0a0", "D06Z01S12", 7),
+            new PersistenceState("34f6ce02-e783-4d0c-af1f-7b8ef46a5c47", "D06Z01S08", 7),
+            new PersistenceState("51018c78-4120-4255-b205-0d65bcdd33d9", "D06Z01S17", 8), // BW
+            new PersistenceState("9f138023-3ded-414e-abc5-1baf87b82fe1", "D06Z01S23", 9), // LD
+
+            // Wall
+            new PersistenceState("ea6075c3-e8aa-465d-a6c7-fa1e613fb775", "D09Z01S11", 0), // PD
+            new PersistenceState("1ea60cae-692c-4b90-831c-3cd581ca9162", "D09BZ01S01", 1), // CI
+            new PersistenceState("e88bf360-3908-4b2d-8e74-54dce9dc9aa1", "D09BZ01S01", 1),
+            new PersistenceState("898ebf47-1ce6-4528-941a-54342e9a45ca", "D09BZ01S01", 1),
+            new PersistenceState("dfe967b5-8601-4094-a0de-6586001f3148", "D09Z01S02", 1),
+            new PersistenceState("1ad69347-4c28-402c-b1a0-575089e5fa5f", "D09Z01S10", 1),
+            new PersistenceState("402c16b9-d157-4f7f-9ab7-7dd4dd4e01a3", "D09BZ01S01", 1),
+            new PersistenceState("057bc369-c0a1-4797-abb2-4e49210328a5", "D09Z01S10", 1),
+            new PersistenceState("9ef658de-65d3-4075-b8cf-f5c68ecaea0d", "D09BZ01S01", 1),
+            new PersistenceState("a768ea2e-7853-4b73-8ca2-0982e70d896f", "D09Z01S09", 1),
+            new PersistenceState("8cd5b42a-8e8c-4cf5-9097-e8cc89a8daa8", "D09BZ01S01", 1),
+            new PersistenceState("27ac21b5-d35f-40ab-bd59-05c3b2d6cef0", "D09Z01S08", 1),
+            new PersistenceState("84665e48-c2d1-46df-af15-c07c3ee50d89", "D09Z01S02", 2), // CH
+            new PersistenceState("49fdeae9-f40c-4616-b668-b7f17cb1f01f", "D09BZ01S01", 3), // CR
+            new PersistenceState("28c97b46-911f-4185-b741-01bc7b6e27a4", "D09BZ01S01", 3),
+            new PersistenceState("0f9e23bf-cdcd-45d1-bf39-6772b407c53f", "D09BZ01S01", 3),
+            new PersistenceState("383389c3-735a-4b50-af27-7ec71d9b8447", "D09Z01S06", 3),
+            new PersistenceState("b2dd5145-5ce0-4824-98f1-4de886712bbc", "D09Z01S07", 5), // GT
+            new PersistenceState("764b219e-5987-41a3-a660-e495e7d6225e", "D09Z01S05", 5),
+            new PersistenceState("4f18233a-16fd-4f0b-b829-90c877e909f0", "D09Z01S08", 5),
+            new PersistenceState("18f597f8-043a-453f-9d0a-3dd4d94a9560", "D09Z01S11", 5),
+            new PersistenceState("debd2dd2-4061-4b29-9ea2-8db07e884f5d", "D09Z01S02", 5),
+            new PersistenceState("fedc4ad7-69bc-49b9-9a79-d92faaa1b5a2", "D09Z01S07", 7), // ST
+            new PersistenceState("1bd4d663-46c5-4e66-9002-04a710f4ad07", "D09Z01S05", 7),
+            new PersistenceState("06fed655-aa37-4c69-a725-cef2c73cb40b", "D09Z01S08", 7),
+            new PersistenceState("990d8b4d-75fe-4662-8aa1-466c6c4d0af5", "D09Z01S11", 7),
+            new PersistenceState("241be671-7245-4eb4-b170-cd024f1f2747", "D09BZ01S01", 8), // BW
+            new PersistenceState("8f7e5d86-e336-4a28-9cd0-3b07b264fa7f", "D09Z01S10", 8),
+            new PersistenceState("e13cd24a-7698-4f4c-97ab-e126b6015164", "D09Z01S09", 8),
+            new PersistenceState("78710f6c-cdc5-466a-8894-675bb6585088", "D09Z01S02", 10), // DR
+            new PersistenceState("47c6f97e-3435-4ffc-bb68-d9b23a0d6fa1", "D09Z01S02", 10),
+            new PersistenceState("8fc4f0af-d016-4d05-b137-222183d45231", "D09Z01S02", 10),
+            new PersistenceState("d7d4edad-b727-48e1-a05a-98a8b013a4bb", "D09Z01S02", 10),
+            new PersistenceState("966de5df-a5e3-4b03-8e34-d761974af73b", "D09Z01S08", 10),
+            new PersistenceState("f97d0e4b-d0dc-4875-a70e-b7c878134060", "D09Z01S08", 10),
+            new PersistenceState("7b46329a-296f-4865-b192-4118a710d592", "D09Z01S08", 10),
+            new PersistenceState("3ee230b2-4765-446d-b40d-c53e7b2fbbb1", "D09Z01S08", 10),
+            new PersistenceState("a17a810d-33fd-45a4-80e9-e9273ce8a8fc", "D09Z01S09", 10),
+            new PersistenceState("2892c6cf-743a-4317-89aa-66033b35614e", "D09Z01S09", 10),
+            new PersistenceState("d020645f-5196-4975-8f09-5f3efd518696", "D09Z01S10", 10),
+            new PersistenceState("4e22ca88-f0fd-45ef-a1ae-da1c4f11f7ed", "D09Z01S10", 10),
+            new PersistenceState("2ac71d61-d551-4ebf-acea-80a75c357c1b", "D09Z01S10", 10),
+
+            // Deambulatory
+            new PersistenceState("696e70f3-5cf8-4713-abb5-e5f62d6a49e2", "D07Z01S01", 0), // PD
 
             //new PersistenceState("", "", 0),
         };

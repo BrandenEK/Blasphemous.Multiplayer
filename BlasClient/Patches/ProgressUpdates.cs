@@ -606,7 +606,7 @@ namespace BlasClient.Patches
             if (dataPath != "use") return true;
 
             ___objectUsed = true;
-            __instance.Closed = false;
+            __instance.Closed = false; // Play anim ?
             return false;
         }
     }
