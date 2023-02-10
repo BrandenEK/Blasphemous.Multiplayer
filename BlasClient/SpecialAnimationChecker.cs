@@ -53,12 +53,17 @@ namespace BlasClient
                 case "Lever Down":
                 case "Lever Up":
                     Main.Multiplayer.usingSpecialAnimation(246); return;
+                case "(Open) Entering":
+                    Main.Multiplayer.usingSpecialAnimation(247); return;
+                case "(Closed) Entering":
+                    Main.Multiplayer.usingSpecialAnimation(248); return;
+                case "(KEY) Entering":
+                    Main.Multiplayer.usingSpecialAnimation(249); return;
                     // Brotherhood fake penitent
                     // Perpetva chest
                     // Pick gemino flower
                     // Place altasgracias item
                     // Altar
-                    // Door
             }
         }
 
@@ -78,7 +83,10 @@ namespace BlasClient
             "Opening",
             "Switch", // Lever
             "Lever Down",
-            "Lever Up"
+            "Lever Up",
+            "(Open) Entering", // Door
+            "(Closed) Entering",
+            "(KEY) Entering"
         };
     }
 }

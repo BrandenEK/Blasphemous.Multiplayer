@@ -53,11 +53,11 @@ namespace BlasClient.Managers
             // Find animator controller
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
-            // Add special animation checker to pds
+            // Add special animation checker to certain interactors
             foreach (Interactable interactable in Object.FindObjectsOfType<Interactable>())
             {
                 System.Type type = interactable.GetType();
-                if (type != typeof(PrieDieu) && type != typeof(CollectibleItem) && type != typeof(Chest) && type != typeof(Lever))
+                if (type != typeof(PrieDieu) && type != typeof(CollectibleItem) && type != typeof(Chest) && type != typeof(Lever) && type != typeof(Door))
                     continue;
 
                 foreach (Transform child in interactable.transform)
@@ -385,6 +385,27 @@ namespace BlasClient.Managers
 
                 anim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
                 anim.SetTrigger("DOWN");
+            }
+            else if (type == 247 || type == 248 || type == 249)
+            {
+                // Door
+                Door door = Object.FindObjectOfType<Door>();
+                if (door == null)
+                    return false;
+
+                anim.runtimeAnimatorController = door.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
+                if (type == 247)
+                {
+                    anim.SetTrigger("OPEN_ENTER");
+                }
+                else if (type == 248)
+                {
+                    anim.SetTrigger("CLOSED_ENTER");
+                }
+                else
+                {
+                    anim.SetTrigger("KEY_ENTER");
+                }
             }
             else
             {
