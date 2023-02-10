@@ -7,6 +7,7 @@ using Framework.Managers;
 using Framework.FrameworkCore;
 using BlasClient.Managers;
 using BlasClient.Structures;
+using BlasClient.Data;
 
 namespace BlasClient
 {
@@ -170,9 +171,9 @@ namespace BlasClient
                 if (animationHasChanged(state))
                 {
                     bool animationExists = false;
-                    for (byte i = 0; i < StaticObjects.animations.Length; i++)
+                    for (byte i = 0; i < AnimationStates.animations.Length; i++)
                     {
-                        if (state.IsName(StaticObjects.animations[i].name))
+                        if (state.IsName(AnimationStates.animations[i].name))
                         {
                             //Main.UnityLog("Sending new player animation");
 
@@ -232,7 +233,7 @@ namespace BlasClient
 
         private bool animationHasChanged(AnimatorStateInfo currentState)
         {
-            return !currentState.IsName(StaticObjects.animations[lastAnimation].name);
+            return !currentState.IsName(AnimationStates.animations[lastAnimation].name);
         }
 
         private bool directionHasChanged(bool currentDirection)

@@ -5,6 +5,7 @@ using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;
 using BlasClient.Structures;
+using BlasClient.Data;
 
 namespace BlasClient.Managers
 {
@@ -218,11 +219,12 @@ namespace BlasClient.Managers
                     // If anim is ladder climbing, set speed to 0
 
                     // Set required parameters to keep player onject in this animation
-                    for (int i = 0; i < StaticObjects.animations[animation].parameterNames.Length; i++)
+                    PlayerAnimState animState = AnimationStates.animations[animation];
+                    for (int i = 0; i < animState.parameterNames.Length; i++)
                     {
-                        anim.SetBool(StaticObjects.animations[animation].parameterNames[i], StaticObjects.animations[animation].parameterValues[i]);
+                        anim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
                     }
-                    anim.Play(StaticObjects.animations[animation].name);
+                    anim.Play(animState.name);
                     //Main.UnityLog("Updating player object animation for " + name);
                 }
                 else
