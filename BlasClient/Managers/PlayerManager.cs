@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
+using Tools.Level;
 using Tools.Level.Interactables;
 using BlasClient.Structures;
 using BlasClient.Data;
@@ -53,12 +54,17 @@ namespace BlasClient.Managers
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Add special animation checker to pds
-            foreach (PrieDieu pd in Object.FindObjectsOfType<PrieDieu>())
+            foreach (Interactable interactable in Object.FindObjectsOfType<Interactable>())
             {
-                foreach (Transform child in pd.transform)
+                System.Type type = interactable.GetType();
+                if (type != typeof(PrieDieu) && type != typeof(CollectibleItem) && type != typeof(Chest) && type != typeof(Lever))
+                    continue;
+
+                foreach (Transform child in interactable.transform)
                 {
                     if (child.name.ToLower().Contains("interactor"))
                     {
+                        // Only add this to the interactor animator of certain interactables
                         child.gameObject.AddComponent<SpecialAnimationChecker>();
                         break;
                     }
@@ -350,16 +356,6 @@ namespace BlasClient.Managers
                     anim.Play("Stand Up");
                 }
             }
-            //else if (type == 242)
-            //{
-            //    // Chest
-            //    Chest chest = Object.FindObjectOfType<Chest>();
-            //    if (chest == null)
-            //        return false;
-
-            //    anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
-            //    anim.SetTrigger("USED");
-            //}
             else if (type == 243 || type == 244)
             {
                 // Collectible item
@@ -368,9 +364,19 @@ namespace BlasClient.Managers
                     return false;
 
                 anim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
-                anim.Play(type == 240 ? "Floor Collection" : "Halfheight Collection");
+                anim.Play(type == 244 ? "Floor Collection" : "Halfheight Collection");
             }
             else if (type == 245)
+            {
+                // Chest
+                Chest chest = Object.FindObjectOfType<Chest>();
+                if (chest == null)
+                    return false;
+
+                anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                anim.SetTrigger("USED");
+            }
+            else if (type == 246)
             {
                 // Lever
                 Lever lever = Object.FindObjectOfType<Lever>();
@@ -379,10 +385,6 @@ namespace BlasClient.Managers
 
                 anim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
                 anim.SetTrigger("DOWN");
-            }
-            else if (type == 246)
-            {
-                // Altar
             }
             else
             {

@@ -39,16 +39,26 @@ namespace BlasClient
             switch (anim)
             {
                 case "Turning ON":
-                    Main.Multiplayer.usingSpecialAnimation(240);
-                    Main.UnityLog("Player is activating!"); return;
+                    Main.Multiplayer.usingSpecialAnimation(240); return;
                 case "Kneeing":
-                    Main.Multiplayer.usingSpecialAnimation(241);
-                    Main.UnityLog("Player is kneeling!"); return;
+                    Main.Multiplayer.usingSpecialAnimation(241); return;
                 case "Stand Up":
-                    Main.Multiplayer.usingSpecialAnimation(242);
-                    Main.UnityLog("Player is standing up!"); return;
-                default:
-                    Main.UnityLog("Unimportant anim"); return;
+                    Main.Multiplayer.usingSpecialAnimation(242); return;
+                case "Halfheight Collection":
+                    Main.Multiplayer.usingSpecialAnimation(243); return;
+                case "Floor Collection":
+                    Main.Multiplayer.usingSpecialAnimation(244); return;
+                case "Opening":
+                    Main.Multiplayer.usingSpecialAnimation(245); return;
+                case "Lever Down":
+                case "Lever Up":
+                    Main.Multiplayer.usingSpecialAnimation(246); return;
+                    // Brotherhood fake penitent
+                    // Perpetva chest
+                    // Pick gemino flower
+                    // Place altasgracias item
+                    // Altar
+                    // Door
             }
         }
 
@@ -60,7 +70,15 @@ namespace BlasClient
             "Knee (Aura ON)",
             "Knee (Aura OFF)",
             "Stand Up",
-            "Turning ON"
+            "Turning ON",
+            "Idle", // Collectible item
+            "Halfheight Collection",
+            "Floor Collection",
+            "Unused", // Chest
+            "Opening",
+            "Switch", // Lever
+            "Lever Down",
+            "Lever Up"
         };
     }
 }
