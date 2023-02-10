@@ -172,10 +172,17 @@ namespace BlasClient.Managers
             // Player just received a pers. object in the same scene - find it and set value immediately
             foreach (PersistentObject persistentObject in scenePersistentObjects)
             {
-                if (persistentObject.GetPersistenID() == persistentId)
+                try
                 {
-                    // Calling getPersistence() with "use" means to play used animation
-                    persistentObject.GetCurrentPersistentState("use", false);
+                    if (persistentObject.GetPersistenID() == persistentId)
+                    {
+                        // Calling getPersistence() with "use" means to play used animation
+                        persistentObject.GetCurrentPersistentState("use", false);
+                    }
+                }
+                catch (System.NullReferenceException)
+                {
+                    Main.UnityLog("Error: Failed to get persistent id of object");
                 }
             }
         }
