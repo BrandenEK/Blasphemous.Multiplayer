@@ -5,6 +5,7 @@ using Gameplay.UI.Others.UIGameLogic;
 using Framework.Managers;
 using Framework.Inventory;
 using Framework.FrameworkCore;
+using BlasClient.Data;
 
 namespace BlasClient.Managers
 {
@@ -99,17 +100,13 @@ namespace BlasClient.Managers
                         notification = "has unlocked the " + skill.caption;
                     break;
                 case 14:
-                    FlagState flag = StaticObjects.getFlagState(progressId);
+                    FlagState flag = FlagStates.getFlagState(progressId);
                     if (flag != null)
                         notification = flag.notification;
                     break;
 
-
-                // Persistent objects
                 // Unlocked teleports
                 // Church donations
-                // Unlocked skills
-                // Map
             }
 
             if (notification != null)

@@ -12,6 +12,7 @@ using Tools.Level.Actionables;
 using Tools.Level.Interactables;
 using Gameplay.GameControllers.Environment.MovingPlatforms;
 using BlasClient.Managers;
+using BlasClient.Data;
 
 namespace BlasClient.Patches
 {
@@ -139,7 +140,7 @@ namespace BlasClient.Patches
         public static void Postfix(EventManager __instance, string id, bool b)
         {
             string formatted = __instance.GetFormattedId(id);
-            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState && StaticObjects.getFlagState(formatted) != null)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState && FlagStates.getFlagState(formatted) != null)
             {
                 Main.Multiplayer.obtainedGameProgress(formatted, 14, (byte)(b ? 0 : 1));
             }
