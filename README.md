@@ -74,5 +74,6 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - notificationDisplaySeconds --> The time that a notification will remain on screen
 - displayNametags --> Whether or not to show a nametag for other players
 - displayOwnNametag --> Whether or not to show a nametag for this player
+- showPlayersOnMap --> Display an icon on the map for other players
 - team --> The id of the team to play on
 - syncSettings --> Which types of progression will be sent & received to/from the server
