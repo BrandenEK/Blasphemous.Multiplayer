@@ -10,6 +10,7 @@ namespace BlasServer
         private SimpleTcpServer server;
 
         private Dictionary<string, PlayerStatus> connectedPlayers;
+        private GameData gameData;
 
         public bool Start()
         {
@@ -28,6 +29,7 @@ namespace BlasServer
             }
 
             connectedPlayers = new Dictionary<string, PlayerStatus>();
+            gameData = new GameData();
             return true;
         }
 
@@ -425,12 +427,14 @@ namespace BlasServer
         // Received a player progress update
         private void receivePlayerProgress(string playerIp, byte[] data)
         {
-            // Get the progress item from the data & add this to the game list
-            // Send the data back to other players
             PlayerStatus current = getCurrentPlayer(playerIp);
             byte progressType = data[0];
             byte progressValue = data[1];
             string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
+
+            // Add the progress to the server data, and if it's new send it to the rest of the players
+            if (!gameData.addPlayerProgress(progressId, progressType, progressValue))
+                return;
 
             if (progressType >= 0 && progressType <= 5)
             {
@@ -467,7 +471,6 @@ namespace BlasServer
                 // Map cell
                 Core.displayCustom($"Received new map cell from {current.name}: {progressId}", ConsoleColor.Green);
             }
-
             sendPlayerProgress(playerIp, data);
         }
 
