@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace BlasClient.Structures
 {
     public class PlayerStatus
@@ -10,12 +6,14 @@ namespace BlasClient.Structures
         public byte team;
         public SkinStatus skin;
 
-        public string currentScene; // Currently unused
+        public string currentScene;
+        public string lastMapScene;
         public bool specialAnimation;
 
         public PlayerStatus()
         {
             currentScene = "";
+            lastMapScene = "";
             skin = new SkinStatus("PENITENT_DEFAULT");
         }
     }

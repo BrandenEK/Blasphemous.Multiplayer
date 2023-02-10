@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Framework.Managers;
 using Framework.Map;
 using Gameplay.UI.Others.MenuLogic;
+using BlasClient.Structures;
 
 namespace BlasClient.Managers
 {
@@ -12,7 +13,7 @@ namespace BlasClient.Managers
         private bool mapUpdateQueued;
 
         private Transform playerMarks;
-        private Sprite playerSprite;
+        private Sprite[] playerSprites;
 
         // Temporarily holds the most recent player map position
         public void setActivePlayerPosition(Vector2 position)
@@ -60,7 +61,7 @@ namespace BlasClient.Managers
             }
 
             // If holder doesn't exist yet, create it
-            if (playerMarks == null || playerSprite == null)
+            if (playerMarks == null || playerSprites == null)
             {
                 NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
                 if (widget == null) return;
@@ -71,7 +72,8 @@ namespace BlasClient.Managers
                 holder.transform.SetParent(rootRenderer, false);
 
                 playerMarks = holder.transform;
-                playerSprite = widget.RendererConfigs[0].Marks[MapData.MarkType.Blue];
+                MapRendererConfig cfg = widget.RendererConfigs[0];
+                playerSprites = new Sprite[3] { cfg.Marks[MapData.MarkType.Blue], cfg.Marks[MapData.MarkType.Green], cfg.Marks[MapData.MarkType.Red] };
             }
 
             // Destroy all old player marks
@@ -83,11 +85,21 @@ namespace BlasClient.Managers
             // Create new marks for each player
             foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
             {
+                PlayerStatus playerStatus = Main.Multiplayer.connectedPlayers[playerName];
+
                 // Calling this function with -1000 will calculate the center position of the scene
-                Core.NewMapManager.GetCellKeyFromPosition(Main.Multiplayer.connectedPlayers[playerName].currentScene, new Vector2(-1000, 0));
+                Core.NewMapManager.GetCellKeyFromPosition(playerStatus.lastMapScene, new Vector2(-1000, 0));
                 Vector2 cellPosition = getActivePlayerPosition();
                 if (cellPosition.x < 0 || cellPosition.y < 0)
                     return;
+
+                // Calculate which icon to use
+                Sprite icon = playerSprites[0];
+                if (playerStatus.currentScene != playerStatus.lastMapScene)
+                {
+                    icon = playerSprites[1];
+                }
+                // Check if they are on other team
 
                 // Create new image for this player
                 GameObject obj = new GameObject(playerName, typeof(RectTransform));
@@ -96,8 +108,8 @@ namespace BlasClient.Managers
                 rect.localRotation = Quaternion.identity;
                 rect.localScale = Vector3.one;
                 rect.localPosition = new Vector2(16 * cellPosition.x, 16 * cellPosition.y);
-                rect.sizeDelta = new Vector2(playerSprite.rect.width, playerSprite.rect.height);
-                rect.gameObject.AddComponent<Image>().sprite = playerSprite;
+                rect.sizeDelta = new Vector2(playerSprites[0].rect.width, playerSprites[0].rect.height);
+                rect.gameObject.AddComponent<Image>().sprite = icon;
                 Main.UnityLog($"Creating mark at " + rect.localPosition);
             }
         }

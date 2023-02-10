@@ -317,6 +317,8 @@ namespace BlasClient
         {
             PlayerStatus playerStatus = getPlayerStatus(playerName);
             playerStatus.currentScene = scene;
+            if (scene.Length == 9)
+                playerStatus.lastMapScene = scene;
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
                 playerManager.addPlayer(playerName);

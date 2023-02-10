@@ -64,6 +64,7 @@ namespace BlasClient
                     // Pick gemino flower
                     // Place altasgracias item
                     // Altar
+                    // Teleporter
             }
         }
 
