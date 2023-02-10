@@ -1,12 +1,20 @@
-﻿namespace BlasClient
+﻿
+namespace BlasClient.Data
 {
-    public static class StaticObjects
+    public static class PersistentStates
     {
-        
+        // Gets a certain persistent object data only if it should be synced
+        public static PersistenceState GetPersistenceState(string id)
+        {
+            for (int i = 0; i < persistentObjects.Length; i++)
+            {
+                if (id == persistentObjects[i].id)
+                    return persistentObjects[i];
+            }
+            return null;
+        }
 
-        
-
-        public static PersistenceState[] persistentObjects = new PersistenceState[]
+        private static PersistenceState[] persistentObjects = new PersistenceState[]
         {
             // Brotherhood
             new PersistenceState("47db0007-4175-4379-8b5c-f37441f6315b", "D17Z01S05", 0), // PD
@@ -393,22 +401,7 @@
 
             //new PersistenceState("", "", 0),
         };
-
-        
-
-        // Gets a certain persistent object data only if it should be synced
-        public static PersistenceState GetPersistenceState(string id)
-        {
-            for (int i = 0; i < persistentObjects.Length; i++)
-            {
-                if (id == persistentObjects[i].id)
-                    return persistentObjects[i];
-            }
-            return null;
-        }
     }
-
-
 
     [System.Serializable]
     public class PersistenceState

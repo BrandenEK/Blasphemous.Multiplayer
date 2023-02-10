@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
 using BlasClient.Structures;
+using BlasClient.Data;
 
 namespace BlasClient.Managers
 {
@@ -150,7 +151,7 @@ namespace BlasClient.Managers
         // Called when interacting with pers. object - determine whether to send it or not
         public void usePersistentObject(string persistentId)
         {
-            if (!updatingProgress && StaticObjects.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
+            if (!updatingProgress && PersistentStates.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
             {
                 // Update save game data & send this object
                 Main.Multiplayer.addPersistentObject(persistentId);
@@ -164,7 +165,7 @@ namespace BlasClient.Managers
         {
             Main.Multiplayer.addPersistentObject(persistentId);
 
-            PersistenceState persistence = StaticObjects.GetPersistenceState(persistentId);
+            PersistenceState persistence = PersistentStates.GetPersistenceState(persistentId);
             if (persistence == null || Core.LevelManager.currentLevel.LevelName != persistence.scene)
                 return;
 
