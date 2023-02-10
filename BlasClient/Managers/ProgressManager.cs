@@ -151,7 +151,7 @@ namespace BlasClient.Managers
         // Called when interacting with pers. object - determine whether to send it or not
         public void usePersistentObject(string persistentId)
         {
-            if (!updatingProgress && PersistentStates.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
+            if (PersistentStates.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
             {
                 // Update save game data & send this object
                 Main.Multiplayer.addPersistentObject(persistentId);

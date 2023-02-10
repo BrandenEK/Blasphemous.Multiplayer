@@ -211,6 +211,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Interactable __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog($"Used {__instance.GetType()}: {persistentId}");
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -315,6 +317,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(CherubCaptorPersistentObject __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Cherub killed: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -389,6 +393,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Gate __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Gate opened: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -433,6 +439,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(StraightMovingPlatform __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Activated platform: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -472,6 +480,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(TriggerReceiver __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Trigger activated: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -516,6 +526,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(BreakableWall __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Broke wall: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -554,6 +566,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(ActionableLadder __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Ladder activated: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
@@ -594,6 +608,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(Door __instance)
         {
+            if (ProgressManager.updatingProgress) return;
+
             string persistentId = __instance.GetPersistenID();
             Main.UnityLog("Door opened: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
