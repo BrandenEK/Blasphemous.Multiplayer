@@ -70,6 +70,7 @@ namespace BlasClient
 
             // Initialize data
             Core.Persistence.AddPersistentManager(this);
+            PersistentStates.loadPersistentObjects();
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
@@ -118,7 +119,7 @@ namespace BlasClient
             inLevel = newLevel.LevelName != "MainMenu";
             notificationManager.createMessageBox();
             playerManager.loadScene(newLevel.LevelName);
-            progressManager.sceneLoaded();
+            progressManager.sceneLoaded(newLevel.LevelName);
 
             if (inLevel && connectedToServer)
             {
@@ -406,16 +407,16 @@ namespace BlasClient
         }
 
         // Add a new persistent object that has been interacted with
-        public void addPersistentObject(string persistentId)
+        public void addPersistentObject(string objectSceneId)
         {
-            if (!interactedPersistenceObjects.Contains(persistentId))
-                interactedPersistenceObjects.Add(persistentId);
+            if (!interactedPersistenceObjects.Contains(objectSceneId))
+                interactedPersistenceObjects.Add(objectSceneId);
         }
 
         // Checks whether or not a persistent object has been interacted with
-        public bool checkPersistentObject(string persistentId)
+        public bool checkPersistentObject(string objectSceneId)
         {
-            return interactedPersistenceObjects.Contains(persistentId);
+            return interactedPersistenceObjects.Contains(objectSceneId);
         }
 
         // Save list of interacted persistent objects

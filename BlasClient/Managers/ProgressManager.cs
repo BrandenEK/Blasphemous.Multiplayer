@@ -16,16 +16,19 @@ namespace BlasClient.Managers
         private PersistentObject[] scenePersistentObjects = new PersistentObject[0];
         private static readonly object progressLock = new object();
 
-        public void sceneLoaded()
+        public void sceneLoaded(string scene)
         {
             scenePersistentObjects = Object.FindObjectsOfType<PersistentObject>();
             foreach (PersistentObject persistence in scenePersistentObjects)
             {
-                if (Main.Multiplayer.checkPersistentObject(persistence.GetPersistenID()))
-                {
-                    // Calling setPersistence() with null data means to play instant animation
-                    persistence.SetCurrentPersistentState(null, false, null);
-                }
+                int objectSceneIdx = PersistentStates.getObjectSceneIndex(scene, persistence.GetPersistenID());
+                string objectSceneId = scene + "~" + objectSceneIdx;
+
+                // This object does not even sync or hasn't been interacted with yet
+                if (objectSceneIdx < 0 || !Main.Multiplayer.checkPersistentObject(objectSceneId)) continue;
+
+                // Calling setPersistence() with null data means to play instant animation
+                persistence.SetCurrentPersistentState(null, false, null);
             }
         }
 
@@ -151,22 +154,29 @@ namespace BlasClient.Managers
         // Called when interacting with pers. object - determine whether to send it or not
         public void usePersistentObject(string persistentId)
         {
-            if (PersistentStates.GetPersistenceState(persistentId) != null && !Main.Multiplayer.checkPersistentObject(persistentId))
-            {
-                // Update save game data & send this object
-                Main.Multiplayer.addPersistentObject(persistentId);
-                if (Main.Multiplayer.config.syncSettings.worldState)
-                    Main.Multiplayer.obtainedGameProgress(persistentId, 15, 0);
-            }
+            string scene = Core.LevelManager.currentLevel.LevelName;
+            int objectSceneIdx = PersistentStates.getObjectSceneIndex(scene, persistentId);
+            string objectSceneId = scene + "~" + objectSceneIdx;
+
+            // Make sure this pers. object should sync & isn't already activated
+            if (objectSceneIdx < 0 || Main.Multiplayer.checkPersistentObject(objectSceneId)) return;
+
+            // Update save game data & send this object
+            Main.Multiplayer.addPersistentObject(objectSceneId);
+            if (Main.Multiplayer.config.syncSettings.worldState)
+                Main.Multiplayer.obtainedGameProgress(objectSceneId, 15, 0);
         }
 
         // When receiving a pers. object update, the object is immediately updated
-        private void updatePersistentObject(string persistentId)
+        private void updatePersistentObject(string objectSceneId)
         {
-            Main.Multiplayer.addPersistentObject(persistentId);
+            Main.Multiplayer.addPersistentObject(objectSceneId);
 
-            PersistenceState persistence = PersistentStates.GetPersistenceState(persistentId);
-            if (persistence == null || Core.LevelManager.currentLevel.LevelName != persistence.scene)
+            string objectScene = objectSceneId.Substring(0, objectSceneId.IndexOf('~'));
+            int objectSceneIdx = int.Parse(objectSceneId.Substring(objectSceneId.IndexOf('~') + 1));
+            string objectPersistentId = PersistentStates.getObjectPersistentId(objectScene, objectSceneIdx);
+
+            if (Core.LevelManager.currentLevel.LevelName != objectScene || objectPersistentId == null)
                 return;
 
             // Player just received a pers. object in the same scene - find it and set value immediately
@@ -174,7 +184,7 @@ namespace BlasClient.Managers
             {
                 try
                 {
-                    if (persistentObject.GetPersistenID() == persistentId)
+                    if (persistentObject.GetPersistenID() == objectPersistentId)
                     {
                         // Calling getPersistence() with "use" means to play used animation
                         persistentObject.GetCurrentPersistentState("use", false);
