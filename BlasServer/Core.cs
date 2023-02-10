@@ -7,6 +7,7 @@ namespace BlasServer
     class Core
     {
         public static Config config;
+        public static GameData gameData;
 
         static void Main(string[] args)
         {
@@ -33,6 +34,7 @@ namespace BlasServer
             Server server = new Server();
             if (server.Start())
             {
+                gameData = new GameData();
                 displayMessage("Server has been started at this machine's local ip address");
                 CommandLoop();
             }
@@ -70,8 +72,15 @@ namespace BlasServer
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 string command = Console.ReadLine().Trim().ToLower();
-                if (command == "exit")
-                    break;
+
+                switch (command)
+                {
+                    case "exit":
+                        return;
+                    case "data":
+                        gameData.printGameProgress();
+                        break;
+                }
             }
         }
     }

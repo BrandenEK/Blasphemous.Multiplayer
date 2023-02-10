@@ -10,7 +10,6 @@ namespace BlasServer
         private SimpleTcpServer server;
 
         private Dictionary<string, PlayerStatus> connectedPlayers;
-        private GameData gameData;
 
         public bool Start()
         {
@@ -29,7 +28,6 @@ namespace BlasServer
             }
 
             connectedPlayers = new Dictionary<string, PlayerStatus>();
-            gameData = new GameData();
             return true;
         }
 
@@ -433,7 +431,7 @@ namespace BlasServer
             string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
 
             // Add the progress to the server data, and if it's new send it to the rest of the players
-            if (!gameData.addPlayerProgress(progressId, progressType, progressValue))
+            if (!Core.gameData.addPlayerProgress(progressId, progressType, progressValue))
                 return;
 
             if (progressType >= 0 && progressType <= 5)
