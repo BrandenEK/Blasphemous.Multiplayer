@@ -393,7 +393,7 @@ namespace BlasClient
             progressManager.receiveProgress(progressId, progressType, progressValue);
 
             // Show notification for new progress
-            notificationManager.showProgressNotification(player, progressType, progressId);
+            notificationManager.showProgressNotification(player, progressType, progressId, progressValue);
         }
 
         public void displayNotification(string message)
