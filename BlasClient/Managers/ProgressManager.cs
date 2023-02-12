@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
+using Framework.FrameworkCore.Attributes.Logic;
 using BlasClient.Structures;
 using BlasClient.Data;
 
@@ -122,35 +123,24 @@ namespace BlasClient.Managers
         // Called when receiving a stat upgrade
         public void upgradeStat(string stat, byte level)
         {
+            Attribute attribute;
             switch (stat)
             {
-                case "LIFE":
-                    Core.Logic.Penitent.Stats.Life.Upgrade();
-                    Core.Logic.Penitent.Stats.Life.SetToCurrentMax();
-                    return;
-                case "FERVOUR":
-                    Core.Logic.Penitent.Stats.Fervour.Upgrade();
-                    Core.Logic.Penitent.Stats.Fervour.SetToCurrentMax();
-                    return;
-                case "STRENGTH":
-                    Core.Logic.Penitent.Stats.Strength.Upgrade();
-                    return;
-                case "MEACULPA":
-                    Core.Logic.Penitent.Stats.MeaCulpa.Upgrade();
-                    return;
-                case "BEADSLOTS":
-                    Core.Logic.Penitent.Stats.BeadSlots.Upgrade();
-                    return;
-                case "FLASK":
-                    Core.Logic.Penitent.Stats.Flask.Upgrade();
-                    Core.Logic.Penitent.Stats.Flask.SetToCurrentMax();
-                    return;
-                case "FLASKHEALTH":
-                    Core.Logic.Penitent.Stats.FlaskHealth.Upgrade();
-                    return;
+                case "LIFE": attribute = Core.Logic.Penitent.Stats.Life; break;
+                case "FERVOUR": attribute = Core.Logic.Penitent.Stats.Fervour; break;
+                case "STRENGTH": attribute = Core.Logic.Penitent.Stats.Strength; break;
+                case "MEACULPA": attribute = Core.Logic.Penitent.Stats.MeaCulpa; break;
+                case "BEADSLOTS": attribute = Core.Logic.Penitent.Stats.BeadSlots; break;
+                case "FLASK": attribute = Core.Logic.Penitent.Stats.Flask; break;
+                case "FLASKHEALTH": attribute = Core.Logic.Penitent.Stats.FlaskHealth; break;
                 default:
                     Main.UnityLog("Error: Unknown stat received - " + stat);
                     return;
+            }
+
+            while (attribute.Final < level)
+            {
+                attribute.Upgrade();
             }
         }
 

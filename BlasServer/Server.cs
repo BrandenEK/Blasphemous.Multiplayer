@@ -432,7 +432,10 @@ namespace BlasServer
 
             // Add the progress to the server data, and if it's new send it to the rest of the players
             if (!Core.gameData.addPlayerProgress(progressId, progressType, progressValue))
+            {
+                Core.displayCustom($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}", ConsoleColor.DarkGreen);
                 return;
+            }
 
             if (progressType >= 0 && progressType <= 5)
             {
