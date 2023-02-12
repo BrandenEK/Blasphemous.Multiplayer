@@ -437,7 +437,7 @@ namespace BlasServer
             if (progressType >= 0 && progressType <= 5)
             {
                 // Item
-                Core.displayCustom($"Received new item from {current.name}: {progressId}", ConsoleColor.Green);
+                Core.displayCustom($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.name}: {progressId}", ConsoleColor.Green);
             }
             else if (progressType >= 6 && progressType <= 12)
             {

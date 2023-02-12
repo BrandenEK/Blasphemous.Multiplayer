@@ -17,22 +17,28 @@ namespace BlasServer
             }
         }
 
+        // Adds the player progress to the server data and determines whether to send it to the rest of the players or not
         public bool addPlayerProgress(string progressId, byte progressType, byte progressValue)
         {
             Dictionary<string, byte> currentProgressSet = progressSets[progressType];
 
-            if (currentProgressSet.ContainsKey(progressId))
-            {
-                // This progress id has already been obtained
-                // Change this to instead update the value if it is higher
-                return false;
-            }
-            else
+            if (!currentProgressSet.ContainsKey(progressId))
             {
                 // This is a new progress
                 currentProgressSet.Add(progressId, progressValue);
                 return true;
             }
+
+            byte currentValue = currentProgressSet[progressId];
+            if (progressValue > currentValue)
+            {
+                // The new progress has a higher value than the server
+                currentProgressSet[progressId] = progressValue;
+                return true;
+            }
+
+            // The new progress was less than the server
+            return false;
         }
 
         public byte checkPlayerProgress(string progressId, byte progressType)
