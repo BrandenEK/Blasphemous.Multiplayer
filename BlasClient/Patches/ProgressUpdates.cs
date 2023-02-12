@@ -502,7 +502,8 @@ namespace BlasClient.Patches
                 return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
             }
 
-            ____running = !Core.Events.GetFlag(___OnDestination);
+            ____running = false;
+            __instance.Use(); // Might have to change this
             return false;
         }
     }
@@ -688,6 +689,23 @@ namespace BlasClient.Patches
         {
             __result = 3;
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(Lever), "ActivateActionable")]
+    public class LeverActionable_Patch
+    {
+        public static void Postfix()
+        {
+            Main.UnityLog("Activating the actionables!");
+        }
+    }
+    [HarmonyPatch(typeof(SlashReceiver), "ActivateActionable")]
+    public class TriggerActionable_Patch
+    {
+        public static void Postfix()
+        {
+            Main.UnityLog("Activating the actionables!");
         }
     }
 }

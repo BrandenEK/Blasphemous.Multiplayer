@@ -70,6 +70,12 @@ namespace BlasClient.Managers
                     }
                 }
             }
+            if (scene == "D17Z01S01")
+            {
+                // Add this to the intro animator
+                GameObject fakePenitent = GameObject.Find("FakePenitent");
+                if (fakePenitent != null) fakePenitent.AddComponent<SpecialAnimationChecker>();
+            }
 
             // Create main player's nametag
             createPlayerNameTag();
@@ -406,6 +412,16 @@ namespace BlasClient.Managers
                 {
                     anim.SetTrigger("KEY_ENTER");
                 }
+            }
+            else if (type == 250 || type == 251)
+            {
+                // Beginning animation
+                GameObject fakePenitent = GameObject.Find("FakePenitent");
+                if (fakePenitent == null)
+                    return false;
+
+                anim.runtimeAnimatorController = fakePenitent.GetComponent<Animator>().runtimeAnimatorController;
+                anim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
             }
             else
             {

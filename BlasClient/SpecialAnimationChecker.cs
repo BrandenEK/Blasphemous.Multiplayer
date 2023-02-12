@@ -59,7 +59,10 @@ namespace BlasClient
                     Main.Multiplayer.usingSpecialAnimation(248); return;
                 case "(KEY) Entering":
                     Main.Multiplayer.usingSpecialAnimation(249); return;
-                    // Brotherhood fake penitent
+                case "FakePenitent laydown":
+                    Main.Multiplayer.usingSpecialAnimation(250); return;
+                case "FakePenitent gettingUp":
+                    Main.Multiplayer.usingSpecialAnimation(251); return;
                     // Perpetva chest
                     // Pick gemino flower
                     // Place altasgracias item
@@ -87,7 +90,10 @@ namespace BlasClient
             "Lever Up",
             "(Open) Entering", // Door
             "(Closed) Entering",
-            "(KEY) Entering"
+            "(KEY) Entering",
+            "FakePenitent laydown", // Beginning
+            "FakePenitent gettingUp",
+            "FakePenitent end"
         };
     }
 }
