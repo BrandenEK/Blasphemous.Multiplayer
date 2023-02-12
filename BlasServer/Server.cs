@@ -237,6 +237,11 @@ namespace BlasServer
         private void sendPlayerLeaveScene(string playerIp)
         {
             PlayerStatus current = getCurrentPlayer(playerIp);
+            current.xPos = 0;
+            current.yPos = 0;
+            current.animation = 0;
+            current.facingDirection = true;
+
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (playerIp != ip)

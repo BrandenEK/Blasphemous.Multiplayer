@@ -8,7 +8,7 @@ namespace BlasClient.Structures
 
         public string currentScene;
         public string lastMapScene;
-        public bool specialAnimation;
+        public byte specialAnimation;
 
         public PlayerStatus()
         {

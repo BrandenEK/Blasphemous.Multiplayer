@@ -227,11 +227,11 @@ namespace BlasClient.Managers
                 if (animation < 240)
                 {
                     // Regular animation
-                    if (playerStatus.specialAnimation)
+                    if (playerStatus.specialAnimation > 0)
                     {
                         // Change back to regular animations
                         anim.runtimeAnimatorController = playerController;
-                        playerStatus.specialAnimation = false;
+                        playerStatus.specialAnimation = 0;
                     }
                     anim.SetBool("IS_CROUCH", false);
                     //anim.SetBool("IS_DEAD") might need one for vertical attack
@@ -251,7 +251,7 @@ namespace BlasClient.Managers
                     // Special animation
                     if (playSpecialAnimation(anim, animation))
                     {
-                        playerStatus.specialAnimation = true;
+                        playerStatus.specialAnimation = animation;
                         Main.UnityLog("Playing special animation for " + name);
                     }
                     else
@@ -418,6 +418,15 @@ namespace BlasClient.Managers
         // Finishes playing a special animation and returns to idle
         public void finishSpecialAnimation(string playerName)
         {
+            byte currentSpecialAnimation = Main.Multiplayer.getPlayerStatus(playerName).specialAnimation;
+            if (currentSpecialAnimation >= 247 && currentSpecialAnimation <= 249)
+            {
+                // If finished entering door, disable renderer
+                GameObject player = getPlayerObject(playerName);
+                if (player != null)
+                    player.GetComponent<SpriteRenderer>().enabled = false;
+            }
+
             updatePlayerAnimation(playerName, 0);
         }
 
