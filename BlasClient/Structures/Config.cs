@@ -14,7 +14,7 @@
         // Default config
         public Config()
         {
-            serverPort = 25565;
+            serverPort = 8989;
             notificationDisplaySeconds = 4f;
             displayNametags = true;
             displayOwnNametag = true;

@@ -45,6 +45,8 @@ namespace BlasServer
         {
             for (int i = 0; i < numberOfProgressTypes; i++)
             {
+                if (progressSets[i].Count == 0) continue;
+
                 Core.displayMessage("---Progress type " + i + "---");
                 foreach (string id in progressSets[i].Keys)
                 {
