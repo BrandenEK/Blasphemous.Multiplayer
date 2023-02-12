@@ -148,7 +148,7 @@ namespace BlasClient.Managers
                     return;
             }
 
-            while (attribute.Final < level)
+            while (attribute.GetUpgrades() < level)
             {
                 attribute.Upgrade();
             }

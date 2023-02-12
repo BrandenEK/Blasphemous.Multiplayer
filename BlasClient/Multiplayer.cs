@@ -257,7 +257,7 @@ namespace BlasClient
         {
             if (connectedToServer)
             {
-                Main.UnityLog("Sending new game progress");
+                Main.UnityLog("Sending new game progress: " + progressId);
                 client.sendPlayerProgress((byte)progressType, progressValue, progressId);
             }
         }

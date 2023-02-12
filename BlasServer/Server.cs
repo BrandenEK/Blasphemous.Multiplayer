@@ -445,7 +445,7 @@ namespace BlasServer
             else if (progressType == 6)
             {
                 // Stat
-                Core.displayCustom($"Received new stat upgrade from {current.name}: Level {progressValue}", ConsoleColor.Green);
+                Core.displayCustom($"Received new stat upgrade from {current.name}: {progressId} level {progressValue + 1}", ConsoleColor.Green);
             }
             else if (progressType == 7)
             {

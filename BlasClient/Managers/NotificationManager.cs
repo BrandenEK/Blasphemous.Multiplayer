@@ -81,7 +81,7 @@ namespace BlasClient.Managers
                     else if (progressId == "MEACULPA") stat = "mea culpa tier";
                     else if (progressId == "BEADSLOTS") stat = "maximum bead slots";
                     else if (progressId == "FLASK") stat = "maximum flasks";
-                    else if (progressId == "FLASKHEALTH") stat = "flasks strength";
+                    else if (progressId == "FLASKHEALTH") stat = "flask strength";
                     if (stat != null)
                         notification = "has upgraded the " + stat;
                     break;

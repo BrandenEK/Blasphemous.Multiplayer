@@ -75,6 +75,7 @@ namespace BlasClient.Data
             new FlagState("LOTL_3OFFERING_DONE", null),
             new FlagState("SERENO_DLC2QUEST_FINISHED", null), // Diosdado
             new FlagState("SERENO_DOOR_REVEALED", null), // Crisanta
+            new FlagState("SANTOS_DOOR_OPENED", "has opened Jibrael's door"), // Amanecidas
             // Add exact plate contents
 
             // World states
