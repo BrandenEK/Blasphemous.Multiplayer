@@ -72,7 +72,7 @@ namespace BlasClient.Managers
             }
             if (scene == "D17Z01S01")
             {
-                // Add this to the intro animator
+                // Add this to the fake penitent intro animator
                 GameObject fakePenitent = GameObject.Find("FakePenitent");
                 if (fakePenitent != null) fakePenitent.AddComponent<SpecialAnimationChecker>();
             }
@@ -415,13 +415,13 @@ namespace BlasClient.Managers
             }
             else if (type == 250 || type == 251)
             {
-                // Beginning animation
-                GameObject fakePenitent = GameObject.Find("FakePenitent");
-                if (fakePenitent == null)
-                    return false;
-
-                anim.runtimeAnimatorController = fakePenitent.GetComponent<Animator>().runtimeAnimatorController;
-                anim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
+                // Fake penitent
+                GameObject logic = GameObject.Find("LOGIC");
+                if (logic != null)
+                {
+                    anim.runtimeAnimatorController = logic.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
+                    anim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
+                }
             }
             else
             {

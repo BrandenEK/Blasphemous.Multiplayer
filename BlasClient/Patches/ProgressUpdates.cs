@@ -700,7 +700,7 @@ namespace BlasClient.Patches
             Main.UnityLog("Activating the actionables!");
         }
     }
-    [HarmonyPatch(typeof(SlashReceiver), "ActivateActionable")]
+    [HarmonyPatch(typeof(TriggerReceiver), "ActivateActionable")]
     public class TriggerActionable_Patch
     {
         public static void Postfix()

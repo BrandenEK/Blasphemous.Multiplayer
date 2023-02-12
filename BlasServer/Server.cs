@@ -240,7 +240,7 @@ namespace BlasServer
             current.xPos = 0;
             current.yPos = 0;
             current.animation = 0;
-            current.facingDirection = true;
+            current.facingDirection = false;
 
             foreach (string ip in connectedPlayers.Keys)
             {

@@ -91,7 +91,7 @@ namespace BlasClient
             "(Open) Entering", // Door
             "(Closed) Entering",
             "(KEY) Entering",
-            "FakePenitent laydown", // Beginning
+            "FakePenitent laydown", // Fake penitent
             "FakePenitent gettingUp",
             "FakePenitent end"
         };
