@@ -67,7 +67,12 @@ namespace BlasClient.Managers
             {
                 case ProgressType.Bead:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
-                        Core.InventoryManager.AddRosaryBead(progress.id);
+                    {
+                        if (progress.value == 1)
+                            Core.InventoryManager.RemoveRosaryBead(progress.id);
+                        else
+                            Core.InventoryManager.AddRosaryBead(progress.id);
+                    }
                     return;
                 case ProgressType.Prayer:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
@@ -87,7 +92,12 @@ namespace BlasClient.Managers
                     return;
                 case ProgressType.QuestItem:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
-                        Core.InventoryManager.AddQuestItem(progress.id);
+                    {
+                        if (progress.value == 1)
+                            Core.InventoryManager.RemoveQuestItem(progress.id);
+                        else
+                            Core.InventoryManager.AddQuestItem(progress.id);
+                    }
                     return;
                 case ProgressType.PlayerStat:
                     if (Main.Multiplayer.config.syncSettings.playerStats)
@@ -103,7 +113,7 @@ namespace BlasClient.Managers
                     return;
                 case ProgressType.Flag:
                     if (Main.Multiplayer.config.syncSettings.worldState)
-                        Core.Events.SetFlag(progress.id, true, false);
+                        Core.Events.SetFlag(progress.id, progress.value == 0, false);
                     return;
                 case ProgressType.PersistentObject:
                     if (Main.Multiplayer.config.syncSettings.worldState)

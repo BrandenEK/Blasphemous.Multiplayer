@@ -18,7 +18,8 @@ namespace BlasClient.Patches
 {
     // Inventory items
 
-    [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))] // TODO - Change this to use the AddBaseObject method
+    // Beads
+    [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))]
     public class InventoryBead_Patch
     {
         public static void Postfix(RosaryBead rosaryBead)
@@ -29,6 +30,19 @@ namespace BlasClient.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(InventoryManager), "RemoveRosaryBead", typeof(RosaryBead))]
+    public class InventoryBeadRemove_Patch
+    {
+        public static void Postfix(RosaryBead bead)
+        {
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
+            {
+                Main.Multiplayer.obtainedGameProgress(bead.id, ProgressManager.ProgressType.Bead, 1);
+            }
+        }
+    }
+
+    // Prayers
     [HarmonyPatch(typeof(InventoryManager), "AddPrayer", typeof(Prayer))]
     public class InventoryPrayer_Patch
     {
@@ -40,6 +54,8 @@ namespace BlasClient.Patches
             }
         }
     }
+
+    // Relics
     [HarmonyPatch(typeof(InventoryManager), "AddRelic", typeof(Relic))]
     public class InventoryRelic_Patch
     {
@@ -51,6 +67,8 @@ namespace BlasClient.Patches
             }
         }
     }
+
+    // Hearts
     [HarmonyPatch(typeof(InventoryManager), "AddSword", typeof(Sword))]
     public class InventorySword_Patch
     {
@@ -62,6 +80,8 @@ namespace BlasClient.Patches
             }
         }
     }
+
+    // Collectibles
     [HarmonyPatch(typeof(InventoryManager), "AddCollectibleItem", typeof(Framework.Inventory.CollectibleItem))]
     public class InventoryCollectible_Patch
     {
@@ -73,6 +93,8 @@ namespace BlasClient.Patches
             }
         }
     }
+
+    // Quest items
     [HarmonyPatch(typeof(InventoryManager), "AddQuestItem", typeof(QuestItem))]
     public class InventoryQuestItem_Patch
     {
@@ -81,6 +103,17 @@ namespace BlasClient.Patches
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
                 Main.Multiplayer.obtainedGameProgress(questItem.id, ProgressManager.ProgressType.QuestItem, 0);
+            }
+        }
+    }
+    [HarmonyPatch(typeof(InventoryManager), "RemoveQuestItem", typeof(QuestItem))]
+    public class InventoryQuestItemRemove_Patch
+    {
+        public static void Postfix(QuestItem questItem)
+        {
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
+            {
+                Main.Multiplayer.obtainedGameProgress(questItem.id, ProgressManager.ProgressType.QuestItem, 1);
             }
         }
     }
