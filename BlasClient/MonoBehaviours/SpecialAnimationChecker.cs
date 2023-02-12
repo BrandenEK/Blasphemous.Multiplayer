@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace BlasClient
+namespace BlasClient.MonoBehaviours
 {
     public class SpecialAnimationChecker : MonoBehaviour
     {

@@ -691,21 +691,4 @@ namespace BlasClient.Patches
             return false;
         }
     }
-
-    [HarmonyPatch(typeof(Lever), "ActivateActionable")]
-    public class LeverActionable_Patch
-    {
-        public static void Postfix()
-        {
-            Main.UnityLog("Activating the actionables!");
-        }
-    }
-    [HarmonyPatch(typeof(TriggerReceiver), "ActivateActionable")]
-    public class TriggerActionable_Patch
-    {
-        public static void Postfix()
-        {
-            Main.UnityLog("Activating the actionables!");
-        }
-    }
 }

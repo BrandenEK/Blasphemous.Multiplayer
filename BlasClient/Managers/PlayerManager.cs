@@ -6,6 +6,7 @@ using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level;
 using Tools.Level.Interactables;
 using BlasClient.Structures;
+using BlasClient.MonoBehaviours;
 using BlasClient.Data;
 
 namespace BlasClient.Managers
@@ -176,6 +177,10 @@ namespace BlasClient.Managers
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
             anim.runtimeAnimatorController = playerController;
+
+            // If in beginning room, add fake penitent controller
+            if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
+                player.AddComponent<FakePenitentIntro>();
 
             // Set up name tag
             if (Main.Multiplayer.config.displayNametags)
