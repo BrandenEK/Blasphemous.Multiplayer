@@ -253,12 +253,12 @@ namespace BlasClient
         }
 
         // Obtained new item, upgraded stat, set flag, etc...
-        public void obtainedGameProgress(string progressId, byte progressType, byte progressValue)
+        public void obtainedGameProgress(string progressId, ProgressManager.ProgressType progressType, byte progressValue)
         {
             if (connectedToServer)
             {
                 Main.UnityLog("Sending new game progress");
-                client.sendPlayerProgress(progressType, progressValue, progressId);
+                client.sendPlayerProgress((byte)progressType, progressValue, progressId);
             }
         }
 

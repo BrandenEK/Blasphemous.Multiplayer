@@ -439,36 +439,37 @@ namespace BlasServer
                 // Item
                 Core.displayCustom($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.name}: {progressId}", ConsoleColor.Green);
             }
-            else if (progressType >= 6 && progressType <= 12)
+            else if (progressType == 6)
             {
                 // Stat
-                Core.displayCustom($"Received new stat upgrade from {current.name}", ConsoleColor.Green);
+                Core.displayCustom($"Received new stat upgrade from {current.name}: Level {progressValue}", ConsoleColor.Green);
             }
-            else if (progressType == 13)
+            else if (progressType == 7)
             {
                 // Skill
                 Core.displayCustom($"Received new skill from {current.name}: {progressId}", ConsoleColor.Green);
             }
-            else if (progressType == 14)
-            {
-                // Flag
-                Core.displayCustom($"Received new flag from {current.name}: {progressId}", ConsoleColor.Green);
-            }
-            else if (progressType == 15)
-            {
-                // Pers. object
-                Core.displayCustom($"Received new pers. object from {current.name}: {progressId}", ConsoleColor.Green);
-            }
-            else if (progressType == 16)
-            {
-                // Teleport
-                Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
-            }
-            else if (progressType == 17)
+            else if (progressType == 8)
             {
                 // Map cell
                 Core.displayCustom($"Received new map cell from {current.name}: {progressId}", ConsoleColor.Green);
             }
+            else if (progressType == 9)
+            {
+                // Flag
+                Core.displayCustom($"Received new flag from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 10)
+            {
+                // Pers. object
+                Core.displayCustom($"Received new pers. object from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 11)
+            {
+                // Teleport
+                Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            
             sendPlayerProgress(playerIp, data);
         }
 
