@@ -163,13 +163,13 @@ namespace BlasClient.Data
                 new PersistenceState("c2925d95-4355-4ed7-9dfd-00530ced4976", "D02Z01S01", 1),
                 new PersistenceState("75fba863-7b32-4dd0-8853-a7726f55b058", "D02Z01S06", 1),
                 new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D02Z01S04", 1),
-                //new PersistenceState("", "", 1),
+                // Other bead/flower
                 new PersistenceState("0495cb35-3807-433b-b82f-23a45692ba83", "D02Z01S02", 3), // CR
                 new PersistenceState("465934da-ee64-4b6c-aaf2-78c145185e7e", "D02Z01S06", 3),
 
                 // Graveyard
                 new PersistenceState("5bd1a831-b47e-4303-b898-c3ba367a857a", "D02Z02S08", 0), // PD
-                //new PersistenceState("2c866895-9fc8-432a-9f34-b2dfc6089aeb", "D02Z02S08", 1), // CI
+                new PersistenceState("ec75430b-dc1f-4ca0-934c-622dbe56cc13", "D02Z02S08", 1), // CI
                 new PersistenceState("475f05b8-1ad8-43f8-92f0-a18b17677f5a", "D02Z02S11", 1),
                 new PersistenceState("8bd708a2-4eb7-484f-9f64-89cf362e76ed", "D02Z02S06", 1),
                 new PersistenceState("611b9d1a-b37a-415d-bce6-e7cadc89c4aa", "D02Z02S03", 1),
@@ -178,15 +178,14 @@ namespace BlasClient.Data
                 new PersistenceState("9dcb9501-a474-4d41-96c8-a3875ce8a638", "D02Z02S04", 1),
                 new PersistenceState("cbde2d24-61c9-458e-8035-643c00a6d376", "D02Z02S04", 1),
                 new PersistenceState("c5d58f0c-b905-4278-abd6-92a5a22ec7b9", "D02Z02S05", 1),
-                new PersistenceState("39f1e0d7-26de-4937-a197-088fa1555e5b", "D03Z02S13", 1),
-                //new PersistenceState("", "", 1),
-                //new PersistenceState("", "", 1),
+                new PersistenceState("39f1e0d7-26de-4937-a197-088fa1555e5b", "D02Z02S13", 1),
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D02Z02S14", 1),
                 new PersistenceState("b898e95c-abca-4bcc-82e5-8bc43bdb1373", "D02Z02S11", 3), // CR
                 new PersistenceState("b3e9cc99-28bb-46a5-be22-6e9896916ebc", "D02Z02S02", 3),
                 new PersistenceState("656d21d9-e784-456a-aea7-59a6520bd4f0", "D02Z02S04", 3),
                 new PersistenceState("2c866895-9fc8-432a-9f34-b2dfc6089aeb", "D02Z02S08", 3),
                 new PersistenceState("5bd00665-3d06-49be-bb29-9ef45c0c4667", "D02Z02S13", 5), // GT
-                new PersistenceState("9bed668f-a47e-4ff5-8378-e95be7430961", "D02Z02S08", 8),
+                new PersistenceState("9bed668f-a47e-4ff5-8378-e95be7430961", "D02Z02S08", 8), // BW
                 new PersistenceState("25a8f890-f84b-437e-b6e7-88f26f6c8730", "D02Z02S05", 8),
 
                 // Convent
@@ -196,14 +195,15 @@ namespace BlasClient.Data
                 new PersistenceState("999d9b4e-f9f5-449e-9f09-d32fb3597f7b", "D02Z03S03", 1),
                 new PersistenceState("2348a9a4-0a18-4a9d-85f9-b20c14c0136f", "D02Z03S05", 1),
                 new PersistenceState("880c396a-c7a2-481f-8994-9efdca134a85", "D02Z03S07", 1),
-                // candle
-                // upper outside
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D02Z03S23", 1),
+                // blue candle item
                 new PersistenceState("b225e61e-432e-48bf-907b-e37fbcfc1f35", "D02Z03S19", 1),
                 new PersistenceState("200fb191-1cc7-4039-a16a-912bf58d2f6a", "D02Z03S08", 4), // LV
                 new PersistenceState("bf0d9de4-3a2b-49dc-9353-2b4480af0b33", "D02Z03S02", 4),
                 new PersistenceState("0c5b1590-1802-40e8-b8ee-7198c83ea6cf", "D02Z03S11", 4),
                 new PersistenceState("fe8cc8d5-6402-4ab9-9c7a-0e7e548aa84f", "D02Z03S05", 5), // GT
                 new PersistenceState("5270e234-3113-49b4-a055-023c8dedd20f", "D02Z03S05", 7), // ST
+                new PersistenceState("51018c78-4120-4255-b205-0d65bcdd33d9", "D02Z03S07", 8), // BW
                 new PersistenceState("274ffa9b-6fe0-46db-830d-cfcd77397c3d", "D02Z03S08", 9), // LD
                 new PersistenceState("0a073b19-8957-4e01-b681-60f9a25931fe", "D02Z03S02", 9),
                 new PersistenceState("75b8be0e-08a6-4d43-b048-1c265a4996ea", "D02Z03S11", 9),
@@ -432,8 +432,6 @@ namespace BlasClient.Data
 
                 // Deambulatory
                 new PersistenceState("696e70f3-5cf8-4713-abb5-e5f62d6a49e2", "D07Z01S01", 0), // PD
-
-                //new PersistenceState("", "", 0),
             };
         }
     }
