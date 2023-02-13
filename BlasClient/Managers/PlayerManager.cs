@@ -57,6 +57,7 @@ namespace BlasClient.Managers
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Add special animation checker to certain interactors
+            int count = 0;
             foreach (Interactable interactable in Object.FindObjectsOfType<Interactable>())
             {
                 System.Type type = interactable.GetType();
@@ -69,6 +70,7 @@ namespace BlasClient.Managers
                     {
                         // Only add this to the interactor animator of certain interactables
                         child.gameObject.AddComponent<SpecialAnimationChecker>();
+                        count++;
                         break;
                     }
                 }
@@ -78,7 +80,9 @@ namespace BlasClient.Managers
                 // Add this to the fake penitent intro animator
                 GameObject fakePenitent = GameObject.Find("FakePenitent");
                 if (fakePenitent != null) fakePenitent.AddComponent<SpecialAnimationChecker>();
+                count++;
             }
+            Main.UnityLog("Adding special animation checkers to " + count + " objects!");
 
             // Create main player's nametag
             createPlayerNameTag();

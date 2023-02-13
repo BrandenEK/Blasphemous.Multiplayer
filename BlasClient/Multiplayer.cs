@@ -28,6 +28,7 @@ namespace BlasClient
         private List<string> interactedPersistenceObjects;
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
+        public byte playerTeam { get; private set; }
         private bool sentAllProgress;
 
         // Player status
@@ -75,6 +76,7 @@ namespace BlasClient
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
+            playerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
             sentAllProgress = false;
         }
         public void Dispose()
