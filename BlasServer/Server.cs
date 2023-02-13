@@ -166,6 +166,14 @@ namespace BlasServer
             bytes.AddRange(BitConverter.GetBytes(connected));
             return bytes.ToArray();
         }
+        private byte[] getProgressPacket(string nameOrStar, byte type, byte value, string id)
+        {
+            List<byte> bytes = addPlayerNameToData(nameOrStar);
+            bytes.Add(type);
+            bytes.Add(value);
+            bytes.AddRange(Encoding.UTF8.GetBytes(id));
+            return bytes.ToArray();
+        }
 
         private List<byte> addPlayerNameToData(string name)
         {
@@ -303,6 +311,16 @@ namespace BlasServer
                     // Maybe send oter player's teams also
                 }
             }
+
+            // Send all of the server data to this player for them to merge
+            for (byte i = 0; i < Core.gameData.numberOfProgressTypes; i++)
+            {
+                Dictionary<string, byte> progressSet = Core.gameData.getProgressSet(i);
+                foreach (string id in progressSet.Keys)
+                {
+                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), 8);
+                }
+            }
         }
 
         // Send that a player connected or disconnected
@@ -320,16 +338,14 @@ namespace BlasServer
         }
 
         // Send a player progress update
-        private void sendPlayerProgress(string playerIp, byte[] data) // Taking in a byte[] is probably only temporary
+        private void sendPlayerProgress(string playerIp, byte type, byte value, string id)
         {
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (playerIp != ip)
                 {
-                    List<byte> bytes = addPlayerNameToData(current.name);
-                    bytes.AddRange(data);
-                    Send(ip, bytes.ToArray(), 8);
+                    Send(ip, getProgressPacket(current.name, type, value, id), 8);
                 }
             }
         }
@@ -478,7 +494,7 @@ namespace BlasServer
                 Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
             }
             
-            sendPlayerProgress(playerIp, data);
+            sendPlayerProgress(playerIp, progressType, progressValue, progressId);
         }
 
         #endregion Receive functions

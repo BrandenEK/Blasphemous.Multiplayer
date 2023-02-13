@@ -59,8 +59,6 @@ namespace BlasClient.Managers
             }
         }
 
-        // TODO - Check for value to determine whether to remove or add
-        // TODO - For stats - value will contain the current level of the stat
         private void applyProgress(ProgressUpdate progress)
         {
             switch ((ProgressType)progress.type)

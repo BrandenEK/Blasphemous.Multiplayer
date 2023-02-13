@@ -5,11 +5,12 @@ namespace BlasServer
     public class GameData
     {
         private Dictionary<string, byte>[] progressSets;
-        private const int numberOfProgressTypes = 12;
+        public int numberOfProgressTypes { get; private set; }
 
         public GameData()
         {
             // Create empty game data
+            numberOfProgressTypes = 12;
             progressSets = new Dictionary<string, byte>[numberOfProgressTypes];
             for (int i = 0; i < numberOfProgressTypes; i++)
             {
@@ -41,10 +42,14 @@ namespace BlasServer
             return false;
         }
 
-        public byte checkPlayerProgress(string progressId, byte progressType)
+        // Used by the server to send all of the server data on player connection
+        public Dictionary<string, byte> getProgressSet(int progressType)
         {
-            Dictionary<string, byte> currentProgressSet = progressSets[progressType];
-            return currentProgressSet.ContainsKey(progressId) ? currentProgressSet[progressId] : (byte)0;
+            if (progressType >= 0 && progressType < progressSets.Length)
+            {
+                return progressSets[progressType];
+            }
+            return null;
         }
 
         public void printGameProgress()
