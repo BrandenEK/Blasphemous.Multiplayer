@@ -748,8 +748,8 @@ namespace BlasClient.Patches
 
             foreach (string flag in ___flags.Keys)
             {
-                if (FlagStates.getFlagState(flag) != null)
-                    Main.Multiplayer.obtainedGameProgress(flag, ProgressManager.ProgressType.Flag, (byte)(___flags[flag].value ? 0 : 1));
+                if (FlagStates.getFlagState(flag) != null && ___flags[flag].value)
+                    Main.Multiplayer.obtainedGameProgress(flag, ProgressManager.ProgressType.Flag, 0);
             }
             return false;
         }
