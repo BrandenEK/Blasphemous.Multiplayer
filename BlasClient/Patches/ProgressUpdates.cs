@@ -238,7 +238,7 @@ namespace BlasClient.Patches
     // 2. Receive - When receiving object data it will play the used animation
     // 3. Load - When loading a new scene it will be automatically used
 
-    // Interactable use (PrieDieus, CollectibleItems, Chests, Levers)
+    // Interactable use (PrieDieus, CollectibleItems, Chests, Levers, Customs)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class InteractableUse_Patch
     {
@@ -675,6 +675,37 @@ namespace BlasClient.Patches
             ___objectUsed = true;
             __instance.Closed = false;
             ___interactableAnimator.SetTrigger("INSTA_OPEN");
+            return false;
+        }
+    }
+
+    // Custom interaction
+    // Interactable use
+    [HarmonyPatch(typeof(CustomInteraction), "GetCurrentPersistentState")]
+    public class CustomReceive_Patch
+    {
+        public static bool Prefix(string dataPath, CustomInteraction __instance, Animator ___interactableAnimator)
+        {
+            if (dataPath != "use") return true;
+
+            __instance.Consumed = true;
+            ___interactableAnimator.SetTrigger("INTERACTED");
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(CustomInteraction), "SetCurrentPersistentState")]
+    public class CustomLoad_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, CustomInteraction __instance)
+        {
+            if (data != null)
+            {
+                // This method is being called normally - only execute if object hasn't been interacted with
+                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+            }
+
+            __instance.Consumed = true;
+            // Play instant animation
             return false;
         }
     }
