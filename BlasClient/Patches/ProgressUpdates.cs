@@ -681,6 +681,81 @@ namespace BlasClient.Patches
 
     // Hidden secrets
 
+    // Initial data sending
+
+    // Skills
+    [HarmonyPatch(typeof(SkillManager), "GetCurrentPersistentState")]
+    public class SkillManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, Dictionary<string, UnlockableSkill> ___allSkills)
+        {
+            // Calling this with 'intro' means it should send all unlocked skills
+            if (dataPath != "intro") return true;
+
+            foreach (string key in ___allSkills.Keys)
+            {
+                if (___allSkills[key].unlocked)
+                    Main.Multiplayer.obtainedGameProgress(key, ProgressManager.ProgressType.SwordSkill, 0);
+            }
+            return false;
+        }
+    }
+
+    // Map cells
+    [HarmonyPatch(typeof(NewMapManager), "GetCurrentPersistentState")]
+    public class MapManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, MapData ___CurrentMap)
+        {
+            // Calling this with 'intro' means it should send all revealed map cells
+            if (dataPath != "intro") return true;
+
+            for (int i = 0; i < ___CurrentMap.Cells.Count; i++)
+            {
+                if (___CurrentMap.Cells[i].Revealed)
+                    Main.Multiplayer.obtainedGameProgress(i.ToString(), ProgressManager.ProgressType.MapCell, 0);
+            }
+            return false;
+        }
+    }
+
+    // Teleports
+    [HarmonyPatch(typeof(SpawnManager), "GetCurrentPersistentState")]
+    public class SpawnManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, Dictionary<string, TeleportDestination> ___TeleportDict)
+        {
+            // Calling this with 'intro' means it should send all unlocked teleports
+            if (dataPath != "intro") return true;
+
+            foreach (string key in ___TeleportDict.Keys)
+            {
+                if (___TeleportDict[key].isActive)
+                    Main.Multiplayer.obtainedGameProgress(key, ProgressManager.ProgressType.Teleport, 0);
+            }
+            return false;
+        }
+    }
+
+    // Flags
+    [HarmonyPatch(typeof(EventManager), "GetCurrentPersistentState")]
+    public class EventManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, Dictionary<string, FlagObject> ___flags)
+        {
+            // Calling this with 'intro' means it should send all set flags
+            if (dataPath != "intro") return true;
+
+            foreach (string flag in ___flags.Keys)
+            {
+                if (FlagStates.getFlagState(flag) != null)
+                    Main.Multiplayer.obtainedGameProgress(flag, ProgressManager.ProgressType.Flag, (byte)(___flags[flag].value ? 0 : 1));
+            }
+            return false;
+        }
+    }
+
+
     // Temporarily allow teleportation
     [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]
     public class AlmsManager_Patch

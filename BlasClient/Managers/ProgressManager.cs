@@ -5,7 +5,6 @@ using Framework.Managers;
 using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes.Logic;
 using Framework.Inventory;
-using Framework.Map;
 using BlasClient.Structures;
 using BlasClient.Data;
 
@@ -191,19 +190,11 @@ namespace BlasClient.Managers
             Main.Multiplayer.obtainedGameProgress("FLASK", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Flask.GetUpgrades());
             Main.Multiplayer.obtainedGameProgress("FLASKHEALTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades());
             // Sword skills
-            // Loop through all 15 skills in local array and send them if unlocked
-
+            Core.SkillManager.GetCurrentPersistentState("intro", false);
             // Map cells
-            MapData map = Core.NewMapManager.DEBUG_GetCurrentMap();
-            for (int i = 0; i < map.Cells.Count; i++)
-            {
-                if (map.Cells[i].Revealed)
-                    Main.Multiplayer.obtainedGameProgress(i.ToString(), ProgressType.MapCell, 0);
-            }
+            Core.NewMapManager.GetCurrentPersistentState("intro", false);
             // Flags
-            // Loop through all flag states and check if flag is set
-            // For * ones, idek yet
-
+            Core.Events.GetCurrentPersistentState("intro", false);
             // Persistent objects
             List<string> objects = Main.Multiplayer.getAllPersistentObjects();
             for (int i = 0; i < objects.Count; i++)
@@ -211,7 +202,7 @@ namespace BlasClient.Managers
                 Main.Multiplayer.obtainedGameProgress(objects[i], ProgressType.PersistentObject, 0);
             }
             // Teleports
-            // Loop over all teleport ids and check if they are active or not
+            Core.SpawnManager.GetCurrentPersistentState("intro", false);
         }
 
         // Called when interacting with pers. object - determine whether to send it or not
