@@ -681,34 +681,34 @@ namespace BlasClient.Patches
 
     // Custom interaction
     // Interactable use
-    [HarmonyPatch(typeof(CustomInteraction), "GetCurrentPersistentState")]
-    public class CustomReceive_Patch
-    {
-        public static bool Prefix(string dataPath, CustomInteraction __instance, Animator ___interactableAnimator)
-        {
-            if (dataPath != "use") return true;
+    //[HarmonyPatch(typeof(CustomInteraction), "GetCurrentPersistentState")]
+    //public class CustomReceive_Patch
+    //{
+    //    public static bool Prefix(string dataPath, CustomInteraction __instance, Animator ___interactableAnimator)
+    //    {
+    //        if (dataPath != "use") return true;
 
-            __instance.Consumed = true;
-            ___interactableAnimator.SetTrigger("INTERACTED");
-            return false;
-        }
-    }
-    [HarmonyPatch(typeof(CustomInteraction), "SetCurrentPersistentState")]
-    public class CustomLoad_Patch
-    {
-        public static bool Prefix(PersistentManager.PersistentData data, CustomInteraction __instance)
-        {
-            if (data != null)
-            {
-                // This method is being called normally - only execute if object hasn't been interacted with
-                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
-            }
+    //        __instance.Consumed = true;
+    //        ___interactableAnimator.SetTrigger("INTERACTED");
+    //        return false;
+    //    }
+    //}
+    //[HarmonyPatch(typeof(CustomInteraction), "SetCurrentPersistentState")]
+    //public class CustomLoad_Patch
+    //{
+    //    public static bool Prefix(PersistentManager.PersistentData data, CustomInteraction __instance)
+    //    {
+    //        if (data != null)
+    //        {
+    //            // This method is being called normally - only execute if object hasn't been interacted with
+    //            return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+    //        }
 
-            __instance.Consumed = true;
-            // Play instant animation
-            return false;
-        }
-    }
+    //        __instance.Consumed = true;
+    //        // Play instant animation
+    //        return false;
+    //    }
+    //}
 
     // Hidden secrets
 

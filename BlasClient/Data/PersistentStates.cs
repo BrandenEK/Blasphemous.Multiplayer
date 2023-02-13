@@ -326,7 +326,6 @@ namespace BlasClient.Data
                 new PersistenceState("877f73fa-f753-4971-b069-243da3ad574e", "D04Z02S01", 9),
                 new PersistenceState("81f82e36-cd57-4d0b-b6f7-cf7fcf3337fa", "D04Z02S06", 9),
                 new PersistenceState("564e5041-0177-4222-b136-548b24ab8bbd", "D04Z02S02", 9),
-                new PersistenceState("8a6ef1c2-9262-4454-b5a4-cbcbcefcbeba", "D04Z02S14", 11), // CS
 
                 // Knot of Words
                 new PersistenceState("58e4ed6d-5107-453c-8930-96f4eb39f534", "D04Z03S01", 0), // PD
