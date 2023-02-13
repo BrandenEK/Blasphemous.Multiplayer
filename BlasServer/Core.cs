@@ -9,7 +9,7 @@ namespace BlasServer
     {
         public static Config config;
         private static Server server;
-        public static GameData gameData;
+        private static Dictionary<byte, GameData> teamGameDatas;
 
         static void Main(string[] args)
         {
@@ -36,7 +36,7 @@ namespace BlasServer
             server = new Server();
             if (server.Start())
             {
-                gameData = new GameData();
+                teamGameDatas = new Dictionary<byte, GameData>();
                 displayMessage("Server has been started at this machine's local ip address");
                 CommandLoop();
             }
@@ -80,12 +80,21 @@ namespace BlasServer
                     case "exit":
                         return;
                     case "data":
-                        gameData.printGameProgress();
+                        printData();
                         break;
                     case "players":
                         printPlayers();
                         break;
                 }
+            }
+        }
+
+        static void printData()
+        {
+            foreach (byte team in teamGameDatas.Keys)
+            {
+                displayCustom("Team " + team + " data:", ConsoleColor.Cyan);
+                teamGameDatas[team].printGameProgress();
             }
         }
 
@@ -98,6 +107,17 @@ namespace BlasServer
                 displayMessage(playerName + ": Team " + players[playerName].team);
             }
             displayMessage("");
+        }
+
+        public static GameData getTeamData(byte team)
+        {
+            if (teamGameDatas.ContainsKey(team))
+                return teamGameDatas[team];
+
+            displayMessage("Creating new game data for team " + team);
+            GameData newData = new GameData();
+            teamGameDatas.Add(team, newData);
+            return newData;
         }
     }
 }

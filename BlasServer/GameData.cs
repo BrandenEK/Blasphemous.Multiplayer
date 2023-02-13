@@ -5,12 +5,11 @@ namespace BlasServer
     public class GameData
     {
         private Dictionary<string, byte>[] progressSets;
-        public int numberOfProgressTypes { get; private set; }
+        public const int numberOfProgressTypes = 12;
 
         public GameData()
         {
             // Create empty game data
-            numberOfProgressTypes = 12;
             progressSets = new Dictionary<string, byte>[numberOfProgressTypes];
             for (int i = 0; i < numberOfProgressTypes; i++)
             {

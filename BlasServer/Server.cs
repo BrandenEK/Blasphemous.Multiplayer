@@ -321,18 +321,6 @@ namespace BlasServer
                     {
                         Send(playerIp, getScenePacket(connectedPlayers[ip]), 2);
                     }
-                    // Maybe send oter player's teams also
-                }
-            }
-
-            // Send all of the server data to this player for them to merge
-            Core.displayMessage("Sending all server data to " + playerIp);
-            for (byte i = 0; i < Core.gameData.numberOfProgressTypes; i++)
-            {
-                Dictionary<string, byte> progressSet = Core.gameData.getProgressSet(i);
-                foreach (string id in progressSet.Keys)
-                {
-                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), 8);
                 }
             }
         }
@@ -357,7 +345,7 @@ namespace BlasServer
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
-                if (playerIp != ip)
+                if (playerIp != ip && current.team == getCurrentPlayer(ip).team)
                 {
                     Send(ip, getProgressPacket(current.name, type, value, id), 8);
                 }
@@ -373,6 +361,17 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     Send(ip, getTeamPacket(current), 9);
+                }
+            }
+
+            // Send all of the server data to this player for them to merge
+            Core.displayMessage("Sending all server data to " + playerIp);
+            for (byte i = 0; i < GameData.numberOfProgressTypes; i++)
+            {
+                Dictionary<string, byte> progressSet = Core.getTeamData(current.team).getProgressSet(i);
+                foreach (string id in progressSet.Keys)
+                {
+                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), 8);
                 }
             }
         }
@@ -479,7 +478,7 @@ namespace BlasServer
             string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
 
             // Add the progress to the server data, and if it's new send it to the rest of the players
-            if (!Core.gameData.addPlayerProgress(progressId, progressType, progressValue))
+            if (!Core.getTeamData(current.team).addPlayerProgress(progressId, progressType, progressValue))
             {
                 Core.displayCustom($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}", ConsoleColor.DarkGreen);
                 return;
