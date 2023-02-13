@@ -371,9 +371,9 @@ namespace BlasClient
             {
                 // Send all initial data
                 client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
-                // Send team (Maybe send this with intro data)
+                client.sendPlayerTeam(playerTeam);
 
-                // If already in game, send enter scene data
+                // If already in game, send enter scene data & game progress
                 if (inLevel)
                 {
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
@@ -413,14 +413,23 @@ namespace BlasClient
             displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }
 
-        public void playerProgressReceived(string player, string progressId, byte progressType, byte progressValue)
+        public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
         {
             // Apply the progress update
             progressManager.receiveProgress(progressId, progressType, progressValue);
 
             // Show notification for new progress
-            if (player != "*")
-                notificationManager.showProgressNotification(player, progressType, progressId, progressValue);
+            if (playerName != "*")
+                notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
+        }
+
+        public void playerTeamReceived(string playerName, byte team)
+        {
+            // As soon as received, will update team - This isn't locked
+            Main.UnityLog("Updating team number for " + playerName);
+            PlayerStatus player = getPlayerStatus(playerName);
+            player.team = team;
+            // Maybe update map/nametag color
         }
 
         public void displayNotification(string message)
