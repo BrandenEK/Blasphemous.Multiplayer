@@ -128,6 +128,15 @@ namespace BlasClient
             {
                 // Entered a new scene
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
+
+                // Send initial position, animation, & direction before scene enter
+                Vector2 position = getCurrentPosition();
+                client.sendPlayerPostition(position.x, position.y);
+                byte animation = getCurrentAnimation();
+                if (animation < 255)
+                    client.sendPlayerAnimation(animation);
+                client.sendPlayerDirection(getCurrentDirection());
+
                 client.sendPlayerEnterScene(newLevel.LevelName);
                 sendAllProgress();
             }
