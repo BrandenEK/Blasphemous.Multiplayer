@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Framework.Managers;
 using Framework.FrameworkCore;
 using Framework.FrameworkCore.Attributes.Logic;
+using Framework.Inventory;
+using Framework.Map;
 using BlasClient.Structures;
 using BlasClient.Data;
 
@@ -150,6 +153,65 @@ namespace BlasClient.Managers
             {
                 attribute.Upgrade();
             }
+        }
+
+        // Called when sending all data upon connecting to server and loading game
+        public void loadAllProgress()
+        {
+            // Beads
+            ReadOnlyCollection<RosaryBead> ownedBeads = Core.InventoryManager.GetRosaryBeadOwned();
+            for (int i = 0; i < ownedBeads.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedBeads[i].id, ProgressType.Bead, 0);
+            // Prayers
+            ReadOnlyCollection<Prayer> ownedPrayers = Core.InventoryManager.GetPrayersOwned();
+            for (int i = 0; i < ownedPrayers.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedPrayers[i].id, ProgressType.Prayer, 0);
+            // Relics
+            ReadOnlyCollection<Relic> ownedRelics = Core.InventoryManager.GetRelicsOwned();
+            for (int i = 0; i < ownedRelics.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedRelics[i].id, ProgressType.Relic, 0);
+            // Hearts
+            ReadOnlyCollection<Sword> ownedHearts = Core.InventoryManager.GetSwordsOwned();
+            for (int i = 0; i < ownedHearts.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedHearts[i].id, ProgressType.Heart, 0);
+            // Collectibles
+            ReadOnlyCollection<Framework.Inventory.CollectibleItem> ownedCollectibles = Core.InventoryManager.GetCollectibleItemOwned();
+            for (int i = 0; i < ownedCollectibles.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedCollectibles[i].id, ProgressType.Collectible, 0);
+            // Quest items
+            ReadOnlyCollection<QuestItem> ownedQuestItems = Core.InventoryManager.GetQuestItemOwned();
+            for (int i = 0; i < ownedQuestItems.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedQuestItems[i].id, ProgressType.QuestItem, 0);
+            // Player stats
+            Main.Multiplayer.obtainedGameProgress("LIFE", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Life.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("FERVOUR", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Fervour.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("STRENGTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Strength.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("MEACULPA", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.MeaCulpa.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("BEADSLOTS", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.BeadSlots.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("FLASK", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Flask.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("FLASKHEALTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades());
+            // Sword skills
+            // Loop through all 15 skills in local array and send them if unlocked
+
+            // Map cells
+            MapData map = Core.NewMapManager.DEBUG_GetCurrentMap();
+            for (int i = 0; i < map.Cells.Count; i++)
+            {
+                if (map.Cells[i].Revealed)
+                    Main.Multiplayer.obtainedGameProgress(i.ToString(), ProgressType.MapCell, 0);
+            }
+            // Flags
+            // Loop through all flag states and check if flag is set
+            // For * ones, idek yet
+
+            // Persistent objects
+            List<string> objects = Main.Multiplayer.getAllPersistentObjects();
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Main.Multiplayer.obtainedGameProgress(objects[i], ProgressType.PersistentObject, 0);
+            }
+            // Teleports
+            // Loop over all teleport ids and check if they are active or not
         }
 
         // Called when interacting with pers. object - determine whether to send it or not

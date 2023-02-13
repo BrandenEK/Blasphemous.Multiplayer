@@ -419,7 +419,7 @@ namespace BlasClient
 
             // This is the first time loading a scene after connecting - send all player progress
             Main.UnityLog("Sending all player progress");
-            // send
+            progressManager.loadAllProgress();
         }
 
         // Add a new persistent object that has been interacted with
@@ -433,6 +433,12 @@ namespace BlasClient
         public bool checkPersistentObject(string objectSceneId)
         {
             return interactedPersistenceObjects.Contains(objectSceneId);
+        }
+
+        // Allows progress manager to send all interacted objects on connect
+        public List<string> getAllPersistentObjects()
+        {
+            return interactedPersistenceObjects;
         }
 
         // Save list of interacted persistent objects
