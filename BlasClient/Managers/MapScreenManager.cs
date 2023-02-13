@@ -99,7 +99,10 @@ namespace BlasClient.Managers
                 {
                     icon = playerSprites[1];
                 }
-                // Check if they are on other team
+                else if (playerStatus.team != Main.Multiplayer.playerTeam)
+                {
+                    icon = playerSprites[2];
+                }
 
                 // Create new image for this player
                 GameObject obj = new GameObject(playerName, typeof(RectTransform));

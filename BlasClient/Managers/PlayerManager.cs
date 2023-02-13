@@ -337,6 +337,13 @@ namespace BlasClient.Managers
             nametag.text = name;
             nametag.alignment = TextAnchor.LowerCenter;
             nametags.Add(nametag);
+
+            Main.UnityLog("Main color: " + nametag.color.ToString());
+            if (name != Main.Multiplayer.playerName && Main.Multiplayer.getPlayerStatus(name).team != Main.Multiplayer.playerTeam)
+            {
+                // Change nametag color to red if player is on other team
+                nametag.color = Color.red;
+            }
         }
 
         // Creates a nametag specifically for the main player

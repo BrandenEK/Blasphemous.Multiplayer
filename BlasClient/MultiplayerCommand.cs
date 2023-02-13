@@ -87,7 +87,7 @@ namespace BlasClient
                 Console.Write(Main.Multiplayer.playerName);
                 foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
                 {
-                    Console.Write(playerName);
+                    Console.Write(playerName + ": Team " + Main.Multiplayer.connectedPlayers[playerName].team);
                 }
             }
         }
