@@ -162,50 +162,31 @@ namespace BlasClient
             if (inLevel && connectedToServer && Core.Logic.Penitent != null)
             {
                 // Check & send updated position
-                Transform penitentTransform = Core.Logic.Penitent.transform;
-                if (positionHasChanged(penitentTransform.position))
+                if (positionHasChanged(out Vector2 newPosition))
                 {
                     //Main.UnityLog("Sending new player position");
-                    client.sendPlayerPostition(penitentTransform.position.x, penitentTransform.position.y);
-                    lastPosition = penitentTransform.position;
+                    client.sendPlayerPostition(newPosition.x, newPosition.y);
+                    lastPosition = newPosition;
                 }
 
                 // Check & send updated animation clip
-                Animator penitentAnimator = Core.Logic.Penitent.Animator;
-                AnimatorStateInfo state = penitentAnimator.GetCurrentAnimatorStateInfo(0);
-                if (animationHasChanged(state))
+                if (animationHasChanged(out byte newAnimation))
                 {
-                    bool animationExists = false;
-                    for (byte i = 0; i < AnimationStates.animations.Length; i++)
+                    // Don't send new animations right after a special animation
+                    if (currentTimeBeforeSendAnimation <= 0 && newAnimation != 255)
                     {
-                        if (state.IsName(AnimationStates.animations[i].name))
-                        {
-                            //Main.UnityLog("Sending new player animation");
-
-                            // Don't send new animations right after a special animation
-                            if (currentTimeBeforeSendAnimation <= 0)
-                            {
-                                client.sendPlayerAnimation(i);
-                            }
-                            lastAnimation = i;
-                            animationExists = true;
-                            break;
-                        }
+                        //Main.UnityLog("Sending new player animation");
+                        client.sendPlayerAnimation(newAnimation);
                     }
-                    if (!animationExists)
-                    {
-                        // This animation could not be found
-                        Main.UnityLog("Error: Animation doesn't exist!");
-                    }
+                    lastAnimation = newAnimation;
                 }
 
                 // Check & send updated facing direction
-                SpriteRenderer penitentRenderer = Core.Logic.Penitent.SpriteRenderer;
-                if (directionHasChanged(penitentRenderer.flipX))
+                if (directionHasChanged(out bool newDirection))
                 {
                     //Main.UnityLog("Sending new player direction");
-                    client.sendPlayerDirection(penitentRenderer.flipX);
-                    lastDirection = penitentRenderer.flipX;
+                    client.sendPlayerDirection(newDirection);
+                    lastDirection = newDirection;
                 }
 
                 // Once all three of these updates are added, send the queue
@@ -230,20 +211,49 @@ namespace BlasClient
                 mapScreenManager.updateMap();
         }
 
-        private bool positionHasChanged(Vector2 currentPosition)
+        private bool positionHasChanged(out Vector2 newPosition)
         {
             float cutoff = 0.03f;
-            return Mathf.Abs(currentPosition.x - lastPosition.x) > cutoff || Mathf.Abs(currentPosition.y - lastPosition.y) > cutoff;
+            newPosition = getCurrentPosition();
+            return Mathf.Abs(newPosition.x - lastPosition.x) > cutoff || Mathf.Abs(newPosition.y - lastPosition.y) > cutoff;
         }
 
-        private bool animationHasChanged(AnimatorStateInfo currentState)
+        private bool animationHasChanged(out byte newAnimation)
         {
-            return !currentState.IsName(AnimationStates.animations[lastAnimation].name);
+            newAnimation = getCurrentAnimation();
+            return newAnimation != lastAnimation;
         }
 
-        private bool directionHasChanged(bool currentDirection)
+        private bool directionHasChanged(out bool newDirection)
         {
-            return currentDirection != lastDirection;
+            newDirection = getCurrentDirection();
+            return newDirection != lastDirection;
+        }
+
+        private Vector2 getCurrentPosition()
+        {
+            return Core.Logic.Penitent.transform.position;
+        }
+
+        private byte getCurrentAnimation()
+        {
+            AnimatorStateInfo state = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
+            for (byte i = 0; i < AnimationStates.animations.Length; i++)
+            {
+                if (state.IsName(AnimationStates.animations[i].name))
+                {
+                    return i;
+                }
+            }
+
+            // This animation could not be found
+            Main.UnityLog("Error: Animation doesn't exist!");
+            return 255;
+        }
+
+        private bool getCurrentDirection()
+        {
+            return Core.Logic.Penitent.SpriteRenderer.flipX;
         }
 
         // Changed skin from menu selector
