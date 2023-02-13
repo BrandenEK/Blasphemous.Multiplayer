@@ -277,6 +277,29 @@ namespace BlasClient
             }
         }
 
+        // Changed team number from command
+        public void changeTeam(byte teamNumber)
+        {
+            playerTeam = teamNumber;
+            client.sendPlayerTeam(teamNumber);
+            sentAllProgress = false;
+
+            if (inLevel)
+            {
+                // On changing teams, send all progress to new team and update other players' colors
+                updatePlayerColors();
+                sendAllProgress();
+            }
+        }
+
+        // Refresh players' nametags & map icons when someone changed teams
+        private void updatePlayerColors()
+        {
+            // Update map color if on map screen
+            // Update player nametags colors if in same scene
+
+        }
+
         // Obtained new item, upgraded stat, set flag, etc...
         public void obtainedGameProgress(string progressId, ProgressManager.ProgressType progressType, byte progressValue)
         {
@@ -429,7 +452,7 @@ namespace BlasClient
             Main.UnityLog("Updating team number for " + playerName);
             PlayerStatus player = getPlayerStatus(playerName);
             player.team = team;
-            // Maybe update map/nametag color
+            updatePlayerColors();
         }
 
         public void displayNotification(string message)

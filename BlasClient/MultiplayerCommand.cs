@@ -31,6 +31,7 @@ namespace BlasClient
                 Console.Write("multiplayer status: Display connection status");
                 Console.Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
                 Console.Write("multiplayer disconnect: Disconnect from current server");
+                Console.Write("multiplayer team NUMBER: Change to a different team (1-10)");
                 Console.Write("multiplayer players: List all connected players in the server");
             }
             else if (command == "status" && ValidateParams(fullCommand, 0, parameters))
@@ -75,6 +76,24 @@ namespace BlasClient
                 else
                     Console.Write("Not connected to a server!");
             }
+            else if (command == "team" && ValidateParams(fullCommand, 1, parameters))
+            {
+                if (!Main.Multiplayer.connectedToServer)
+                {
+                    Console.Write("Not connected to a server!");
+                    return;
+                }
+
+                if (byte.TryParse(parameters[0], out byte newTeam) && newTeam > 0 && newTeam <= 10)
+                {
+                    Console.Write("Changing team number to " + newTeam);
+                    Main.Multiplayer.changeTeam(newTeam);
+                }
+                else
+                {
+                    Console.Write("Team number must be between 1 and 10");
+                }
+            }
             else if (command == "players" && ValidateParams(fullCommand, 0, parameters))
             {
                 if (!Main.Multiplayer.connectedToServer)
@@ -84,7 +103,7 @@ namespace BlasClient
                 }
 
                 Console.Write("Connected players:");
-                Console.Write(Main.Multiplayer.playerName);
+                Console.Write(Main.Multiplayer.playerName + ": Team " + Main.Multiplayer.playerTeam);
                 foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
                 {
                     Console.Write(playerName + ": Team " + Main.Multiplayer.connectedPlayers[playerName].team);
