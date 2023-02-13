@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace BlasServer
@@ -7,6 +8,7 @@ namespace BlasServer
     class Core
     {
         public static Config config;
+        private static Server server;
         public static GameData gameData;
 
         static void Main(string[] args)
@@ -31,7 +33,7 @@ namespace BlasServer
             }
 
             // Create server
-            Server server = new Server();
+            server = new Server();
             if (server.Start())
             {
                 gameData = new GameData();
@@ -80,8 +82,22 @@ namespace BlasServer
                     case "data":
                         gameData.printGameProgress();
                         break;
+                    case "players":
+                        printPlayers();
+                        break;
                 }
             }
+        }
+
+        static void printPlayers()
+        {
+            displayCustom("Connected players:", ConsoleColor.Cyan);
+            Dictionary<string, PlayerStatus> players = server.getPlayers();
+            foreach (string playerName in players.Keys)
+            {
+                displayMessage(playerName + ": Team " + players[playerName].team);
+            }
+            displayMessage("");
         }
     }
 }

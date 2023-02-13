@@ -11,6 +11,11 @@ namespace BlasServer
 
         private Dictionary<string, PlayerStatus> connectedPlayers;
 
+        public Dictionary<string, PlayerStatus> getPlayers()
+        {
+            return connectedPlayers;
+        }
+
         public bool Start()
         {
             try

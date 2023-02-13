@@ -64,6 +64,7 @@ namespace BlasServer
                     Core.displayMessage(id + ": " + progressSets[i][id]);
                 }
             }
+            Core.displayMessage("");
         }
     }
 }
