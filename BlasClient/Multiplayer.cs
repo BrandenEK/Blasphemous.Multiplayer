@@ -28,6 +28,7 @@ namespace BlasClient
         private List<string> interactedPersistenceObjects;
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
+        private bool sentAllProgress;
 
         // Player status
         private Vector2 lastPosition;
@@ -74,6 +75,7 @@ namespace BlasClient
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
+            sentAllProgress = false;
         }
         public void Dispose()
         {
@@ -103,6 +105,7 @@ namespace BlasClient
             connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
+            sentAllProgress = false;
         }
 
         public PlayerStatus getPlayerStatus(string playerName)
@@ -126,6 +129,7 @@ namespace BlasClient
                 // Entered a new scene
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
                 client.sendPlayerEnterScene(newLevel.LevelName);
+                sendAllProgress();
             }
         }
 
@@ -353,6 +357,7 @@ namespace BlasClient
                 {
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
                     playerManager.createPlayerNameTag();
+                    sendAllProgress();
                 }
 
                 return;
@@ -393,7 +398,8 @@ namespace BlasClient
             progressManager.receiveProgress(progressId, progressType, progressValue);
 
             // Show notification for new progress
-            notificationManager.showProgressNotification(player, progressType, progressId, progressValue);
+            if (player != "*")
+                notificationManager.showProgressNotification(player, progressType, progressId, progressValue);
         }
 
         public void displayNotification(string message)
@@ -404,6 +410,16 @@ namespace BlasClient
         public string getServerIp()
         {
             return client.serverIp;
+        }
+
+        private void sendAllProgress()
+        {
+            if (sentAllProgress) return;
+            sentAllProgress = true;
+
+            // This is the first time loading a scene after connecting - send all player progress
+            Main.UnityLog("Sending all player progress");
+            // send
         }
 
         // Add a new persistent object that has been interacted with

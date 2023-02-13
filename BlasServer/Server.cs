@@ -313,6 +313,7 @@ namespace BlasServer
             }
 
             // Send all of the server data to this player for them to merge
+            Core.displayMessage("Sending all server data to " + playerIp);
             for (byte i = 0; i < Core.gameData.numberOfProgressTypes; i++)
             {
                 Dictionary<string, byte> progressSet = Core.gameData.getProgressSet(i);
