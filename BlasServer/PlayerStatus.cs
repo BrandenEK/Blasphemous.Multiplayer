@@ -4,6 +4,7 @@ namespace BlasServer
     public class PlayerStatus
     {
         public string name;
+        public byte team;
 
         public float xPos;
         public float yPos;
@@ -16,6 +17,7 @@ namespace BlasServer
         public PlayerStatus(string name)
         {
             this.name = name;
+            team = 1;
             sceneName = "";
             skin = "";
         }
