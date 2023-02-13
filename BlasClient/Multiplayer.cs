@@ -326,7 +326,7 @@ namespace BlasClient
                 playerStatus.lastMapScene = scene;
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
-                playerManager.addPlayer(playerName);
+                playerManager.queuePlayer(playerName, true);
             mapScreenManager.queueMapUpdate();
         }
 
@@ -336,7 +336,7 @@ namespace BlasClient
             PlayerStatus playerStatus = getPlayerStatus(playerName);
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == playerStatus.currentScene)
-                playerManager.removePlayer(playerName);
+                playerManager.queuePlayer(playerName, false);
 
             playerStatus.currentScene = "";
             mapScreenManager.queueMapUpdate();

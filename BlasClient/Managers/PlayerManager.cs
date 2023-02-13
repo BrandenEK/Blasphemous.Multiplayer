@@ -21,19 +21,21 @@ namespace BlasClient.Managers
         private RuntimeAnimatorController playerController;
 
         // Queued player updates
+        private Dictionary<string, bool> queuedPlayers = new Dictionary<string, bool>();
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
         private Dictionary<string, bool> queuedDirections = new Dictionary<string, bool>();
 
+        private static readonly object playerLock = new object();
         private static readonly object positionLock = new object();
         private static readonly object animationLock = new object();
-        private static readonly object directionLock = new object(); // Might also need to lock players list when adding/removing
+        private static readonly object directionLock = new object();
 
         public void loadScene(string scene)
         {
             // Remove all existing player objects and nametags
             destroyPlayers();
-            
+
             // Create any players that are already in this scene
             foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
             {
@@ -90,26 +92,50 @@ namespace BlasClient.Managers
         // Should be optimized to not use dictionaries
         public void updatePlayers()
         {
+            // Add or remove any new player objects
+            lock (playerLock)
+            {
+                if (queuedPlayers.Count > 0)
+                {
+                    foreach (string name in queuedPlayers.Keys)
+                    {
+                        if (queuedPlayers[name])
+                            addPlayer(name);
+                        else
+                            removePlayer(name);
+                    }
+                    queuedPlayers.Clear();
+                }
+            }
             // Update any player's new position
             lock (positionLock)
             {
-                foreach (string name in queuedPositions.Keys)
-                    updatePlayerPosition(name, queuedPositions[name]);
-                queuedPositions.Clear();
+                if (queuedPositions.Count > 0)
+                {
+                    foreach (string name in queuedPositions.Keys)
+                        updatePlayerPosition(name, queuedPositions[name]);
+                    queuedPositions.Clear();
+                }
             }
             // Update any player's new animation
             lock (animationLock)
             {
-                foreach (string name in queuedAnimations.Keys)
-                    updatePlayerAnimation(name, queuedAnimations[name]);
-                queuedAnimations.Clear();
+                if (queuedAnimations.Count > 0)
+                {
+                    foreach (string name in queuedAnimations.Keys)
+                        updatePlayerAnimation(name, queuedAnimations[name]);
+                    queuedAnimations.Clear();
+                }
             }
             // Update any player's new direction
             lock (directionLock)
             {
-                foreach (string name in queuedDirections.Keys)
-                    updatePlayerDirection(name, queuedDirections[name]);
-                queuedDirections.Clear();
+                if (queuedDirections.Count > 0)
+                {
+                    foreach (string name in queuedDirections.Keys)
+                        updatePlayerDirection(name, queuedDirections[name]);
+                    queuedDirections.Clear();
+                }
             }
 
             // Check status of player skins and potentially update the textures
@@ -159,7 +185,7 @@ namespace BlasClient.Managers
         }
 
         // When a player enters a scene, create a new player object
-        public void addPlayer(string name) // Maybe take in playerstatus instead
+        private void addPlayer(string name)
         {
             // Create base object
             GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
@@ -190,7 +216,7 @@ namespace BlasClient.Managers
         }
 
         // When a player leaves a scene, destroy the player object
-        public void removePlayer(string name)
+        private void removePlayer(string name)
         {
             GameObject player = getPlayerObject(name);
             if (player != null)
@@ -471,6 +497,14 @@ namespace BlasClient.Managers
                     return nametags[i];
             }
             return null;
+        }
+
+        public void queuePlayer(string playerName, bool addition)
+        {
+            lock (playerLock)
+            {
+                queuedPlayers.Add(playerName, addition);
+            }
         }
 
         public void queuePosition(string playerName, Vector2 position)
