@@ -65,16 +65,20 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
 ### Server:
 
-- serverPort --> The port to start the server on
-- maxPlayers --> The maximum number of players to allow on the server
+| Setting | Description | Default |
+| ------- | ----------- | ------- |
+| serverPort | The port to start the server on | 8989 |
+| maxPlayers| The maximum number of players to allow on the server| 8 |
 
 ### Client:
 
-- serverPort --> The port that the server is running on
-- notificationDisplaySeconds --> The time that a notification will remain on screen
-- displayNametags --> Whether or not to show a nametag for other players
-- displayOwnNametag --> Whether or not to show a nametag for this player
-- showPlayersOnMap --> Display map icon for other players
-- showOtherTeamOnMap --> Display a map icon for players on a different team
-- team --> The id of the team to play on
-- syncSettings --> Which types of progression will be sent & received to/from the server
+| Setting | Description | Default |
+| ------- | ----------- | ------- |
+| serverPort | The port that the server is running on | 8989 |
+| notificationDisplaySeconds | The time that a notification will remain on screen | 4.0 |
+| displayNametags | Whether or not to show a nametag for other players | true |
+| displayOwnNametag | Whether or not to show a nametag for this player | true |
+| showPlayersOnMap | Display map icon for other players | true |
+| showOtherTeamOnMap | Display a map icon for players on a different team | false |
+| team | The id of the team to play on (1-10) | 1 |
+| syncSettings | Which types of progression will be sent & received to & from the server | All enabled |
