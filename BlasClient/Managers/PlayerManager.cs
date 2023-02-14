@@ -347,6 +347,16 @@ namespace BlasClient.Managers
                 createNameTag(Main.Multiplayer.playerName, true);
         }
 
+        // Updates the colors of all nametags in the scene when someone changes teams
+        public void refreshNametagColors()
+        {
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                bool friendlyTeam = nametags[i].name == Main.Multiplayer.playerName || Main.Multiplayer.playerTeam == Main.Multiplayer.getPlayerStatus(nametags[i].name).team;
+                nametags[i].GetComponent<Text>().color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
+            }
+        }
+
         // Sets the skin texture of a player's object - must be delayed until after object creation
         private void setSkinTexture(string name, string skin)
         {

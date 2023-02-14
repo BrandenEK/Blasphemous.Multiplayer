@@ -295,9 +295,8 @@ namespace BlasClient
         // Refresh players' nametags & map icons when someone changed teams
         private void updatePlayerColors()
         {
-            // Update map color if on map screen
-            // Update player nametags colors if in same scene
-
+            playerManager.refreshNametagColors();
+            mapScreenManager.queueMapUpdate();
         }
 
         // Obtained new item, upgraded stat, set flag, etc...
