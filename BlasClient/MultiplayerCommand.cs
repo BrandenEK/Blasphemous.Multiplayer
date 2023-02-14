@@ -78,12 +78,6 @@ namespace BlasClient
             }
             else if (command == "team" && ValidateParams(fullCommand, 1, parameters))
             {
-                if (!Main.Multiplayer.connectedToServer)
-                {
-                    Console.Write("Not connected to a server!");
-                    return;
-                }
-
                 if (byte.TryParse(parameters[0], out byte newTeam) && newTeam > 0 && newTeam <= 10)
                 {
                     if (newTeam == Main.Multiplayer.playerTeam)

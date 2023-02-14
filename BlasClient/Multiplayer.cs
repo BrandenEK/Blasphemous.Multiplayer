@@ -281,14 +281,16 @@ namespace BlasClient
         public void changeTeam(byte teamNumber)
         {
             playerTeam = teamNumber;
-            client.sendPlayerTeam(teamNumber);
             sentAllProgress = false;
 
-            if (inLevel)
+            if (connectedToServer)
             {
-                // On changing teams, send all progress to new team and update other players' colors
-                updatePlayerColors();
-                sendAllProgress();
+                client.sendPlayerTeam(teamNumber);
+                if (inLevel)
+                {
+                    updatePlayerColors();
+                    sendAllProgress();
+                }
             }
         }
 
