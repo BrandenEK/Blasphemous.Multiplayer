@@ -38,7 +38,7 @@ namespace BlasClient
             {
                 if (Main.Multiplayer.connectedToServer)
                 {
-                    Console.Write($"Connected to {Main.Multiplayer.getServerIp()}");
+                    Console.Write("Connected to " + Main.Multiplayer.serverIp);
                 }
                 else
                 {
@@ -47,6 +47,12 @@ namespace BlasClient
             }
             else if (command == "connect")
             {
+                if (Main.Multiplayer.connectedToServer)
+                {
+                    Console.Write("You are already connected to " + Main.Multiplayer.serverIp);
+                    return;
+                }
+
                 string password = null;
                 if (parameters.Count == 3)
                 {
@@ -65,15 +71,14 @@ namespace BlasClient
                 }
 
                 Console.Write($"Attempting to connect to {parameters[0]} as {parameters[1]}...");
-                string result = Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
-                Console.Write(result);
+                Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
             }
             else if (command == "disconnect" && ValidateParams(fullCommand, 0, parameters))
             {
                 if (Main.Multiplayer.connectedToServer)
                 {
+                    Console.Write("Disconnecting from server");
                     Main.Multiplayer.disconnectCommand();
-                    Console.Write("Disconnected from server");
                 }
                 else
                     Console.Write("Not connected to a server!");

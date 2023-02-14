@@ -2,9 +2,11 @@
 using System.IO;
 using BepInEx;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
+using Gameplay.UI;
 using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
@@ -29,6 +31,7 @@ namespace BlasClient
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
         public byte playerTeam { get; private set; }
+        public string serverIp {  get { return client.serverIp; } }
         private bool sentAllProgress;
 
         // Player status
@@ -85,25 +88,31 @@ namespace BlasClient
             LevelManager.OnBeforeLevelLoad -= onLevelUnloaded;
         }
 
-        public string connectCommand(string ip, string name, string password)
+        public void connectCommand(string ip, string name, string password)
         {
             playerName = name;
             bool result = client.Connect(ip, name, password);
-            if (result)
-                notificationManager.showNotification("Connected to server!");
+            if (!result)
+                UIController.instance.StartCoroutine(delayedNotificationCoroutine("Failed to connect to " + ip));
 
-            return result ? $"Successfully connected to {ip}" : $"Failed to connect to {ip}";
+            IEnumerator delayedNotificationCoroutine(string notification)
+            {
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                notificationManager.showNotification(notification);
+            }
         }
 
         public void disconnectCommand()
         {
             client.Disconnect();
-            onDisconnect();
+            onDisconnect(true);
         }
 
-        public void onDisconnect()
+        public void onDisconnect(bool showNotification)
         {
-            notificationManager.showNotification("Disconnected from server!");
+            if (showNotification)
+                notificationManager.showNotification("Disconnected from server!");
             connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
@@ -405,18 +414,20 @@ namespace BlasClient
                     sendAllProgress();
                 }
 
+                notificationManager.showNotification("Connected to server!");
                 return;
             }
 
             // Failed to connect
-            onDisconnect();
+            onDisconnect(false);
             string reason;
             if (response == 1) reason = "Incorrect password"; // Wrong password
             else if (response == 2) reason = "You have been banned"; // Banned player
             else if (response == 3) reason = "Server is full"; // Max player limit
             else if (response == 4) reason = "Player name is already taken"; // Duplicate name
             else reason = "Unknown reason"; // Unknown reason
-            notificationManager.showNotification($"({reason})");
+
+            notificationManager.showNotification("Connection refused: " + reason);
         }
 
         // Received player connection status from server
@@ -456,11 +467,6 @@ namespace BlasClient
             player.team = team;
             if (inLevel)
                 updatePlayerColors();
-        }
-
-        public string getServerIp()
-        {
-            return client.serverIp;
         }
 
         private void sendAllProgress()

@@ -98,7 +98,7 @@ namespace BlasClient
             catch (System.IO.IOException)
             {
                 onDisconnect();
-                Main.Multiplayer.onDisconnect();
+                Main.Multiplayer.onDisconnect(true);
             }
         }
 
