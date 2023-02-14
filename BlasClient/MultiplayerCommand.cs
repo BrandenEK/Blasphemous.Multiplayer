@@ -86,8 +86,15 @@ namespace BlasClient
 
                 if (byte.TryParse(parameters[0], out byte newTeam) && newTeam > 0 && newTeam <= 10)
                 {
-                    Console.Write("Changing team number to " + newTeam);
-                    Main.Multiplayer.changeTeam(newTeam);
+                    if (newTeam == Main.Multiplayer.playerTeam)
+                    {
+                        Console.Write("You are already on team " + newTeam);
+                    }
+                    else
+                    {
+                        Console.Write("Changing team number to " + newTeam);
+                        Main.Multiplayer.changeTeam(newTeam);
+                    }
                 }
                 else
                 {
