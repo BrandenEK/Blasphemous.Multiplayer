@@ -90,7 +90,7 @@ namespace BlasClient
             playerName = name;
             bool result = client.Connect(name, ip);
             if (result)
-                displayNotification("Connected to server!");
+                notificationManager.showNotification("Connected to server!");
 
             return result ? $"Successfully connected to {ip}" : $"Failed to connect to {ip}";
         }
@@ -103,7 +103,7 @@ namespace BlasClient
 
         public void onDisconnect()
         {
-            displayNotification("Disconnected from server!");
+            notificationManager.showNotification("Disconnected from server!");
             connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
@@ -415,7 +415,7 @@ namespace BlasClient
             else if (response == 2) reason = "Server is full"; // Max player limit
             else reason = "Unknown reason"; // Unknown reason
             // Banned from server
-            displayNotification($"({reason})");
+            notificationManager.showNotification($"({reason})");
         }
 
         // Received player connection status from server
@@ -434,7 +434,7 @@ namespace BlasClient
                 if (connectedPlayers.ContainsKey(playerName))
                     connectedPlayers.Remove(playerName);
             }
-            displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
+            notificationManager.showNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }
 
         public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
@@ -454,11 +454,6 @@ namespace BlasClient
             PlayerStatus player = getPlayerStatus(playerName);
             player.team = team;
             updatePlayerColors();
-        }
-
-        public void displayNotification(string message)
-        {
-            notificationManager.showNotification(message);
         }
 
         public string getServerIp()
