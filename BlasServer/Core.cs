@@ -85,6 +85,9 @@ namespace BlasServer
                     case "players":
                         printPlayers();
                         break;
+                    case "delay":
+                        printDelay();
+                        break;
                 }
             }
         }
@@ -107,6 +110,12 @@ namespace BlasServer
                 displayMessage(playerName + ": Team " + players[playerName].team);
             }
             displayMessage("");
+        }
+
+        static void printDelay()
+        {
+            bool disabled = server.DisableDelay();
+            displayMessage("Delay disabled: " + disabled);
         }
 
         public static GameData getTeamData(byte team)

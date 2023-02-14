@@ -16,6 +16,11 @@ namespace BlasServer
             return connectedPlayers;
         }
 
+        public bool DisableDelay()
+        {
+            return server != null && server.DisableDelay();
+        }
+
         public bool Start()
         {
             try
@@ -25,7 +30,7 @@ namespace BlasServer
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
                 server.Start(Core.config.serverPort);
-                server.DisableDelay(); // Does this even work ??
+                // server.DisableDelay(); // Does this even work ??
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -131,6 +136,8 @@ namespace BlasServer
             return new PlayerStatus("");
         }
 
+        #region Data packets
+
         private byte[] getPositionPacket(PlayerStatus player)
         {
             List<byte> bytes = addPlayerNameToData(player.name);
@@ -196,6 +203,8 @@ namespace BlasServer
             data.AddRange(nameBytes);
             return data;
         }
+
+        #endregion Data packets
 
         #region Send functions
 
