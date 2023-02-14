@@ -119,5 +119,29 @@ namespace BlasServer
             teamGameDatas.Add(team, newData);
             return newData;
         }
+
+        public static void removeUnusedGameData(Dictionary<string, PlayerStatus> allPlayers)
+        {
+            for (byte i = 1; i <= 10; i++)
+            {
+                if (!teamGameDatas.ContainsKey(i)) continue;
+
+                // If no player is currently on this team, remove the game data
+                bool teamExists = false;
+                foreach (PlayerStatus player in allPlayers.Values)
+                {
+                    if (player.team == i)
+                    {
+                        teamExists = true;
+                        break;
+                    }
+                }
+                if (!teamExists)
+                {
+                    displayMessage("Removing game data for team " + i);
+                    teamGameDatas.Remove(i);
+                }
+            }
+        }
     }
 }

@@ -116,11 +116,10 @@ namespace BlasServer
             if (!connectedPlayers.ContainsKey(e.ip))
                 return;
 
-            // Send that this player has disconnected
+            // Send that this player has disconnected & remove them
             sendPlayerConnection(e.ip, false);
-
-            // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
+            Core.removeUnusedGameData(connectedPlayers);
         }
 
         private PlayerStatus getCurrentPlayer(string ip)
@@ -530,6 +529,7 @@ namespace BlasServer
             current.team = data[0];
 
             sendPlayerTeam(playerIp);
+            Core.removeUnusedGameData(connectedPlayers);
         }
 
         #endregion Receive functions
