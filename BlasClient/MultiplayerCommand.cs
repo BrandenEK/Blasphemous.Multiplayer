@@ -47,10 +47,12 @@ namespace BlasClient
             }
             else if (command == "connect")
             {
-                string password;
-                if (parameters.Count == 2) { password = ""; }
-                else if (parameters.Count == 3) { password = parameters[2]; }
-                else
+                string password = null;
+                if (parameters.Count == 3)
+                {
+                    password = parameters[2];
+                }
+                else if (parameters.Count != 2)
                 {
                     Console.Write("The command 'connect' requires either 2 or 3 parameters.  You passed " + parameters.Count);
                     return;

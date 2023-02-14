@@ -88,7 +88,7 @@ namespace BlasClient
         public string connectCommand(string ip, string name, string password)
         {
             playerName = name;
-            bool result = client.Connect(name, ip);
+            bool result = client.Connect(ip, name, password);
             if (result)
                 notificationManager.showNotification("Connected to server!");
 
@@ -411,10 +411,11 @@ namespace BlasClient
             // Failed to connect
             onDisconnect();
             string reason;
-            if (response == 1) reason = "Player name is already taken"; // Duplicate name
-            else if (response == 2) reason = "Server is full"; // Max player limit
+            if (response == 1) reason = "Incorrect password"; // Wrong password
+            else if (response == 2) reason = "You have been banned"; // Banned player
+            else if (response == 3) reason = "Server is full"; // Max player limit
+            else if (response == 4) reason = "Player name is already taken"; // Duplicate name
             else reason = "Unknown reason"; // Unknown reason
-            // Banned from server
             notificationManager.showNotification($"({reason})");
         }
 

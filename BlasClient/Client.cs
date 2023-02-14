@@ -21,7 +21,7 @@ namespace BlasClient
             serverIp = string.Empty;
         }
 
-        public bool Connect(string playerName, string ipAddress)
+        public bool Connect(string ipAddress, string playerName, string password)
         {
             if (connectionStatus != ConnectionStatus.Disconnnected) return false;
 
@@ -39,7 +39,7 @@ namespace BlasClient
                 return false;
             }
 
-            sendPlayerIntro(playerName);
+            sendPlayerIntro(playerName, password);
             return true;
         }
 
@@ -203,9 +203,21 @@ namespace BlasClient
         }
 
         // Send this player's introductory data
-        public void sendPlayerIntro(string name)
+        public void sendPlayerIntro(string name, string password)
         {
-            Send(Encoding.UTF8.GetBytes(name), 6, false);
+            List<byte> bytes = new List<byte>();
+            if (password == null)
+            {
+                bytes.Add(0);
+            }
+            else
+            {
+                bytes.Add((byte)password.Length);
+                bytes.AddRange(Encoding.UTF8.GetBytes(password));
+            }
+            bytes.AddRange(Encoding.UTF8.GetBytes(name));
+
+            Send(bytes.ToArray(), 6, false);
         }
 
         // Send a new item/flag/stat/etc...
