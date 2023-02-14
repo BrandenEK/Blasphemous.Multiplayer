@@ -19,7 +19,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - All player stats (Max health / Max fervour / Strength / Mea Culpa level / Max flasks / Flask level / Bead slots)
 - All unlocked sword skills
 - All revealed map cells
-- Most world state progress (Bosses defeated / Chests opened / Levers pulled / Gates opened / Cherubs freed / Teleports unlocked / Questline progress)
+- Most world state progress (Bosses defeated / Chests opened / Gates opened / Cherubs freed / Teleports unlocked / Questline progress / etc. )
 
 ## Things that don't sync yet
 
@@ -74,6 +74,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - notificationDisplaySeconds --> The time that a notification will remain on screen
 - displayNametags --> Whether or not to show a nametag for other players
 - displayOwnNametag --> Whether or not to show a nametag for this player
-- showPlayersOnMap --> Display an icon on the map for other players
+- showPlayersOnMap --> Display map icon for other players
+- showOtherTeamOnMap --> Display a map icon for players on a different team
 - team --> The id of the team to play on
 - syncSettings --> Which types of progression will be sent & received to/from the server
