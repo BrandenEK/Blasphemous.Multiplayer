@@ -16,9 +16,10 @@ namespace BlasServer
             return connectedPlayers;
         }
 
-        public bool DisableDelay()
+        public bool DelayDisabled
         {
-            return server != null && server.DisableDelay();
+            get { return server != null && server.DelayDisabled; }
+            set { if (server != null) server.DelayDisabled = value; }
         }
 
         public bool Start()

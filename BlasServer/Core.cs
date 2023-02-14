@@ -114,8 +114,10 @@ namespace BlasServer
 
         static void printDelay()
         {
-            bool disabled = server.DisableDelay();
-            displayMessage("Delay disabled: " + disabled);
+            bool disabled = server.DelayDisabled;
+            displayMessage("Delay disabled before: " + disabled);
+            server.DelayDisabled = !disabled;
+            displayMessage("Delay diabled after: " + server.DelayDisabled);
         }
 
         public static GameData getTeamData(byte team)
