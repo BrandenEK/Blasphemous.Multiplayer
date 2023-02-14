@@ -49,14 +49,24 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 2. Run the BlasServer.exe program
 
 ### Client:
-1. Unzip the BlasClient.zip file into the game's root folder
+1. Extract the contents of the BlasClient.zip file into the game's root folder
 2. Run the game and verify on the title screen that the mod has been loaded
-3. Press the 'backslash' key to open the debug console
-4. Run the command "multiplayer connect SERVER NAME [PASSWORD]"
-  - SERVER --> The ip address of the machine running the server application
-  - NAME --> The player name you wish to use
-  - PASSWORD --> The password to the server (Optional)
-  - Run the command "multiplayer help" to list additional commands
+3. Run the connect command in the console and start a game
+
+<br/>
+
+## Available commands
+- Press the 'backslash' key to open the debug console
+- Type the desired command followed by the parameters all separated by a single space
+
+| Command | Parameters | Description |
+| ------- | ----------- | ------- |
+| `multiplayer help` | none | List all available commands |
+| `multiplayer status` | none | Display connection status |
+| `multiplayer connect` | SERVER, NAME, PASSWORD (Optional) | Connect to the specified server IP address |
+| `multiplayer disconnect` | none | Disconnect from current server |
+| `multiplayer team` | NUMBER | Change to a different team (1-10) |
+| `multiplayer players` | none | List all connected players in the server |
 
 <br/>
 
@@ -66,14 +76,14 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 ### Server:
 
 | Setting | Description | Default |
-| ------- | ----------- | ------- |
+| ------- | ----------- | :-----: |
 | serverPort | The port to start the server on | 8989 |
 | maxPlayers| The maximum number of players to allow on the server| 8 |
 
 ### Client:
 
 | Setting | Description | Default |
-| ------- | ----------- | ------- |
+| ------- | ----------- | :-----: |
 | serverPort | The port that the server is running on | 8989 |
 | notificationDisplaySeconds | The time that a notification will remain on screen | 4.0 |
 | displayNametags | Whether or not to show a nametag for other players | true |
