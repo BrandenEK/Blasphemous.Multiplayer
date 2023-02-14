@@ -448,28 +448,45 @@ namespace BlasServer
         // Received a player's introductory data
         private void receivePlayerIntro(string playerIp, byte[] data)
         {
-            // Ensure there are no duplicate names
-            string playerName = Encoding.UTF8.GetString(data);
-            foreach (PlayerStatus player in connectedPlayers.Values)
+            // Load player name and password from data
+            byte passwordLength = data[0], nameStartIdx = 1;
+            string playerPassword = null;
+            if (passwordLength > 0)
             {
-                if (player.name == playerName)
-                {
-                    Core.displayMessage("Player connection rejected: Duplicate name");
-                    sendPlayerIntro(playerIp, 1);
-                    return;
-                }
+                playerPassword = Encoding.UTF8.GetString(data, 1, passwordLength);
+                nameStartIdx = (byte)(passwordLength + 1);
             }
+            string playerName = Encoding.UTF8.GetString(data, nameStartIdx, data.Length - passwordLength - 1);
 
-            // Ensure the server doesn't have max number of players
-            if (connectedPlayers.Count >= Core.config.maxPlayers)
+            // Ensure the password is correct
+            string serverPassword = Core.config.password;
+            if (serverPassword != null && serverPassword != "" && (playerPassword == null || playerPassword != serverPassword))
             {
-                Core.displayMessage("Player connection rejected: Player limit reached");
-                sendPlayerIntro(playerIp, 2);
+                Core.displayMessage("Player connection rejected: Incorrect password");
+                sendPlayerIntro(playerIp, 1);
                 return;
             }
 
             // Ensure this ip address is not banned
 
+            // Ensure the server doesn't have max number of players
+            if (connectedPlayers.Count >= Core.config.maxPlayers)
+            {
+                Core.displayMessage("Player connection rejected: Player limit reached");
+                sendPlayerIntro(playerIp, 3);
+                return;
+            }
+
+            // Ensure there are no duplicate names
+            foreach (PlayerStatus player in connectedPlayers.Values)
+            {
+                if (player.name == playerName)
+                {
+                    Core.displayMessage("Player connection rejected: Duplicate name");
+                    sendPlayerIntro(playerIp, 4);
+                    return;
+                }
+            }
 
             // Add new connected player
             Core.displayMessage("Player connection accepted");
