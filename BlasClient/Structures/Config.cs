@@ -8,6 +8,7 @@
         public bool displayNametags;
         public bool displayOwnNametag;
         public bool showPlayersOnMap;
+        public bool showOtherTeamOnMap;
         public int team;
         public SyncSettings syncSettings;
 
@@ -19,6 +20,7 @@
             displayNametags = true;
             displayOwnNametag = true;
             showPlayersOnMap = true;
+            showOtherTeamOnMap = false;
             team = 1;
             syncSettings = new SyncSettings();
         }

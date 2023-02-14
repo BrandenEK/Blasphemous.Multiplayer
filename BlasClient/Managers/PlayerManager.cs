@@ -214,7 +214,7 @@ namespace BlasClient.Managers
 
             // Set up name tag
             if (Main.Multiplayer.config.displayNametags)
-                createNameTag(name);
+                createNameTag(name, Main.Multiplayer.getPlayerStatus(name).team == Main.Multiplayer.playerTeam);
 
             Main.UnityLog("Created new player object for " + name);
         }
@@ -322,7 +322,7 @@ namespace BlasClient.Managers
         }
 
         // Instantiates a nametag object
-        private void createNameTag(string name)
+        private void createNameTag(string name, bool friendlyTeam)
         {
             if (canvas == null || textPrefab == null)
             {
@@ -336,21 +336,15 @@ namespace BlasClient.Managers
             nametag.name = name;
             nametag.text = name;
             nametag.alignment = TextAnchor.LowerCenter;
+            nametag.color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
             nametags.Add(nametag);
-
-            Main.UnityLog("Main color: " + nametag.color.ToString());
-            if (name != Main.Multiplayer.playerName && Main.Multiplayer.getPlayerStatus(name).team != Main.Multiplayer.playerTeam)
-            {
-                // Change nametag color to red if player is on other team
-                nametag.color = Color.red;
-            }
         }
 
         // Creates a nametag specifically for the main player
         public void createPlayerNameTag()
         {
-            if (Main.Multiplayer.config.displayOwnNametag)
-                createNameTag(Main.Multiplayer.playerName);
+            if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
+                createNameTag(Main.Multiplayer.playerName, true);
         }
 
         // Sets the skin texture of a player's object - must be delayed until after object creation
