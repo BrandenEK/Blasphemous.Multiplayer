@@ -9,7 +9,7 @@
         // Default config
         public Config()
         {
-            serverPort = 25565;
+            serverPort = 8989;
             maxPlayers = 8;
         }
     }
