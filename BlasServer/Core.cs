@@ -94,6 +94,7 @@ namespace BlasServer
 
         static void printData()
         {
+            displayCustom("Server game data:", ConsoleColor.Cyan);
             foreach (byte team in teamGameDatas.Keys)
             {
                 displayCustom("Team " + team + " data:", ConsoleColor.Cyan);
@@ -117,7 +118,7 @@ namespace BlasServer
             bool disabled = server.DelayDisabled;
             displayMessage("Delay disabled before: " + disabled);
             server.DelayDisabled = !disabled;
-            displayMessage("Delay diabled after: " + server.DelayDisabled);
+            displayMessage("Delay disabled after: " + server.DelayDisabled);
         }
 
         public static GameData getTeamData(byte team)
