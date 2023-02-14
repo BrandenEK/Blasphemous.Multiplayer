@@ -326,6 +326,7 @@ namespace BlasServer
                     // Send all other connected players and their important data
                     Send(playerIp, getConnectionPacket(connectedPlayers[ip], true), 7);
                     Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
+                    Send(playerIp, getTeamPacket(connectedPlayers[ip]), 9);
                     if (connectedPlayers[ip].sceneName != "")
                     {
                         Send(playerIp, getScenePacket(connectedPlayers[ip]), 2);

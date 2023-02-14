@@ -453,7 +453,8 @@ namespace BlasClient
             Main.UnityLog("Updating team number for " + playerName);
             PlayerStatus player = getPlayerStatus(playerName);
             player.team = team;
-            updatePlayerColors();
+            if (inLevel)
+                updatePlayerColors();
         }
 
         public string getServerIp()
