@@ -4,6 +4,8 @@ A co-op mod for Blasphemous.  This is still a work in progress without an offici
 
 Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
+---
+
 ## Features
 
 - See other players as you both move around the world of Cvstodia
@@ -11,7 +13,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - [Coming soon] Compatible with randomizer
 - [Coming soon] Enable PvP to fight other players
 
-<br/>
+---
 
 ## Things that sync
 
@@ -19,7 +21,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - All player stats (Max health / Max fervour / Strength / Mea Culpa level / Max flasks / Flask level / Bead slots)
 - All unlocked sword skills
 - All revealed map cells
-- Most world state progress (Bosses defeated / Chests opened / Gates opened / Cherubs freed / Teleports unlocked / Questline progress / etc. )
+- Most world state progress (Bosses defeated / Gates opened / Cherubs freed / Teleports unlocked / Questline progress / etc. )
 
 ## Things that don't sync yet
 
@@ -30,30 +32,30 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
 - Enemies & bosses (This is a huge task and not really feasible)
 
-<br/>
+---
 
 ## Requirements
 
-### Server:
+#### Server:
 - Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
 
-### Client:
+#### Client:
 - Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
 
-<br/>
+---
 
 ## How to use
 
-### Server:
+#### Server:
 1. Unzip the BlasServer.zip file anywhere on the host machine
 2. Run the BlasServer.exe program
 
-### Client:
+#### Client:
 1. Extract the contents of the BlasClient.zip file into the game's root folder
 2. Run the game and verify on the title screen that the mod has been loaded
 3. Run the connect command in the console and start a game
 
-<br/>
+---
 
 ## Available commands
 - Press the 'backslash' key to open the debug console
@@ -68,7 +70,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 | `multiplayer team` | NUMBER | Change to a different team (1-10) |
 | `multiplayer players` | none | List all connected players in the server |
 
-<br/>
+---
 
 ## Configuration settings
 - These settings can be modified in the 'multiplayer.cfg' file generated in the same folder as the application
