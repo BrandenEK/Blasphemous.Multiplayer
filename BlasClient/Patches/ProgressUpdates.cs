@@ -788,13 +788,13 @@ namespace BlasClient.Patches
 
 
     // Temporarily allow teleportation
-    [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]
-    public class AlmsManager_Patch
-    {
-        public static bool Prefix(ref int __result)
-        {
-            __result = 3;
-            return false;
-        }
-    }
+    //[HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]
+    //public class AlmsManager_Patch
+    //{
+    //    public static bool Prefix(ref int __result)
+    //    {
+    //        __result = 3;
+    //        return false;
+    //    }
+    //}
 }

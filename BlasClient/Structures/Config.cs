@@ -9,6 +9,8 @@
         public bool displayOwnNametag;
         public bool showPlayersOnMap;
         public bool showOtherTeamOnMap;
+        public bool enablePvP;
+        public bool enableFriendlyFire;
         public int team;
         public SyncSettings syncSettings;
 
@@ -21,6 +23,8 @@
             displayOwnNametag = true;
             showPlayersOnMap = true;
             showOtherTeamOnMap = false;
+            enablePvP = true;
+            enableFriendlyFire = false;
             team = 1;
             syncSettings = new SyncSettings();
         }
