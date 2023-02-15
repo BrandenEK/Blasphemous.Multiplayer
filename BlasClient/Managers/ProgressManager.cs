@@ -56,7 +56,7 @@ namespace BlasClient.Managers
         {
             lock (progressLock)
             {
-                Main.UnityLog("Received new game progress: " + id);
+                Main.Multiplayer.Log("Received new game progress: " + id);
                 queuedProgressUpdates.Add(new ProgressUpdate(id, type, value));
             }
         }
@@ -126,7 +126,7 @@ namespace BlasClient.Managers
 
                 // Church donations
                 default:
-                    Main.UnityLog("Error: Progress type doesn't exist: " + progress.type); return;
+                    Main.Multiplayer.Log("Error: Progress type doesn't exist: " + progress.type); return;
             }
         }
 
@@ -144,7 +144,7 @@ namespace BlasClient.Managers
                 case "FLASK": attribute = Core.Logic.Penitent.Stats.Flask; break;
                 case "FLASKHEALTH": attribute = Core.Logic.Penitent.Stats.FlaskHealth; break;
                 default:
-                    Main.UnityLog("Error: Unknown stat received - " + stat);
+                    Main.Multiplayer.Log("Error: Unknown stat received - " + stat);
                     return;
             }
 
@@ -246,7 +246,7 @@ namespace BlasClient.Managers
                 }
                 catch (System.NullReferenceException)
                 {
-                    Main.UnityLog("Error: Failed to get persistent id of object");
+                    Main.Multiplayer.Log("Error: Failed to get persistent id of object");
                 }
             }
         }

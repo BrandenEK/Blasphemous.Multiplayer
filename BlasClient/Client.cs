@@ -51,7 +51,7 @@ namespace BlasClient
 
         private void onDisconnect()
         {
-            Main.UnityLog("Error: Disconnected from server");
+            Main.Multiplayer.Log("Error: Disconnected from server");
             connectionStatus = ConnectionStatus.Disconnnected;
             serverIp = string.Empty;
             client = null;
@@ -92,7 +92,7 @@ namespace BlasClient
         {
             try
             {
-                //Main.UnityLog($"Sending {data.length} bytes");
+                //Main.Multiplayer.Log($"Sending {data.length} bytes");
                 client.Write(data);
             }
             catch (System.IO.IOException)
@@ -105,7 +105,7 @@ namespace BlasClient
         // Data should be formatted as length length type data
         private void Receive(object sender, DataReceivedEventArgs message)
         {
-            //Main.UnityLog("Bytes received: " + message.data.Length);
+            //Main.Multiplayer.Log("Bytes received: " + message.data.Length);
 
             int startIdx = 0;
             while (startIdx < message.data.Length - 3)
@@ -120,7 +120,7 @@ namespace BlasClient
                 startIdx += 3 + length;
             }
             if (startIdx != message.data.Length)
-                Main.UnityLog("Received data was formatted incorrectly");
+                Main.Multiplayer.Log("Received data was formatted incorrectly");
 
             // Determines which received function to call based on the type
             void processDataReceived(byte type, byte[] data)
@@ -148,7 +148,7 @@ namespace BlasClient
                     case 9:
                         receivePlayerTeam(data); break;
                     default:
-                        Main.UnityLog($"Data type '{type}' is not valid"); break;
+                        Main.Multiplayer.Log($"Data type '{type}' is not valid"); break;
                 }
             }
         }
