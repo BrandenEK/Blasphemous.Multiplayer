@@ -87,6 +87,10 @@ namespace BlasClient.Managers
             {
                 PlayerStatus playerStatus = Main.Multiplayer.connectedPlayers[playerName];
 
+                // Only show other teams if config option
+                if (playerStatus.team != Main.Multiplayer.playerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
+                    continue;
+
                 // Calling this function with -1000 will calculate the center position of the scene
                 Core.NewMapManager.GetCellKeyFromPosition(playerStatus.lastMapScene, new Vector2(-1000, 0));
                 Vector2 cellPosition = getActivePlayerPosition();
@@ -99,7 +103,10 @@ namespace BlasClient.Managers
                 {
                     icon = playerSprites[1];
                 }
-                // Check if they are on other team
+                else if (playerStatus.team != Main.Multiplayer.playerTeam)
+                {
+                    icon = playerSprites[2];
+                }
 
                 // Create new image for this player
                 GameObject obj = new GameObject(playerName, typeof(RectTransform));

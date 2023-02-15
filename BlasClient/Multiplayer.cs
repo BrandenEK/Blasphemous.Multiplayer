@@ -2,9 +2,11 @@
 using System.IO;
 using BepInEx;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
 using Framework.FrameworkCore;
+using Gameplay.UI;
 using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
@@ -28,6 +30,9 @@ namespace BlasClient
         private List<string> interactedPersistenceObjects;
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
+        public byte playerTeam { get; private set; }
+        public string serverIp {  get { return client.serverIp; } }
+        private bool sentAllProgress;
 
         // Player status
         private Vector2 lastPosition;
@@ -74,6 +79,8 @@ namespace BlasClient
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
+            playerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
+            sentAllProgress = false;
         }
         public void Dispose()
         {
@@ -81,28 +88,35 @@ namespace BlasClient
             LevelManager.OnBeforeLevelLoad -= onLevelUnloaded;
         }
 
-        public string connectCommand(string ip, string name, string password)
+        public void connectCommand(string ip, string name, string password)
         {
             playerName = name;
-            bool result = client.Connect(name, ip);
-            if (result)
-                displayNotification("Connected to server!");
+            bool result = client.Connect(ip, name, password);
+            if (!result)
+                UIController.instance.StartCoroutine(delayedNotificationCoroutine("Failed to connect to " + ip));
 
-            return result ? $"Successfully connected to {ip}" : $"Failed to connect to {ip}";
+            IEnumerator delayedNotificationCoroutine(string notification)
+            {
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                notificationManager.showNotification(notification);
+            }
         }
 
         public void disconnectCommand()
         {
             client.Disconnect();
-            onDisconnect();
+            onDisconnect(true);
         }
 
-        public void onDisconnect()
+        public void onDisconnect(bool showNotification)
         {
-            displayNotification("Disconnected from server!");
+            if (showNotification)
+                notificationManager.showNotification("Disconnected from server!");
             connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
+            sentAllProgress = false;
         }
 
         public PlayerStatus getPlayerStatus(string playerName)
@@ -125,7 +139,17 @@ namespace BlasClient
             {
                 // Entered a new scene
                 Main.UnityLog("Entering new scene: " + newLevel.LevelName);
+
+                // Send initial position, animation, & direction before scene enter
+                lastPosition = getCurrentPosition();
+                client.sendPlayerPostition(lastPosition.x, lastPosition.y);
+                lastAnimation = 0;
+                client.sendPlayerAnimation(lastAnimation);
+                lastDirection = getCurrentDirection();
+                client.sendPlayerDirection(lastDirection);
+
                 client.sendPlayerEnterScene(newLevel.LevelName);
+                sendAllProgress();
             }
         }
 
@@ -158,50 +182,31 @@ namespace BlasClient
             if (inLevel && connectedToServer && Core.Logic.Penitent != null)
             {
                 // Check & send updated position
-                Transform penitentTransform = Core.Logic.Penitent.transform;
-                if (positionHasChanged(penitentTransform.position))
+                if (positionHasChanged(out Vector2 newPosition))
                 {
                     //Main.UnityLog("Sending new player position");
-                    client.sendPlayerPostition(penitentTransform.position.x, penitentTransform.position.y);
-                    lastPosition = penitentTransform.position;
+                    client.sendPlayerPostition(newPosition.x, newPosition.y);
+                    lastPosition = newPosition;
                 }
 
                 // Check & send updated animation clip
-                Animator penitentAnimator = Core.Logic.Penitent.Animator;
-                AnimatorStateInfo state = penitentAnimator.GetCurrentAnimatorStateInfo(0);
-                if (animationHasChanged(state))
+                if (animationHasChanged(out byte newAnimation))
                 {
-                    bool animationExists = false;
-                    for (byte i = 0; i < AnimationStates.animations.Length; i++)
+                    // Don't send new animations right after a special animation
+                    if (currentTimeBeforeSendAnimation <= 0 && newAnimation != 255)
                     {
-                        if (state.IsName(AnimationStates.animations[i].name))
-                        {
-                            //Main.UnityLog("Sending new player animation");
-
-                            // Don't send new animations right after a special animation
-                            if (currentTimeBeforeSendAnimation <= 0)
-                            {
-                                client.sendPlayerAnimation(i);
-                            }
-                            lastAnimation = i;
-                            animationExists = true;
-                            break;
-                        }
+                        //Main.UnityLog("Sending new player animation");
+                        client.sendPlayerAnimation(newAnimation);
                     }
-                    if (!animationExists)
-                    {
-                        // This animation could not be found
-                        Main.UnityLog("Error: Animation doesn't exist!");
-                    }
+                    lastAnimation = newAnimation;
                 }
 
                 // Check & send updated facing direction
-                SpriteRenderer penitentRenderer = Core.Logic.Penitent.SpriteRenderer;
-                if (directionHasChanged(penitentRenderer.flipX))
+                if (directionHasChanged(out bool newDirection))
                 {
                     //Main.UnityLog("Sending new player direction");
-                    client.sendPlayerDirection(penitentRenderer.flipX);
-                    lastDirection = penitentRenderer.flipX;
+                    client.sendPlayerDirection(newDirection);
+                    lastDirection = newDirection;
                 }
 
                 // Once all three of these updates are added, send the queue
@@ -226,20 +231,49 @@ namespace BlasClient
                 mapScreenManager.updateMap();
         }
 
-        private bool positionHasChanged(Vector2 currentPosition)
+        private bool positionHasChanged(out Vector2 newPosition)
         {
             float cutoff = 0.03f;
-            return Mathf.Abs(currentPosition.x - lastPosition.x) > cutoff || Mathf.Abs(currentPosition.y - lastPosition.y) > cutoff;
+            newPosition = getCurrentPosition();
+            return Mathf.Abs(newPosition.x - lastPosition.x) > cutoff || Mathf.Abs(newPosition.y - lastPosition.y) > cutoff;
         }
 
-        private bool animationHasChanged(AnimatorStateInfo currentState)
+        private bool animationHasChanged(out byte newAnimation)
         {
-            return !currentState.IsName(AnimationStates.animations[lastAnimation].name);
+            newAnimation = getCurrentAnimation();
+            return newAnimation != lastAnimation;
         }
 
-        private bool directionHasChanged(bool currentDirection)
+        private bool directionHasChanged(out bool newDirection)
         {
-            return currentDirection != lastDirection;
+            newDirection = getCurrentDirection();
+            return newDirection != lastDirection;
+        }
+
+        private Vector2 getCurrentPosition()
+        {
+            return Core.Logic.Penitent.transform.position;
+        }
+
+        private byte getCurrentAnimation()
+        {
+            AnimatorStateInfo state = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
+            for (byte i = 0; i < AnimationStates.animations.Length; i++)
+            {
+                if (state.IsName(AnimationStates.animations[i].name))
+                {
+                    return i;
+                }
+            }
+
+            // This animation could not be found
+            Main.UnityLog("Error: Animation doesn't exist!");
+            return 255;
+        }
+
+        private bool getCurrentDirection()
+        {
+            return Core.Logic.Penitent.SpriteRenderer.flipX;
         }
 
         // Changed skin from menu selector
@@ -252,13 +286,37 @@ namespace BlasClient
             }
         }
 
+        // Changed team number from command
+        public void changeTeam(byte teamNumber)
+        {
+            playerTeam = teamNumber;
+            sentAllProgress = false;
+
+            if (connectedToServer)
+            {
+                client.sendPlayerTeam(teamNumber);
+                if (inLevel)
+                {
+                    updatePlayerColors();
+                    sendAllProgress();
+                }
+            }
+        }
+
+        // Refresh players' nametags & map icons when someone changed teams
+        private void updatePlayerColors()
+        {
+            playerManager.refreshNametagColors();
+            mapScreenManager.queueMapUpdate();
+        }
+
         // Obtained new item, upgraded stat, set flag, etc...
-        public void obtainedGameProgress(string progressId, byte progressType, byte progressValue)
+        public void obtainedGameProgress(string progressId, ProgressManager.ProgressType progressType, byte progressValue)
         {
             if (connectedToServer)
             {
-                Main.UnityLog("Sending new game progress");
-                client.sendPlayerProgress(progressType, progressValue, progressId);
+                Main.UnityLog("Sending new game progress: " + progressId);
+                client.sendPlayerProgress((byte)progressType, progressValue, progressId);
             }
         }
 
@@ -322,7 +380,7 @@ namespace BlasClient
                 playerStatus.lastMapScene = scene;
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
-                playerManager.addPlayer(playerName);
+                playerManager.queuePlayer(playerName, true);
             mapScreenManager.queueMapUpdate();
         }
 
@@ -332,7 +390,7 @@ namespace BlasClient
             PlayerStatus playerStatus = getPlayerStatus(playerName);
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == playerStatus.currentScene)
-                playerManager.removePlayer(playerName);
+                playerManager.queuePlayer(playerName, false);
 
             playerStatus.currentScene = "";
             mapScreenManager.queueMapUpdate();
@@ -346,26 +404,30 @@ namespace BlasClient
             {
                 // Send all initial data
                 client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
-                // Send team (Maybe send this with intro data)
+                client.sendPlayerTeam(playerTeam);
 
-                // If already in game, send enter scene data
+                // If already in game, send enter scene data & game progress
                 if (inLevel)
                 {
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
                     playerManager.createPlayerNameTag();
+                    sendAllProgress();
                 }
 
+                notificationManager.showNotification("Connected to server!");
                 return;
             }
 
             // Failed to connect
-            onDisconnect();
+            onDisconnect(false);
             string reason;
-            if (response == 1) reason = "Player name is already taken"; // Duplicate name
-            else if (response == 2) reason = "Server is full"; // Max player limit
+            if (response == 1) reason = "Incorrect password"; // Wrong password
+            else if (response == 2) reason = "You have been banned"; // Banned player
+            else if (response == 3) reason = "Server is full"; // Max player limit
+            else if (response == 4) reason = "Player name is already taken"; // Duplicate name
             else reason = "Unknown reason"; // Unknown reason
-            // Banned from server
-            displayNotification($"({reason})");
+
+            notificationManager.showNotification("Connection refused: " + reason);
         }
 
         // Received player connection status from server
@@ -384,26 +446,37 @@ namespace BlasClient
                 if (connectedPlayers.ContainsKey(playerName))
                     connectedPlayers.Remove(playerName);
             }
-            displayNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
+            notificationManager.showNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
         }
 
-        public void playerProgressReceived(string player, string progressId, byte progressType, byte progressValue)
+        public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
         {
             // Apply the progress update
             progressManager.receiveProgress(progressId, progressType, progressValue);
 
             // Show notification for new progress
-            notificationManager.showProgressNotification(player, progressType, progressId);
+            if (playerName != "*")
+                notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
         }
 
-        public void displayNotification(string message)
+        public void playerTeamReceived(string playerName, byte team)
         {
-            notificationManager.showNotification(message);
+            // As soon as received, will update team - This isn't locked
+            Main.UnityLog("Updating team number for " + playerName);
+            PlayerStatus player = getPlayerStatus(playerName);
+            player.team = team;
+            if (inLevel)
+                updatePlayerColors();
         }
 
-        public string getServerIp()
+        private void sendAllProgress()
         {
-            return client.serverIp;
+            if (sentAllProgress) return;
+            sentAllProgress = true;
+
+            // This is the first time loading a scene after connecting - send all player progress
+            Main.UnityLog("Sending all player progress");
+            progressManager.loadAllProgress();
         }
 
         // Add a new persistent object that has been interacted with
@@ -417,6 +490,12 @@ namespace BlasClient
         public bool checkPersistentObject(string objectSceneId)
         {
             return interactedPersistenceObjects.Contains(objectSceneId);
+        }
+
+        // Allows progress manager to send all interacted objects on connect
+        public List<string> getAllPersistentObjects()
+        {
+            return interactedPersistenceObjects;
         }
 
         // Save list of interacted persistent objects

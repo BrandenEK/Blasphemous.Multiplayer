@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace BlasServer
@@ -7,6 +8,8 @@ namespace BlasServer
     class Core
     {
         public static Config config;
+        private static Server server;
+        private static Dictionary<byte, GameData> teamGameDatas;
 
         static void Main(string[] args)
         {
@@ -30,9 +33,10 @@ namespace BlasServer
             }
 
             // Create server
-            Server server = new Server();
+            server = new Server();
             if (server.Start())
             {
+                teamGameDatas = new Dictionary<byte, GameData>();
                 displayMessage("Server has been started at this machine's local ip address");
                 CommandLoop();
             }
@@ -70,8 +74,74 @@ namespace BlasServer
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 string command = Console.ReadLine().Trim().ToLower();
-                if (command == "exit")
-                    break;
+
+                switch (command)
+                {
+                    case "exit":
+                        return;
+                    case "data":
+                        printData();
+                        break;
+                    case "players":
+                        printPlayers();
+                        break;
+                }
+            }
+        }
+
+        static void printData()
+        {
+            displayCustom("Server game data:", ConsoleColor.Cyan);
+            foreach (byte team in teamGameDatas.Keys)
+            {
+                displayCustom("Team " + team + " data:", ConsoleColor.Cyan);
+                teamGameDatas[team].printGameProgress();
+            }
+        }
+
+        static void printPlayers()
+        {
+            displayCustom("Connected players:", ConsoleColor.Cyan);
+            Dictionary<string, PlayerStatus> players = server.getPlayers();
+            foreach (string playerName in players.Keys)
+            {
+                displayMessage(playerName + ": Team " + players[playerName].team);
+            }
+            displayMessage("");
+        }
+
+        public static GameData getTeamData(byte team)
+        {
+            if (teamGameDatas.ContainsKey(team))
+                return teamGameDatas[team];
+
+            displayMessage("Creating new game data for team " + team);
+            GameData newData = new GameData();
+            teamGameDatas.Add(team, newData);
+            return newData;
+        }
+
+        public static void removeUnusedGameData(Dictionary<string, PlayerStatus> allPlayers)
+        {
+            for (byte i = 1; i <= 10; i++)
+            {
+                if (!teamGameDatas.ContainsKey(i)) continue;
+
+                // If no player is currently on this team, remove the game data
+                bool teamExists = false;
+                foreach (PlayerStatus player in allPlayers.Values)
+                {
+                    if (player.team == i)
+                    {
+                        teamExists = true;
+                        break;
+                    }
+                }
+                if (!teamExists)
+                {
+                    displayMessage("Removing game data for team " + i);
+                    teamGameDatas.Remove(i);
+                }
             }
         }
     }

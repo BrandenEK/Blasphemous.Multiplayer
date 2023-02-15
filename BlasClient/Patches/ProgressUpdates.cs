@@ -18,17 +18,31 @@ namespace BlasClient.Patches
 {
     // Inventory items
 
-    [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))] // TODO - Change this to use the AddBaseObject method
+    // Beads
+    [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))]
     public class InventoryBead_Patch
     {
         public static void Postfix(RosaryBead rosaryBead)
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
-                Main.Multiplayer.obtainedGameProgress(rosaryBead.id, 0, 0);
+                Main.Multiplayer.obtainedGameProgress(rosaryBead.id, ProgressManager.ProgressType.Bead, 0);
             }
         }
     }
+    [HarmonyPatch(typeof(InventoryManager), "RemoveRosaryBead", typeof(RosaryBead))]
+    public class InventoryBeadRemove_Patch
+    {
+        public static void Postfix(RosaryBead bead)
+        {
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
+            {
+                Main.Multiplayer.obtainedGameProgress(bead.id, ProgressManager.ProgressType.Bead, 1);
+            }
+        }
+    }
+
+    // Prayers
     [HarmonyPatch(typeof(InventoryManager), "AddPrayer", typeof(Prayer))]
     public class InventoryPrayer_Patch
     {
@@ -36,10 +50,12 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
-                Main.Multiplayer.obtainedGameProgress(prayer.id, 1, 0);
+                Main.Multiplayer.obtainedGameProgress(prayer.id, ProgressManager.ProgressType.Prayer, 0);
             }
         }
     }
+
+    // Relics
     [HarmonyPatch(typeof(InventoryManager), "AddRelic", typeof(Relic))]
     public class InventoryRelic_Patch
     {
@@ -47,10 +63,12 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
-                Main.Multiplayer.obtainedGameProgress(relic.id, 2, 0);
+                Main.Multiplayer.obtainedGameProgress(relic.id, ProgressManager.ProgressType.Relic, 0);
             }
         }
     }
+
+    // Hearts
     [HarmonyPatch(typeof(InventoryManager), "AddSword", typeof(Sword))]
     public class InventorySword_Patch
     {
@@ -58,10 +76,12 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
-                Main.Multiplayer.obtainedGameProgress(sword.id, 3, 0);
+                Main.Multiplayer.obtainedGameProgress(sword.id, ProgressManager.ProgressType.Heart, 0);
             }
         }
     }
+
+    // Collectibles
     [HarmonyPatch(typeof(InventoryManager), "AddCollectibleItem", typeof(Framework.Inventory.CollectibleItem))]
     public class InventoryCollectible_Patch
     {
@@ -69,10 +89,12 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
-                Main.Multiplayer.obtainedGameProgress(collectibleItem.id, 4, 0);
+                Main.Multiplayer.obtainedGameProgress(collectibleItem.id, ProgressManager.ProgressType.Collectible, 0);
             }
         }
     }
+
+    // Quest items
     [HarmonyPatch(typeof(InventoryManager), "AddQuestItem", typeof(QuestItem))]
     public class InventoryQuestItem_Patch
     {
@@ -80,7 +102,18 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
-                Main.Multiplayer.obtainedGameProgress(questItem.id, 5, 0);
+                Main.Multiplayer.obtainedGameProgress(questItem.id, ProgressManager.ProgressType.QuestItem, 0);
+            }
+        }
+    }
+    [HarmonyPatch(typeof(InventoryManager), "RemoveQuestItem", typeof(QuestItem))]
+    public class InventoryQuestItemRemove_Patch
+    {
+        public static void Postfix(QuestItem questItem)
+        {
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
+            {
+                Main.Multiplayer.obtainedGameProgress(questItem.id, ProgressManager.ProgressType.QuestItem, 1);
             }
         }
     }
@@ -88,24 +121,24 @@ namespace BlasClient.Patches
     // Player stats
 
     [HarmonyPatch(typeof(Attribute), "Upgrade")]
-    public class LifeUpgrade_Patch
+    public class AttributeUpgrade_Patch
     {
         public static void Postfix(Attribute __instance)
         {
             if (ProgressManager.updatingProgress)
                 return;
 
-            byte type = 255;
-            if (__instance.GetType() == typeof(Life)) type = 6;
-            else if (__instance.GetType() == typeof(Fervour)) type = 7;
-            else if (__instance.GetType() == typeof(Strength)) type = 8;
-            else if (__instance.GetType() == typeof(MeaCulpa)) type = 9;
-            else if (__instance.GetType() == typeof(BeadSlots)) type = 10;
-            else if (__instance.GetType() == typeof(Flask)) type = 11;
-            else if (__instance.GetType() == typeof(FlaskHealth)) type = 12;
+            string type = null;
+            if (__instance.GetType() == typeof(Life)) type = "LIFE";
+            else if (__instance.GetType() == typeof(Fervour)) type = "FERVOUR";
+            else if (__instance.GetType() == typeof(Strength)) type = "STRENGTH";
+            else if (__instance.GetType() == typeof(MeaCulpa)) type = "MEACULPA";
+            else if (__instance.GetType() == typeof(BeadSlots)) type = "BEADSLOTS";
+            else if (__instance.GetType() == typeof(Flask)) type = "FLASK";
+            else if (__instance.GetType() == typeof(FlaskHealth)) type = "FLASKHEALTH";
 
-            if (type != 255 && Main.Multiplayer.config.syncSettings.playerStats)
-                Main.Multiplayer.obtainedGameProgress("Stat", type, 0);
+            if (type != null && Main.Multiplayer.config.syncSettings.playerStats)
+                Main.Multiplayer.obtainedGameProgress(type, ProgressManager.ProgressType.PlayerStat, (byte)__instance.GetUpgrades());
         }
     }
 
@@ -126,38 +159,8 @@ namespace BlasClient.Patches
             {
                 // Actually obtaining item, send to other players
                 if (Main.Multiplayer.config.syncSettings.swordSkills)
-                    Main.Multiplayer.obtainedGameProgress(skill, 13, 0);
+                    Main.Multiplayer.obtainedGameProgress(skill, ProgressManager.ProgressType.SwordSkill, 0);
                 return true;
-            }
-        }
-    }
-
-    // Game flags
-
-    [HarmonyPatch(typeof(EventManager), "SetFlag")]
-    public class EventManager_Patch
-    {
-        public static void Postfix(EventManager __instance, string id, bool b)
-        {
-            string formatted = __instance.GetFormattedId(id);
-            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState && FlagStates.getFlagState(formatted) != null)
-            {
-                Main.Multiplayer.obtainedGameProgress(formatted, 14, (byte)(b ? 0 : 1));
-            }
-        }
-    }
-
-    // Warp teleports
-
-    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
-    public class SpawnManager_Patch
-    {
-        public static void Postfix(string teleportId)
-        {
-            Main.UnityLog("Unlocked teleport");
-            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
-            {
-                Main.Multiplayer.obtainedGameProgress(teleportId, 16, 0);
             }
         }
     }
@@ -181,7 +184,7 @@ namespace BlasClient.Patches
                 foreach (CellData cell in ___CurrentMap.CellsByZone[__instance.CurrentScene])
                 {
                     if (cell.Bounding.Contains(position) && !cell.Revealed)
-                        Main.Multiplayer.obtainedGameProgress(___CurrentMap.Cells.IndexOf(cell).ToString(), 17, 0);
+                        Main.Multiplayer.obtainedGameProgress(___CurrentMap.Cells.IndexOf(cell).ToString(), ProgressManager.ProgressType.MapCell, 0);
                 }
                 return true;
             }
@@ -198,6 +201,36 @@ namespace BlasClient.Patches
         }
     }
 
+    // Game flags
+
+    [HarmonyPatch(typeof(EventManager), "SetFlag")]
+    public class EventManager_Patch
+    {
+        public static void Postfix(EventManager __instance, string id, bool b)
+        {
+            string formatted = __instance.GetFormattedId(id);
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState && FlagStates.getFlagState(formatted) != null)
+            {
+                Main.Multiplayer.obtainedGameProgress(formatted, ProgressManager.ProgressType.Flag, (byte)(b ? 0 : 1));
+            }
+        }
+    }
+
+    // Warp teleports
+
+    [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
+    public class SpawnManager_Patch
+    {
+        public static void Postfix(string teleportId)
+        {
+            Main.UnityLog("Unlocked teleport");
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
+            {
+                Main.Multiplayer.obtainedGameProgress(teleportId, ProgressManager.ProgressType.Teleport, 0);
+            }
+        }
+    }
+
     // Persistent objects
 
     // Each type has three methods:
@@ -205,7 +238,7 @@ namespace BlasClient.Patches
     // 2. Receive - When receiving object data it will play the used animation
     // 3. Load - When loading a new scene it will be automatically used
 
-    // Interactable use (PrieDieus, CollectibleItems, Chests, Levers)
+    // Interactable use (PrieDieus, CollectibleItems, Chests, Levers, Customs)
     [HarmonyPatch(typeof(Interactable), "Use")] // Change to patches for each type of pers. object
     public class InteractableUse_Patch
     {
@@ -469,7 +502,8 @@ namespace BlasClient.Patches
                 return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
             }
 
-            ____running = !Core.Events.GetFlag(___OnDestination);
+            ____running = false;
+            __instance.Use(); // Might have to change this
             return false;
         }
     }
@@ -645,7 +679,113 @@ namespace BlasClient.Patches
         }
     }
 
+    // Custom interaction
+    // Interactable use
+    //[HarmonyPatch(typeof(CustomInteraction), "GetCurrentPersistentState")]
+    //public class CustomReceive_Patch
+    //{
+    //    public static bool Prefix(string dataPath, CustomInteraction __instance, Animator ___interactableAnimator)
+    //    {
+    //        if (dataPath != "use") return true;
+
+    //        __instance.Consumed = true;
+    //        ___interactableAnimator.SetTrigger("INTERACTED");
+    //        return false;
+    //    }
+    //}
+    //[HarmonyPatch(typeof(CustomInteraction), "SetCurrentPersistentState")]
+    //public class CustomLoad_Patch
+    //{
+    //    public static bool Prefix(PersistentManager.PersistentData data, CustomInteraction __instance)
+    //    {
+    //        if (data != null)
+    //        {
+    //            // This method is being called normally - only execute if object hasn't been interacted with
+    //            return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+    //        }
+
+    //        __instance.Consumed = true;
+    //        // Play instant animation
+    //        return false;
+    //    }
+    //}
+
     // Hidden secrets
+
+    // Initial data sending
+
+    // Skills
+    [HarmonyPatch(typeof(SkillManager), "GetCurrentPersistentState")]
+    public class SkillManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, Dictionary<string, UnlockableSkill> ___allSkills)
+        {
+            // Calling this with 'intro' means it should send all unlocked skills
+            if (dataPath != "intro") return true;
+
+            foreach (string key in ___allSkills.Keys)
+            {
+                if (___allSkills[key].unlocked)
+                    Main.Multiplayer.obtainedGameProgress(key, ProgressManager.ProgressType.SwordSkill, 0);
+            }
+            return false;
+        }
+    }
+
+    // Map cells
+    [HarmonyPatch(typeof(NewMapManager), "GetCurrentPersistentState")]
+    public class MapManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, MapData ___CurrentMap)
+        {
+            // Calling this with 'intro' means it should send all revealed map cells
+            if (dataPath != "intro") return true;
+
+            for (int i = 0; i < ___CurrentMap.Cells.Count; i++)
+            {
+                if (___CurrentMap.Cells[i].Revealed)
+                    Main.Multiplayer.obtainedGameProgress(i.ToString(), ProgressManager.ProgressType.MapCell, 0);
+            }
+            return false;
+        }
+    }
+
+    // Teleports
+    [HarmonyPatch(typeof(SpawnManager), "GetCurrentPersistentState")]
+    public class SpawnManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, Dictionary<string, TeleportDestination> ___TeleportDict)
+        {
+            // Calling this with 'intro' means it should send all unlocked teleports
+            if (dataPath != "intro") return true;
+
+            foreach (string key in ___TeleportDict.Keys)
+            {
+                if (___TeleportDict[key].isActive)
+                    Main.Multiplayer.obtainedGameProgress(key, ProgressManager.ProgressType.Teleport, 0);
+            }
+            return false;
+        }
+    }
+
+    // Flags
+    [HarmonyPatch(typeof(EventManager), "GetCurrentPersistentState")]
+    public class EventManagerIntro_Patch
+    {
+        public static bool Prefix(string dataPath, Dictionary<string, FlagObject> ___flags)
+        {
+            // Calling this with 'intro' means it should send all set flags
+            if (dataPath != "intro") return true;
+
+            foreach (string flag in ___flags.Keys)
+            {
+                if (FlagStates.getFlagState(flag) != null && ___flags[flag].value)
+                    Main.Multiplayer.obtainedGameProgress(flag, ProgressManager.ProgressType.Flag, 0);
+            }
+            return false;
+        }
+    }
+
 
     // Temporarily allow teleportation
     [HarmonyPatch(typeof(AlmsManager), "GetPrieDieuLevel")]

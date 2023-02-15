@@ -11,6 +11,17 @@ namespace BlasServer
 
         private Dictionary<string, PlayerStatus> connectedPlayers;
 
+        public Dictionary<string, PlayerStatus> getPlayers()
+        {
+            return connectedPlayers;
+        }
+
+        public bool DelayDisabled
+        {
+            get { return server != null && server.DelayDisabled; }
+            set { if (server != null) server.DelayDisabled = value; }
+        }
+
         public bool Start()
         {
             try
@@ -20,7 +31,7 @@ namespace BlasServer
                 server.ClientDisconnected += clientDisconnected;
                 server.DataReceived += Receive;
                 server.Start(Core.config.serverPort);
-                server.DisableDelay(); // Does this even work ??
+                server.DelayDisabled = true;
             }
             catch (System.Net.Sockets.SocketException)
             {
@@ -90,6 +101,8 @@ namespace BlasServer
                         receivePlayerIntro(e.ip, data); break;
                     case 8:
                         receivePlayerProgress(e.ip, data); break;
+                    case 9:
+                        receivePlayerTeam(e.ip, data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -109,11 +122,10 @@ namespace BlasServer
             if (!connectedPlayers.ContainsKey(e.ip))
                 return;
 
-            // Send that this player has disconnected
+            // Send that this player has disconnected & remove them
             sendPlayerConnection(e.ip, false);
-
-            // Remove this player from connected list
             connectedPlayers.Remove(e.ip);
+            Core.removeUnusedGameData(connectedPlayers);
         }
 
         private PlayerStatus getCurrentPlayer(string ip)
@@ -124,6 +136,8 @@ namespace BlasServer
             Core.displayError("Data for " + ip + " has not been created yet!");
             return new PlayerStatus("");
         }
+
+        #region Data packets
 
         private byte[] getPositionPacket(PlayerStatus player)
         {
@@ -166,6 +180,20 @@ namespace BlasServer
             bytes.AddRange(BitConverter.GetBytes(connected));
             return bytes.ToArray();
         }
+        private byte[] getProgressPacket(string nameOrStar, byte type, byte value, string id)
+        {
+            List<byte> bytes = addPlayerNameToData(nameOrStar);
+            bytes.Add(type);
+            bytes.Add(value);
+            bytes.AddRange(Encoding.UTF8.GetBytes(id));
+            return bytes.ToArray();
+        }
+        private byte[] getTeamPacket(PlayerStatus player)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.Add(player.team);
+            return bytes.ToArray();
+        }
 
         private List<byte> addPlayerNameToData(string name)
         {
@@ -176,6 +204,8 @@ namespace BlasServer
             data.AddRange(nameBytes);
             return data;
         }
+
+        #endregion Data packets
 
         #region Send functions
 
@@ -237,6 +267,11 @@ namespace BlasServer
         private void sendPlayerLeaveScene(string playerIp)
         {
             PlayerStatus current = getCurrentPlayer(playerIp);
+            current.xPos = 0;
+            current.yPos = 0;
+            current.animation = 0;
+            current.facingDirection = false;
+
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (playerIp != ip)
@@ -291,11 +326,11 @@ namespace BlasServer
                     // Send all other connected players and their important data
                     Send(playerIp, getConnectionPacket(connectedPlayers[ip], true), 7);
                     Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
+                    Send(playerIp, getTeamPacket(connectedPlayers[ip]), 9);
                     if (connectedPlayers[ip].sceneName != "")
                     {
                         Send(playerIp, getScenePacket(connectedPlayers[ip]), 2);
                     }
-                    // Maybe send oter player's teams also
                 }
             }
         }
@@ -315,16 +350,38 @@ namespace BlasServer
         }
 
         // Send a player progress update
-        private void sendPlayerProgress(string playerIp, byte[] data) // Taking in a byte[] is probably only temporary
+        private void sendPlayerProgress(string playerIp, byte type, byte value, string id)
+        {
+            PlayerStatus current = getCurrentPlayer(playerIp);
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (playerIp != ip && current.team == getCurrentPlayer(ip).team)
+                {
+                    Send(ip, getProgressPacket(current.name, type, value, id), 8);
+                }
+            }
+        }
+
+        // Send a player team update
+        private void sendPlayerTeam(string playerIp)
         {
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (playerIp != ip)
                 {
-                    List<byte> bytes = addPlayerNameToData(current.name);
-                    bytes.AddRange(data);
-                    Send(ip, bytes.ToArray(), 8);
+                    Send(ip, getTeamPacket(current), 9);
+                }
+            }
+
+            // Send all of the server data to this player for them to merge
+            Core.displayMessage("Sending all server data to " + playerIp);
+            for (byte i = 0; i < GameData.numberOfProgressTypes; i++)
+            {
+                Dictionary<string, byte> progressSet = Core.getTeamData(current.team).getProgressSet(i);
+                foreach (string id in progressSet.Keys)
+                {
+                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), 8);
                 }
             }
         }
@@ -391,28 +448,45 @@ namespace BlasServer
         // Received a player's introductory data
         private void receivePlayerIntro(string playerIp, byte[] data)
         {
-            // Ensure there are no duplicate names
-            string playerName = Encoding.UTF8.GetString(data);
-            foreach (PlayerStatus player in connectedPlayers.Values)
+            // Load player name and password from data
+            byte passwordLength = data[0], nameStartIdx = 1;
+            string playerPassword = null;
+            if (passwordLength > 0)
             {
-                if (player.name == playerName)
-                {
-                    Core.displayMessage("Player connection rejected: Duplicate name");
-                    sendPlayerIntro(playerIp, 1);
-                    return;
-                }
+                playerPassword = Encoding.UTF8.GetString(data, 1, passwordLength);
+                nameStartIdx = (byte)(passwordLength + 1);
             }
+            string playerName = Encoding.UTF8.GetString(data, nameStartIdx, data.Length - passwordLength - 1);
 
-            // Ensure the server doesn't have max number of players
-            if (connectedPlayers.Count >= Core.config.maxPlayers)
+            // Ensure the password is correct
+            string serverPassword = Core.config.password;
+            if (serverPassword != null && serverPassword != "" && (playerPassword == null || playerPassword != serverPassword))
             {
-                Core.displayMessage("Player connection rejected: Player limit reached");
-                sendPlayerIntro(playerIp, 2);
+                Core.displayMessage("Player connection rejected: Incorrect password");
+                sendPlayerIntro(playerIp, 1);
                 return;
             }
 
             // Ensure this ip address is not banned
 
+            // Ensure the server doesn't have max number of players
+            if (connectedPlayers.Count >= Core.config.maxPlayers)
+            {
+                Core.displayMessage("Player connection rejected: Player limit reached");
+                sendPlayerIntro(playerIp, 3);
+                return;
+            }
+
+            // Ensure there are no duplicate names
+            foreach (PlayerStatus player in connectedPlayers.Values)
+            {
+                if (player.name == playerName)
+                {
+                    Core.displayMessage("Player connection rejected: Duplicate name");
+                    sendPlayerIntro(playerIp, 4);
+                    return;
+                }
+            }
 
             // Add new connected player
             Core.displayMessage("Player connection accepted");
@@ -425,50 +499,65 @@ namespace BlasServer
         // Received a player progress update
         private void receivePlayerProgress(string playerIp, byte[] data)
         {
-            // Get the progress item from the data & add this to the game list
-            // Send the data back to other players
             PlayerStatus current = getCurrentPlayer(playerIp);
             byte progressType = data[0];
             byte progressValue = data[1];
             string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
 
+            // Add the progress to the server data, and if it's new send it to the rest of the players
+            if (!Core.getTeamData(current.team).addPlayerProgress(progressId, progressType, progressValue))
+            {
+                Core.displayCustom($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}", ConsoleColor.DarkGreen);
+                return;
+            }
+
             if (progressType >= 0 && progressType <= 5)
             {
                 // Item
-                Core.displayCustom($"Received new item from {current.name}: {progressId}", ConsoleColor.Green);
+                Core.displayCustom($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.name}: {progressId}", ConsoleColor.Green);
             }
-            else if (progressType >= 6 && progressType <= 12)
+            else if (progressType == 6)
             {
                 // Stat
-                Core.displayCustom($"Received new stat upgrade from {current.name}", ConsoleColor.Green);
+                Core.displayCustom($"Received new stat upgrade from {current.name}: {progressId} level {progressValue + 1}", ConsoleColor.Green);
             }
-            else if (progressType == 13)
+            else if (progressType == 7)
             {
                 // Skill
                 Core.displayCustom($"Received new skill from {current.name}: {progressId}", ConsoleColor.Green);
             }
-            else if (progressType == 14)
-            {
-                // Flag
-                Core.displayCustom($"Received new flag from {current.name}: {progressId}", ConsoleColor.Green);
-            }
-            else if (progressType == 15)
-            {
-                // Pers. object
-                Core.displayCustom($"Received new pers. object from {current.name}: {progressId}", ConsoleColor.Green);
-            }
-            else if (progressType == 16)
-            {
-                // Teleport
-                Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
-            }
-            else if (progressType == 17)
+            else if (progressType == 8)
             {
                 // Map cell
                 Core.displayCustom($"Received new map cell from {current.name}: {progressId}", ConsoleColor.Green);
             }
+            else if (progressType == 9)
+            {
+                // Flag
+                Core.displayCustom($"Received new flag from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 10)
+            {
+                // Pers. object
+                Core.displayCustom($"Received new pers. object from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            else if (progressType == 11)
+            {
+                // Teleport
+                Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+            
+            sendPlayerProgress(playerIp, progressType, progressValue, progressId);
+        }
 
-            sendPlayerProgress(playerIp, data);
+        // Received a player's new team
+        private void receivePlayerTeam(string playerIp, byte[] data)
+        {
+            PlayerStatus current = getCurrentPlayer(playerIp);
+            current.team = data[0];
+
+            sendPlayerTeam(playerIp);
+            Core.removeUnusedGameData(connectedPlayers);
         }
 
         #endregion Receive functions

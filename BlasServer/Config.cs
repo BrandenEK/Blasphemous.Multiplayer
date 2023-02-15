@@ -5,12 +5,14 @@
     {
         public int serverPort;
         public int maxPlayers;
+        public string password;
 
         // Default config
         public Config()
         {
-            serverPort = 25565;
+            serverPort = 8989;
             maxPlayers = 8;
+            password = "";
         }
     }
 }

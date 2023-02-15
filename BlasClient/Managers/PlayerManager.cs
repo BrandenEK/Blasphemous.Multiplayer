@@ -6,6 +6,7 @@ using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level;
 using Tools.Level.Interactables;
 using BlasClient.Structures;
+using BlasClient.MonoBehaviours;
 using BlasClient.Data;
 
 namespace BlasClient.Managers
@@ -20,19 +21,21 @@ namespace BlasClient.Managers
         private RuntimeAnimatorController playerController;
 
         // Queued player updates
+        private Dictionary<string, bool> queuedPlayers = new Dictionary<string, bool>();
         private Dictionary<string, Vector2> queuedPositions = new Dictionary<string, Vector2>();
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
         private Dictionary<string, bool> queuedDirections = new Dictionary<string, bool>();
 
+        private static readonly object playerLock = new object();
         private static readonly object positionLock = new object();
         private static readonly object animationLock = new object();
-        private static readonly object directionLock = new object(); // Might also need to lock players list when adding/removing
+        private static readonly object directionLock = new object();
 
         public void loadScene(string scene)
         {
             // Remove all existing player objects and nametags
             destroyPlayers();
-            
+
             // Create any players that are already in this scene
             foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
             {
@@ -54,6 +57,7 @@ namespace BlasClient.Managers
             if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Add special animation checker to certain interactors
+            int count = 0;
             foreach (Interactable interactable in Object.FindObjectsOfType<Interactable>())
             {
                 System.Type type = interactable.GetType();
@@ -66,10 +70,19 @@ namespace BlasClient.Managers
                     {
                         // Only add this to the interactor animator of certain interactables
                         child.gameObject.AddComponent<SpecialAnimationChecker>();
+                        count++;
                         break;
                     }
                 }
             }
+            if (scene == "D17Z01S01")
+            {
+                // Add this to the fake penitent intro animator
+                GameObject fakePenitent = GameObject.Find("FakePenitent");
+                if (fakePenitent != null) fakePenitent.AddComponent<SpecialAnimationChecker>();
+                count++;
+            }
+            Main.UnityLog("Adding special animation checkers to " + count + " objects!");
 
             // Create main player's nametag
             createPlayerNameTag();
@@ -83,26 +96,50 @@ namespace BlasClient.Managers
         // Should be optimized to not use dictionaries
         public void updatePlayers()
         {
+            // Add or remove any new player objects
+            lock (playerLock)
+            {
+                if (queuedPlayers.Count > 0)
+                {
+                    foreach (string name in queuedPlayers.Keys)
+                    {
+                        if (queuedPlayers[name])
+                            addPlayer(name);
+                        else
+                            removePlayer(name);
+                    }
+                    queuedPlayers.Clear();
+                }
+            }
             // Update any player's new position
             lock (positionLock)
             {
-                foreach (string name in queuedPositions.Keys)
-                    updatePlayerPosition(name, queuedPositions[name]);
-                queuedPositions.Clear();
+                if (queuedPositions.Count > 0)
+                {
+                    foreach (string name in queuedPositions.Keys)
+                        updatePlayerPosition(name, queuedPositions[name]);
+                    queuedPositions.Clear();
+                }
             }
             // Update any player's new animation
             lock (animationLock)
             {
-                foreach (string name in queuedAnimations.Keys)
-                    updatePlayerAnimation(name, queuedAnimations[name]);
-                queuedAnimations.Clear();
+                if (queuedAnimations.Count > 0)
+                {
+                    foreach (string name in queuedAnimations.Keys)
+                        updatePlayerAnimation(name, queuedAnimations[name]);
+                    queuedAnimations.Clear();
+                }
             }
             // Update any player's new direction
             lock (directionLock)
             {
-                foreach (string name in queuedDirections.Keys)
-                    updatePlayerDirection(name, queuedDirections[name]);
-                queuedDirections.Clear();
+                if (queuedDirections.Count > 0)
+                {
+                    foreach (string name in queuedDirections.Keys)
+                        updatePlayerDirection(name, queuedDirections[name]);
+                    queuedDirections.Clear();
+                }
             }
 
             // Check status of player skins and potentially update the textures
@@ -152,7 +189,7 @@ namespace BlasClient.Managers
         }
 
         // When a player enters a scene, create a new player object
-        public void addPlayer(string name) // Maybe take in playerstatus instead
+        private void addPlayer(string name)
         {
             // Create base object
             GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
@@ -171,15 +208,19 @@ namespace BlasClient.Managers
             Animator anim = player.GetComponent<Animator>();
             anim.runtimeAnimatorController = playerController;
 
+            // If in beginning room, add fake penitent controller
+            if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
+                player.AddComponent<FakePenitentIntro>();
+
             // Set up name tag
             if (Main.Multiplayer.config.displayNametags)
-                createNameTag(name);
+                createNameTag(name, Main.Multiplayer.getPlayerStatus(name).team == Main.Multiplayer.playerTeam);
 
             Main.UnityLog("Created new player object for " + name);
         }
 
         // When a player leaves a scene, destroy the player object
-        public void removePlayer(string name)
+        private void removePlayer(string name)
         {
             GameObject player = getPlayerObject(name);
             if (player != null)
@@ -227,11 +268,11 @@ namespace BlasClient.Managers
                 if (animation < 240)
                 {
                     // Regular animation
-                    if (playerStatus.specialAnimation)
+                    if (playerStatus.specialAnimation > 0)
                     {
                         // Change back to regular animations
                         anim.runtimeAnimatorController = playerController;
-                        playerStatus.specialAnimation = false;
+                        playerStatus.specialAnimation = 0;
                     }
                     anim.SetBool("IS_CROUCH", false);
                     //anim.SetBool("IS_DEAD") might need one for vertical attack
@@ -251,7 +292,7 @@ namespace BlasClient.Managers
                     // Special animation
                     if (playSpecialAnimation(anim, animation))
                     {
-                        playerStatus.specialAnimation = true;
+                        playerStatus.specialAnimation = animation;
                         Main.UnityLog("Playing special animation for " + name);
                     }
                     else
@@ -281,7 +322,7 @@ namespace BlasClient.Managers
         }
 
         // Instantiates a nametag object
-        private void createNameTag(string name)
+        private void createNameTag(string name, bool friendlyTeam)
         {
             if (canvas == null || textPrefab == null)
             {
@@ -295,14 +336,25 @@ namespace BlasClient.Managers
             nametag.name = name;
             nametag.text = name;
             nametag.alignment = TextAnchor.LowerCenter;
+            nametag.color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
             nametags.Add(nametag);
         }
 
         // Creates a nametag specifically for the main player
         public void createPlayerNameTag()
         {
-            if (Main.Multiplayer.config.displayOwnNametag)
-                createNameTag(Main.Multiplayer.playerName);
+            if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
+                createNameTag(Main.Multiplayer.playerName, true);
+        }
+
+        // Updates the colors of all nametags in the scene when someone changes teams
+        public void refreshNametagColors()
+        {
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                bool friendlyTeam = nametags[i].name == Main.Multiplayer.playerName || Main.Multiplayer.playerTeam == Main.Multiplayer.getPlayerStatus(nametags[i].name).team;
+                nametags[i].GetComponent<Text>().color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
+            }
         }
 
         // Sets the skin texture of a player's object - must be delayed until after object creation
@@ -407,6 +459,16 @@ namespace BlasClient.Managers
                     anim.SetTrigger("KEY_ENTER");
                 }
             }
+            else if (type == 250 || type == 251)
+            {
+                // Fake penitent
+                GameObject logic = GameObject.Find("LOGIC");
+                if (logic != null)
+                {
+                    anim.runtimeAnimatorController = logic.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
+                    anim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
+                }
+            }
             else
             {
                 return false;
@@ -418,6 +480,15 @@ namespace BlasClient.Managers
         // Finishes playing a special animation and returns to idle
         public void finishSpecialAnimation(string playerName)
         {
+            byte currentSpecialAnimation = Main.Multiplayer.getPlayerStatus(playerName).specialAnimation;
+            if (currentSpecialAnimation >= 247 && currentSpecialAnimation <= 249)
+            {
+                // If finished entering door, disable renderer
+                GameObject player = getPlayerObject(playerName);
+                if (player != null)
+                    player.GetComponent<SpriteRenderer>().enabled = false;
+            }
+
             updatePlayerAnimation(playerName, 0);
         }
 
@@ -441,6 +512,14 @@ namespace BlasClient.Managers
                     return nametags[i];
             }
             return null;
+        }
+
+        public void queuePlayer(string playerName, bool addition)
+        {
+            lock (playerLock)
+            {
+                queuedPlayers.Add(playerName, addition);
+            }
         }
 
         public void queuePosition(string playerName, Vector2 position)

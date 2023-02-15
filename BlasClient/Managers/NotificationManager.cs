@@ -38,68 +38,59 @@ namespace BlasClient.Managers
         }
 
         // Add a new notification for a progress update, but calculates it first
-        public void showProgressNotification(string playerName, byte progressType, string progressId)
+        public void showProgressNotification(string playerName, byte progressType, string progressId, byte progressValue)
         {
             string notification = null;
-            switch (progressType)
+            switch ((ProgressManager.ProgressType)progressType)
             {
-                case 0:
+                case ProgressManager.ProgressType.Bead:
                     RosaryBead bead = Core.InventoryManager.GetRosaryBead(progressId);
-                    if (bead != null)
+                    if (bead != null && progressValue == 0)
                         notification = "has obtained the " + bead.caption;
                     break;
-                case 1:
+                case ProgressManager.ProgressType.Prayer:
                     Prayer prayer = Core.InventoryManager.GetPrayer(progressId);
-                    if (prayer != null)
+                    if (prayer != null && progressValue == 0)
                         notification = "has obtained the " + prayer.caption;
                     break;
-                case 2:
+                case ProgressManager.ProgressType.Relic:
                     Relic relic = Core.InventoryManager.GetRelic(progressId);
-                    if (relic != null)
+                    if (relic != null && progressValue == 0)
                         notification = "has obtained the " + relic.caption;
                     break;
-                case 3:
+                case ProgressManager.ProgressType.Heart:
                     Sword sword = Core.InventoryManager.GetSword(progressId);
-                    if (sword != null)
+                    if (sword != null && progressValue == 0)
                         notification = "has obtained the " + sword.caption;
                     break;
-                case 4:
+                case ProgressManager.ProgressType.Collectible:
                     Framework.Inventory.CollectibleItem collectible = Core.InventoryManager.GetCollectibleItem(progressId);
-                    if (collectible != null)
+                    if (collectible != null && progressValue == 0)
                         notification = "has obtained the " + collectible.caption;
                     break;
-                case 5:
+                case ProgressManager.ProgressType.QuestItem:
                     QuestItem quest = Core.InventoryManager.GetQuestItem(progressId);
-                    if (quest != null)
+                    if (quest != null && progressValue == 0)
                         notification = "has obtained the " + quest.caption;
                     break;
-                case 6:
-                    notification = "has upgraded the maximum health";
+                case ProgressManager.ProgressType.PlayerStat:
+                    string stat = null;
+                    if (progressId == "LIFE") stat = "maximum health";
+                    else if (progressId == "FERVOUR") stat = "maximum fervour";
+                    else if (progressId == "STRENGTH") stat = "mea culpa strength";
+                    else if (progressId == "MEACULPA") stat = "mea culpa tier";
+                    else if (progressId == "BEADSLOTS") stat = "maximum bead slots";
+                    else if (progressId == "FLASK") stat = "maximum flasks";
+                    else if (progressId == "FLASKHEALTH") stat = "flask strength";
+                    if (stat != null)
+                        notification = "has upgraded the " + stat;
                     break;
-                case 7:
-                    notification = "has upgraded the maximum fervour";
-                    break;
-                case 8:
-                    notification = "has upgraded the mea culpa strength";
-                    break;
-                case 9:
-                    notification = "has upgraded the mea culpa tier";
-                    break;
-                case 10:
-                    notification = "has upgraded the maximum bead slots";
-                    break;
-                 case 11:
-                    notification = "has upgraded the maximum flasks";
-                    break;
-                case 12:
-                    notification = "has upgraded the flasks strength";
-                    break;
-                case 13:
+                case ProgressManager.ProgressType.SwordSkill:
                     UnlockableSkill skill = Core.SkillManager.GetSkill(progressId);
                     if (skill != null)
                         notification = "has unlocked the " + skill.caption;
                     break;
-                case 14:
+                case ProgressManager.ProgressType.Flag:
                     FlagState flag = FlagStates.getFlagState(progressId);
                     if (flag != null)
                         notification = flag.notification;

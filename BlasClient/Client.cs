@@ -21,7 +21,7 @@ namespace BlasClient
             serverIp = string.Empty;
         }
 
-        public bool Connect(string playerName, string ipAddress)
+        public bool Connect(string ipAddress, string playerName, string password)
         {
             if (connectionStatus != ConnectionStatus.Disconnnected) return false;
 
@@ -39,7 +39,7 @@ namespace BlasClient
                 return false;
             }
 
-            sendPlayerIntro(playerName);
+            sendPlayerIntro(playerName, password);
             return true;
         }
 
@@ -98,7 +98,7 @@ namespace BlasClient
             catch (System.IO.IOException)
             {
                 onDisconnect();
-                Main.Multiplayer.onDisconnect();
+                Main.Multiplayer.onDisconnect(true);
             }
         }
 
@@ -145,6 +145,8 @@ namespace BlasClient
                         receivePlayerConnection(data); break;
                     case 8:
                         receivePlayerProgress(data); break;
+                    case 9:
+                        receivePlayerTeam(data); break;
                     default:
                         Main.UnityLog($"Data type '{type}' is not valid"); break;
                 }
@@ -201,9 +203,21 @@ namespace BlasClient
         }
 
         // Send this player's introductory data
-        public void sendPlayerIntro(string name)
+        public void sendPlayerIntro(string name, string password)
         {
-            Send(Encoding.UTF8.GetBytes(name), 6, false);
+            List<byte> bytes = new List<byte>();
+            if (password == null)
+            {
+                bytes.Add(0);
+            }
+            else
+            {
+                bytes.Add((byte)password.Length);
+                bytes.AddRange(Encoding.UTF8.GetBytes(password));
+            }
+            bytes.AddRange(Encoding.UTF8.GetBytes(name));
+
+            Send(bytes.ToArray(), 6, false);
         }
 
         // Send a new item/flag/stat/etc...
@@ -214,6 +228,12 @@ namespace BlasClient
             bytes.Add(value);
             bytes.AddRange(Encoding.UTF8.GetBytes(id));
             Send(bytes.ToArray(), 8, false);
+        }
+
+        // Send this player's new team number
+        public void sendPlayerTeam(byte team)
+        {
+            Send(new byte[] { team }, 9, false);
         }
 
         #endregion Send functions
@@ -319,6 +339,16 @@ namespace BlasClient
 
             // Give new progress update
             Main.Multiplayer.playerProgressReceived(playerName, id, type, value);
+        }
+
+        // Received a player's new team number
+        private void receivePlayerTeam(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            byte team = data[startIdx];
+
+            // Update player's team
+            Main.Multiplayer.playerTeamReceived(playerName, team);
         }
 
         #endregion Receive functions

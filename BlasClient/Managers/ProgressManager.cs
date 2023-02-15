@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Framework.Managers;
 using Framework.FrameworkCore;
+using Framework.FrameworkCore.Attributes.Logic;
+using Framework.Inventory;
 using BlasClient.Structures;
 using BlasClient.Data;
 
@@ -11,6 +14,7 @@ namespace BlasClient.Managers
     {
         // Only enabled when processing & applying the queued progress updates
         public static bool updatingProgress;
+        public enum ProgressType { Bead, Prayer, Relic, Heart, Collectible, QuestItem, PlayerStat, SwordSkill, MapCell, Flag, PersistentObject, Teleport }
 
         private List<ProgressUpdate> queuedProgressUpdates = new List<ProgressUpdate>();
         private PersistentObject[] scenePersistentObjects = new PersistentObject[0];
@@ -57,98 +61,148 @@ namespace BlasClient.Managers
             }
         }
 
-        // TODO - Check for value to determine whether to remove or add
-        // TODO - For stats - value will contain the current level of the stat
         private void applyProgress(ProgressUpdate progress)
         {
-            switch (progress.type)
+            switch ((ProgressType)progress.type)
             {
-                case 0:
+                case ProgressType.Bead:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
-                        Core.InventoryManager.AddRosaryBead(progress.id);
+                    {
+                        if (progress.value == 1)
+                            Core.InventoryManager.RemoveRosaryBead(progress.id);
+                        else
+                            Core.InventoryManager.AddRosaryBead(progress.id);
+                    }
                     return;
-                case 1:
+                case ProgressType.Prayer:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
                         Core.InventoryManager.AddPrayer(progress.id);
                     return;
-                case 2:
+                case ProgressType.Relic:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
                         Core.InventoryManager.AddRelic(progress.id);
                     return;
-                case 3:
+                case ProgressType.Heart:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
                         Core.InventoryManager.AddSword(progress.id);
                     return;
-                case 4:
+                case ProgressType.Collectible:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
                         Core.InventoryManager.AddCollectibleItem(progress.id);
                     return;
-                case 5:
+                case ProgressType.QuestItem:
                     if (Main.Multiplayer.config.syncSettings.inventoryItems)
-                        Core.InventoryManager.AddQuestItem(progress.id);
-                    return;
-                case 6:
-                    if (Main.Multiplayer.config.syncSettings.playerStats)
                     {
-                        Core.Logic.Penitent.Stats.Life.Upgrade();
-                        Core.Logic.Penitent.Stats.Life.SetToCurrentMax();
+                        if (progress.value == 1)
+                            Core.InventoryManager.RemoveQuestItem(progress.id);
+                        else
+                            Core.InventoryManager.AddQuestItem(progress.id);
                     }
                     return;
-                case 7:
+                case ProgressType.PlayerStat:
                     if (Main.Multiplayer.config.syncSettings.playerStats)
-                    {
-                        Core.Logic.Penitent.Stats.Fervour.Upgrade();
-                        Core.Logic.Penitent.Stats.Fervour.SetToCurrentMax();
-                    }
+                        upgradeStat(progress.id, progress.value);
                     return;
-                case 8:
-                    if (Main.Multiplayer.config.syncSettings.playerStats)
-                        Core.Logic.Penitent.Stats.Strength.Upgrade();
-                    return;
-                case 9:
-                    if (Main.Multiplayer.config.syncSettings.playerStats)
-                        Core.Logic.Penitent.Stats.MeaCulpa.Upgrade();
-                    return;
-                case 10:
-                    if (Main.Multiplayer.config.syncSettings.playerStats)
-                        Core.Logic.Penitent.Stats.BeadSlots.Upgrade();
-                    return;
-                case 11:
-                    if (Main.Multiplayer.config.syncSettings.playerStats)
-                    {
-                        Core.Logic.Penitent.Stats.Flask.Upgrade();
-                        Core.Logic.Penitent.Stats.Flask.SetToCurrentMax();
-                    }
-                    return;
-                case 12:
-                    if (Main.Multiplayer.config.syncSettings.playerStats)
-                        Core.Logic.Penitent.Stats.FlaskHealth.Upgrade();
-                    return;
-                case 13:
+                case ProgressType.SwordSkill:
                     if (Main.Multiplayer.config.syncSettings.swordSkills)
                         Core.SkillManager.UnlockSkill(progress.id);
                     return;
-                case 14:
-                    if (Main.Multiplayer.config.syncSettings.worldState)
-                        Core.Events.SetFlag(progress.id, true, false);
+                case ProgressType.MapCell:
+                    if (Main.Multiplayer.config.syncSettings.mapCells)
+                        Core.NewMapManager.RevealCellInPosition(new Vector2(int.Parse(progress.id), 0));
                     return;
-                case 15:
+                case ProgressType.Flag:
+                    if (Main.Multiplayer.config.syncSettings.worldState)
+                        Core.Events.SetFlag(progress.id, progress.value == 0, false);
+                    return;
+                case ProgressType.PersistentObject:
                     if (Main.Multiplayer.config.syncSettings.worldState)
                         updatePersistentObject(progress.id);
                     return;
-                case 16:
+                case ProgressType.Teleport:
                     if (Main.Multiplayer.config.syncSettings.worldState)
                         Core.SpawnManager.SetTeleportActive(progress.id, true);
-                    return;
-                case 17:
-                    if (Main.Multiplayer.config.syncSettings.mapCells)
-                        Core.NewMapManager.RevealCellInPosition(new Vector2(int.Parse(progress.id), 0));
                     return;
 
                 // Church donations
                 default:
                     Main.UnityLog("Error: Progress type doesn't exist: " + progress.type); return;
             }
+        }
+
+        // Called when receiving a stat upgrade
+        public void upgradeStat(string stat, byte level)
+        {
+            Attribute attribute;
+            switch (stat)
+            {
+                case "LIFE": attribute = Core.Logic.Penitent.Stats.Life; break;
+                case "FERVOUR": attribute = Core.Logic.Penitent.Stats.Fervour; break;
+                case "STRENGTH": attribute = Core.Logic.Penitent.Stats.Strength; break;
+                case "MEACULPA": attribute = Core.Logic.Penitent.Stats.MeaCulpa; break;
+                case "BEADSLOTS": attribute = Core.Logic.Penitent.Stats.BeadSlots; break;
+                case "FLASK": attribute = Core.Logic.Penitent.Stats.Flask; break;
+                case "FLASKHEALTH": attribute = Core.Logic.Penitent.Stats.FlaskHealth; break;
+                default:
+                    Main.UnityLog("Error: Unknown stat received - " + stat);
+                    return;
+            }
+
+            while (attribute.GetUpgrades() < level)
+            {
+                attribute.Upgrade();
+            }
+        }
+
+        // Called when sending all data upon connecting to server and loading game
+        public void loadAllProgress()
+        {
+            // Beads
+            ReadOnlyCollection<RosaryBead> ownedBeads = Core.InventoryManager.GetRosaryBeadOwned();
+            for (int i = 0; i < ownedBeads.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedBeads[i].id, ProgressType.Bead, 0);
+            // Prayers
+            ReadOnlyCollection<Prayer> ownedPrayers = Core.InventoryManager.GetPrayersOwned();
+            for (int i = 0; i < ownedPrayers.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedPrayers[i].id, ProgressType.Prayer, 0);
+            // Relics
+            ReadOnlyCollection<Relic> ownedRelics = Core.InventoryManager.GetRelicsOwned();
+            for (int i = 0; i < ownedRelics.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedRelics[i].id, ProgressType.Relic, 0);
+            // Hearts
+            ReadOnlyCollection<Sword> ownedHearts = Core.InventoryManager.GetSwordsOwned();
+            for (int i = 0; i < ownedHearts.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedHearts[i].id, ProgressType.Heart, 0);
+            // Collectibles
+            ReadOnlyCollection<Framework.Inventory.CollectibleItem> ownedCollectibles = Core.InventoryManager.GetCollectibleItemOwned();
+            for (int i = 0; i < ownedCollectibles.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedCollectibles[i].id, ProgressType.Collectible, 0);
+            // Quest items
+            ReadOnlyCollection<QuestItem> ownedQuestItems = Core.InventoryManager.GetQuestItemOwned();
+            for (int i = 0; i < ownedQuestItems.Count; i++)
+                Main.Multiplayer.obtainedGameProgress(ownedQuestItems[i].id, ProgressType.QuestItem, 0);
+            // Player stats
+            Main.Multiplayer.obtainedGameProgress("LIFE", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Life.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("FERVOUR", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Fervour.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("STRENGTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Strength.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("MEACULPA", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.MeaCulpa.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("BEADSLOTS", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.BeadSlots.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("FLASK", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Flask.GetUpgrades());
+            Main.Multiplayer.obtainedGameProgress("FLASKHEALTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades());
+            // Sword skills
+            Core.SkillManager.GetCurrentPersistentState("intro", false);
+            // Map cells
+            Core.NewMapManager.GetCurrentPersistentState("intro", false);
+            // Flags
+            Core.Events.GetCurrentPersistentState("intro", false);
+            // Persistent objects
+            List<string> objects = Main.Multiplayer.getAllPersistentObjects();
+            for (int i = 0; i < objects.Count; i++)
+            {
+                Main.Multiplayer.obtainedGameProgress(objects[i], ProgressType.PersistentObject, 0);
+            }
+            // Teleports
+            Core.SpawnManager.GetCurrentPersistentState("intro", false);
         }
 
         // Called when interacting with pers. object - determine whether to send it or not
@@ -164,7 +218,7 @@ namespace BlasClient.Managers
             // Update save game data & send this object
             Main.Multiplayer.addPersistentObject(objectSceneId);
             if (Main.Multiplayer.config.syncSettings.worldState)
-                Main.Multiplayer.obtainedGameProgress(objectSceneId, 15, 0);
+                Main.Multiplayer.obtainedGameProgress(objectSceneId, ProgressType.PersistentObject, 0);
         }
 
         // When receiving a pers. object update, the object is immediately updated
