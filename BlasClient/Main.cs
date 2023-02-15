@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using ModdingAPI;
 
 namespace BlasClient
 {

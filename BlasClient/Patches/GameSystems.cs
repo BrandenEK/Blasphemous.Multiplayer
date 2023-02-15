@@ -6,25 +6,6 @@ using Gameplay.UI.Console;
 
 namespace BlasClient.Patches
 {
-    // Initialize Multiplayer class
-    [HarmonyPatch(typeof(AchievementsManager), "AllInitialized")]
-    public class AchievementsManager_InitializePatch
-    {
-        public static void Postfix()
-        {
-            Main.Multiplayer.Initialize();
-        }
-    }
-    // Dispose Multiplayer class
-    [HarmonyPatch(typeof(AchievementsManager), "Dispose")]
-    public class AchievementsManager_DisposePatch
-    {
-        public static void Postfix()
-        {
-            Main.Multiplayer.Dispose();
-        }
-    }
-
     // Add multiplayer commands to console
     [HarmonyPatch(typeof(ConsoleWidget), "InitializeCommands")]
     public class Console_Patch
