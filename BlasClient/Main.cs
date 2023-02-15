@@ -4,6 +4,7 @@ using HarmonyLib;
 namespace BlasClient
 {
     [BepInPlugin("com.damocles.blasphemous.multiplayer", "Blasphemous Multiplayer", "1.0.0")]
+    [BepInDependency("com.damocles.blasphemous.modding-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInProcess("Blasphemous.exe")]
     public class Main : BaseUnityPlugin
     {
