@@ -78,7 +78,9 @@ namespace BlasClient.Data
                 new PersistenceState("d402af99-cf62-4c4f-bc37-9a7d6f860a15", "D01Z02S02", 1), // CI
                 new PersistenceState("fd9a8f43-cb35-4b4e-bc7b-27af46e5ced4", "D01Z02S04", 1),
                 new PersistenceState("509072a9-0d58-4bcb-a025-3dadad6325e4", "D01Z02S05", 1),
-                // Warp room
+                new PersistenceState("a96c43f4-fc8e-4696-ad8d-1a6e8d334571", "D01Z02S07", 1),
+                new PersistenceState("57269b9b-f3fd-4f2b-be81-f7b3d72028e4", "D01BZ04S01", 1),
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D01BZ04S01", 1),
                 new PersistenceState("b389b291-1fb6-4b26-8b48-10bda40ca9d0", "D01Z02S03", 3), // CR
                 new PersistenceState("57c0ac09-88ae-4a22-8e97-5280de0821a5", "D01Z02S07", 5), // GT
                 new PersistenceState("16bfa182-d418-411e-a5dd-7c72e11732cf", "D01Z02S07", 7), // ST
@@ -149,7 +151,10 @@ namespace BlasClient.Data
                 new PersistenceState("bb43b53c-3ee7-464e-9130-2cc318debec4", "D01Z05S02", 5),
                 new PersistenceState("57b57842-5b31-4d8f-99f3-b8ace711aa70", "D01Z05S08", 5),
                 new PersistenceState("682b61ba-cd0b-4752-a45f-273a89a63701", "D01Z05S25", 5),
+                new PersistenceState("b9f2e4b8-ac30-429c-8d14-82b67659ec8a", "D01S05S23", 5),
+                new PersistenceState("1a0f3713-ea34-4595-b408-c2efdaae2a3a", "D01Z05S24", 5),
                 new PersistenceState("47c07521-184d-46d5-9086-7ab68a939f9f", "D01Z05S25", 7), // ST
+                new PersistenceState("16bfa182-d418-411e-a5dd-7c72e11732cf", "D01Z05S24", 7),
                 new PersistenceState("f0e957d2-3313-4ae7-ba91-17f651f683d2", "D01Z05S03", 8), // BW
 
                 // Petrous
@@ -166,6 +171,8 @@ namespace BlasClient.Data
                 // Other bead/flower
                 new PersistenceState("0495cb35-3807-433b-b82f-23a45692ba83", "D02Z01S02", 3), // CR
                 new PersistenceState("465934da-ee64-4b6c-aaf2-78c145185e7e", "D02Z01S06", 3),
+                new PersistenceState("25a8f890-f84b-437e-b6e7-88f26f6c8730", "D02Z01S04", 8), // BW
+                new PersistenceState("bc87ab04-a4be-4744-b18c-14d85f16222f", "D02Z01S06", 8),
 
                 // Graveyard
                 new PersistenceState("5bd1a831-b47e-4303-b898-c3ba367a857a", "D02Z02S08", 0), // PD
@@ -196,7 +203,7 @@ namespace BlasClient.Data
                 new PersistenceState("2348a9a4-0a18-4a9d-85f9-b20c14c0136f", "D02Z03S05", 1),
                 new PersistenceState("880c396a-c7a2-481f-8994-9efdca134a85", "D02Z03S07", 1),
                 new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D02Z03S23", 1),
-                // blue candle item
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D02Z03S17", 1),
                 new PersistenceState("b225e61e-432e-48bf-907b-e37fbcfc1f35", "D02Z03S19", 1),
                 new PersistenceState("200fb191-1cc7-4039-a16a-912bf58d2f6a", "D02Z03S08", 4), // LV
                 new PersistenceState("bf0d9de4-3a2b-49dc-9353-2b4480af0b33", "D02Z03S02", 4),
@@ -282,12 +289,15 @@ namespace BlasClient.Data
                 new PersistenceState("61a55d1e-5da3-413d-8d29-5b3e4232fb9e", "D03Z03S06", 3), // CR
                 new PersistenceState("06138bc6-5f81-48a2-83ee-a9092a8ef3c0", "D03Z03S08", 3),
                 new PersistenceState("a0234103-70b4-4b45-8851-e1a29a2a95d1", "D03Z03S09", 3),
+                new PersistenceState("51018c78-4120-4255-b205-0d65bcdd33d9", "D03Z03S07", 8), // BW
 
                 // Bridge
                 new PersistenceState("3c851c94-2256-475a-8712-c440298743e3", "D08Z01S01", 0), // PD
+                new PersistenceState("69a9b9c9-d04e-4d1a-a0d0-32298106834f", "D08Z01S02", 1), // CI
 
                 // Hall
-                // item
+                new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D08Z03S02", 0), // PD
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D08Z03S01", 1), // CI
 
                 // Patio
                 new PersistenceState("6f3600e0-196d-43a6-aa3f-e6265d9335c2", "D04Z01S01", 0), // PD
@@ -295,7 +305,7 @@ namespace BlasClient.Data
                 new PersistenceState("1591d68c-60ed-468f-bfa7-9ac75806f52c", "D04Z01S02", 1),
                 new PersistenceState("f054b407-2cdb-4e7b-b031-f6a2020d8f5e", "D04Z01S03", 1),
                 new PersistenceState("a6bfeaa0-a546-4ad9-8d98-b053006f0203", "D04Z01S03", 1),
-                //new PersistenceState("", "", 1), upper shaft
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D04Z01S06", 1),
                 new PersistenceState("aa747fc1-eeac-46ab-b95e-c416542c661e", "D04Z01S01", 3), // CR
                 new PersistenceState("962fbc9e-e50d-4aad-a283-c10a01dadee5", "D04Z01S03", 3),
                 new PersistenceState("7ee1df26-25ab-4a30-9ffa-1274694d163f", "D04Z01S06", 4), // LV
@@ -311,7 +321,8 @@ namespace BlasClient.Data
                 new PersistenceState("5a97c5b6-8ad1-4151-99db-bdec0b330a52", "D04Z02S06", 1),
                 new PersistenceState("0bb0bba0-506d-4899-8160-cd8a2c4b6548", "D04Z02S11", 1),
                 new PersistenceState("b225e61e-432e-48bf-907b-e37fbcfc1f35", "D04Z02S15", 1),
-                // redento room x 2
+                new PersistenceState("8eddaf71-dd08-41a3-a569-6b1861737feb", "D04BZ02S01", 1),
+                new PersistenceState("8a1c64f0-507b-42b5-9eaf-9480932f829f", "D04BZ02S01", 2), // CH
                 new PersistenceState("15bafd86-e3ea-4cb5-977c-df7a57e50faf", "D04Z02S01", 3), // CR
                 new PersistenceState("4dad058e-0f35-4101-8442-e00c6e614f50", "D04Z02S11", 3),
                 new PersistenceState("8dca4577-1a1d-4eae-bdf3-a6d8696dc16f", "D04Z02S07", 4), // LV
@@ -339,8 +350,10 @@ namespace BlasClient.Data
                 new PersistenceState("5380262d-3478-401a-a326-665f35ee7e30", "D05Z01S11", 1),
                 new PersistenceState("e2f6f817-8168-4683-83d3-d82b7b93307b", "D05Z01S11", 1),
                 new PersistenceState("eaff3393-6d9d-49c8-83d6-d0353979778d", "D05Z01S15", 1),
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D05BZ01S01", 1),
                 new PersistenceState("7a1ab0fd-972f-4d54-b44c-fdce0ce1a1d0", "D05Z01S06", 2), // CH
                 new PersistenceState("57b6fe51-00be-4252-9df7-49a256adb07c", "D05Z01S10", 2),
+                new PersistenceState("5f451460-a4de-4781-8b16-b9c3fd2bf5e5", "D05Z01S18", 2),
                 new PersistenceState("8672dac8-0537-4f1f-b3ab-9cf1619ace4d", "D05Z01S04", 3), // CR
                 new PersistenceState("49d91474-4567-4175-a679-8c02a0a12ccd", "D05Z01S11", 3),
                 new PersistenceState("19566f8c-a976-4d2d-8ccb-1c6aa94e95e2", "D05Z01S21", 3),
@@ -360,6 +373,7 @@ namespace BlasClient.Data
                 new PersistenceState("00bbf955-7b39-4770-a565-e5c8c2cf0823", "D05Z02S02", 1), // CI
                 new PersistenceState("b10e3250-2940-48ac-a9bf-9eac2598bf87", "D05Z02S08", 1),
                 new PersistenceState("b2cdc579-6bac-4431-a25f-740cb92b46f9", "D05Z02S11", 1),
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D05Z02S15", 1),
                 new PersistenceState("d609740f-16a0-4a1b-a794-bf22dfc9f0d3", "D05Z02S11", 5), // GT
                 new PersistenceState("bedf4186-c007-4b10-9123-54b4b2437561", "D05Z02S11", 7), // ST
 
@@ -430,8 +444,27 @@ namespace BlasClient.Data
                 new PersistenceState("4e22ca88-f0fd-45ef-a1ae-da1c4f11f7ed", "D09Z01S10", 10),
                 new PersistenceState("2ac71d61-d551-4ebf-acea-80a75c357c1b", "D09Z01S10", 10),
 
+                // Echoes of Salt
+                new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D20Z01S01", 0), // PD
+                new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D20Z01S11", 0),
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D20Z01S03", 1), // CI
+                new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D20Z01S09", 1),
+                new PersistenceState("1a0f3713-ea34-4595-b408-c2efdaae2a3a", "D20Z01S06", 5), // GT
+                new PersistenceState("693246da-1b7c-44ae-8a5b-320cc073b2fe", "D20Z01S06", 7), // ST
+                new PersistenceState("eddbfcd5-d416-4b61-9257-2dc57ee61a9b", "D20Z01S11", 8), // BW
+
+                // Mourning and Havoc
+                new PersistenceState("b844bc20-d630-4b45-b301-3d6f63e63a9d", "D20Z02S01", 0), // PD
+                new PersistenceState("09bd730e-5cbc-428b-9fe5-c24ceeaa369a", "D20Z02S09", 0),
+                new PersistenceState("7455514c-c4ae-4429-97cf-a4d8c8c74770", "D20Z02S02", 2), // CH
+                new PersistenceState("bf22d5e0-a884-4686-894e-4c48a50d0af1", "D20Z02S11", 2),
+                new PersistenceState("cae6fabb-27de-48e3-b44a-f1fad9c14d3a", "D20Z02S04", 9), // LD
+                new PersistenceState("5c3ea9bd-e2f1-4d72-86ce-b4ad02fbd97e", "D20Z02S06", 9),
+                new PersistenceState("1a0f3713-ea34-4595-b408-c2efdaae2a3a", "D20Z02S11", 9),
+                // Ladder triggers
+
                 // Deambulatory
-                new PersistenceState("696e70f3-5cf8-4713-abb5-e5f62d6a49e2", "D07Z01S01", 0), // PD
+                new PersistenceState("696e70f3-5cf8-4713-abb5-e5f62d6a49e2", "D07Z01S01", 0) // PD
             };
         }
     }

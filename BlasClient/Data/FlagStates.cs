@@ -66,6 +66,7 @@ namespace BlasClient.Data
             new FlagState("GEMINO_RB10_REWARD", null),
             new FlagState("GEMINO_OFFERING_DONE", null),
             // Gemino death states
+            new FlagState("REDENTO_STATUE_DISCOVERED", null), // Redento
             new FlagState("ALTASGRACIAS_FIRST_OFFERING", null), // Altasgracias
             new FlagState("ALTASGRACIAS_SECOND_OFFERING", null),
             new FlagState("ALTASGRACIAS_EGG_BROKEN", null),
@@ -74,7 +75,8 @@ namespace BlasClient.Data
             new FlagState("LOTL_2OFFERING_DONE", null),
             new FlagState("LOTL_3OFFERING_DONE", null),
             new FlagState("SERENO_DLC2QUEST_FINISHED", null), // Diosdado
-            new FlagState("SERENO_DOOR_REVEALED", null), // Crisanta
+            new FlagState("PERPETUA_EVENT_FINISHED", null), // Crisanta
+            new FlagState("SERENO_DOOR_REVEALED", null),
             new FlagState("SANTOS_DOOR_OPENED", "has opened Jibrael's door"), // Amanecidas
             // Add exact plate contents
 
@@ -108,6 +110,9 @@ namespace BlasClient.Data
             new FlagState("D01Z05S12_SHORTCUTGATESEWERS", null), // Cistern
             new FlagState("D01Z05S21_PUZZLESOLVED", null),
             new FlagState("D01Z05S02_ELEVATORPATHOPENED", null),
+            new FlagState("D01Z05S23_CHALICEPUZZLE", null),
+            new FlagState("D01Z05S24_SHORTCUTGATESEWERS", null),
+            new FlagState("D02Z01S01_CAVEEXIT", null), // Olive Trees
             new FlagState("D04Z02S15_BLOODGATE", null), // Convent
             new FlagState("D02Z03S02_ARCHDEACONROOM", null),
             new FlagState("D05Z01S15_ARCHDEACON2VISITED", null),
@@ -120,6 +125,7 @@ namespace BlasClient.Data
             new FlagState("D03Z03S12_GHOSTARENA", null), // Grievance Ascends
             new FlagState("D03Z03S03_GHOSTKNIGHT", null),
             new FlagState("D03Z03S05_MIXEDCOMBATROUND2_TOP", null),
+            new FlagState("D08Z01S02_FACE_BROKEN", null), // Bridge
             new FlagState("D04Z01S03_SECRETPASSAGE", null), // Patio
             new FlagState("D04Z02S06_LADDERUNFOLDED", null), // Mothers
             new FlagState("D04Z02S17_ARCHDEACON1VISITED", null),
@@ -127,6 +133,7 @@ namespace BlasClient.Data
             new FlagState("D04Z04S01_DREAMVISITED", null),
             new FlagState("D02Z03S19_ARCHDEACON3VISITED", null), // Library
             new FlagState("D02Z03S19_ARCHDEACON3ITEMTAKEN", null),
+            new FlagState("D05Z01S09_RIDDLESOLVED", null),
             new FlagState("D05Z02S09_RIDDLESOLVED", null), // Canvases
             new FlagState("D05Z02S06_GATESTATE", null),
             new FlagState("D06Z01S03_COMBATCOMPLETED", null), // Rooftops
@@ -144,6 +151,7 @@ namespace BlasClient.Data
             new FlagState("D09Z01S08_GROUNDDESTROYED", null),
             new FlagState("D09Z01S08_WALLDESTROYED", null),
             new FlagState("D09Z01S10_ELEVATORUSED", null),
+            new FlagState("D20Z01S11_PERPETVAWALL", null), // Echoes
 
             // Randomizer
             new FlagState("LOCATION_*", null),
