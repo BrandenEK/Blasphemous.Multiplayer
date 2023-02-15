@@ -26,7 +26,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 ## Things that don't sync yet
 
 - Church donation amount
-- Certain questline flags
+- Most npc questlines
 
 ## Things that will probably never sync
 
@@ -41,6 +41,7 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
 #### Client:
 - Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
+- A network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding or Hamachi (https://vpn.net/)
 
 ---
 
