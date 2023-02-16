@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System.IO;
-using BepInEx;
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
@@ -54,21 +51,6 @@ namespace BlasClient
         {
             base.Initialize();
 
-            // Load config from file
-            string configPath = Paths.GameRootPath + "\\multiplayer.cfg";
-            if (File.Exists(configPath))
-            {
-                string json = File.ReadAllText(configPath);
-                config = JsonConvert.DeserializeObject<Config>(json);
-                Log("Loaded config from " + configPath);
-            }
-            else
-            {
-                config = new Config();
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-                Log("Creating new config at " + configPath);
-            }
-
             // Create managers
             playerManager = new PlayerManager();
             progressManager = new ProgressManager();
@@ -77,6 +59,7 @@ namespace BlasClient
             client = new Client();
 
             // Initialize data
+            config = FileUtil.loadConfig<Config>();
             PersistentStates.loadPersistentObjects();
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
