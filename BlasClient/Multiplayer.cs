@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
-using Framework.FrameworkCore;
 using Gameplay.UI;
 using BlasClient.Managers;
 using BlasClient.Structures;
@@ -14,7 +13,7 @@ using ModdingAPI;
 
 namespace BlasClient
 {
-    public class Multiplayer : Mod, PersistentInterface
+    public class Multiplayer : PersistentMod
     {
         // Application status
         private Client client;
@@ -47,10 +46,14 @@ namespace BlasClient
             get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
 
-        public Multiplayer(string modName, string modVersion) : base(modName, modVersion) { }
+        public override string PersistentID { get { return "ID_MULTIPLAYER"; } }
+
+        public Multiplayer(string modId, string modName, string modVersion) : base(modId, modName, modVersion) { }
 
         public override void Initialize()
         {
+            base.Initialize();
+
             // Load config from file
             string configPath = Paths.GameRootPath + "\\multiplayer.cfg";
             if (File.Exists(configPath))
@@ -74,7 +77,6 @@ namespace BlasClient
             client = new Client();
 
             // Initialize data
-            Core.Persistence.AddPersistentManager(this);
             PersistentStates.loadPersistentObjects();
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
@@ -494,7 +496,7 @@ namespace BlasClient
         }
 
         // Save list of interacted persistent objects
-        public PersistentManager.PersistentData GetCurrentPersistentState(string dataPath, bool fullSave)
+        public override PersistentManager.PersistentData SaveGame()
         {
             MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
             multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
@@ -502,19 +504,16 @@ namespace BlasClient
         }
 
         // Load list of interacted persistent objects
-        public void SetCurrentPersistentState(PersistentManager.PersistentData data, bool isloading, string dataPath)
+        public override void LoadGame(PersistentManager.PersistentData data)
         {
             MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
             interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
         }
 
         // Reset list of interacted persitent objects
-        public void ResetPersistence()
+        public override void ResetGame()
         {
             interactedPersistenceObjects.Clear();
         }
-
-        public string GetPersistenID() { return "ID_MULTIPLAYER"; }
-        public int GetOrder() { return 0; }
     }
 }

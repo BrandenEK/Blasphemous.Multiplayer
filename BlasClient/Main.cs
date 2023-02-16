@@ -1,26 +1,21 @@
 ﻿using BepInEx;
-using HarmonyLib;
-using ModdingAPI;
 
 namespace BlasClient
 {
-    [BepInPlugin("com.damocles.blasphemous.multiplayer", "Blasphemous Multiplayer", "1.0.0")]
+    [BepInPlugin(MOD_ID, MOD_NAME, MOD_VERSION)]
     [BepInDependency("com.damocles.blasphemous.modding-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInProcess("Blasphemous.exe")]
     public class Main : BaseUnityPlugin
     {
+        public const string MOD_ID = "com.damocles.blasphemous.multiplayer";
+        public const string MOD_NAME = "Multiplayer";
+        public const string MOD_VERSION = "1.0.0";
+
         public static Multiplayer Multiplayer;
 
         private void Start()
         {
-            Multiplayer = new Multiplayer("Multiplayer", "1.0.0");
-            Patch();
-        }
-
-        private void Patch()
-        {
-            Harmony harmony = new Harmony("com.damocles.blasphemous.multiplayer");
-            harmony.PatchAll();
+            Multiplayer = new Multiplayer(MOD_ID, MOD_NAME, MOD_VERSION);
         }
 
         // Recursive method that returns the entire hierarchy of an object
