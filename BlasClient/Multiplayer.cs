@@ -47,7 +47,7 @@ namespace BlasClient
 
         public Multiplayer(string modId, string modName, string modVersion) : base(modId, modName, modVersion) { }
 
-        public override void Initialize()
+        protected override void Initialize()
         {
             base.Initialize();
 
@@ -108,7 +108,7 @@ namespace BlasClient
             return new PlayerStatus();
         }
 
-        public override void LevelLoaded(string oldLevel, string newLevel)
+        protected override void LevelLoaded(string oldLevel, string newLevel)
         {
             inLevel = newLevel != "MainMenu";
             notificationManager.createMessageBox();
@@ -133,7 +133,7 @@ namespace BlasClient
             }
         }
 
-        public override void LevelUnloaded(string oldLevel, string newLevel)
+        protected override void LevelUnloaded(string oldLevel, string newLevel)
         {
             if (inLevel && connectedToServer)
             {
@@ -146,7 +146,7 @@ namespace BlasClient
             playerManager.unloadScene();
         }
 
-        public override void LateUpdate()
+        protected override void LateUpdate()
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
@@ -479,7 +479,7 @@ namespace BlasClient
         }
 
         // Save list of interacted persistent objects
-        public override PersistentManager.PersistentData SaveGame()
+        public override ModPersistentData SaveGame()
         {
             MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
             multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
@@ -487,7 +487,7 @@ namespace BlasClient
         }
 
         // Load list of interacted persistent objects
-        public override void LoadGame(PersistentManager.PersistentData data)
+        public override void LoadGame(ModPersistentData data)
         {
             MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
             interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;

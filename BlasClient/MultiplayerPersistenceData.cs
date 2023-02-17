@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Framework.Managers;
+using ModdingAPI;
 
 namespace BlasClient
 {
     [System.Serializable]
-    public class MultiplayerPersistenceData : PersistentManager.PersistentData
+    public class MultiplayerPersistenceData : ModPersistentData
     {
         public MultiplayerPersistenceData() : base("ID_MULTIPLAYER") { }
 
