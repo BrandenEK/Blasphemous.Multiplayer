@@ -47,7 +47,7 @@ namespace BlasClient.Patches
 
             // Scene is not a valid one on the map
             Main.Multiplayer.mapScreenManager.setActivePlayerPosition(new Vector2(-1, -1));
-            Main.UnityLog("Player zone '" + scene + "' does not exist!");
+            Main.Multiplayer.Log("Player zone '" + scene + "' does not exist!");
             return false;
         }
     }

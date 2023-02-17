@@ -51,7 +51,7 @@ namespace BlasClient.Managers
             // Only add marks for other players if config enabled
             if (!Main.Multiplayer.config.showPlayersOnMap)
                 return;
-            Main.UnityLog("Updating map with new player marks!");
+            Main.Multiplayer.Log("Updating map with new player marks!");
 
             // Destroy old holder to put players on top of other marks
             if (forceRecalculate && playerMarks != null)
@@ -117,7 +117,7 @@ namespace BlasClient.Managers
                 rect.localPosition = new Vector2(16 * cellPosition.x, 16 * cellPosition.y);
                 rect.sizeDelta = new Vector2(playerSprites[0].rect.width, playerSprites[0].rect.height);
                 rect.gameObject.AddComponent<Image>().sprite = icon;
-                Main.UnityLog($"Creating mark at " + rect.localPosition);
+                Main.Multiplayer.Log($"Creating mark at " + rect.localPosition);
             }
         }
     }

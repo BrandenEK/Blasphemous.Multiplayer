@@ -223,7 +223,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix(string teleportId)
         {
-            Main.UnityLog("Unlocked teleport");
+            Main.Multiplayer.Log("Unlocked teleport");
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
             {
                 Main.Multiplayer.obtainedGameProgress(teleportId, ProgressManager.ProgressType.Teleport, 0);
@@ -247,7 +247,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog($"Used {__instance.GetType()}: {persistentId}");
+            Main.Multiplayer.Log($"Used {__instance.GetType()}: {persistentId}");
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -353,7 +353,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Cherub killed: " + persistentId);
+            Main.Multiplayer.Log("Cherub killed: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -429,7 +429,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Gate opened: " + persistentId);
+            Main.Multiplayer.Log("Gate opened: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -475,7 +475,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Activated platform: " + persistentId);
+            Main.Multiplayer.Log("Activated platform: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -517,7 +517,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Trigger activated: " + persistentId);
+            Main.Multiplayer.Log("Trigger activated: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -563,7 +563,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Broke wall: " + persistentId);
+            Main.Multiplayer.Log("Broke wall: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -603,7 +603,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Ladder activated: " + persistentId);
+            Main.Multiplayer.Log("Ladder activated: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }
@@ -645,7 +645,7 @@ namespace BlasClient.Patches
             if (ProgressManager.updatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.UnityLog("Door opened: " + persistentId);
+            Main.Multiplayer.Log("Door opened: " + persistentId);
             Main.Multiplayer.progressManager.usePersistentObject(persistentId);
         }
     }

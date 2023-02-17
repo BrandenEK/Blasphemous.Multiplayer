@@ -31,7 +31,7 @@ namespace BlasClient.MonoBehaviours
             }
 
             // This animator is playing an unknown animation state
-            Main.UnityLog("Unknown animation: " + transform.parent.name);
+            Main.Multiplayer.Log("Unknown animation: " + transform.parent.name);
         }
 
         private void playSpecialAnimation(string anim)

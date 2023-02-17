@@ -82,7 +82,7 @@ namespace BlasClient.Managers
                 if (fakePenitent != null) fakePenitent.AddComponent<SpecialAnimationChecker>();
                 count++;
             }
-            Main.UnityLog("Adding special animation checkers to " + count + " objects!");
+            Main.Multiplayer.Log("Adding special animation checkers to " + count + " objects!");
 
             // Create main player's nametag
             createPlayerNameTag();
@@ -216,7 +216,7 @@ namespace BlasClient.Managers
             if (Main.Multiplayer.config.displayNametags)
                 createNameTag(name, Main.Multiplayer.getPlayerStatus(name).team == Main.Multiplayer.playerTeam);
 
-            Main.UnityLog("Created new player object for " + name);
+            Main.Multiplayer.Log("Created new player object for " + name);
         }
 
         // When a player leaves a scene, destroy the player object
@@ -227,18 +227,18 @@ namespace BlasClient.Managers
             {
                 players.Remove(player);
                 Object.Destroy(player);
-                Main.UnityLog("Removed player object for " + name);
+                Main.Multiplayer.Log("Removed player object for " + name);
             }
             else
             {
-                Main.UnityLog("Error: Can't remove player object for " + name);
+                Main.Multiplayer.Log("Error: Can't remove player object for " + name);
             }
             Text nametag = getPlayerNametag(name);
             if (nametag != null)
             {
                 nametags.Remove(nametag);
                 Object.Destroy(nametag);
-                Main.UnityLog("Removed nametag for " + name);
+                Main.Multiplayer.Log("Removed nametag for " + name);
             }
         }
 
@@ -249,11 +249,11 @@ namespace BlasClient.Managers
             if (player != null)
             {
                 player.transform.position = position;
-                //Main.UnityLog("Updating player object position for " + name);
+                //Main.Multiplayer.Log("Updating player object position for " + name);
             }
             else
             {
-                Main.UnityLog("Error: Can't update object position for " + name);
+                Main.Multiplayer.Log("Error: Can't update object position for " + name);
             }
         }
 
@@ -285,7 +285,7 @@ namespace BlasClient.Managers
                         anim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
                     }
                     anim.Play(animState.name);
-                    //Main.UnityLog("Updating player object animation for " + name);
+                    //Main.Multiplayer.Log("Updating player object animation for " + name);
                 }
                 else
                 {
@@ -293,15 +293,15 @@ namespace BlasClient.Managers
                     if (playSpecialAnimation(anim, animation))
                     {
                         playerStatus.specialAnimation = animation;
-                        Main.UnityLog("Playing special animation for " + name);
+                        Main.Multiplayer.Log("Playing special animation for " + name);
                     }
                     else
-                        Main.UnityLog("Failed to play special animation for " + name);
+                        Main.Multiplayer.Log("Failed to play special animation for " + name);
                 }
             }
             else
             {
-                Main.UnityLog("Error: Can't update object animation for " + name);
+                Main.Multiplayer.Log("Error: Can't update object animation for " + name);
             }
         }
 
@@ -313,11 +313,11 @@ namespace BlasClient.Managers
             {
                 SpriteRenderer render = player.GetComponent<SpriteRenderer>();
                 render.flipX = direction;
-                //Main.UnityLog("Updating player object direction for " + name);
+                //Main.Multiplayer.Log("Updating player object direction for " + name);
             }
             else
             {
-                Main.UnityLog("Error: Can't update object direction for " + name);
+                Main.Multiplayer.Log("Error: Can't update object direction for " + name);
             }
         }
 
@@ -326,7 +326,7 @@ namespace BlasClient.Managers
         {
             if (canvas == null || textPrefab == null)
             {
-                Main.UnityLog("Error: Failed to create nametag for " + name);
+                Main.Multiplayer.Log("Error: Failed to create nametag for " + name);
                 return;
             }
 
@@ -364,7 +364,7 @@ namespace BlasClient.Managers
             GameObject player = getPlayerObject(name);
             if (player == null)
             {
-                Main.UnityLog("Error: Can't update object skin for " + name);
+                Main.Multiplayer.Log("Error: Can't update object skin for " + name);
                 return;
             }
 
@@ -376,11 +376,11 @@ namespace BlasClient.Managers
             Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);
             if (palette == null)
             {
-                Main.UnityLog("Error: Couldn't find skin named " + skin);
+                Main.Multiplayer.Log("Error: Couldn't find skin named " + skin);
                 return;
             }
 
-            Main.UnityLog("Setting skin texture for " + name);
+            Main.Multiplayer.Log("Setting skin texture for " + name);
             render.material.SetTexture("_PaletteTex", palette.texture);
         }
 

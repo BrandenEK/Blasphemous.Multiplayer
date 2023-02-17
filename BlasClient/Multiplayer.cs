@@ -1,19 +1,16 @@
 ﻿using UnityEngine;
-using System.IO;
-using BepInEx;
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
-using Framework.FrameworkCore;
 using Gameplay.UI;
 using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
+using ModdingAPI;
 
 namespace BlasClient
 {
-    public class Multiplayer : PersistentInterface
+    public class Multiplayer : PersistentMod
     {
         // Application status
         private Client client;
@@ -46,25 +43,13 @@ namespace BlasClient
             get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
 
-        public void Initialize()
-        {
-            LevelManager.OnLevelLoaded += onLevelLoaded;
-            LevelManager.OnBeforeLevelLoad += onLevelUnloaded;
+        public override string PersistentID { get { return "ID_MULTIPLAYER"; } }
 
-            // Load config from file
-            string configPath = Paths.GameRootPath + "\\multiplayer.cfg";
-            if (File.Exists(configPath))
-            {
-                string json = File.ReadAllText(configPath);
-                config = JsonConvert.DeserializeObject<Config>(json);
-                Main.UnityLog("Loaded config from " + configPath);
-            }
-            else
-            {
-                config = new Config();
-                File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-                Main.UnityLog("Creating new config at " + configPath);
-            }
+        public Multiplayer(string modId, string modName, string modVersion) : base(modId, modName, modVersion) { }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
 
             // Create managers
             playerManager = new PlayerManager();
@@ -74,18 +59,13 @@ namespace BlasClient
             client = new Client();
 
             // Initialize data
-            Core.Persistence.AddPersistentManager(this);
+            config = FileUtil.loadConfig<Config>();
             PersistentStates.loadPersistentObjects();
             connectedPlayers = new Dictionary<string, PlayerStatus>();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
             playerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
             sentAllProgress = false;
-        }
-        public void Dispose()
-        {
-            LevelManager.OnLevelLoaded -= onLevelLoaded;
-            LevelManager.OnBeforeLevelLoad -= onLevelUnloaded;
         }
 
         public void connectCommand(string ip, string name, string password)
@@ -124,21 +104,21 @@ namespace BlasClient
             if (connectedPlayers.ContainsKey(playerName))
                 return connectedPlayers[playerName];
 
-            Main.UnityLog("Error: Player is not in the server: " + playerName);
+            Log("Error: Player is not in the server: " + playerName);
             return new PlayerStatus();
         }
 
-        private void onLevelLoaded(Level oldLevel, Level newLevel)
+        protected override void LevelLoaded(string oldLevel, string newLevel)
         {
-            inLevel = newLevel.LevelName != "MainMenu";
+            inLevel = newLevel != "MainMenu";
             notificationManager.createMessageBox();
-            playerManager.loadScene(newLevel.LevelName);
-            progressManager.sceneLoaded(newLevel.LevelName);
+            playerManager.loadScene(newLevel);
+            progressManager.sceneLoaded(newLevel);
 
             if (inLevel && connectedToServer)
             {
                 // Entered a new scene
-                Main.UnityLog("Entering new scene: " + newLevel.LevelName);
+                Log("Entering new scene: " + newLevel);
 
                 // Send initial position, animation, & direction before scene enter
                 lastPosition = getCurrentPosition();
@@ -148,17 +128,17 @@ namespace BlasClient
                 lastDirection = getCurrentDirection();
                 client.sendPlayerDirection(lastDirection);
 
-                client.sendPlayerEnterScene(newLevel.LevelName);
+                client.sendPlayerEnterScene(newLevel);
                 sendAllProgress();
             }
         }
 
-        private void onLevelUnloaded(Level oldLevel, Level newLevel)
+        protected override void LevelUnloaded(string oldLevel, string newLevel)
         {
             if (inLevel && connectedToServer)
             {
                 // Left a scene
-                Main.UnityLog("Leaving old scene");
+                Log("Leaving old scene");
                 client.sendPlayerLeaveScene();
             }
 
@@ -166,7 +146,7 @@ namespace BlasClient
             playerManager.unloadScene();
         }
 
-        public void update()
+        protected override void LateUpdate()
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
@@ -184,7 +164,7 @@ namespace BlasClient
                 // Check & send updated position
                 if (positionHasChanged(out Vector2 newPosition))
                 {
-                    //Main.UnityLog("Sending new player position");
+                    //Main.Multiplayer.Log("Sending new player position");
                     client.sendPlayerPostition(newPosition.x, newPosition.y);
                     lastPosition = newPosition;
                 }
@@ -195,7 +175,7 @@ namespace BlasClient
                     // Don't send new animations right after a special animation
                     if (currentTimeBeforeSendAnimation <= 0 && newAnimation != 255)
                     {
-                        //Main.UnityLog("Sending new player animation");
+                        //Main.Multiplayer.Log("Sending new player animation");
                         client.sendPlayerAnimation(newAnimation);
                     }
                     lastAnimation = newAnimation;
@@ -204,7 +184,7 @@ namespace BlasClient
                 // Check & send updated facing direction
                 if (directionHasChanged(out bool newDirection))
                 {
-                    //Main.UnityLog("Sending new player direction");
+                    //Main.Multiplayer.Log("Sending new player direction");
                     client.sendPlayerDirection(newDirection);
                     lastDirection = newDirection;
                 }
@@ -267,7 +247,7 @@ namespace BlasClient
             }
 
             // This animation could not be found
-            Main.UnityLog("Error: Animation doesn't exist!");
+            Log("Error: Animation doesn't exist!");
             return 255;
         }
 
@@ -281,7 +261,7 @@ namespace BlasClient
         {
             if (connectedToServer)
             {
-                Main.UnityLog("Sending new player skin");
+                Log("Sending new player skin");
                 client.sendPlayerSkin(skin);
             }
         }
@@ -315,7 +295,7 @@ namespace BlasClient
         {
             if (connectedToServer)
             {
-                Main.UnityLog("Sending new game progress: " + progressId);
+                Log("Sending new game progress: " + progressId);
                 client.sendPlayerProgress((byte)progressType, progressValue, progressId);
             }
         }
@@ -325,7 +305,7 @@ namespace BlasClient
         {
             if (connectedToServer)
             {
-                Main.UnityLog("Sending special animation");
+                Log("Sending special animation");
                 currentTimeBeforeSendAnimation = totalTimeBeforeSendAnimation;
                 client.sendPlayerAnimation(animation);
             }
@@ -336,7 +316,7 @@ namespace BlasClient
         {
             if (inLevel)
             {
-                Main.UnityLog("Finished special animation");
+                Log("Finished special animation");
                 playerManager.finishSpecialAnimation(playerName);
             }
         }
@@ -366,7 +346,7 @@ namespace BlasClient
         public void playerSkinUpdated(string playerName, string skin)
         {
             // As soon as received, will update skin - This isn't locked
-            Main.UnityLog("Updating player skin for " + playerName);
+            Log("Updating player skin for " + playerName);
             PlayerStatus player = getPlayerStatus(playerName);
             player.skin.skinName = skin;
         }
@@ -462,7 +442,7 @@ namespace BlasClient
         public void playerTeamReceived(string playerName, byte team)
         {
             // As soon as received, will update team - This isn't locked
-            Main.UnityLog("Updating team number for " + playerName);
+            Log("Updating team number for " + playerName);
             PlayerStatus player = getPlayerStatus(playerName);
             player.team = team;
             if (inLevel)
@@ -475,7 +455,7 @@ namespace BlasClient
             sentAllProgress = true;
 
             // This is the first time loading a scene after connecting - send all player progress
-            Main.UnityLog("Sending all player progress");
+            Log("Sending all player progress");
             progressManager.loadAllProgress();
         }
 
@@ -499,7 +479,7 @@ namespace BlasClient
         }
 
         // Save list of interacted persistent objects
-        public PersistentManager.PersistentData GetCurrentPersistentState(string dataPath, bool fullSave)
+        public override ModPersistentData SaveGame()
         {
             MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
             multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
@@ -507,19 +487,16 @@ namespace BlasClient
         }
 
         // Load list of interacted persistent objects
-        public void SetCurrentPersistentState(PersistentManager.PersistentData data, bool isloading, string dataPath)
+        public override void LoadGame(ModPersistentData data)
         {
             MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
             interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
         }
 
         // Reset list of interacted persitent objects
-        public void ResetPersistence()
+        public override void ResetGame()
         {
             interactedPersistenceObjects.Clear();
         }
-
-        public string GetPersistenID() { return "ID_MULTIPLAYER"; }
-        public int GetOrder() { return 0; }
     }
 }

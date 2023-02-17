@@ -25,7 +25,7 @@ namespace BlasClient.Managers
         {
             lock (notificationLock)
             {
-                Main.UnityLog("Notification: " + notification);
+                Main.Multiplayer.Log("Notification: " + notification);
 
                 // Add new line to list
                 NotificationLine line = new NotificationLine(notification, Main.Multiplayer.config.notificationDisplaySeconds);
@@ -160,7 +160,7 @@ namespace BlasClient.Managers
         public void createMessageBox()
         {
             if (messageBox != null) return;
-            Main.UnityLog("Creating new message box!");
+            Main.Multiplayer.Log("Creating new message box!");
 
             // Find canvas parent
             Transform parent = null;
