@@ -1,21 +1,9 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using Framework.Managers;
-using Gameplay.UI.Widgets;
-using Gameplay.UI.Console;
 
 namespace BlasClient.Patches
-{
-    // Add multiplayer commands to console
-    [HarmonyPatch(typeof(ConsoleWidget), "InitializeCommands")]
-    public class Console_Patch
-    {
-        public static void Postfix(List<ConsoleCommand> ___commands)
-        {
-            ___commands.Add(new MultiplayerCommand());
-        }
-    }
-    
+{    
     // Send updated skin when picking a new one
     [HarmonyPatch(typeof(ColorPaletteManager), "SetCurrentColorPaletteId")]
     public class ColorPaletteManager_Patch

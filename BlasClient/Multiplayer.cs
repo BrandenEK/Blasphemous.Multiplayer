@@ -50,6 +50,7 @@ namespace BlasClient
         protected override void Initialize()
         {
             base.Initialize();
+            RegisterCommand(new MultiplayerCommand());
 
             // Create managers
             playerManager = new PlayerManager();
@@ -498,5 +499,7 @@ namespace BlasClient
         {
             interactedPersistenceObjects.Clear();
         }
+
+        public override void NewGame() { }
     }
 }

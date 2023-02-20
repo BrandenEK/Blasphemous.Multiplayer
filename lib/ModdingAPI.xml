@@ -160,6 +160,12 @@
             <param name="oldLevel">The name of the old level</param>
             <param name="newLevel">The name of the new level</param>
         </member>
+        <member name="M:ModdingAPI.Mod.RegisterCommand(ModdingAPI.ModCommand)">
+            <summary>
+            Registers a command to be used in the debug console for this mod
+            </summary>
+            <param name="command">The new command to be added</param>
+        </member>
         <member name="M:ModdingAPI.Mod.Log(System.String)">
             <summary>
             Logs a message to the console
@@ -177,6 +183,70 @@
             Logs an error to the console
             </summary>
             <param name="error">The error to display</param>
+        </member>
+        <member name="T:ModdingAPI.ModCommand">
+            <summary>
+            A command that can be used in the console for this mod/>
+            </summary>
+        </member>
+        <member name="P:ModdingAPI.ModCommand.CommandName">
+            <summary>
+            The prefix used to call this command
+            </summary>
+        </member>
+        <member name="P:ModdingAPI.ModCommand.AllowUppercase">
+            <summary>
+            Whether to keep uppercase letters in the command or convert everything to lowercase
+            </summary>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateParameterList(System.String[],System.Int32)">
+            <summary>
+            Validates the number of parameters passed in and displays an error if incorrect
+            </summary>
+            <param name="parameters">The list of paramaters</param>
+            <param name="amount">The correct amount of parameters</param>
+            <returns>Whether the parameter list is valid or not"</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateIntParameter(System.String,System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Parses a parameter into an integer and validates its value
+            </summary>
+            <param name="parameter">The parameter passed in</param>
+            <param name="minValue">The minimum acceptable value</param>
+            <param name="maxValue">The maxmimum acceptable value</param>
+            <param name="result">The resulting integer</param>
+            <returns>Whether the parameter is valid or not</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateFloatParameter(System.String,System.Single,System.Single,System.Single@)">
+            <summary>
+            Parses a parameter into a float and validates its value
+            </summary>
+            <param name="parameter">The parameter passed in</param>
+            <param name="minValue">The minimum acceptable value</param>
+            <param name="maxValue">The maxmimum acceptable value</param>
+            <param name="result">The resulting float</param>
+            <returns>Whether the parameter is valid or not</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateStringParameter(System.String,System.Int32,System.Int32)">
+            <summary>
+            Validates the length of a string parameter
+            </summary>
+            <param name="parameter">The parameter passed in</param>
+            <param name="minLength">The minimum acceptable length</param>
+            <param name="maxLength">The maxmimum acceptable length</param>
+            <returns>Whether the parameter is valid or not</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.Write(System.String)">
+            <summary>
+            Writes a line of text to the console
+            </summary>
+            <param name="text">The text to write</param>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.AddSubCommands">
+            <summary>
+            Initializes a mapping of command names to functionality
+            </summary>
+            <returns>The command mapping</returns>
         </member>
         <member name="T:ModdingAPI.ModPersistentData">
             <summary>
@@ -217,6 +287,11 @@
         <member name="M:ModdingAPI.PersistentMod.ResetGame">
             <summary>
             Called by the modding API whenever the game is reset
+            </summary>
+        </member>
+        <member name="M:ModdingAPI.PersistentMod.NewGame">
+            <summary>
+            Called by the modding API whenever a new game is started
             </summary>
         </member>
         <member name="P:ModdingAPI.PersistentMod.PersistentID">

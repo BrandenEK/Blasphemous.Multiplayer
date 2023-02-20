@@ -1,131 +1,123 @@
 ﻿using System;
 using System.Collections.Generic;
-using Gameplay.UI.Console;
+using ModdingAPI;
 
 namespace BlasClient
 {
-    public class MultiplayerCommand : ConsoleCommand
+    public class MultiplayerCommand : ModCommand
     {
-        public override void Execute(string command, string[] parameters)
+        protected override string CommandName => "multiplayer";
+
+        protected override bool AllowUppercase => true;
+
+        protected override Dictionary<string, Action<string[]>> AddSubCommands()
         {
-            List<string> paramList;
-            string subcommand = GetSubcommand(parameters, out paramList);
-            if (command != null && command == "multiplayer")
+            return new Dictionary<string, Action<string[]>>()
             {
-                processMultiplayer(subcommand, paramList);
+                { "help", Help },
+                { "status", Status },
+                { "connect", Connect },
+                { "disconnect", Disconnect },
+                { "team", Team },
+                { "players", Players }
+            };
+        }
+
+        private void Help(string[] parameters)
+        {
+            if (!ValidateParameterList(parameters, 0)) return;
+
+            Write("Available MULTIPLAYER commands:");
+            Write("multiplayer status: Display connection status");
+            Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
+            Write("multiplayer disconnect: Disconnect from current server");
+            Write("multiplayer team NUMBER: Change to a different team (1-10)");
+            Write("multiplayer players: List all connected players in the server");
+        }
+
+        private void Status(string[] parameters)
+        {
+            if (!ValidateParameterList(parameters, 0)) return;
+
+            if (Main.Multiplayer.connectedToServer)
+            {
+                Write("Connected to " + Main.Multiplayer.serverIp);
+            }
+            else
+            {
+                Write("Not connected to a server!");
             }
         }
 
-        private void processMultiplayer(string command, List<string> parameters)
+        private void Connect(string[] parameters)
         {
-            if (command == null)
+            if (Main.Multiplayer.connectedToServer)
             {
-                Console.Write("Command unknown, use multiplayer help");
+                Write("You are already connected to " + Main.Multiplayer.serverIp);
                 return;
             }
-            string fullCommand = "multiplayer " + command;
 
-            if (command == "help" && ValidateParams(fullCommand, 0, parameters))
+            string password = null;
+            if (parameters.Length == 3)
             {
-                Console.Write("Available MULTIPLAYER commands:");
-                Console.Write("multiplayer status: Display connection status");
-                Console.Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
-                Console.Write("multiplayer disconnect: Disconnect from current server");
-                Console.Write("multiplayer team NUMBER: Change to a different team (1-10)");
-                Console.Write("multiplayer players: List all connected players in the server");
+                password = parameters[2];
             }
-            else if (command == "status" && ValidateParams(fullCommand, 0, parameters))
+            else if (parameters.Length != 2)
             {
-                if (Main.Multiplayer.connectedToServer)
-                {
-                    Console.Write("Connected to " + Main.Multiplayer.serverIp);
-                }
-                else
-                {
-                    Console.Write("Not connected to a server!");
-                }
+                Write("This command requires either 2 or 3 parameters.  You passed " + parameters.Length);
+                return;
             }
-            else if (command == "connect")
-            {
-                if (Main.Multiplayer.connectedToServer)
-                {
-                    Console.Write("You are already connected to " + Main.Multiplayer.serverIp);
-                    return;
-                }
 
-                string password = null;
-                if (parameters.Count == 3)
-                {
-                    password = parameters[2];
-                }
-                else if (parameters.Count != 2)
-                {
-                    Console.Write("The command 'connect' requires either 2 or 3 parameters.  You passed " + parameters.Count);
-                    return;
-                }
+            if (!ValidateStringParameter(parameters[1], 1, 16)) return;
 
-                if (parameters[1].Length > 16)
-                {
-                    Console.Write("Player name can not be more than 16 characters");
-                    return;
-                }
-
-                Console.Write($"Attempting to connect to {parameters[0]} as {parameters[1]}...");
-                Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
-            }
-            else if (command == "disconnect" && ValidateParams(fullCommand, 0, parameters))
-            {
-                if (Main.Multiplayer.connectedToServer)
-                {
-                    Console.Write("Disconnecting from server");
-                    Main.Multiplayer.disconnectCommand();
-                }
-                else
-                    Console.Write("Not connected to a server!");
-            }
-            else if (command == "team" && ValidateParams(fullCommand, 1, parameters))
-            {
-                if (byte.TryParse(parameters[0], out byte newTeam) && newTeam > 0 && newTeam <= 10)
-                {
-                    if (newTeam == Main.Multiplayer.playerTeam)
-                    {
-                        Console.Write("You are already on team " + newTeam);
-                    }
-                    else
-                    {
-                        Console.Write("Changing team number to " + newTeam);
-                        Main.Multiplayer.changeTeam(newTeam);
-                    }
-                }
-                else
-                {
-                    Console.Write("Team number must be between 1 and 10");
-                }
-            }
-            else if (command == "players" && ValidateParams(fullCommand, 0, parameters))
-            {
-                if (!Main.Multiplayer.connectedToServer)
-                {
-                    Console.Write("Not connected to a server!");
-                    return;
-                }
-
-                Console.Write("Connected players:");
-                Console.Write(Main.Multiplayer.playerName + ": Team " + Main.Multiplayer.playerTeam);
-                foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
-                {
-                    Console.Write(playerName + ": Team " + Main.Multiplayer.connectedPlayers[playerName].team);
-                }
-            }
+            Write($"Attempting to connect to {parameters[0]} as {parameters[1]}...");
+            Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
         }
 
-        public override List<string> GetNames()
+        private void Disconnect(string[] parameters)
         {
-            return new List<string> { "multiplayer" };
+            if (!ValidateParameterList(parameters, 0)) return;
+
+            if (Main.Multiplayer.connectedToServer)
+            {
+                Write("Disconnecting from server");
+                Main.Multiplayer.disconnectCommand();
+            }
+            else
+                Write("Not connected to a server!");
         }
 
-        public override bool ToLowerAll() { return false; }
+        private void Team(string[] parameters)
+        {
+            if (!ValidateParameterList(parameters, 1) || !ValidateIntParameter(parameters[0], 1, 10, out int newTeam)) return;
 
-        public override bool HasLowerParameters() { return false; }
+            if (newTeam == Main.Multiplayer.playerTeam)
+            {
+                Write("You are already on team " + newTeam);
+            }
+            else
+            {
+                Write("Changing team number to " + newTeam);
+                Main.Multiplayer.changeTeam((byte)newTeam);
+            }
+        }
+
+        private void Players(string[] parameters)
+        {
+            if (!ValidateParameterList(parameters, 0)) return;
+
+            if (!Main.Multiplayer.connectedToServer)
+            {
+                Write("Not connected to a server!");
+                return;
+            }
+
+            Write("Connected players:");
+            Write(Main.Multiplayer.playerName + ": Team " + Main.Multiplayer.playerTeam);
+            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+            {
+                Write(playerName + ": Team " + Main.Multiplayer.connectedPlayers[playerName].team);
+            }
+        }
     }
 }
