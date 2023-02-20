@@ -43,13 +43,12 @@ namespace BlasClient
             get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
         }
 
-        public override string PersistentID { get { return "ID_MULTIPLAYER"; } }
+        public override string PersistentID => "ID_MULTIPLAYER";
 
         public Multiplayer(string modId, string modName, string modVersion) : base(modId, modName, modVersion) { }
 
         protected override void Initialize()
         {
-            base.Initialize();
             RegisterCommand(new MultiplayerCommand());
 
             // Create managers
