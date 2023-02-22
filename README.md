@@ -2,12 +2,12 @@
 
 ## Table of Contents
 
-- [Features]()
-- [Sync details]()
-- [Requirements]()
-- [Installation]()
-- [Available commands]()
-- [Configuration settings]()
+- [Features](https://github.com/BrandenEK/Blasphemous-Multiplayer#features)
+- [Sync details](https://github.com/BrandenEK/Blasphemous-Multiplayer#sync-details)
+- [Requirements](https://github.com/BrandenEK/Blasphemous-Multiplayer#requirements)
+- [Installation](https://github.com/BrandenEK/Blasphemous-Multiplayer#installation)
+- [Available commands](https://github.com/BrandenEK/Blasphemous-Multiplayer#available-commands)
+- [Configuration settings](https://github.com/BrandenEK/Blasphemous-Multiplayer#configuration-settings)
 
 ---
 
