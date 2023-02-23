@@ -4,8 +4,8 @@
 
 - [Features](https://github.com/BrandenEK/Blasphemous-Multiplayer#features)
 - [Sync details](https://github.com/BrandenEK/Blasphemous-Multiplayer#sync-details)
-- [Requirements](https://github.com/BrandenEK/Blasphemous-Multiplayer#requirements)
 - [Installation](https://github.com/BrandenEK/Blasphemous-Multiplayer#installation)
+- [Connecting](https://github.com/BrandenEK/Blasphemous-Multiplayer#connecting)
 - [Available commands](https://github.com/BrandenEK/Blasphemous-Multiplayer#available-commands)
 - [Configuration settings](https://github.com/BrandenEK/Blasphemous-Multiplayer#configuration-settings)
 
@@ -15,7 +15,7 @@
 
 - See other players as you both move around the world of Cvstodia
 - Sync items, stats, skills, and other game progress across all players
-- [Coming soon] Compatible with randomizer
+- Compatible with randomizer (Make sure to play on the same seed)
 - [Coming soon] Enable PvP to fight other players
 
 ---
@@ -41,28 +41,26 @@
 
 ---
 
-## Requirements
-
-#### Server:
-- Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
-
-#### Client:
-- A network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding or Hamachi (https://vpn.net/)
-
----
-
 ## Installation
 
 #### Server:
-1. Download the latest release of the Multiplayer server from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
-2. Unzip the BlasServer.zip file anywhere on the host machine
-3. Run the BlasServer.exe program
+1. Download and install Microsoft .NET Core 3.1 from https://dotnet.microsoft.com/en-us/download/dotnet/3.1
+2. Download the latest release of the Multiplayer server from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
+3. Unzip the BlasServer.zip file anywhere on the host machine
 
 #### Client:
 1. Download the latest release of the Modding API from https://github.com/BrandenEK/Blasphemous-Modding-API/releases
 2. Follow the instructions there on how to install the api
 3. Download the latest release of the Multiplayer client from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
 4. Extract the contents of the BlasClient.zip file into the "Modding" folder
+
+---
+
+## Connecting
+
+First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect SERVER NAME [PASSWORD]``` command
+<br>
+However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding or Hamachi (https://vpn.net/)
 
 ---
 
