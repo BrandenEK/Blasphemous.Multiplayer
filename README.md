@@ -54,14 +54,15 @@
 ## Installation
 
 #### Server:
-1. Unzip the BlasServer.zip file anywhere on the host machine
-2. Run the BlasServer.exe program
+1. Download the latest release of the Multiplayer server from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
+2. Unzip the BlasServer.zip file anywhere on the host machine
+3. Run the BlasServer.exe program
 
 #### Client:
 1. Download the latest release of the Modding API from https://github.com/BrandenEK/Blasphemous-Modding-API/releases
 2. Follow the instructions there on how to install the api
-3. Download the latest release of the Multiplayer client from the releases page
-4. Extract the contents of the zip file into the "Modding" folder
+3. Download the latest release of the Multiplayer client from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
+4. Extract the contents of the BlasClient.zip file into the "Modding" folder
 
 ---
 
