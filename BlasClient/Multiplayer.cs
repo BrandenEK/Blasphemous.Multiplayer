@@ -28,7 +28,8 @@ namespace BlasClient
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
         public byte playerTeam { get; private set; }
-        public string serverIp {  get { return client.serverIp; } }
+        public string serverIp => client.serverIp;
+        public bool inRando => IsModLoaded("com.damocles.blasphemous.randomizer");
         private bool sentAllProgress;
 
         // Player status

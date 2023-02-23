@@ -147,7 +147,7 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(SkillManager), "UnlockSkill")]
     public class SkilManager_Patch
     {
-        public static bool Prefix(string skill, Dictionary<string, UnlockableSkill> ___allSkills)
+        public static bool Prefix(string skill, bool ignoreChecks, Dictionary<string, UnlockableSkill> ___allSkills)
         {
             if (ProgressManager.updatingProgress)
             {
@@ -155,13 +155,14 @@ namespace BlasClient.Patches
                 ___allSkills[skill].unlocked = true;
                 return false;
             }
-            else
+
+            if (!Main.Multiplayer.inRando || ignoreChecks)
             {
                 // Actually obtaining item, send to other players
                 if (Main.Multiplayer.config.syncSettings.swordSkills)
                     Main.Multiplayer.obtainedGameProgress(skill, ProgressManager.ProgressType.SwordSkill, 0);
-                return true;
             }
+            return true;
         }
     }
 
@@ -188,16 +189,14 @@ namespace BlasClient.Patches
                 }
                 return true;
             }
-            else
+
+            // Received this new cell from other player, skip other stuff
+            int cellIdx = Mathf.RoundToInt(position.x);
+            if (___CurrentMap != null && cellIdx >= 0 && cellIdx < ___CurrentMap.Cells.Count)
             {
-                // Received this new cell from other player, skip other stuff
-                int cellIdx = Mathf.RoundToInt(position.x);
-                if (___CurrentMap != null && cellIdx >= 0 && cellIdx < ___CurrentMap.Cells.Count)
-                {
-                    ___CurrentMap.Cells[cellIdx].Revealed = true;
-                }
-                return false;
+                ___CurrentMap.Cells[cellIdx].Revealed = true;
             }
+            return false;
         }
     }
 

@@ -105,7 +105,7 @@ namespace BlasClient.Managers
                     return;
                 case ProgressType.SwordSkill:
                     if (Main.Multiplayer.config.syncSettings.swordSkills)
-                        Core.SkillManager.UnlockSkill(progress.id);
+                        Core.SkillManager.UnlockSkill(progress.id, true);
                     return;
                 case ProgressType.MapCell:
                     if (Main.Multiplayer.config.syncSettings.mapCells)
