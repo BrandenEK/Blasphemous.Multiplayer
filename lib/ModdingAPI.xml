@@ -166,6 +166,13 @@
             </summary>
             <param name="command">The new command to be added</param>
         </member>
+        <member name="M:ModdingAPI.Mod.IsModLoaded(System.String)">
+            <summary>
+            Checks whether a specific mod has been loaded or not
+            </summary>
+            <param name="modId">The unique id of the mod</param>
+            <returns>Whether or not the mod has been loaded</returns>
+        </member>
         <member name="M:ModdingAPI.Mod.Log(System.String)">
             <summary>
             Logs a message to the console
@@ -297,11 +304,6 @@
         <member name="P:ModdingAPI.PersistentMod.PersistentID">
             <summary>
             The unique id of this persistent system
-            </summary>
-        </member>
-        <member name="M:ModdingAPI.PersistentMod.Initialize">
-            <summary>
-            Called at the beginning of the game by the modding API
             </summary>
         </member>
     </members>

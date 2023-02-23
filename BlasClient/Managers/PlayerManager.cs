@@ -85,7 +85,8 @@ namespace BlasClient.Managers
             Main.Multiplayer.Log("Adding special animation checkers to " + count + " objects!");
 
             // Create main player's nametag
-            createPlayerNameTag();
+            if (Main.Multiplayer.connectedToServer)
+                createPlayerNameTag();
         }
 
         public void unloadScene()

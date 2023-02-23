@@ -70,10 +70,14 @@ namespace BlasClient
 
         public void connectCommand(string ip, string name, string password)
         {
-            playerName = name;
-            bool result = client.Connect(ip, name, password);
-            if (!result)
+            if (client.Connect(ip, name, password))
+            {
+                playerName = name;
+            }
+            else
+            {
                 UIController.instance.StartCoroutine(delayedNotificationCoroutine("Failed to connect to " + ip));
+            }
 
             IEnumerator delayedNotificationCoroutine(string notification)
             {
