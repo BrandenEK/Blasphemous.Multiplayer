@@ -1,8 +1,13 @@
 # Blasphemous Multiplayer
 
-A co-op mod for Blasphemous.  This is still a work in progress without an official release.
+## Table of Contents
 
-Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
+- [Features](https://github.com/BrandenEK/Blasphemous-Multiplayer#features)
+- [Sync details](https://github.com/BrandenEK/Blasphemous-Multiplayer#sync-details)
+- [Requirements](https://github.com/BrandenEK/Blasphemous-Multiplayer#requirements)
+- [Installation](https://github.com/BrandenEK/Blasphemous-Multiplayer#installation)
+- [Available commands](https://github.com/BrandenEK/Blasphemous-Multiplayer#available-commands)
+- [Configuration settings](https://github.com/BrandenEK/Blasphemous-Multiplayer#configuration-settings)
 
 ---
 
@@ -15,7 +20,9 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 
 ---
 
-## Things that sync
+## Sync details
+
+### Things that sync
 
 - All inventory items (Beads / Relics / Prayers / Hearts / Collectibles / Quest items)
 - All player stats (Max health / Max fervour / Strength / Mea Culpa level / Max flasks / Flask level / Bead slots)
@@ -23,12 +30,12 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - All revealed map cells
 - Most world state progress (Bosses defeated / Gates opened / Cherubs freed / Teleports unlocked / Questline progress / etc. )
 
-## Things that don't sync yet
+### Things that don't sync yet
 
 - Church donation amount
 - Most npc questlines
 
-## Things that will probably never sync
+### Things that will probably never sync
 
 - Enemies & bosses (This is a huge task and not really feasible)
 
@@ -40,21 +47,22 @@ Progress board: [Trello](https://trello.com/b/FBdBWoVM/blasphemous-multiplayer)
 - Microsoft .NET Core 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
 
 #### Client:
-- Most recent version of the Blasphemous game (https://store.steampowered.com/app/774361/Blasphemous)
 - A network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding or Hamachi (https://vpn.net/)
 
 ---
 
-## How to use
+## Installation
 
 #### Server:
-1. Unzip the BlasServer.zip file anywhere on the host machine
-2. Run the BlasServer.exe program
+1. Download the latest release of the Multiplayer server from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
+2. Unzip the BlasServer.zip file anywhere on the host machine
+3. Run the BlasServer.exe program
 
 #### Client:
-1. Extract the contents of the BlasClient.zip file into the game's root folder
-2. Run the game and verify on the title screen that the mod has been loaded
-3. Run the connect command in the console and start a game
+1. Download the latest release of the Modding API from https://github.com/BrandenEK/Blasphemous-Modding-API/releases
+2. Follow the instructions there on how to install the api
+3. Download the latest release of the Multiplayer client from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
+4. Extract the contents of the BlasClient.zip file into the "Modding" folder
 
 ---
 
