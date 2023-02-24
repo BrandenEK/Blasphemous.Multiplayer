@@ -77,7 +77,7 @@ namespace BlasClient
             }
             else
             {
-                UIController.instance.StartCoroutine(delayedNotificationCoroutine("Failed to connect to " + ip));
+                UIController.instance.StartCoroutine(delayedNotificationCoroutine(Localize("conerr") + " " + ip));
             }
 
             IEnumerator delayedNotificationCoroutine(string notification)
@@ -97,7 +97,7 @@ namespace BlasClient
         public void onDisconnect(bool showNotification)
         {
             if (showNotification)
-                notificationManager.showNotification("Disconnected from server!");
+                notificationManager.showNotification(Localize("dcon") + "!");
             connectedPlayers.Clear();
             playerManager.destroyPlayers();
             playerName = "";
@@ -399,20 +399,20 @@ namespace BlasClient
                     sendAllProgress();
                 }
 
-                notificationManager.showNotification("Connected to server!");
+                notificationManager.showNotification(Localize("con") + "!");
                 return;
             }
 
             // Failed to connect
             onDisconnect(false);
             string reason;
-            if (response == 1) reason = "Incorrect password"; // Wrong password
-            else if (response == 2) reason = "You have been banned"; // Banned player
-            else if (response == 3) reason = "Server is full"; // Max player limit
-            else if (response == 4) reason = "Player name is already taken"; // Duplicate name
-            else reason = "Unknown reason"; // Unknown reason
+            if (response == 1) reason = "refpas"; // Wrong password
+            else if (response == 2) reason = "refban"; // Banned player
+            else if (response == 3) reason = "refmax"; // Max player limit
+            else if (response == 4) reason = "refnam"; // Duplicate name
+            else reason = "refunk"; // Unknown reason
 
-            notificationManager.showNotification("Connection refused: " + reason);
+            notificationManager.showNotification(Localize("refuse") + ": " + Localize(reason));
         }
 
         // Received player connection status from server
@@ -431,7 +431,7 @@ namespace BlasClient
                 if (connectedPlayers.ContainsKey(playerName))
                     connectedPlayers.Remove(playerName);
             }
-            notificationManager.showNotification($"{playerName} has {(connected ? "joined" : "left")} the server!");
+            notificationManager.showNotification($"{playerName} {Localize(connected ? "join" : "leave")}!");
         }
 
         public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)

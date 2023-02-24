@@ -46,49 +46,49 @@ namespace BlasClient.Managers
                 case ProgressManager.ProgressType.Bead:
                     RosaryBead bead = Core.InventoryManager.GetRosaryBead(progressId);
                     if (bead != null && progressValue == 0)
-                        notification = "has obtained the " + bead.caption;
+                        notification = Main.Multiplayer.Localize("itmnot") + " " + bead.caption;
                     break;
                 case ProgressManager.ProgressType.Prayer:
                     Prayer prayer = Core.InventoryManager.GetPrayer(progressId);
                     if (prayer != null && progressValue == 0)
-                        notification = "has obtained the " + prayer.caption;
+                        notification = Main.Multiplayer.Localize("itmnot") + " " + prayer.caption;
                     break;
                 case ProgressManager.ProgressType.Relic:
                     Relic relic = Core.InventoryManager.GetRelic(progressId);
                     if (relic != null && progressValue == 0)
-                        notification = "has obtained the " + relic.caption;
+                        notification = Main.Multiplayer.Localize("itmnot") + " " + relic.caption;
                     break;
                 case ProgressManager.ProgressType.Heart:
                     Sword sword = Core.InventoryManager.GetSword(progressId);
                     if (sword != null && progressValue == 0)
-                        notification = "has obtained the " + sword.caption;
+                        notification = Main.Multiplayer.Localize("itmnot") + " " + sword.caption;
                     break;
                 case ProgressManager.ProgressType.Collectible:
                     Framework.Inventory.CollectibleItem collectible = Core.InventoryManager.GetCollectibleItem(progressId);
                     if (collectible != null && progressValue == 0)
-                        notification = "has obtained the " + collectible.caption;
+                        notification = Main.Multiplayer.Localize("itmnot") + " " + collectible.caption;
                     break;
                 case ProgressManager.ProgressType.QuestItem:
                     QuestItem quest = Core.InventoryManager.GetQuestItem(progressId);
                     if (quest != null && progressValue == 0)
-                        notification = "has obtained the " + quest.caption;
+                        notification = Main.Multiplayer.Localize("itmnot") + " " + quest.caption;
                     break;
                 case ProgressManager.ProgressType.PlayerStat:
                     string stat = null;
-                    if (progressId == "LIFE") stat = "maximum health";
-                    else if (progressId == "FERVOUR") stat = "maximum fervour";
-                    else if (progressId == "STRENGTH") stat = "mea culpa strength";
-                    else if (progressId == "MEACULPA") stat = "mea culpa tier";
-                    else if (progressId == "BEADSLOTS") stat = "maximum bead slots";
-                    else if (progressId == "FLASK") stat = "maximum flasks";
-                    else if (progressId == "FLASKHEALTH") stat = "flask strength";
+                    if (progressId == "LIFE") stat = "stlife";
+                    else if (progressId == "FERVOUR") stat = "stferv";
+                    else if (progressId == "STRENGTH") stat = "stmeas";
+                    else if (progressId == "MEACULPA") stat = "stmeat";
+                    else if (progressId == "BEADSLOTS") stat = "stbead";
+                    else if (progressId == "FLASK") stat = "stfknm";
+                    else if (progressId == "FLASKHEALTH") stat = "stfkhl";
                     if (stat != null)
-                        notification = "has upgraded the " + stat;
+                        notification = Main.Multiplayer.Localize("stnot") + " " + Main.Multiplayer.Localize(stat);
                     break;
                 case ProgressManager.ProgressType.SwordSkill:
                     UnlockableSkill skill = Core.SkillManager.GetSkill(progressId);
                     if (skill != null)
-                        notification = "has unlocked the " + skill.caption;
+                        notification = Main.Multiplayer.Localize("sklnot") + " " + skill.caption;
                     break;
                 case ProgressManager.ProgressType.Flag:
                     FlagState flag = FlagStates.getFlagState(progressId);
