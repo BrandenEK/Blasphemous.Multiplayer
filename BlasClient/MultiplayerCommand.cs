@@ -69,25 +69,32 @@ namespace BlasClient
             string password = null;
             int passIdx = -1;
 
+            // Name has a space and spans multiple parameters
             if (parameters[1].StartsWith("\""))
             {
-                // Name has a space and spans multiple parameters
-                for (int i = 1; i < parameters.Length; i++)
+                // Find the ending index of the name
+                for (int i = parameters.Length - 1; i >= 1; i--)
                 {
-                    name += parameters[i] + " ";
                     if (parameters[i].EndsWith("\""))
                     {
-                        name = name.Substring(1, name.Length - 3);
                         passIdx = i + 1;
                         break;
                     }
                 }
 
+                // Verify the ending quote exists
                 if (passIdx == -1)
                 {
                     Write("Invalid syntax!");
                     return;
                 }
+
+                // Build up the name
+                for (int i = 1; i < passIdx; i++)
+                {
+                    name += parameters[i] + " ";
+                }
+                name = name.Substring(1, name.Length - 3);
             }
             else
             {
