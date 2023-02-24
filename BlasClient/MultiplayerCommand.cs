@@ -51,27 +51,67 @@ namespace BlasClient
 
         private void Connect(string[] parameters)
         {
+            // Already connected
             if (Main.Multiplayer.connectedToServer)
             {
                 Write("You are already connected to " + Main.Multiplayer.serverIp);
                 return;
             }
 
-            string password = null;
-            if (parameters.Length == 3)
-            {
-                password = parameters[2];
-            }
-            else if (parameters.Length != 2)
+            // Too few parameters
+            if (parameters.Length < 2)
             {
                 Write("This command requires either 2 or 3 parameters.  You passed " + parameters.Length);
                 return;
             }
 
-            if (!ValidateStringParameter(parameters[1], 1, 16)) return;
+            string name = "";
+            string password = null;
+            int passIdx = -1;
 
-            Write($"Attempting to connect to {parameters[0]} as {parameters[1]}...");
-            Main.Multiplayer.connectCommand(parameters[0], parameters[1], password);
+            if (parameters[1].StartsWith("\""))
+            {
+                // Name has a space and spans multiple parameters
+                for (int i = 1; i < parameters.Length; i++)
+                {
+                    name += parameters[i] + " ";
+                    if (parameters[i].EndsWith("\""))
+                    {
+                        name = name.Substring(1, name.Length - 3);
+                        passIdx = i + 1;
+                        break;
+                    }
+                }
+
+                if (passIdx == -1)
+                {
+                    Write("Invalid syntax!");
+                    return;
+                }
+            }
+            else
+            {
+                // Name is only one word
+                name = parameters[1];
+                passIdx = 2;
+            }
+
+            // Too many parameters
+            if (parameters.Length > passIdx + 1)
+            {
+                Write("This command requires either 2 or 3 parameters.  You passed " + parameters.Length);
+                return;
+            }
+
+            if (parameters.Length > passIdx)
+            {
+                password = parameters[passIdx];
+            }
+
+            if (!ValidateStringParameter(name, 1, 16)) return;
+
+            Write($"Attempting to connect to {parameters[0]} as {name}...");
+            Main.Multiplayer.connectCommand(parameters[0], name, password);
         }
 
         private void Disconnect(string[] parameters)

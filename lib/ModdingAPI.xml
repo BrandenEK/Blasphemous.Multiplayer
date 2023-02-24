@@ -173,6 +173,13 @@
             <param name="modId">The unique id of the mod</param>
             <returns>Whether or not the mod has been loaded</returns>
         </member>
+        <member name="M:ModdingAPI.Mod.Localize(System.String)">
+            <summary>
+            Localizes text based on a key into the game's current language
+            </summary>
+            <param name="key">The key of the text to localize</param>
+            <returns>The localized text</returns>
+        </member>
         <member name="M:ModdingAPI.Mod.Log(System.String)">
             <summary>
             Logs a message to the console
