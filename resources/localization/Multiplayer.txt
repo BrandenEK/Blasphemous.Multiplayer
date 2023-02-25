@@ -1,0 +1,2 @@
+keys: conerr~con~dcon~refuse~refpas~refban~refmax~refnam~refunk~join~leave~itmnot~stnot~sklnot~stlife~stferv~stmeas~stmeat~stbead~stfknm~stfkhl
+en: Failed to connect to~Connected to server~Disconnected from server~Connection refused~Incorrect password~You have been banned~Server is full~Player name is already taken~Unknown reason~has joined the server~has left the server~has obtained the~has upgraded the~has unlocked the~maximum health~maximum fervour~mea culpa strength~mea culpa tier~maximum bead slots~maximum flasks~flask strength
