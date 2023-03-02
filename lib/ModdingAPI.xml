@@ -23,17 +23,6 @@
             <typeparam name="T">The type of the config object</typeparam>
             <param name="config">The configuration object</param>
         </member>
-        <member name="M:ModdingAPI.FileUtil.appendLog(System.String)">
-            <summary>
-            Adds a message to the log file for this mod
-            </summary>
-            <param name="line">The message to add to the log file</param>
-        </member>
-        <member name="M:ModdingAPI.FileUtil.clearLog">
-            <summary>
-            Clears the log file for this mod
-            </summary>
-        </member>
         <member name="M:ModdingAPI.FileUtil.loadDataText(System.String,System.String@)">
             <summary>
             Loads a string from a file in the data folder
@@ -118,6 +107,11 @@
             The file utility for performing various IO operations
             </summary>
         </member>
+        <member name="P:ModdingAPI.Mod.DisableFileLogging">
+            <summary>
+            Set to true to disable the mod from writing to the log file
+            </summary>
+        </member>
         <member name="M:ModdingAPI.Mod.#ctor(System.String,System.String,System.String)">
             <summary>
             Creates, registers, and patches a new mod
@@ -182,21 +176,27 @@
         </member>
         <member name="M:ModdingAPI.Mod.Log(System.String)">
             <summary>
-            Logs a message to the console
+            Logs a message to the console and log file
             </summary>
             <param name="message">The message to display</param>
         </member>
         <member name="M:ModdingAPI.Mod.LogWarning(System.String)">
             <summary>
-            Logs a warning to the console
+            Logs a warning to the console and log file
             </summary>
             <param name="warning">The warning to display</param>
         </member>
         <member name="M:ModdingAPI.Mod.LogError(System.String)">
             <summary>
-            Logs an error to the console
+            Logs an error to the console and log file
             </summary>
             <param name="error">The error to display</param>
+        </member>
+        <member name="M:ModdingAPI.Mod.LogDisplay(System.String)">
+            <summary>
+            Displays a message with a UI text box
+            </summary>
+            <param name="message">The text to display</param>
         </member>
         <member name="T:ModdingAPI.ModCommand">
             <summary>
