@@ -554,6 +554,11 @@ namespace BlasServer
                 // Teleport
                 Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
             }
+            else if (progressType == 12)
+            {
+                // Church donation
+                Core.displayCustom($"Received new tear donation from {current.name}: {progressValue}", ConsoleColor.Green);
+            }
             
             sendPlayerProgress(playerIp, progressType, progressValue, progressId);
         }

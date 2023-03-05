@@ -14,7 +14,7 @@ namespace BlasClient.Managers
     {
         // Only enabled when processing & applying the queued progress updates
         public static bool updatingProgress;
-        public enum ProgressType { Bead, Prayer, Relic, Heart, Collectible, QuestItem, PlayerStat, SwordSkill, MapCell, Flag, PersistentObject, Teleport }
+        public enum ProgressType { Bead, Prayer, Relic, Heart, Collectible, QuestItem, PlayerStat, SwordSkill, MapCell, Flag, PersistentObject, Teleport, ChurchDonation }
 
         private List<ProgressUpdate> queuedProgressUpdates = new List<ProgressUpdate>();
         private PersistentObject[] scenePersistentObjects = new PersistentObject[0];
@@ -123,8 +123,13 @@ namespace BlasClient.Managers
                     if (Main.Multiplayer.config.syncSettings.worldState)
                         Core.SpawnManager.SetTeleportActive(progress.id, true);
                     return;
-
-                // Church donations
+                case ProgressType.ChurchDonation:
+                    if (Main.Multiplayer.config.syncSettings.worldState)
+                    {
+                        int tears = progress.value * 1000;
+                        Core.Alms.DEBUG_SetTearsGiven(tears); // Not ideal
+                    }
+                    return;
                 default:
                     Main.Multiplayer.Log("Error: Progress type doesn't exist: " + progress.type); return;
             }
@@ -203,6 +208,8 @@ namespace BlasClient.Managers
             }
             // Teleports
             Core.SpawnManager.GetCurrentPersistentState("intro", false);
+            // Church donations
+            Main.Multiplayer.obtainedGameProgress("Tears", ProgressType.ChurchDonation, (byte)(Core.Alms.TearsGiven / 1000));
         }
 
         // Called when interacting with pers. object - determine whether to send it or not

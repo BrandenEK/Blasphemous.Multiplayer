@@ -222,10 +222,23 @@ namespace BlasClient.Patches
     {
         public static void Postfix(string teleportId)
         {
-            Main.Multiplayer.Log("Unlocked teleport");
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
             {
                 Main.Multiplayer.obtainedGameProgress(teleportId, ProgressManager.ProgressType.Teleport, 0);
+            }
+        }
+    }
+
+    // Church donations
+
+    [HarmonyPatch(typeof(AlmsManager), "ConsumeTears")]
+    public class AlmsManager_Patch
+    {
+        public static void Postfix(AlmsManager __instance)
+        {
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
+            {
+                Main.Multiplayer.obtainedGameProgress("Tears", ProgressManager.ProgressType.ChurchDonation, (byte)(__instance.TearsGiven / 1000));
             }
         }
     }

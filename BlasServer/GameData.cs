@@ -5,7 +5,7 @@ namespace BlasServer
     public class GameData
     {
         private Dictionary<string, byte>[] progressSets;
-        public const int numberOfProgressTypes = 12;
+        public const int numberOfProgressTypes = 13;
 
         public GameData()
         {
