@@ -81,6 +81,7 @@ namespace BlasClient.Data
                 new PersistenceState("a96c43f4-fc8e-4696-ad8d-1a6e8d334571", "D01Z02S07", 1),
                 new PersistenceState("57269b9b-f3fd-4f2b-be81-f7b3d72028e4", "D01BZ04S01", 1),
                 new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D01BZ04S01", 1),
+                new PersistenceState("9a0bde6c-82e8-4b9b-a181-a49f80ef4f44", "D01Z02S05", 1),
                 new PersistenceState("b389b291-1fb6-4b26-8b48-10bda40ca9d0", "D01Z02S03", 3), // CR
                 new PersistenceState("57c0ac09-88ae-4a22-8e97-5280de0821a5", "D01Z02S07", 5), // GT
                 new PersistenceState("16bfa182-d418-411e-a5dd-7c72e11732cf", "D01Z02S07", 7), // ST
