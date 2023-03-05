@@ -232,7 +232,7 @@ namespace BlasClient.Managers
             }
             else
             {
-                Main.Multiplayer.Log("Error: Can't remove player object for " + name);
+                Main.Multiplayer.LogWarning("Error: Can't remove player object for " + name);
             }
             Text nametag = getPlayerNametag(name);
             if (nametag != null)
@@ -254,7 +254,7 @@ namespace BlasClient.Managers
             }
             else
             {
-                Main.Multiplayer.Log("Error: Can't update object position for " + name);
+                Main.Multiplayer.LogWarning("Error: Can't update object position for " + name);
             }
         }
 
@@ -297,12 +297,12 @@ namespace BlasClient.Managers
                         Main.Multiplayer.Log("Playing special animation for " + name);
                     }
                     else
-                        Main.Multiplayer.Log("Failed to play special animation for " + name);
+                        Main.Multiplayer.LogWarning("Failed to play special animation for " + name);
                 }
             }
             else
             {
-                Main.Multiplayer.Log("Error: Can't update object animation for " + name);
+                Main.Multiplayer.LogWarning("Error: Can't update object animation for " + name);
             }
         }
 
@@ -318,7 +318,7 @@ namespace BlasClient.Managers
             }
             else
             {
-                Main.Multiplayer.Log("Error: Can't update object direction for " + name);
+                Main.Multiplayer.LogWarning("Error: Can't update object direction for " + name);
             }
         }
 
@@ -327,7 +327,7 @@ namespace BlasClient.Managers
         {
             if (canvas == null || textPrefab == null)
             {
-                Main.Multiplayer.Log("Error: Failed to create nametag for " + name);
+                Main.Multiplayer.LogWarning("Error: Failed to create nametag for " + name);
                 return;
             }
 
@@ -365,7 +365,7 @@ namespace BlasClient.Managers
             GameObject player = getPlayerObject(name);
             if (player == null)
             {
-                Main.Multiplayer.Log("Error: Can't update object skin for " + name);
+                Main.Multiplayer.LogWarning("Error: Can't update object skin for " + name);
                 return;
             }
 
@@ -377,8 +377,13 @@ namespace BlasClient.Managers
             Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);
             if (palette == null)
             {
-                Main.Multiplayer.Log("Error: Couldn't find skin named " + skin);
-                return;
+                palette = Core.ColorPaletteManager.GetColorPaletteById("PENITENT_DEFAULT");
+                if (palette == null)
+                {
+                    Main.Multiplayer.LogWarning("Error: Default skin couldn't be found");
+                    return;
+                }
+                Main.Multiplayer.LogWarning($"Couldn't find skin {skin}.  Using default instead.");
             }
 
             Main.Multiplayer.Log("Setting skin texture for " + name);
