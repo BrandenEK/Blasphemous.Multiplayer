@@ -162,6 +162,8 @@ namespace BlasClient.Managers
         // Called when sending all data upon connecting to server and loading game
         public void loadAllProgress()
         {
+            Main.Multiplayer.DisableFileLogging = true;
+
             // Beads
             ReadOnlyCollection<RosaryBead> ownedBeads = Core.InventoryManager.GetRosaryBeadOwned();
             for (int i = 0; i < ownedBeads.Count; i++)
@@ -210,6 +212,8 @@ namespace BlasClient.Managers
             Core.SpawnManager.GetCurrentPersistentState("intro", false);
             // Church donations
             Main.Multiplayer.obtainedGameProgress("Tears", ProgressType.ChurchDonation, (byte)(Core.Alms.TearsGiven / 1000));
+
+            Main.Multiplayer.DisableFileLogging = false;
         }
 
         // Called when interacting with pers. object - determine whether to send it or not
