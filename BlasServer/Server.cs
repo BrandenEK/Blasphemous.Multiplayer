@@ -477,13 +477,21 @@ namespace BlasServer
                 return;
             }
 
+            // Ensure there are no duplicate ips
+            if (connectedPlayers.ContainsKey(playerIp))
+            {
+                Core.displayMessage("Player connection rejected: Duplicate ip address");
+                sendPlayerIntro(playerIp, 4);
+                return;
+            }
+
             // Ensure there are no duplicate names
             foreach (PlayerStatus player in connectedPlayers.Values)
             {
                 if (player.name == playerName)
                 {
                     Core.displayMessage("Player connection rejected: Duplicate name");
-                    sendPlayerIntro(playerIp, 4);
+                    sendPlayerIntro(playerIp, 5);
                     return;
                 }
             }

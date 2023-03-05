@@ -409,7 +409,8 @@ namespace BlasClient
             if (response == 1) reason = "refpas"; // Wrong password
             else if (response == 2) reason = "refban"; // Banned player
             else if (response == 3) reason = "refmax"; // Max player limit
-            else if (response == 4) reason = "refnam"; // Duplicate name
+            else if (response == 4) reason = "refipa"; // Duplicate ip
+            else if (response == 5) reason = "refnam"; // Duplicate name
             else reason = "refunk"; // Unknown reason
 
             notificationManager.showNotification(Localize("refuse") + ": " + Localize(reason));
