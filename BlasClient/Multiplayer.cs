@@ -378,7 +378,7 @@ namespace BlasClient
             if (response == 0)
             {
                 // Send all initial data
-                client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteSprite().texture.EncodeToPNG());
+                client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteSprite().texture.GetRawTextureData());
                 client.sendPlayerTeam(playerTeam);
 
                 // If already in game, send enter scene data & game progress

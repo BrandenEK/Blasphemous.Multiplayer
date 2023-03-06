@@ -11,7 +11,7 @@ namespace BlasClient.Patches
         public static void Postfix(string colorPaletteId)
         {
             Sprite newSkin = Core.ColorPaletteManager.GetColorPaletteById(colorPaletteId);
-            Main.Multiplayer.changeSkin(newSkin.texture.EncodeToPNG());
+            Main.Multiplayer.changeSkin(newSkin.texture.GetRawTextureData());
         }
     }
 }

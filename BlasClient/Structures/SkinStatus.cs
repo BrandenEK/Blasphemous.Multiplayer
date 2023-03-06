@@ -6,7 +6,7 @@ namespace BlasClient.Structures
     public class SkinStatus
     {
         // Skin sprite, is updated whenever receiving a skin update packet
-        public Sprite skinSprite;
+        public Texture2D skinTexture;
         // Determines whether to set player objects skin texture in an update cycle
         // 0 - Already updated, do nothing
         // 1 - When object is first created
@@ -15,15 +15,16 @@ namespace BlasClient.Structures
 
         public SkinStatus()
         {
-            skinSprite = Core.ColorPaletteManager.GetColorPaletteById("PENITENT_DEFAULT");
+            skinTexture = Core.ColorPaletteManager.GetColorPaletteById("PENITENT_DEFAULT").texture;
         }
 
         public void createSkin(byte[] skin)
         {
             Texture2D tex = new Texture2D(256, 1, TextureFormat.RGB24, false);
-            tex.LoadImage(skin);
+            tex.LoadRawTextureData(skin);
             tex.filterMode = FilterMode.Point;
-            skinSprite = Sprite.Create(tex, new Rect(0, 0, 256, 1), new Vector2(0.5f, 0.5f));
+            tex.Apply();
+            skinTexture = tex;
         }
     }
 }

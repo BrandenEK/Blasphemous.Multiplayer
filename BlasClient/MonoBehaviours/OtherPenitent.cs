@@ -78,10 +78,10 @@ namespace BlasClient.MonoBehaviours
             renderer.flipX = facingDirection;
         }
 
-        public void updateSkin(Sprite skin)
+        public void updateSkin(Texture2D skin)
         {
             renderer.enabled = true;
-            renderer.material.SetTexture("_PaletteTex", skin.texture);
+            renderer.material.SetTexture("_PaletteTex", skin);
         }
 
         // Gets the animator controller of an interactable object in the scene & plays special animation

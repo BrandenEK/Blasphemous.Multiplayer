@@ -143,7 +143,7 @@ namespace BlasClient.Managers
                 else if (playerSkin.updateStatus == 1)
                 {
                     // Set the player texture
-                    setSkinTexture(name, playerSkin.skinSprite);
+                    setSkinTexture(name, playerSkin.skinTexture);
                     playerSkin.updateStatus = 0;
                 }
             }
@@ -313,7 +313,7 @@ namespace BlasClient.Managers
         }
 
         // Sets the skin texture of a player's object - must be delayed until after object creation
-        private void setSkinTexture(string name, Sprite skinTexture)
+        private void setSkinTexture(string name, Texture2D skinTexture)
         {
             // Get player object with this name
             OtherPenitent penitent = getPlayerObject(name);
