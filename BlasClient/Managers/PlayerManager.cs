@@ -19,7 +19,8 @@ namespace BlasClient.Managers
         // Not accessed directly, just store objects - they are set when first accessing
         private Transform canvas;
         private GameObject textPrefab;
-        private RuntimeAnimatorController animatorController;
+        private RuntimeAnimatorController penitentAnimator;
+        private Material penitentMaterial;
 
         // Queued player updates
         private Dictionary<string, bool> queuedPlayers = new Dictionary<string, bool>();
@@ -43,6 +44,12 @@ namespace BlasClient.Managers
                 if (Main.Multiplayer.connectedPlayers[playerName].currentScene == scene)
                     addPlayer(playerName);
             }
+
+            // Load stored objects
+            getCanvas();
+            getTextPrefab();
+            getPenitentAnimator();
+            getPenitentMaterial();
 
             // Add special animation checker to certain interactors
             int count = 0;
@@ -180,26 +187,22 @@ namespace BlasClient.Managers
         // When a player enters a scene, create a new player object
         private void addPlayer(string name)
         {
-            // Create base object
-            GameObject player = new GameObject("_" + name, typeof(SpriteRenderer), typeof(Animator), typeof(EventReceiver));  // Change to create prefab at initialization, and instantiate a new instance
-            players.Add(player);
+            // Create & setup new penitent object
+            GameObject playerObject = new GameObject("_" + name);
+            OtherPenitent penitent = playerObject.AddComponent<OtherPenitent>();
+            penitent.createPenitent(getPenitentAnimator(), getPenitentMaterial());
 
-            // Set up sprite rendering
-            SpriteRenderer render = player.GetComponent<SpriteRenderer>();
-            render.material = Core.Logic.Penitent.SpriteRenderer.material;
-            render.sortingLayerName = "Player";
+            // Change to store the OtherPenitent in the list
+            players.Add(playerObject);
+
+
 
             // Hide player object until skin texture is set - must be delayed
             Main.Multiplayer.getPlayerStatus(name).skin.updateStatus = 2;
-            render.enabled = false;
-
-            // Set up animations
-            Animator anim = player.GetComponent<Animator>();
-            anim.runtimeAnimatorController = getAnimatorController();
 
             // If in beginning room, add fake penitent controller
             if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
-                player.AddComponent<FakePenitentIntro>();
+                playerObject.AddComponent<FakePenitentIntro>();
 
             // Set up name tag
             if (Main.Multiplayer.config.displayNametags)
@@ -260,7 +263,7 @@ namespace BlasClient.Managers
                     if (playerStatus.specialAnimation > 0)
                     {
                         // Change back to regular animations
-                        anim.runtimeAnimatorController = getAnimatorController();
+                        anim.runtimeAnimatorController = getPenitentAnimator();
                         playerStatus.specialAnimation = 0;
                     }
                     anim.SetBool("IS_CROUCH", false);
@@ -577,15 +580,26 @@ namespace BlasClient.Managers
             return textPrefab;
         }
 
-        private RuntimeAnimatorController getAnimatorController()
+        private RuntimeAnimatorController getPenitentAnimator()
         {
-            if (animatorController == null)
+            if (penitentAnimator == null)
             {
-                Main.Multiplayer.LogWarning("Player animator controller was null - Loading now");
+                Main.Multiplayer.LogWarning("Penitent animator controller was null - Loading now");
                 if (Core.Logic.Penitent != null)
-                    animatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+                    penitentAnimator = Core.Logic.Penitent.Animator.runtimeAnimatorController;
             }
-            return animatorController;
+            return penitentAnimator;
+        }
+
+        private Material getPenitentMaterial()
+        {
+            if (penitentMaterial == null)
+            {
+                Main.Multiplayer.LogWarning("Penitent material was null - Loading now");
+                if (Core.Logic.Penitent != null)
+                    penitentMaterial = Core.Logic.Penitent.SpriteRenderer.material;
+            }
+            return penitentMaterial;
         }
     }
 }
