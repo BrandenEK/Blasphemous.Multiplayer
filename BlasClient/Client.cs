@@ -197,9 +197,9 @@ namespace BlasClient
         }
 
         // Send this player's updated skin
-        public void sendPlayerSkin(string skin)
+        public void sendPlayerSkin(byte[] skin)
         {
-            Send(Encoding.UTF8.GetBytes(skin), 5, false);
+            Send(skin, 5, false);
         }
 
         // Send this player's introductory data
@@ -292,7 +292,11 @@ namespace BlasClient
         private void receivePlayerSkin(byte[] data)
         {
             int startIdx = getPlayerNameFromData(data, out string playerName);
-            string skin = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
+            byte[] skin = new byte[data.Length - startIdx];
+            for (int i = 0; i < skin.Length; i++)
+            {
+                skin[i] = data[i + startIdx];
+            }
 
             // Update specified player with new data
             Main.Multiplayer.playerSkinUpdated(playerName, skin);

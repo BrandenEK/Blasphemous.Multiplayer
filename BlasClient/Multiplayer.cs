@@ -262,11 +262,11 @@ namespace BlasClient
         }
 
         // Changed skin from menu selector
-        public void changeSkin(string skin)
+        public void changeSkin(byte[] skin)
         {
             if (connectedToServer)
             {
-                Log("Sending new player skin");
+                Log($"Sending new player skin ({skin.Length} bytes)");
                 client.sendPlayerSkin(skin);
             }
         }
@@ -338,12 +338,12 @@ namespace BlasClient
         }
 
         // Received skin data from server
-        public void playerSkinUpdated(string playerName, string skin)
+        public void playerSkinUpdated(string playerName, byte[] skin)
         {
             // As soon as received, will update skin - This isn't locked
             Log("Updating player skin for " + playerName);
             PlayerStatus player = getPlayerStatus(playerName);
-            player.skin.skinName = skin;
+            player.skin.createSkin(skin);
         }
 
         // Received enterScene data from server
@@ -378,7 +378,7 @@ namespace BlasClient
             if (response == 0)
             {
                 // Send all initial data
-                client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+                client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteSprite().texture.EncodeToPNG());
                 client.sendPlayerTeam(playerTeam);
 
                 // If already in game, send enter scene data & game progress

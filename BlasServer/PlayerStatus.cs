@@ -10,7 +10,7 @@ namespace BlasServer
         public float yPos;
         public bool facingDirection;
         public byte animation;
-        public string skin;
+        public byte[] skin;
 
         public string sceneName;
 
@@ -19,7 +19,7 @@ namespace BlasServer
             this.name = name;
             team = 1;
             sceneName = "";
-            skin = "";
+            skin = new byte[0];
         }
 
         public bool isInSameScene(PlayerStatus player)

@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
-using System.Collections.Generic;
 using Framework.Managers;
+using UnityEngine;
 
 namespace BlasClient.Patches
 {    
@@ -10,7 +10,8 @@ namespace BlasClient.Patches
     {
         public static void Postfix(string colorPaletteId)
         {
-            Main.Multiplayer.changeSkin(colorPaletteId);
+            Sprite newSkin = Core.ColorPaletteManager.GetColorPaletteById(colorPaletteId);
+            Main.Multiplayer.changeSkin(newSkin.texture.EncodeToPNG());
         }
     }
 }

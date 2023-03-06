@@ -161,7 +161,7 @@ namespace BlasServer
         private byte[] getSkinPacket(PlayerStatus player)
         {
             List<byte> bytes = addPlayerNameToData(player.name);
-            bytes.AddRange(Encoding.UTF8.GetBytes(player.skin));
+            bytes.AddRange(player.skin);
             return bytes.ToArray();
         }
         private byte[] getScenePacket(PlayerStatus player)
@@ -440,7 +440,7 @@ namespace BlasServer
         private void receivePlayerSkin(string playerIp, byte[] data)
         {
             PlayerStatus current = getCurrentPlayer(playerIp);
-            current.skin = Encoding.UTF8.GetString(data);
+            current.skin = data;
 
             sendPlayerSkin(playerIp);
         }

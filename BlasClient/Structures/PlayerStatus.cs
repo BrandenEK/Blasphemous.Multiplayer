@@ -15,7 +15,7 @@ namespace BlasClient.Structures
             currentScene = "";
             lastMapScene = "";
             team = 1;
-            skin = new SkinStatus("PENITENT_DEFAULT");
+            skin = new SkinStatus();
         }
     }
 }

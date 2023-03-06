@@ -78,19 +78,10 @@ namespace BlasClient.MonoBehaviours
             renderer.flipX = facingDirection;
         }
 
-        public void updateSkin(string skin)
+        public void updateSkin(Sprite skin)
         {
             renderer.enabled = true;
-
-            // Get skin texture
-            Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);
-            if (palette == null)
-            {
-                palette = Core.ColorPaletteManager.GetColorPaletteById("PENITENT_DEFAULT");
-                Main.Multiplayer.LogWarning($"Couldn't find skin {skin}.  Using default instead.");
-            }
-
-            renderer.material.SetTexture("_PaletteTex", palette.texture);
+            renderer.material.SetTexture("_PaletteTex", skin.texture);
         }
 
         // Gets the animator controller of an interactable object in the scene & plays special animation
