@@ -16,9 +16,10 @@ namespace BlasClient.Managers
         private List<GameObject> players = new List<GameObject>();
         private List<Text> nametags = new List<Text>();
 
-        private Transform canvas; // Optimize to not have to find these every scene change
+        // Not accessed directly, just store objects - they are set when first accessing
+        private Transform canvas;
         private GameObject textPrefab;
-        private RuntimeAnimatorController playerController;
+        private RuntimeAnimatorController animatorController;
 
         // Queued player updates
         private Dictionary<string, bool> queuedPlayers = new Dictionary<string, bool>();
@@ -42,19 +43,6 @@ namespace BlasClient.Managers
                 if (Main.Multiplayer.connectedPlayers[playerName].currentScene == scene)
                     addPlayer(playerName);
             }
-
-            // Find textPrefab
-            foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
-            {
-                if (obj.name == "PurgePoints") { textPrefab = obj.transform.GetChild(1).gameObject; break; }
-            }
-            // Find canvas parent
-            foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
-            {
-                if (c.name == "Game UI") { canvas = c.transform; break; }
-            }
-            // Find animator controller
-            if (Core.Logic.Penitent != null) playerController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
 
             // Add special animation checker to certain interactors
             int count = 0;
@@ -207,7 +195,7 @@ namespace BlasClient.Managers
 
             // Set up animations
             Animator anim = player.GetComponent<Animator>();
-            anim.runtimeAnimatorController = playerController;
+            anim.runtimeAnimatorController = getAnimatorController();
 
             // If in beginning room, add fake penitent controller
             if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
@@ -272,7 +260,7 @@ namespace BlasClient.Managers
                     if (playerStatus.specialAnimation > 0)
                     {
                         // Change back to regular animations
-                        anim.runtimeAnimatorController = playerController;
+                        anim.runtimeAnimatorController = getAnimatorController();
                         playerStatus.specialAnimation = 0;
                     }
                     anim.SetBool("IS_CROUCH", false);
@@ -325,13 +313,15 @@ namespace BlasClient.Managers
         // Instantiates a nametag object
         private void createNameTag(string name, bool friendlyTeam)
         {
-            if (canvas == null || textPrefab == null)
+            Transform parent = getCanvas(); GameObject text = getTextPrefab();
+
+            if (parent == null || text == null)
             {
                 Main.Multiplayer.LogWarning("Error: Failed to create nametag for " + name);
                 return;
             }
 
-            Text nametag = Object.Instantiate(textPrefab, canvas).GetComponent<Text>();
+            Text nametag = Object.Instantiate(text, parent).GetComponent<Text>();
             nametag.rectTransform.sizeDelta = new Vector2(100, 50);
             nametag.rectTransform.SetAsFirstSibling();
             nametag.name = name;
@@ -559,6 +549,43 @@ namespace BlasClient.Managers
                 else
                     queuedDirections.Add(playerName, direction);
             }
+        }
+
+        private Transform getCanvas()
+        {
+            if (canvas == null)
+            {
+                Main.Multiplayer.LogWarning("Canvas was null - Loading now");
+                foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
+                {
+                    if (c.name == "Game UI") { canvas = c.transform; break; }
+                }
+            }
+            return canvas;
+        }
+
+        private GameObject getTextPrefab()
+        {
+            if (textPrefab == null)
+            {
+                Main.Multiplayer.LogWarning("Text prefab was null - Loading now");
+                foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
+                {
+                    if (obj.name == "PurgePoints") { textPrefab = obj.transform.GetChild(1).gameObject; break; }
+                }
+            }
+            return textPrefab;
+        }
+
+        private RuntimeAnimatorController getAnimatorController()
+        {
+            if (animatorController == null)
+            {
+                Main.Multiplayer.LogWarning("Player animator controller was null - Loading now");
+                if (Core.Logic.Penitent != null)
+                    animatorController = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+            }
+            return animatorController;
         }
     }
 }
