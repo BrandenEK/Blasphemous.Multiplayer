@@ -7,20 +7,13 @@ using Tools.Level;
 using Tools.Level.Interactables;
 using BlasClient.Structures;
 using BlasClient.MonoBehaviours;
-using BlasClient.Data;
 
 namespace BlasClient.Managers
 {
     public class PlayerManager
     {
-        private List<GameObject> players = new List<GameObject>();
+        private List<OtherPenitent> players = new List<OtherPenitent>();
         private List<Text> nametags = new List<Text>();
-
-        // Not accessed directly, just store objects - they are set when first accessing
-        private Transform canvas;
-        private GameObject textPrefab;
-        private RuntimeAnimatorController penitentAnimator;
-        private Material penitentMaterial;
 
         // Queued player updates
         private Dictionary<string, bool> queuedPlayers = new Dictionary<string, bool>();
@@ -46,10 +39,10 @@ namespace BlasClient.Managers
             }
 
             // Load stored objects
-            getCanvas();
-            getTextPrefab();
-            getPenitentAnimator();
-            getPenitentMaterial();
+            Transform tempCanvas = storedCanvas;
+            GameObject tempText = storedTextPrefab;
+            RuntimeAnimatorController tempAnimator = storedPenitentAnimator;
+            Material tempMaterial = storedPenitentMaterial;
 
             // Add special animation checker to certain interactors
             int count = 0;
@@ -162,7 +155,16 @@ namespace BlasClient.Managers
                 string name = nametags[i].name;
 
                 // Get player with this name
-                GameObject player = name == Main.Multiplayer.playerName ? Core.Logic.Penitent.gameObject : getPlayerObject(name);
+                GameObject player = null;
+                if (name == Main.Multiplayer.playerName)
+                {
+                    player = Core.Logic.Penitent.gameObject;
+                }
+                else
+                {
+                    OtherPenitent penitent = getPlayerObject(name);
+                    if (penitent != null) player = penitent.gameObject;
+                }
                 if (player != null)
                 {
                     Vector3 viewPosition = Camera.main.WorldToViewportPoint(player.transform.position + Vector3.up * 3.1f);
@@ -190,15 +192,8 @@ namespace BlasClient.Managers
             // Create & setup new penitent object
             GameObject playerObject = new GameObject("_" + name);
             OtherPenitent penitent = playerObject.AddComponent<OtherPenitent>();
-            penitent.createPenitent(getPenitentAnimator(), getPenitentMaterial());
-
-            // Change to store the OtherPenitent in the list
-            players.Add(playerObject);
-
-
-
-            // Hide player object until skin texture is set - must be delayed
-            Main.Multiplayer.getPlayerStatus(name).skin.updateStatus = 2;
+            penitent.createPenitent(name, storedPenitentAnimator, storedPenitentMaterial);
+            players.Add(penitent);
 
             // If in beginning room, add fake penitent controller
             if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
@@ -214,11 +209,11 @@ namespace BlasClient.Managers
         // When a player leaves a scene, destroy the player object
         private void removePlayer(string name)
         {
-            GameObject player = getPlayerObject(name);
-            if (player != null)
+            OtherPenitent penitent = getPlayerObject(name);
+            if (penitent != null)
             {
-                players.Remove(player);
-                Object.Destroy(player);
+                players.Remove(penitent);
+                Object.Destroy(penitent.gameObject);
                 Main.Multiplayer.Log("Removed player object for " + name);
             }
             else
@@ -237,10 +232,10 @@ namespace BlasClient.Managers
         // When receiving a player position update, find the player and change its position
         private void updatePlayerPosition(string name, Vector2 position)
         {
-            GameObject player = getPlayerObject(name);
-            if (player != null)
+            OtherPenitent penitent = getPlayerObject(name);
+            if (penitent != null)
             {
-                player.transform.position = position;
+                penitent.updatePosition(position);
                 //Main.Multiplayer.Log("Updating player object position for " + name);
             }
             else
@@ -252,44 +247,11 @@ namespace BlasClient.Managers
         // When receiving a player position update, find the player and change its position
         private void updatePlayerAnimation(string name, byte animation)
         {
-            GameObject player = getPlayerObject(name);
-            PlayerStatus playerStatus = Main.Multiplayer.getPlayerStatus(name);
-            if (player != null)
+            OtherPenitent penitent = getPlayerObject(name);
+            if (penitent != null)
             {
-                Animator anim = player.GetComponent<Animator>();
-                if (animation < 240)
-                {
-                    // Regular animation
-                    if (playerStatus.specialAnimation > 0)
-                    {
-                        // Change back to regular animations
-                        anim.runtimeAnimatorController = getPenitentAnimator();
-                        playerStatus.specialAnimation = 0;
-                    }
-                    anim.SetBool("IS_CROUCH", false);
-                    //anim.SetBool("IS_DEAD") might need one for vertical attack
-                    // If anim is ladder climbing, set speed to 0
-
-                    // Set required parameters to keep player onject in this animation
-                    PlayerAnimState animState = AnimationStates.animations[animation];
-                    for (int i = 0; i < animState.parameterNames.Length; i++)
-                    {
-                        anim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
-                    }
-                    anim.Play(animState.name);
-                    //Main.Multiplayer.Log("Updating player object animation for " + name);
-                }
-                else
-                {
-                    // Special animation
-                    if (playSpecialAnimation(anim, animation))
-                    {
-                        playerStatus.specialAnimation = animation;
-                        Main.Multiplayer.Log("Playing special animation for " + name);
-                    }
-                    else
-                        Main.Multiplayer.LogWarning("Failed to play special animation for " + name);
-                }
+                penitent.updateAnimation(animation);
+                //Main.Multiplayer.Log("Updating player object animation for " + name);
             }
             else
             {
@@ -300,11 +262,10 @@ namespace BlasClient.Managers
         // When receiving a player direction update, find the player and change its direction
         private void updatePlayerDirection(string name, bool direction)
         {
-            GameObject player = getPlayerObject(name);
-            if (player != null)
+            OtherPenitent penitent = getPlayerObject(name);
+            if (penitent != null)
             {
-                SpriteRenderer render = player.GetComponent<SpriteRenderer>();
-                render.flipX = direction;
+                penitent.updateDirection(direction);
                 //Main.Multiplayer.Log("Updating player object direction for " + name);
             }
             else
@@ -316,7 +277,7 @@ namespace BlasClient.Managers
         // Instantiates a nametag object
         private void createNameTag(string name, bool friendlyTeam)
         {
-            Transform parent = getCanvas(); GameObject text = getTextPrefab();
+            Transform parent = storedCanvas; GameObject text = storedTextPrefab;
 
             if (parent == null || text == null)
             {
@@ -355,144 +316,19 @@ namespace BlasClient.Managers
         private void setSkinTexture(string name, string skin)
         {
             // Get player object with this name
-            GameObject player = getPlayerObject(name);
-            if (player == null)
+            OtherPenitent penitent = getPlayerObject(name);
+            if (penitent == null)
             {
                 Main.Multiplayer.LogWarning("Error: Can't update object skin for " + name);
                 return;
             }
 
-            // Make player visible
-            SpriteRenderer render = player.GetComponent<SpriteRenderer>();
-            render.enabled = true;
-
-            // Get skin texture for this player
-            Sprite palette = Core.ColorPaletteManager.GetColorPaletteById(skin);
-            if (palette == null)
-            {
-                palette = Core.ColorPaletteManager.GetColorPaletteById("PENITENT_DEFAULT");
-                if (palette == null)
-                {
-                    Main.Multiplayer.LogWarning("Error: Default skin couldn't be found");
-                    return;
-                }
-                Main.Multiplayer.LogWarning($"Couldn't find skin {skin}.  Using default instead.");
-            }
-
             Main.Multiplayer.Log("Setting skin texture for " + name);
-            render.material.SetTexture("_PaletteTex", palette.texture);
-        }
-
-        // Gets the animator controller of an interactable object in the scene & plays special animation
-        private bool playSpecialAnimation(Animator anim, byte type)
-        {
-            if (type == 240 || type == 241 || type == 242)
-            {
-                // Prie Dieu
-                PrieDieu priedieu = Object.FindObjectOfType<PrieDieu>();
-                if (priedieu == null)
-                    return false;
-
-                anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
-                if (type == 240)
-                {
-                    anim.SetTrigger("ACTIVATION");
-                }
-                else if (type == 241)
-                {
-                    anim.SetTrigger("KNEE_START");
-                }
-                else
-                {
-                    anim.Play("Stand Up");
-                }
-            }
-            else if (type == 243 || type == 244)
-            {
-                // Collectible item
-                CollectibleItem item = Object.FindObjectOfType<CollectibleItem>();
-                if (item == null)
-                    return false;
-
-                anim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
-                anim.Play(type == 244 ? "Floor Collection" : "Halfheight Collection");
-            }
-            else if (type == 245)
-            {
-                // Chest
-                Chest chest = Object.FindObjectOfType<Chest>();
-                if (chest == null)
-                    return false;
-
-                anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
-                anim.SetTrigger("USED");
-            }
-            else if (type == 246)
-            {
-                // Lever
-                Lever lever = Object.FindObjectOfType<Lever>();
-                if (lever == null)
-                    return false;
-
-                anim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
-                anim.SetTrigger("DOWN");
-            }
-            else if (type == 247 || type == 248 || type == 249)
-            {
-                // Door
-                Door door = Object.FindObjectOfType<Door>();
-                if (door == null)
-                    return false;
-
-                anim.runtimeAnimatorController = door.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
-                if (type == 247)
-                {
-                    anim.SetTrigger("OPEN_ENTER");
-                }
-                else if (type == 248)
-                {
-                    anim.SetTrigger("CLOSED_ENTER");
-                }
-                else
-                {
-                    anim.SetTrigger("KEY_ENTER");
-                }
-            }
-            else if (type == 250 || type == 251)
-            {
-                // Fake penitent
-                GameObject logic = GameObject.Find("LOGIC");
-                if (logic != null)
-                {
-                    anim.runtimeAnimatorController = logic.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
-                    anim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        // Finishes playing a special animation and returns to idle
-        public void finishSpecialAnimation(string playerName)
-        {
-            byte currentSpecialAnimation = Main.Multiplayer.getPlayerStatus(playerName).specialAnimation;
-            if (currentSpecialAnimation >= 247 && currentSpecialAnimation <= 249)
-            {
-                // If finished entering door, disable renderer
-                GameObject player = getPlayerObject(playerName);
-                if (player != null)
-                    player.GetComponent<SpriteRenderer>().enabled = false;
-            }
-
-            updatePlayerAnimation(playerName, 0);
+            penitent.updateSkin(skin);
         }
 
         // Finds a specified player in the scene
-        private GameObject getPlayerObject(string name)
+        private OtherPenitent getPlayerObject(string name)
         {
             for (int i = 0; i < players.Count; i++)
             {
@@ -554,52 +390,68 @@ namespace BlasClient.Managers
             }
         }
 
-        private Transform getCanvas()
+        private Transform m_canvas;
+        private Transform storedCanvas
         {
-            if (canvas == null)
+            get
             {
-                Main.Multiplayer.LogWarning("Canvas was null - Loading now");
-                foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
+                if (m_canvas == null)
                 {
-                    if (c.name == "Game UI") { canvas = c.transform; break; }
+                    Main.Multiplayer.LogWarning("Canvas was null - Loading now");
+                    foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
+                    {
+                        if (c.name == "Game UI") { m_canvas = c.transform; break; }
+                    }
                 }
+                return m_canvas;
             }
-            return canvas;
         }
 
-        private GameObject getTextPrefab()
+        private GameObject m_textPrefab;
+        private GameObject storedTextPrefab
         {
-            if (textPrefab == null)
+            get
             {
-                Main.Multiplayer.LogWarning("Text prefab was null - Loading now");
-                foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
+                if (m_textPrefab == null)
                 {
-                    if (obj.name == "PurgePoints") { textPrefab = obj.transform.GetChild(1).gameObject; break; }
+                    Main.Multiplayer.LogWarning("Text prefab was null - Loading now");
+                    foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
+                    {
+                        if (obj.name == "PurgePoints") { m_textPrefab = obj.transform.GetChild(1).gameObject; break; }
+                    }
                 }
+                return m_textPrefab;
             }
-            return textPrefab;
         }
 
-        private RuntimeAnimatorController getPenitentAnimator()
+        private RuntimeAnimatorController m_penitentAnimator;
+        private RuntimeAnimatorController storedPenitentAnimator
         {
-            if (penitentAnimator == null)
+            get
             {
-                Main.Multiplayer.LogWarning("Penitent animator controller was null - Loading now");
-                if (Core.Logic.Penitent != null)
-                    penitentAnimator = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+                if (m_penitentAnimator == null)
+                {
+                    Main.Multiplayer.LogWarning("Penitent animator controller was null - Loading now");
+                    if (Core.Logic.Penitent != null)
+                        m_penitentAnimator = Core.Logic.Penitent.Animator.runtimeAnimatorController;
+                }
+                return m_penitentAnimator;
             }
-            return penitentAnimator;
         }
 
-        private Material getPenitentMaterial()
+        private Material m_penitentMaterial;
+        private Material storedPenitentMaterial
         {
-            if (penitentMaterial == null)
+            get
             {
-                Main.Multiplayer.LogWarning("Penitent material was null - Loading now");
-                if (Core.Logic.Penitent != null)
-                    penitentMaterial = Core.Logic.Penitent.SpriteRenderer.material;
+                if (m_penitentMaterial == null)
+                {
+                    Main.Multiplayer.LogWarning("Penitent material was null - Loading now");
+                    if (Core.Logic.Penitent != null)
+                        m_penitentMaterial = Core.Logic.Penitent.SpriteRenderer.material;
+                }
+                return m_penitentMaterial;
             }
-            return penitentMaterial;
         }
     }
 }

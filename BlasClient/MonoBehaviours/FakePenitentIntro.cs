@@ -16,7 +16,7 @@ namespace BlasClient.MonoBehaviours
             if (anim.GetCurrentAnimatorStateInfo(0).IsName("FakePenitent end"))
             {
                 // Once the player reaches this animation, finish it and return to idle
-                Main.Multiplayer.finishedSpecialAnimation(gameObject.name.Substring(1));
+                gameObject.GetComponent<OtherPenitent>().finishSpecialAnimation();
             }
         }
     }
