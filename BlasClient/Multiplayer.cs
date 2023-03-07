@@ -332,7 +332,14 @@ namespace BlasClient
         public void playerSkinUpdated(string playerName, byte[] skin)
         {
             Log("Updating player skin for " + playerName);
-            playerList.setPlayerSkinTexture(playerName, skin);
+            UIController.instance.StartCoroutine(delaySkinUpdate());
+
+            IEnumerator delaySkinUpdate()
+            {
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                playerList.setPlayerSkinTexture(playerName, skin);
+            }
         }
 
         // Received enterScene data from server
