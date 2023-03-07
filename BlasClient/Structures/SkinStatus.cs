@@ -20,11 +20,22 @@ namespace BlasClient.Structures
 
         public void createSkin(byte[] skin)
         {
-            Texture2D tex = new Texture2D(256, 1, TextureFormat.RGB24, false);
-            tex.LoadRawTextureData(skin);
-            tex.filterMode = FilterMode.Point;
-            tex.Apply();
-            skinTexture = tex;
+            try
+            {
+                Main.Multiplayer.Log("Enter create func: " + skin.Length);
+                Texture2D tex = new Texture2D(256, 1, TextureFormat.RGB24, false);
+                tex.LoadRawTextureData(skin);
+                Main.Multiplayer.Log("After load raw");
+                tex.filterMode = FilterMode.Point;
+                tex.Apply();
+                Main.Multiplayer.Log("After apply");
+                skinTexture = tex;
+
+            }
+            catch (System.Exception e)
+            {
+                Main.Multiplayer.LogError("Failed to create skin tex: " + e.Message);
+            }
         }
     }
 }

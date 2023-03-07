@@ -8,7 +8,7 @@ namespace BlasClient.MonoBehaviours
 {
     public class OtherPenitent : MonoBehaviour
     {
-        private PlayerStatus penitentStatus;
+        private string penitentName;
 
         private SpriteRenderer renderer;
         private Animator anim;
@@ -17,8 +17,8 @@ namespace BlasClient.MonoBehaviours
         // Adds necessary components & initializes them
         public void createPenitent(string name, RuntimeAnimatorController animatorController, Material material)
         {
-            penitentStatus = Main.Multiplayer.getPlayerStatus(name);
-            penitentStatus.skin.updateStatus = 2;
+            penitentName = name;
+            Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(name, 2);
 
             // Rendering
             renderer = gameObject.AddComponent<SpriteRenderer>();
@@ -42,11 +42,11 @@ namespace BlasClient.MonoBehaviours
             if (animation < 240)
             {
                 // Regular animation
-                if (penitentStatus.specialAnimation > 0)
+                if (Main.Multiplayer.playerList.getPlayerSpecialAnimation(penitentName) > 0)
                 {
                     // Change back to regular animations
                     anim.runtimeAnimatorController = penitentAnimatorController;
-                    penitentStatus.specialAnimation = 0;
+                    Main.Multiplayer.playerList.setPlayerSpecialAnimation(penitentName, 0);
                 }
                 anim.SetBool("IS_CROUCH", false);
 
@@ -65,7 +65,7 @@ namespace BlasClient.MonoBehaviours
                 // Special animation
                 if (playSpecialAnimation(animation))
                 {
-                    penitentStatus.specialAnimation = animation;
+                    Main.Multiplayer.playerList.setPlayerSpecialAnimation(penitentName, animation);
                     Main.Multiplayer.Log("Playing special animation for " + name);
                 }
                 else
@@ -180,7 +180,7 @@ namespace BlasClient.MonoBehaviours
         // Finishes playing a special animation and returns to idle
         public void finishSpecialAnimation()
         {
-            byte currentSpecialAnimation = penitentStatus.specialAnimation;
+            byte currentSpecialAnimation = Main.Multiplayer.playerList.getPlayerSpecialAnimation(penitentName);
             if (currentSpecialAnimation >= 247 && currentSpecialAnimation <= 249)
             {
                 // If finished entering door, disable renderer

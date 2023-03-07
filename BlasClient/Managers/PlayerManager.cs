@@ -5,7 +5,6 @@ using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level;
 using Tools.Level.Interactables;
-using BlasClient.Structures;
 using BlasClient.MonoBehaviours;
 
 namespace BlasClient.Managers
@@ -32,9 +31,9 @@ namespace BlasClient.Managers
             destroyPlayers();
 
             // Create any players that are already in this scene
-            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+            foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
-                if (Main.Multiplayer.connectedPlayers[playerName].currentScene == scene)
+                if (Main.Multiplayer.playerList.getPlayerScene(playerName) == scene)
                     addPlayer(playerName);
             }
 
@@ -132,19 +131,19 @@ namespace BlasClient.Managers
             }
 
             // Check status of player skins and potentially update the textures
-            foreach (string name in Main.Multiplayer.connectedPlayers.Keys)
+            foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
-                SkinStatus playerSkin = Main.Multiplayer.connectedPlayers[name].skin;
-                if (playerSkin.updateStatus == 2)
+                byte currentSkinStatus = Main.Multiplayer.playerList.getPlayerSkinUpdateStatus(playerName);
+                if (currentSkinStatus == 2)
                 {
                     // Set that one update cycle has passed
-                    playerSkin.updateStatus = 1;
+                    Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(playerName, 1);
                 }
-                else if (playerSkin.updateStatus == 1)
+                else if (currentSkinStatus == 1)
                 {
                     // Set the player texture
-                    setSkinTexture(name, playerSkin.skinTexture);
-                    playerSkin.updateStatus = 0;
+                    setSkinTexture(playerName, Main.Multiplayer.playerList.getPlayerSkinTexture(playerName));
+                    Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(playerName, 0);
                 }
             }
 
@@ -201,7 +200,7 @@ namespace BlasClient.Managers
 
             // Set up name tag
             if (Main.Multiplayer.config.displayNametags)
-                createNameTag(name, Main.Multiplayer.getPlayerStatus(name).team == Main.Multiplayer.playerTeam);
+                createNameTag(name, Main.Multiplayer.playerList.getPlayerTeam(name) == Main.Multiplayer.playerTeam);
 
             Main.Multiplayer.Log("Created new player object for " + name);
         }
@@ -307,7 +306,7 @@ namespace BlasClient.Managers
         {
             for (int i = 0; i < nametags.Count; i++)
             {
-                bool friendlyTeam = nametags[i].name == Main.Multiplayer.playerName || Main.Multiplayer.playerTeam == Main.Multiplayer.getPlayerStatus(nametags[i].name).team;
+                bool friendlyTeam = nametags[i].name == Main.Multiplayer.playerName || Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(nametags[i].name);
                 nametags[i].GetComponent<Text>().color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
             }
         }

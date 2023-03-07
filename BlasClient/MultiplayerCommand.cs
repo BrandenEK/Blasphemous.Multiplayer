@@ -161,9 +161,9 @@ namespace BlasClient
 
             Write("Connected players:");
             Write(Main.Multiplayer.playerName + ": Team " + Main.Multiplayer.playerTeam);
-            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+            foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
-                Write(playerName + ": Team " + Main.Multiplayer.connectedPlayers[playerName].team);
+                Write(playerName + ": Team " + Main.Multiplayer.playerList.getPlayerTeam(playerName));
             }
         }
     }

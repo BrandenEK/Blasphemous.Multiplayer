@@ -23,13 +23,13 @@ namespace BlasClient
         public MapScreenManager mapScreenManager { get; private set; }
 
         // Game status
-        public Dictionary<string, PlayerStatus> connectedPlayers { get; private set; }
-        private List<string> interactedPersistenceObjects;
+        public PlayerList playerList { get; private set; }
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
         public byte playerTeam { get; private set; }
         public string serverIp => client.serverIp;
         public bool inRando => IsModLoaded("com.damocles.blasphemous.randomizer");
+        private List<string> interactedPersistenceObjects;
         private bool sentAllProgress;
 
         // Player status
@@ -62,7 +62,7 @@ namespace BlasClient
             // Initialize data
             config = FileUtil.loadConfig<Config>();
             PersistentStates.loadPersistentObjects();
-            connectedPlayers = new Dictionary<string, PlayerStatus>();
+            playerList = new PlayerList();
             interactedPersistenceObjects = new List<string>();
             playerName = "";
             playerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
@@ -98,19 +98,10 @@ namespace BlasClient
         {
             if (showNotification)
                 notificationManager.showNotification(Localize("dcon") + "!");
-            connectedPlayers.Clear();
+            playerList.ClearPlayers();
             playerManager.destroyPlayers();
             playerName = "";
             sentAllProgress = false;
-        }
-
-        public PlayerStatus getPlayerStatus(string playerName)
-        {
-            if (connectedPlayers.ContainsKey(playerName))
-                return connectedPlayers[playerName];
-
-            Log("Error: Player is not in the server: " + playerName);
-            return new PlayerStatus();
         }
 
         protected override void LevelLoaded(string oldLevel, string newLevel)
@@ -155,9 +146,9 @@ namespace BlasClient
         {
             if (Input.GetKeyDown(KeyCode.Keypad5))
             {
-                PlayerStatus test = new PlayerStatus();
-                test.currentScene = "D05Z02S06";
-                connectedPlayers.Add("Test", test);
+                //PlayerStatus test = new PlayerStatus();
+                //test.currentScene = "D05Z02S06";
+                //connectedPlayers.Add("Test", test);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
@@ -340,19 +331,14 @@ namespace BlasClient
         // Received skin data from server
         public void playerSkinUpdated(string playerName, byte[] skin)
         {
-            // As soon as received, will update skin - This isn't locked
             Log("Updating player skin for " + playerName);
-            PlayerStatus player = getPlayerStatus(playerName);
-            player.skin.createSkin(skin);
+            playerList.setPlayerSkinTexture(playerName, skin);
         }
 
         // Received enterScene data from server
         public void playerEnteredScene(string playerName, string scene)
         {
-            PlayerStatus playerStatus = getPlayerStatus(playerName);
-            playerStatus.currentScene = scene;
-            if (scene.Length == 9)
-                playerStatus.lastMapScene = scene;
+            playerList.setPlayerScene(playerName, scene);
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
                 playerManager.queuePlayer(playerName, true);
@@ -362,12 +348,10 @@ namespace BlasClient
         // Received leftScene data from server
         public void playerLeftScene(string playerName)
         {
-            PlayerStatus playerStatus = getPlayerStatus(playerName);
-
-            if (inLevel && Core.LevelManager.currentLevel.LevelName == playerStatus.currentScene)
+            if (inLevel && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
                 playerManager.queuePlayer(playerName, false);
 
-            playerStatus.currentScene = "";
+            playerList.setPlayerScene(playerName, "");
             mapScreenManager.queueMapUpdate();
         }
 
@@ -412,15 +396,13 @@ namespace BlasClient
             if (connected)
             {
                 // Add this player to the list of connected players
-                PlayerStatus newPlayer = new PlayerStatus();
-                connectedPlayers.Add(playerName, newPlayer);
+                playerList.AddPlayer(playerName);
             }
             else
             {
                 // Remove this player from the list of connected players
                 playerLeftScene(playerName);
-                if (connectedPlayers.ContainsKey(playerName))
-                    connectedPlayers.Remove(playerName);
+                playerList.RemovePlayer(playerName);
             }
             notificationManager.showNotification($"{playerName} {Localize(connected ? "join" : "leave")}!");
         }
@@ -437,10 +419,8 @@ namespace BlasClient
 
         public void playerTeamReceived(string playerName, byte team)
         {
-            // As soon as received, will update team - This isn't locked
             Log("Updating team number for " + playerName);
-            PlayerStatus player = getPlayerStatus(playerName);
-            player.team = team;
+            playerList.setPlayerTeam(playerName, team);
             if (inLevel)
                 updatePlayerColors();
         }

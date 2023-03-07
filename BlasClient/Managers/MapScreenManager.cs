@@ -83,27 +83,28 @@ namespace BlasClient.Managers
             }
 
             // Create new marks for each player
-            foreach (string playerName in Main.Multiplayer.connectedPlayers.Keys)
+            foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
-                PlayerStatus playerStatus = Main.Multiplayer.connectedPlayers[playerName];
+                string playerScene = Main.Multiplayer.playerList.getPlayerScene(playerName), playerLastMapScene = Main.Multiplayer.playerList.getPlayerMapScene(playerName);
+                byte playerTeam = Main.Multiplayer.playerList.getPlayerTeam(playerName);
 
                 // Only show other teams if config option
-                if (playerStatus.team != Main.Multiplayer.playerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
+                if (playerTeam != Main.Multiplayer.playerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
                     continue;
 
                 // Calling this function with -1000 will calculate the center position of the scene
-                Core.NewMapManager.GetCellKeyFromPosition(playerStatus.lastMapScene, new Vector2(-1000, 0));
+                Core.NewMapManager.GetCellKeyFromPosition(playerLastMapScene, new Vector2(-1000, 0));
                 Vector2 cellPosition = getActivePlayerPosition();
                 if (cellPosition.x < 0 || cellPosition.y < 0)
                     return;
 
                 // Calculate which icon to use
                 Sprite icon = playerSprites[0];
-                if (playerStatus.currentScene != playerStatus.lastMapScene)
+                if (playerScene != playerLastMapScene)
                 {
                     icon = playerSprites[1];
                 }
-                else if (playerStatus.team != Main.Multiplayer.playerTeam)
+                else if (playerTeam != Main.Multiplayer.playerTeam)
                 {
                     icon = playerSprites[2];
                 }
