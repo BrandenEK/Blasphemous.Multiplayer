@@ -253,12 +253,11 @@ namespace BlasClient
         }
 
         // Changed skin from menu selector
-        public void changeSkin(byte[] skin)
+        public void changeSkin(string skin)
         {
             if (connectedToServer)
             {
-                Log($"Sending new player skin ({skin.Length} bytes)");
-                client.sendPlayerSkin(skin);
+                sendNewSkin(skin);
             }
         }
 
@@ -305,6 +304,23 @@ namespace BlasClient
                 currentTimeBeforeSendAnimation = totalTimeBeforeSendAnimation;
                 client.sendPlayerAnimation(animation);
             }
+        }
+
+        // Gets the byte[] that stores either an original skin name or a custom skin texture
+        public void sendNewSkin(string skinName)
+        {
+            bool custom = true;
+            for (int i = 0; i < originalSkins.Length; i++)
+            {
+                if (skinName == originalSkins[i])
+                {
+                    custom = false; break;
+                }
+            }
+
+            byte[] data = custom ? Core.ColorPaletteManager.GetColorPaletteById(skinName).texture.EncodeToPNG() : System.Text.Encoding.UTF8.GetBytes(skinName);
+            Log($"Sending new player skin ({data.Length} bytes)");
+            client.sendPlayerSkin(data);
         }
 
         // Received position data from server
@@ -369,7 +385,7 @@ namespace BlasClient
             if (response == 0)
             {
                 // Send all initial data
-                client.sendPlayerSkin(Core.ColorPaletteManager.GetCurrentColorPaletteSprite().texture.GetRawTextureData());
+                sendNewSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
                 client.sendPlayerTeam(playerTeam);
 
                 // If already in game, send enter scene data & game progress
@@ -483,5 +499,27 @@ namespace BlasClient
         }
 
         public override void NewGame() { }
+
+        private string[] originalSkins = new string[]
+        {
+            "PENITENT_DEFAULT",
+            "PENITENT_ENDING_A",
+            "PENITENT_ENDING_B",
+            "PENITENT_OSSUARY",
+            "PENITENT_BACKER",
+            "PENITENT_DELUXE",
+            "PENITENT_ALMS",
+            "PENITENT_PE01",
+            "PENITENT_PE02",
+            "PENITENT_PE03",
+            "PENITENT_BOSSRUSH",
+            "PENITENT_DEMAKE",
+            "PENITENT_ENDING_C",
+            "PENITENT_SIERPES",
+            "PENITENT_ISIDORA",
+            "PENITENT_BOSSRUSH_S",
+            "PENITENT_GAMEBOY",
+            "PENITENT_KONAMI"
+        };
     }
 }
