@@ -14,7 +14,7 @@ namespace BlasClient.Managers
     {
         // Only enabled when processing & applying the queued progress updates
         public static bool updatingProgress;
-        public enum ProgressType { Bead, Prayer, Relic, Heart, Collectible, QuestItem, PlayerStat, SwordSkill, MapCell, Flag, PersistentObject, Teleport, ChurchDonation }
+        public enum ProgressType { Bead, Prayer, Relic, Heart, Collectible, QuestItem, PlayerStat, SwordSkill, MapCell, Flag, PersistentObject, Teleport, ChurchDonation, MiriamStatus }
 
         private List<ProgressUpdate> queuedProgressUpdates = new List<ProgressUpdate>();
         private PersistentObject[] scenePersistentObjects = new PersistentObject[0];
@@ -130,13 +130,17 @@ namespace BlasClient.Managers
                         Core.Alms.DEBUG_SetTearsGiven(tears); // Not ideal
                     }
                     return;
+                case ProgressType.MiriamStatus:
+                    if (Main.Multiplayer.config.syncSettings.worldState)
+                        updateMiriamStatus(progress.id);
+                    return;
                 default:
                     Main.Multiplayer.Log("Error: Progress type doesn't exist: " + progress.type); return;
             }
         }
 
         // Called when receiving a stat upgrade
-        public void upgradeStat(string stat, byte level)
+        private void upgradeStat(string stat, byte level)
         {
             Attribute attribute;
             switch (stat)
@@ -157,6 +161,17 @@ namespace BlasClient.Managers
             {
                 attribute.Upgrade();
             }
+        }
+
+        // Called when receiving miriam status update
+        private void updateMiriamStatus(string status)
+        {
+            if (status == "START")
+                Core.Events.StartMiriamQuest();
+            else if (status == "FINISH")
+                Core.Events.FinishMiriamQuest();
+            else if (status == "D02Z03S24" || status == "D03Z03S19" || status == "D04Z04S02" || status == "D05Z01S24" || status == "D06Z01S26")
+                Core.Events.SetCurrentPersistentState(null, false, status);
         }
 
         // Called when sending all data upon connecting to server and loading game
@@ -212,6 +227,12 @@ namespace BlasClient.Managers
             Core.SpawnManager.GetCurrentPersistentState("intro", false);
             // Church donations
             Main.Multiplayer.obtainedGameProgress("Tears", ProgressType.ChurchDonation, (byte)(Core.Alms.TearsGiven / 1000));
+            // Miriam status
+            if (Core.Events.IsMiriamQuestStarted)
+                Main.Multiplayer.obtainedGameProgress("START", ProgressType.MiriamStatus, 0);
+            if (Core.Events.IsMiriamQuestFinished)
+                Main.Multiplayer.obtainedGameProgress("FINISH", ProgressType.MiriamStatus, 0);
+            Core.Events.GetCurrentPersistentState("intro", false);
 
             Main.Multiplayer.DisableFileLogging = false;
         }

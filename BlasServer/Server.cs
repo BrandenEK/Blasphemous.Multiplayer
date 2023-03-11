@@ -566,7 +566,12 @@ namespace BlasServer
                 // Church donation
                 Core.displayCustom($"Received new tear donation from {current.name}: {progressValue}", ConsoleColor.Green);
             }
-            
+            else if (progressType == 13)
+            {
+                // Miriam status
+                Core.displayCustom($"Received new miriam status from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+
             sendPlayerProgress(playerIp, progressType, progressValue, progressId);
         }
 

@@ -250,6 +250,68 @@ namespace BlasClient.Patches
         }
     }
 
+    // Miriam status
+
+    // Send miriam closed portal
+    [HarmonyPatch(typeof(EventManager), "EndMiriamPortalAndReturn")]
+    public class EventManagerMiriamPortal_Patch
+    {
+        public static void Prefix(EventManager __instance)
+        {
+            if (__instance.AreInMiriamLevel() && !ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
+            {
+                Main.Multiplayer.obtainedGameProgress(__instance.MiriamCurrentScenePortal, ProgressManager.ProgressType.MiriamStatus, 0);
+            }
+        }
+    }
+
+    // Send miriam quest start
+    [HarmonyPatch(typeof(EventManager), "StartMiriamQuest")]
+    public class EventManagerMiriamStart_Patch
+    {
+        public static void Postfix(bool __result)
+        {
+            if (__result && !ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
+            {
+                Main.Multiplayer.obtainedGameProgress("START", ProgressManager.ProgressType.MiriamStatus, 0);
+            }
+        }
+    }
+
+    // Send miriam quest finish
+    [HarmonyPatch(typeof(EventManager), "FinishMiriamQuest")]
+    public class EventManagerMiriamFinish_Patch
+    {
+        public static void Postfix(bool __result)
+        {
+            if (__result && !ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
+            {
+                Main.Multiplayer.obtainedGameProgress("FINISH", ProgressManager.ProgressType.MiriamStatus, 0);
+            }
+        }
+    }
+
+    // Receive closed portal
+    [HarmonyPatch(typeof(EventManager), "SetCurrentPersistentState")]
+    public class EventManagerMiriamReceive_Patch
+    {
+        public static bool Prefix(PersistentManager.PersistentData data, string dataPath, List<string> ___MiriamClosedPortals)
+        {
+            if (data == null)
+            {
+                // Called specially - close specified portal
+                if (!___MiriamClosedPortals.Contains(dataPath))
+                    ___MiriamClosedPortals.Add(dataPath);
+                return false;
+            }
+            else
+            {
+                // Called normally
+                return true;
+            }
+        }
+    }
+
     // Persistent objects
 
     // Each type has three methods:
@@ -806,6 +868,23 @@ namespace BlasClient.Patches
             {
                 if (FlagStates.getFlagState(flag) != null && ___flags[flag].value)
                     Main.Multiplayer.obtainedGameProgress(flag, ProgressManager.ProgressType.Flag, 0);
+            }
+            return false;
+        }
+    }
+
+    // Miriam status
+    [HarmonyPatch(typeof(EventManager), "GetCurrentPersistentState")]
+    public class MiriamIntro_Patch
+    {
+        public static bool Prefix(string dataPath, List<string> ___MiriamClosedPortals)
+        {
+            // Calling this with 'intro' means it should send all closed portals
+            if (dataPath != "intro") return true;
+
+            foreach (string portal in ___MiriamClosedPortals)
+            {
+                Main.Multiplayer.obtainedGameProgress(portal, ProgressManager.ProgressType.MiriamStatus, 0);
             }
             return false;
         }
