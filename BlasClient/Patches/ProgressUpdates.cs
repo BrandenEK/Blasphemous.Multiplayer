@@ -123,11 +123,17 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(Attribute), "Upgrade")]
     public class AttributeUpgrade_Patch
     {
-        public static void Postfix(Attribute __instance)
+        public static bool Prefix(Attribute __instance)
         {
+            // If receiving upgrade, then just upgrade and skip send
             if (ProgressManager.updatingProgress)
-                return;
+                return true;
 
+            // If shouldn't upgrade because received upgrade from same room, skip upgrade and skip send
+            if (!Main.Multiplayer.CanObtainStatUpgrades)
+                return false;
+
+            // If you can upgrade and found this naturally, upgrade and send
             string type = null;
             if (__instance.GetType() == typeof(Life)) type = "LIFE";
             else if (__instance.GetType() == typeof(Fervour)) type = "FERVOUR";
@@ -139,6 +145,7 @@ namespace BlasClient.Patches
 
             if (type != null && Main.Multiplayer.config.syncSettings.playerStats)
                 Main.Multiplayer.obtainedGameProgress(type, ProgressManager.ProgressType.PlayerStat, (byte)__instance.GetUpgrades());
+            return true;
         }
     }
 

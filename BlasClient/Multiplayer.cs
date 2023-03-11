@@ -456,8 +456,11 @@ namespace BlasClient
             // Set stat obtained status
             if (inLevel && progressType == (byte)ProgressManager.ProgressType.PlayerStat && !inRando && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
             {
-                CanObtainStatUpgrades = false;
-                LogWarning("Received stat upgrade from player in same room!");
+                if (progressId == "LIFE" || progressId == "FERVOUR" || progressId == "STRENGTH" || progressId == "MEACULPA")
+                {
+                    CanObtainStatUpgrades = false;
+                    LogWarning("Received stat upgrade from player in the same room!");
+                }
             }
         }
 
