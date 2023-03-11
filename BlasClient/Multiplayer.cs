@@ -39,6 +39,11 @@ namespace BlasClient
         private float totalTimeBeforeSendAnimation = 0.5f;
         private float currentTimeBeforeSendAnimation = 0;
 
+        // Set to false when receiving a stat upgrade from someone in the same room & not in randomizer
+        // Set to true upon loading a new scene
+        // Must be true to naturally obtain stat upgrades and send them
+        public bool CanObtainStatUpgrades { get; set; }
+
         public bool connectedToServer
         {
             get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
@@ -110,6 +115,7 @@ namespace BlasClient
             notificationManager.createMessageBox();
             playerManager.loadScene(newLevel);
             progressManager.sceneLoaded(newLevel);
+            CanObtainStatUpgrades = true;
 
             if (inLevel && connectedToServer)
             {
@@ -446,6 +452,13 @@ namespace BlasClient
             // Show notification for new progress
             if (playerName != "*")
                 notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
+
+            // Set stat obtained status
+            if (inLevel && progressType == (byte)ProgressManager.ProgressType.PlayerStat && !inRando && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
+            {
+                CanObtainStatUpgrades = false;
+                LogWarning("Received stat upgrade from player in same room!");
+            }
         }
 
         public void playerTeamReceived(string playerName, byte team)
