@@ -117,12 +117,7 @@ namespace BlasClient
                 Log("Entering new scene: " + newLevel);
 
                 // Send initial position, animation, & direction before scene enter
-                lastPosition = getCurrentPosition();
-                client.sendPlayerPostition(lastPosition.x, lastPosition.y);
-                lastAnimation = 0;
-                client.sendPlayerAnimation(lastAnimation);
-                lastDirection = getCurrentDirection();
-                client.sendPlayerDirection(lastDirection);
+                SendAllLocationData();
 
                 client.sendPlayerEnterScene(newLevel);
                 sendAllProgress();
@@ -323,6 +318,18 @@ namespace BlasClient
             client.sendPlayerSkin(data);
         }
 
+        // Sends the current position/animation/direction when first entering a scene or joining server
+        // Make sure you are connected to server first
+        private void SendAllLocationData()
+        {
+            lastPosition = getCurrentPosition();
+            client.sendPlayerPostition(lastPosition.x, lastPosition.y);
+            lastAnimation = 0;
+            client.sendPlayerAnimation(lastAnimation);
+            lastDirection = getCurrentDirection();
+            client.sendPlayerDirection(lastDirection);
+        }
+
         // Received position data from server
         public void playerPositionUpdated(string playerName, float xPos, float yPos)
         {
@@ -391,6 +398,7 @@ namespace BlasClient
                 // If already in game, send enter scene data & game progress
                 if (inLevel)
                 {
+                    SendAllLocationData();
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
                     playerManager.createPlayerNameTag();
                     sendAllProgress();
