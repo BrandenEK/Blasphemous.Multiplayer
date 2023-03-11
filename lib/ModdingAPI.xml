@@ -4,6 +4,70 @@
         <name>ModdingAPI</name>
     </assembly>
     <members>
+        <member name="T:ModdingAPI.ModCommand">
+            <summary>
+            A command that can be used in the console for this mod/>
+            </summary>
+        </member>
+        <member name="P:ModdingAPI.ModCommand.CommandName">
+            <summary>
+            The prefix used to call this command
+            </summary>
+        </member>
+        <member name="P:ModdingAPI.ModCommand.AllowUppercase">
+            <summary>
+            Whether to keep uppercase letters in the command or convert everything to lowercase
+            </summary>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateParameterList(System.String[],System.Int32)">
+            <summary>
+            Validates the number of parameters passed in and displays an error if incorrect
+            </summary>
+            <param name="parameters">The list of paramaters</param>
+            <param name="amount">The correct amount of parameters</param>
+            <returns>Whether the parameter list is valid or not"</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateIntParameter(System.String,System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Parses a parameter into an integer and validates its value
+            </summary>
+            <param name="parameter">The parameter passed in</param>
+            <param name="minValue">The minimum acceptable value</param>
+            <param name="maxValue">The maxmimum acceptable value</param>
+            <param name="result">The resulting integer</param>
+            <returns>Whether the parameter is valid or not</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateFloatParameter(System.String,System.Single,System.Single,System.Single@)">
+            <summary>
+            Parses a parameter into a float and validates its value
+            </summary>
+            <param name="parameter">The parameter passed in</param>
+            <param name="minValue">The minimum acceptable value</param>
+            <param name="maxValue">The maxmimum acceptable value</param>
+            <param name="result">The resulting float</param>
+            <returns>Whether the parameter is valid or not</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.ValidateStringParameter(System.String,System.Int32,System.Int32)">
+            <summary>
+            Validates the length of a string parameter
+            </summary>
+            <param name="parameter">The parameter passed in</param>
+            <param name="minLength">The minimum acceptable length</param>
+            <param name="maxLength">The maxmimum acceptable length</param>
+            <returns>Whether the parameter is valid or not</returns>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.Write(System.String)">
+            <summary>
+            Writes a line of text to the console
+            </summary>
+            <param name="text">The text to write</param>
+        </member>
+        <member name="M:ModdingAPI.ModCommand.AddSubCommands">
+            <summary>
+            Initializes a mapping of command names to functionality
+            </summary>
+            <returns>The command mapping</returns>
+        </member>
         <member name="T:ModdingAPI.FileUtil">
             <summary>
             A class for handling file IO related operations
@@ -47,14 +111,15 @@
             <param name="output">The data dictionary, or null if the file deosn't exist</param>
             <returns>Whether the data was loaded successfully or not</returns>
         </member>
-        <member name="M:ModdingAPI.FileUtil.loadDataImages(System.String,System.Int32,System.Int32,System.Int32,System.Boolean,UnityEngine.Sprite[]@)">
+        <member name="M:ModdingAPI.FileUtil.loadDataImages(System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.Boolean,UnityEngine.Sprite[]@)">
             <summary>
             Loads an array of images from an image file in the data folder
             </summary>
             <param name="fileName">The name of the data file</param>
-            <param name="spriteSize">The pixel size of each square sprite in the image</param>
-            <param name="pixelsPerUnit">The pixels per unit of each square sprite in the image</param>
-            <param name="border">The border size of each square sprite in the image</param>
+            <param name="spriteWidth">The pixel width of each sprite in the image</param>
+            <param name="spriteHeight">The pixel height of each sprite in the image</param>
+            <param name="pixelsPerUnit">The pixels per unit of each sprite in the image</param>
+            <param name="border">The border size of each sprite in the image</param>
             <param name="pointFilter">Whether a point filter should be applied to the image</param>
             <param name="output">The data images, or null if the file deosn't exist</param>
             <returns>Whether the data was loaded successfully or not</returns>
@@ -160,6 +225,12 @@
             </summary>
             <param name="command">The new command to be added</param>
         </member>
+        <member name="M:ModdingAPI.Mod.RegisterPenitence(ModdingAPI.ModPenitence)">
+            <summary>
+            Registers a penitence that can be selected from the Brotherhood statue
+            </summary>
+            <param name="penitence">The new penitence to be added</param>
+        </member>
         <member name="M:ModdingAPI.Mod.IsModLoaded(System.String)">
             <summary>
             Checks whether a specific mod has been loaded or not
@@ -198,69 +269,56 @@
             </summary>
             <param name="message">The text to display</param>
         </member>
-        <member name="T:ModdingAPI.ModCommand">
+        <member name="T:ModdingAPI.ModPenitence">
             <summary>
-            A command that can be used in the console for this mod/>
+            An abstract representation of a penitence
             </summary>
         </member>
-        <member name="P:ModdingAPI.ModCommand.CommandName">
+        <member name="P:ModdingAPI.ModPenitence.Id">
             <summary>
-            The prefix used to call this command
+            The unique id of this penitence (PEXX...)
             </summary>
         </member>
-        <member name="P:ModdingAPI.ModCommand.AllowUppercase">
+        <member name="P:ModdingAPI.ModPenitence.Name">
             <summary>
-            Whether to keep uppercase letters in the command or convert everything to lowercase
+            The descriptive name of this penitence
             </summary>
         </member>
-        <member name="M:ModdingAPI.ModCommand.ValidateParameterList(System.String[],System.Int32)">
+        <member name="P:ModdingAPI.ModPenitence.Description">
             <summary>
-            Validates the number of parameters passed in and displays an error if incorrect
+            The full description of this penitence
             </summary>
-            <param name="parameters">The list of paramaters</param>
-            <param name="amount">The correct amount of parameters</param>
-            <returns>Whether the parameter list is valid or not"</returns>
         </member>
-        <member name="M:ModdingAPI.ModCommand.ValidateIntParameter(System.String,System.Int32,System.Int32,System.Int32@)">
+        <member name="P:ModdingAPI.ModPenitence.ItemIdToGive">
             <summary>
-            Parses a parameter into an integer and validates its value
+            The ID of the item to give for completing the penitence
             </summary>
-            <param name="parameter">The parameter passed in</param>
-            <param name="minValue">The minimum acceptable value</param>
-            <param name="maxValue">The maxmimum acceptable value</param>
-            <param name="result">The resulting integer</param>
-            <returns>Whether the parameter is valid or not</returns>
         </member>
-        <member name="M:ModdingAPI.ModCommand.ValidateFloatParameter(System.String,System.Single,System.Single,System.Single@)">
+        <member name="P:ModdingAPI.ModPenitence.ItemTypeToGive">
             <summary>
-            Parses a parameter into a float and validates its value
+            The type of the item to give for completing the penitence
             </summary>
-            <param name="parameter">The parameter passed in</param>
-            <param name="minValue">The minimum acceptable value</param>
-            <param name="maxValue">The maxmimum acceptable value</param>
-            <param name="result">The resulting float</param>
-            <returns>Whether the parameter is valid or not</returns>
         </member>
-        <member name="M:ModdingAPI.ModCommand.ValidateStringParameter(System.String,System.Int32,System.Int32)">
+        <member name="M:ModdingAPI.ModPenitence.Activate">
             <summary>
-            Validates the length of a string parameter
+            Should perform any necessary actions to activate this penitence's functionality
             </summary>
-            <param name="parameter">The parameter passed in</param>
-            <param name="minLength">The minimum acceptable length</param>
-            <param name="maxLength">The maxmimum acceptable length</param>
-            <returns>Whether the parameter is valid or not</returns>
         </member>
-        <member name="M:ModdingAPI.ModCommand.Write(System.String)">
+        <member name="M:ModdingAPI.ModPenitence.Deactivate">
             <summary>
-            Writes a line of text to the console
+            Should perform any necessary actions to deactivate this penitence's functionality
             </summary>
-            <param name="text">The text to write</param>
         </member>
-        <member name="M:ModdingAPI.ModCommand.AddSubCommands">
+        <member name="M:ModdingAPI.ModPenitence.#ctor(UnityEngine.Sprite,UnityEngine.Sprite,UnityEngine.Sprite,UnityEngine.Sprite,UnityEngine.Sprite,UnityEngine.Sprite)">
             <summary>
-            Initializes a mapping of command names to functionality
+            Creates a new custom penitence and stores all of its images
             </summary>
-            <returns>The command mapping</returns>
+            <param name="inProgress">The menu icon for an activated penitence</param>
+            <param name="completed">The menu icon for a completed penitence</param>
+            <param name="abandoned">The menu icon for an abandoned penitence</param>
+            <param name="gameplay">The gameplay icon for an activated penitence</param>
+            <param name="chooseSelected">The selected icon when choosing a penitence</param>
+            <param name="chooseUnselected">The unselected icon when chooseing a penitence</param>
         </member>
         <member name="T:ModdingAPI.ModPersistentData">
             <summary>

@@ -178,7 +178,7 @@ namespace BlasClient.Managers
         public void destroyPlayers()
         {
             for (int i = 0; i < players.Count; i++)
-                Object.Destroy(players[i]);
+                Object.Destroy(players[i].gameObject);
             players.Clear();
             for (int i = 0; i < nametags.Count; i++)
                 Object.Destroy(nametags[i].gameObject);

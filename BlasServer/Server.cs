@@ -319,6 +319,7 @@ namespace BlasServer
             if (response > 0)
                 return;
 
+            PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
             {
                 if (playerIp != ip)
@@ -330,6 +331,12 @@ namespace BlasServer
                     if (connectedPlayers[ip].sceneName != "")
                     {
                         Send(playerIp, getScenePacket(connectedPlayers[ip]), 2);
+                        if (current.isInSameScene(connectedPlayers[ip]))
+                        {
+                            Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
+                            Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
+                            Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                        }
                     }
                 }
             }
