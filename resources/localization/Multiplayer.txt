@@ -1,3 +1,71 @@
-keys:conerr~con~dcon~refuse~refpas~refban~refmax~refnam~refunk~join~leave~itmnot~stnot~sklnot~stlife~stferv~stmeas~stmeat~stbead~stfknm~stfkhl
-en:Failed to connect to~Connected to server~Disconnected from server~Connection refused~Incorrect password~You have been banned~Server is full~Player name is already taken~Unknown reason~has joined the server~has left the server~has obtained the~has upgraded the~has unlocked the~maximum health~maximum fervour~mea culpa strength~mea culpa tier~maximum bead slots~maximum flasks~flask strength
-zh:无法连接至~已连接服务器~已从服务器断开连接~连接被服务器拒绝~密码错误~你已进入服务器黑名单~服务器已满员~该名称已被占用~未知错误~已加入服务器~已离开服务器~已获得~已升级~已解锁~血量上限~蓝量上限~孽刃攻击力~孽刃等级~念珠槽位~血瓶数量~血瓶回复量
+lang: en
+conerr: Failed to connect to
+con: Connected to server
+dcon: Disconnected from server
+refuse: Connection refused
+refpas: Incorrect password
+refban: You have been banned
+refmax: Server is full
+refipa: IP address is already connected
+refnam: Player name is already taken
+refunk: Unknown reason
+join: has joined the server
+leave: has left the server
+itmnot: has obtained the
+stnot: has upgraded the
+sklnot: has unlocked the
+stlife: maximum health
+stferv: maximum fervour
+stmeas: mea culpa strength
+stmeat: mea culpa tier
+stbead: maximum bead slots
+stfknm: maximum flasks
+stfkhl: flask strength
+
+lang: es
+conerr: Error al conectarse a
+con: Te has conectado al servidor
+dcon: Te has desconectado del servidor
+refuse: Conexión rechazada
+refpas: Contraseña incorrecta
+refban: Te han expulsado
+refmax: El servidor está lleno
+refipa: La dirección IP ya está conectada
+refnam: Ya hay alguien con ese nombre
+refunk: Motivo desconocido
+join: se ha unido al servidor
+leave: ha salido del servidor
+itmnot: ha obtenido
+stnot: ha aumentado
+sklnot: ha desbloqueado
+stlife: la salud máxima
+stferv: el fervor máximo
+stmeas: el poder de Mea Culpa
+stmeat: el nivel de Mea Culpa
+stbead: el máximo de cuentas de rosario
+stfknm: el máximo de matraces biliares
+stfkhl: el poder de los matraces
+
+lang: zh
+conerr: 无法连接至
+con: 已连接服务器
+dcon: 已从服务器断开连接
+refuse: 连接被服务器拒绝
+refpas: 密码错误
+refban: 你已进入服务器黑名单
+refmax: 服务器已满员
+refipa: 已连接该IP地址
+refnam: 该名称已被占用
+refunk: 未知错误
+join: 已加入服务器
+leave: 已离开服务器
+itmnot: 已获得
+stnot: 已升级
+sklnot: 已解锁
+stlife: 血量上限
+stferv: 蓝量上限
+stmeas: 孽刃攻击力
+stmeat: 孽刃等级
+stbead: 念珠槽位
+stfknm: 血瓶数量
+stfkhl: 血瓶回复量
