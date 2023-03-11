@@ -28,12 +28,8 @@
 - All player stats (Max health / Max fervour / Strength / Mea Culpa level / Max flasks / Flask level / Bead slots)
 - All unlocked sword skills
 - All revealed map cells
-- Most world state progress (Bosses defeated / Gates opened / Cherubs freed / Teleports unlocked / Questline progress / etc. )
-
-### Things that don't sync yet
-
+- All world state progress (Bosses defeated / Gates opened / Cherubs freed / Teleports unlocked / Questline progress / etc. )
 - Church donation amount
-- Most npc questlines
 
 ### Things that will probably never sync
 
