@@ -107,6 +107,7 @@ namespace BlasClient.Data
             new FlagState("ABNEGATION_RIGHT_EYE", null),
             new FlagState("ABNEGATION_EYES_RETRIEVED", null),
             new FlagState("CRISANTA_LIBERATED", null),
+            new FlagState("CRISANTA_HIGHWILLS", null),
 
             new FlagState("SANTOS_DOOR_OPENED", "has opened Jibrael's door"), // Amanecidas
             new FlagState("SANTOS_AMANECIDA_LOCATION1_ACTIVATED", "has activated an Amanecida"),

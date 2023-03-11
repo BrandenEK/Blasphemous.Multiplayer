@@ -500,7 +500,7 @@ namespace BlasClient
             interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
         }
 
-        // Reset list of interacted persitent objects
+        // Reset list of interacted persistent objects
         public override void ResetGame()
         {
             interactedPersistenceObjects.Clear();
