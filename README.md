@@ -8,6 +8,7 @@
 - [Connecting](https://github.com/BrandenEK/Blasphemous-Multiplayer#connecting)
 - [Available commands](https://github.com/BrandenEK/Blasphemous-Multiplayer#available-commands)
 - [Configuration settings](https://github.com/BrandenEK/Blasphemous-Multiplayer#configuration-settings)
+- [Translations](https://github.com/BrandenEK/Blasphemous-Multiplayer#translations)
 
 ---
 
@@ -100,3 +101,11 @@ However, the client must have a network connection to the machine running the se
 | enableFriendlyFire | Allow players on the same team to damage each other | false |
 | team | The id of the team to play on (1-10) | 1 |
 | syncSettings | Which types of progression will be sent & received to & from the server | All enabled |
+
+---
+
+## Translations
+
+This mod is available in these other languages in addition to English:
+- Spanish (Thanks to Rodol J. "ConanCimmerio" Pérez (Ro))
+- Chinese (Thanks to NewbieElton)
