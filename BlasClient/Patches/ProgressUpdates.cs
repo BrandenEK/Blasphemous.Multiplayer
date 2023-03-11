@@ -144,7 +144,7 @@ namespace BlasClient.Patches
             else if (__instance.GetType() == typeof(FlaskHealth)) type = "FLASKHEALTH";
 
             if (type != null && Main.Multiplayer.config.syncSettings.playerStats)
-                Main.Multiplayer.obtainedGameProgress(type, ProgressManager.ProgressType.PlayerStat, (byte)__instance.GetUpgrades());
+                Main.Multiplayer.obtainedGameProgress(type, ProgressManager.ProgressType.PlayerStat, (byte)(__instance.GetUpgrades() + 1));
             return true;
         }
     }
@@ -855,11 +855,11 @@ namespace BlasClient.Patches
         }
     }
 
-    // Flags
+    // Flags & Miriam status
     [HarmonyPatch(typeof(EventManager), "GetCurrentPersistentState")]
     public class EventManagerIntro_Patch
     {
-        public static bool Prefix(string dataPath, Dictionary<string, FlagObject> ___flags)
+        public static bool Prefix(string dataPath, Dictionary<string, FlagObject> ___flags, List<string> ___MiriamClosedPortals)
         {
             // Calling this with 'intro' means it should send all set flags
             if (dataPath != "intro") return true;
@@ -869,19 +869,6 @@ namespace BlasClient.Patches
                 if (FlagStates.getFlagState(flag) != null && ___flags[flag].value)
                     Main.Multiplayer.obtainedGameProgress(flag, ProgressManager.ProgressType.Flag, 0);
             }
-            return false;
-        }
-    }
-
-    // Miriam status
-    [HarmonyPatch(typeof(EventManager), "GetCurrentPersistentState")]
-    public class MiriamIntro_Patch
-    {
-        public static bool Prefix(string dataPath, List<string> ___MiriamClosedPortals)
-        {
-            // Calling this with 'intro' means it should send all closed portals
-            if (dataPath != "intro") return true;
-
             foreach (string portal in ___MiriamClosedPortals)
             {
                 Main.Multiplayer.obtainedGameProgress(portal, ProgressManager.ProgressType.MiriamStatus, 0);

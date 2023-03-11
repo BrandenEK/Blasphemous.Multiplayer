@@ -449,9 +449,10 @@ namespace BlasClient
             // Apply the progress update
             progressManager.receiveProgress(progressId, progressType, progressValue);
 
+            if (playerName == "*") return;
+
             // Show notification for new progress
-            if (playerName != "*")
-                notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
+            notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
 
             // Set stat obtained status
             if (inLevel && progressType == (byte)ProgressManager.ProgressType.PlayerStat && !inRando && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))

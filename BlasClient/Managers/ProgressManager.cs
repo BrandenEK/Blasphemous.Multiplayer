@@ -232,7 +232,6 @@ namespace BlasClient.Managers
                 Main.Multiplayer.obtainedGameProgress("START", ProgressType.MiriamStatus, 0);
             if (Core.Events.IsMiriamQuestFinished)
                 Main.Multiplayer.obtainedGameProgress("FINISH", ProgressType.MiriamStatus, 0);
-            Core.Events.GetCurrentPersistentState("intro", false);
 
             Main.Multiplayer.DisableFileLogging = false;
         }

@@ -179,13 +179,13 @@ namespace BlasClient.Managers
         {
             for (int i = 0; i < players.Count; i++)
             {
-                if (players[i].gameObject != null)
+                if (players[i] != null)
                     Object.Destroy(players[i].gameObject);
             }
             players.Clear();
             for (int i = 0; i < nametags.Count; i++)
             {
-                if (nametags[i].gameObject != null)
+                if (nametags[i] != null)
                     Object.Destroy(nametags[i].gameObject);
             }
             nametags.Clear();
