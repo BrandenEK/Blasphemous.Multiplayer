@@ -102,7 +102,7 @@ namespace BlasClient
         public void onDisconnect(bool showNotification)
         {
             if (showNotification)
-                notificationManager.showNotification(Localize("dcon") + "!");
+                notificationManager.showNotification(Localize("dcon"));
             playerList.ClearPlayers();
             playerManager.destroyPlayers();
             playerName = "";
@@ -410,7 +410,7 @@ namespace BlasClient
                     sendAllProgress();
                 }
 
-                notificationManager.showNotification(Localize("con") + "!");
+                notificationManager.showNotification(Localize("con"));
                 return;
             }
 
@@ -441,7 +441,7 @@ namespace BlasClient
                 playerLeftScene(playerName);
                 playerList.RemovePlayer(playerName);
             }
-            notificationManager.showNotification($"{playerName} {Localize(connected ? "join" : "leave")}!");
+            notificationManager.showNotification($"{playerName} {Localize(connected ? "join" : "leave")}");
         }
 
         public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)

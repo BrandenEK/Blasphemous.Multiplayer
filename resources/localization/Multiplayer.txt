@@ -1,7 +1,7 @@
 lang: en
 conerr: Failed to connect to
-con: Connected to server
-dcon: Disconnected from server
+con: Connected to server!
+dcon: Disconnected from server!
 refuse: Connection refused
 refpas: Incorrect password
 refban: You have been banned
@@ -9,8 +9,8 @@ refmax: Server is full
 refipa: IP address is already connected
 refnam: Player name is already taken
 refunk: Unknown reason
-join: has joined the server
-leave: has left the server
+join: has joined the server!
+leave: has left the server!
 itmnot: has obtained the
 stnot: has upgraded the
 sklnot: has unlocked the

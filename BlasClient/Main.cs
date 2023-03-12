@@ -3,13 +3,13 @@
 namespace BlasClient
 {
     [BepInPlugin(MOD_ID, MOD_NAME, MOD_VERSION)]
-    [BepInDependency("com.damocles.blasphemous.modding-api", "1.1.1")]
+    [BepInDependency("com.damocles.blasphemous.modding-api", "1.2.0")]
     [BepInProcess("Blasphemous.exe")]
     public class Main : BaseUnityPlugin
     {
         public const string MOD_ID = "com.damocles.blasphemous.multiplayer";
         public const string MOD_NAME = "Multiplayer";
-        public const string MOD_VERSION = "1.0.0";
+        public const string MOD_VERSION = "Beta";
 
         public static Multiplayer Multiplayer;
 
