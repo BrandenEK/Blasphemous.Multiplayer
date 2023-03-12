@@ -16,7 +16,7 @@
 
 - See other players as you both move around the world of Cvstodia
 - Sync items, stats, skills, and other game progress across all players
-- Compatible with randomizer (Make sure to play on the same seed)
+- Compatible with randomizer (Make sure to use the same seed and settings)
 - [Coming soon] Enable PvP to fight other players
 
 ---
@@ -55,7 +55,7 @@
 
 ## Connecting
 
-First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect SERVER NAME [PASSWORD]``` command
+First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
 <br>
 However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding or Hamachi (https://vpn.net/)
 
