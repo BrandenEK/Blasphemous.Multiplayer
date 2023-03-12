@@ -9,7 +9,7 @@ namespace BlasClient
     {
         public const string MOD_ID = "com.damocles.blasphemous.multiplayer";
         public const string MOD_NAME = "Multiplayer";
-        public const string MOD_VERSION = "Beta";
+        public const string MOD_VERSION = "1.0.0";
 
         public static Multiplayer Multiplayer;
 
