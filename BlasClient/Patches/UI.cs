@@ -51,4 +51,29 @@ namespace BlasClient.Patches
             return false;
         }
     }
+
+    // Remove confessor icons from map once beaten
+    [HarmonyPatch(typeof(NewMapManager), "GetAllMarks")]
+    public class MapManagerConfessor_Patch
+    {
+        public static void Prefix(NewMapManager __instance, MapData ___CurrentMap)
+        {
+            if (Core.Events.GetFlag("CONFESSOR_1_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(-100, -13));
+            if (Core.Events.GetFlag("CONFESSOR_2_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(-480, 96));
+            if (Core.Events.GetFlag("CONFESSOR_3_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(-660, -170));
+            if (Core.Events.GetFlag("CONFESSOR_4_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(-880, -4));
+            if (Core.Events.GetFlag("CONFESSOR_5_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(260, 42));
+            if (Core.Events.GetFlag("CONFESSOR_6_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(280, 10));
+            if (Core.Events.GetFlag("CONFESSOR_7_ARENACOMPLETED")) RemoveConfessorMarker(new Vector2(0, 120));
+
+            void RemoveConfessorMarker(Vector2 position)
+            {
+                CellKey cellKey = __instance.GetCellKeyFromPosition(position);
+                if (___CurrentMap.CellsByCellKey.ContainsKey(cellKey))
+                {
+                    ___CurrentMap.CellsByCellKey[cellKey].Type = EditorMapCellData.CellType.Normal;
+                }
+            }
+        }
+    }
 }

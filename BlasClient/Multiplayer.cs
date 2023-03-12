@@ -153,7 +153,7 @@ namespace BlasClient
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                
+
             }
 
             if (inLevel && connectedToServer && Core.Logic.Penitent != null)

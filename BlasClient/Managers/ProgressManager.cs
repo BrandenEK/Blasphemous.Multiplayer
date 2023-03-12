@@ -113,7 +113,9 @@ namespace BlasClient.Managers
                     return;
                 case ProgressType.Flag:
                     if (Main.Multiplayer.config.syncSettings.worldState)
+                    {
                         Core.Events.SetFlag(progress.id, progress.value == 0, false);
+                    }
                     return;
                 case ProgressType.PersistentObject:
                     if (Main.Multiplayer.config.syncSettings.worldState)
