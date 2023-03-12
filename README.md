@@ -16,7 +16,7 @@
 
 - See other players as you both move around the world of Cvstodia
 - Sync items, stats, skills, and other game progress across all players
-- Compatible with randomizer (Make sure to play on the same seed)
+- Compatible with randomizer (Make sure to use the same seed and settings)
 - [Coming soon] Enable PvP to fight other players
 
 ---
