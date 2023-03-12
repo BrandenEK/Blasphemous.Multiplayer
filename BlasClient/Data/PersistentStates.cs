@@ -290,6 +290,7 @@ namespace BlasClient.Data
                 new PersistenceState("61a55d1e-5da3-413d-8d29-5b3e4232fb9e", "D03Z03S06", 3), // CR
                 new PersistenceState("06138bc6-5f81-48a2-83ee-a9092a8ef3c0", "D03Z03S08", 3),
                 new PersistenceState("a0234103-70b4-4b45-8851-e1a29a2a95d1", "D03Z03S09", 3),
+                new PersistenceState("6a55a345-2ece-4797-b2f4-fd98f0237c0d", "D03Z03S15", 5), // GT
                 new PersistenceState("51018c78-4120-4255-b205-0d65bcdd33d9", "D03Z03S07", 8), // BW
 
                 // Bridge

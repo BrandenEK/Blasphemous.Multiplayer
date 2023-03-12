@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using BlasClient.Structures;
 using BlasClient.Data;
 using Tools.Level.Interactables;
-using Framework.Managers;
 
 namespace BlasClient.MonoBehaviours
 {
@@ -194,7 +192,7 @@ namespace BlasClient.MonoBehaviours
         private void Update()
         {
             AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
-            if (state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike")))
+            if (state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall")))
             {
                 anim.enabled = false;
             }
