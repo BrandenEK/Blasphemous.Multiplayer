@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ModdingAPI;
+using ModdingAPI.Commands;
 
 namespace BlasClient
 {

@@ -69,3 +69,27 @@ stmeat: 孽刃等级
 stbead: 念珠槽位
 stfknm: 血瓶数量
 stfkhl: 血瓶回复量
+
+lang: fr
+conerr: Impossible de se connecter à
+con: Connecté au serveur
+dcon: Déconnecté du serveur
+refuse: Connexion refusée
+refpas: Mot de passe incorrect
+refban: Vous avez été banni
+refmax: Le serveur est complet
+refipa: Déjà connecté à l'adresse IP
+refnam: Nom de joueur déjà pris
+refunk: Raison inconnue
+join: a rejoint le serveur
+leave: a quitté le serveur
+itmnot: a obtenu
+stnot: a amélioré
+sklnot: a débloqué
+stlife: vie maximum
+stferv: ferveur maximum
+stmeas: amélioration de mea culpa
+stmeat: amélioration de sanctuaire
+stbead: nombre de perles maximum
+stfknm: nombre de flasques maximum
+stfkhl: force des flasques
