@@ -57,7 +57,7 @@
 
 First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
 <br>
-However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding or Hamachi (https://vpn.net/)
+However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding, Hamachi (https://vpn.net/), or ZeroTier (https://www.zerotier.com/)
 
 ---
 
@@ -109,3 +109,4 @@ However, the client must have a network connection to the machine running the se
 This mod is available in these other languages in addition to English:
 - Spanish (Thanks to Rodol J. "ConanCimmerio" Pérez (Ro))
 - Chinese (Thanks to NewbieElton)
+- French  (Thanks to Rocher)
