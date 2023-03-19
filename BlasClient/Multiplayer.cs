@@ -523,7 +523,7 @@ namespace BlasClient
             interactedPersistenceObjects.Clear();
         }
 
-        public override void NewGame() { }
+        public override void NewGame(bool NGPlus) { }
 
         private string[] originalSkins = new string[]
         {

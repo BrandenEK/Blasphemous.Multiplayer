@@ -560,10 +560,11 @@
             Called by the modding API whenever the game is reset
             </summary>
         </member>
-        <member name="M:ModdingAPI.PersistentMod.NewGame">
+        <member name="M:ModdingAPI.PersistentMod.NewGame(System.Boolean)">
             <summary>
             Called by the modding API whenever a new game is started
             </summary>
+            <param name="NGPlus">Whether the new game has been started in NG+ or not</param>
         </member>
         <member name="P:ModdingAPI.PersistentMod.PersistentID">
             <summary>
