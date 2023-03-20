@@ -102,6 +102,9 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
+                // Dont send upgraded versions of the chalice
+                if (questItem.id == "QI76" || questItem.id == "QI77") return;
+
                 Main.Multiplayer.obtainedGameProgress(questItem.id, ProgressManager.ProgressType.QuestItem, 0);
             }
         }
@@ -113,6 +116,9 @@ namespace BlasClient.Patches
         {
             if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.inventoryItems)
             {
+                // Dont remove versions of the chalice
+                if (questItem.id == "QI75" || questItem.id == "QI76" || questItem.id == "QI77") return;
+
                 Main.Multiplayer.obtainedGameProgress(questItem.id, ProgressManager.ProgressType.QuestItem, 1);
             }
         }

@@ -110,10 +110,10 @@ namespace BlasClient.Data
             new FlagState("CRISANTA_HIGHWILLS", null),
 
             new FlagState("SANTOS_DOOR_OPENED", "has opened Jibrael's door"), // Amanecidas
-            new FlagState("SANTOS_AMANECIDA_LOCATION1_ACTIVATED", "has activated an Amanecida"),
-            new FlagState("SANTOS_AMANECIDA_LOCATION2_ACTIVATED", "has activated an Amanecida"),
-            new FlagState("SANTOS_AMANECIDA_LOCATION3_ACTIVATED", "has activated an Amanecida"),
-            new FlagState("SANTOS_AMANECIDA_LOCATION4_ACTIVATED", "has activated an Amanecida"),
+            new FlagState("SANTOS_AMANECIDA_LOCATION1_ACTIVATED", "has activated an Amanecida location"),
+            new FlagState("SANTOS_AMANECIDA_LOCATION2_ACTIVATED", "has activated an Amanecida location"),
+            new FlagState("SANTOS_AMANECIDA_LOCATION3_ACTIVATED", "has activated an Amanecida location"),
+            new FlagState("SANTOS_AMANECIDA_LOCATION4_ACTIVATED", "has activated an Amanecida location"),
             new FlagState("SANTOS_GATE_OPENED", null),
             new FlagState("SANTOS_LAUDES_ACTIVATED", null),
 
