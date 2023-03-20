@@ -452,7 +452,9 @@ namespace BlasClient.Data
                 new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D20Z01S03", 1), // CI
                 new PersistenceState("98eafe95-57de-4d04-b28e-1219e7ef39e8", "D20Z01S09", 1),
                 new PersistenceState("1a0f3713-ea34-4595-b408-c2efdaae2a3a", "D20Z01S06", 5), // GT
+                new PersistenceState("1a0f3713-ea34-4595-b408-c2efdaae2a3a", "D20Z01S07", 5),
                 new PersistenceState("693246da-1b7c-44ae-8a5b-320cc073b2fe", "D20Z01S06", 7), // ST
+                new PersistenceState("693246da-1b7c-44ae-8a5b-320cc073b2fe", "D20Z01S07", 7),
                 new PersistenceState("eddbfcd5-d416-4b61-9257-2dc57ee61a9b", "D20Z01S11", 8), // BW
 
                 // Mourning and Havoc
