@@ -77,7 +77,7 @@ However, the client must have a network connection to the machine running the se
 ---
 
 ## Configuration settings
-- These settings can be modified in the 'multiplayer.cfg' file generated in the same folder as the application
+- These settings can be modified in the 'multiplayer.cfg' file located in the "Modding/config" folder
 
 ### Server:
 
