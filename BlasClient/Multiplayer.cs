@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
 using Gameplay.UI;
+using Tools.Level.Interactables;
 using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
@@ -128,6 +129,9 @@ namespace BlasClient
                 client.sendPlayerEnterScene(newLevel);
                 sendAllProgress();
             }
+
+            if (newLevel == "D06Z01S01")
+                FixElevatorLevers();
         }
 
         protected override void LevelUnloaded(string oldLevel, string newLevel)
@@ -481,6 +485,47 @@ namespace BlasClient
             // This is the first time loading a scene after connecting - send all player progress
             Log("Sending all player progress");
             progressManager.loadAllProgress();
+        }
+
+        // If loading the rooftops elevator scene, set levers if they have been unlocked by someone else
+        private void FixElevatorLevers()
+        {
+            Lever[] levers = Object.FindObjectsOfType<Lever>();
+            Lever downLever = null, UpLever = null;
+
+            // Find the levers in the scene
+            foreach (Lever lever in levers)
+            {
+                if (lever.GetPersistenID() == "fc76ec10-a6e2-4465-ade0-642520e84efc")
+                    downLever = lever;
+                else if (lever.GetPersistenID() == "14b5e15b-2178-4677-8a54-468d5496037d")
+                    UpLever = lever;
+            }
+            if (UpLever == null || downLever == null)
+            {
+                LogWarning("Could not find elevator levers!");
+                return;
+            }
+
+            // Check where the elevator is & what positions are unlocked, and maybe set levers up
+            if (Core.Events.GetFlag("ELEVATOR_POSITION_1"))
+            {
+                downLever.SetLeverDownInstantly();
+                if (Core.Events.GetFlag("ELEVATOR_POSITION_2_UNLOCKED"))
+                    UpLever.SetLeverUpInstantly();
+            }
+            else if (Core.Events.GetFlag("ELEVATOR_POSITION_2"))
+            {
+                downLever.SetLeverUpInstantly();
+                if (Core.Events.GetFlag("ELEVATOR_POSITION_3_UNLOCKED"))
+                    UpLever.SetLeverUpInstantly();
+            }
+            else if (Core.Events.GetFlag("ELEVATOR_POSITION_3"))
+            {
+                downLever.SetLeverUpInstantly();
+                if (Core.Events.GetFlag("ELEVATOR_FULL_UNLOCKED"))
+                    UpLever.SetLeverUpInstantly();
+            }
         }
 
         // Add a new persistent object that has been interacted with
