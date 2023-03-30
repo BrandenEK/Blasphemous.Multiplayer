@@ -148,9 +148,10 @@ namespace BlasClient.Patches
             else if (__instance.GetType() == typeof(BeadSlots)) type = "BEADSLOTS";
             else if (__instance.GetType() == typeof(Flask)) type = "FLASK";
             else if (__instance.GetType() == typeof(FlaskHealth)) type = "FLASKHEALTH";
+            byte upgradeLevel = (byte)(__instance.GetUpgrades() + 1);
 
-            if (type != null && Main.Multiplayer.config.syncSettings.playerStats)
-                Main.Multiplayer.obtainedGameProgress(type, ProgressManager.ProgressType.PlayerStat, (byte)(__instance.GetUpgrades() + 1));
+            if (type != null && upgradeLevel > 1 && Main.Multiplayer.config.syncSettings.playerStats)
+                Main.Multiplayer.obtainedGameProgress(type, ProgressManager.ProgressType.PlayerStat, upgradeLevel);
             return true;
         }
     }
