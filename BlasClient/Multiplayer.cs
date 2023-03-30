@@ -328,6 +328,15 @@ namespace BlasClient
             client.sendPlayerSkin(data);
         }
 
+        // Creates and sends a new attack to other players in the same scene
+        public void SendNewAttack(byte attack)
+        {
+            if (connectedToServer)
+            {
+                client.sendPlayerAttack(attack);
+            }
+        }
+
         // Sends the current position/animation/direction when first entering a scene or joining server
         // Make sure you are connected to server first
         private void SendAllLocationData()
@@ -475,6 +484,11 @@ namespace BlasClient
             playerList.setPlayerTeam(playerName, team);
             if (inLevel)
                 updatePlayerColors();
+        }
+
+        public void playerAttackReceived(string playerName, byte attack)
+        {
+            LogWarning("Received attack from " + playerName);
         }
 
         private void sendAllProgress()

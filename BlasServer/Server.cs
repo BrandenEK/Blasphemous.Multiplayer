@@ -103,6 +103,8 @@ namespace BlasServer
                         receivePlayerProgress(e.ip, data); break;
                     case 9:
                         receivePlayerTeam(e.ip, data); break;
+                    case 10:
+                        receivePlayerAttack(e.ip, data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -192,6 +194,12 @@ namespace BlasServer
         {
             List<byte> bytes = addPlayerNameToData(player.name);
             bytes.Add(player.team);
+            return bytes.ToArray();
+        }
+        private byte[] getAttackPacket(PlayerStatus player, byte attack)
+        {
+            List<byte> bytes = addPlayerNameToData(player.name);
+            bytes.Add(attack);
             return bytes.ToArray();
         }
 
@@ -393,6 +401,20 @@ namespace BlasServer
             }
         }
 
+        // Send a player attack
+        private void sendPlayerAttack(string playerIp, byte attack)
+        {
+            PlayerStatus current = getCurrentPlayer(playerIp);
+            foreach (string ip in connectedPlayers.Keys)
+            {
+                if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
+                {
+                    // Send this player's attack
+                    Send(ip, getAttackPacket(current, attack), 10);
+                }
+            }
+        }
+
         #endregion Send functions
 
         #region Receive functions
@@ -583,6 +605,12 @@ namespace BlasServer
 
             sendPlayerTeam(playerIp);
             Core.removeUnusedGameData(connectedPlayers);
+        }
+
+        // Received a player's attack
+        private void receivePlayerAttack(string playerIp, byte[] data)
+        {
+            sendPlayerAttack(playerIp, data[0]);
         }
 
         #endregion Receive functions

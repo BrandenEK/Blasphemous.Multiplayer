@@ -147,6 +147,8 @@ namespace BlasClient
                         receivePlayerProgress(data); break;
                     case 9:
                         receivePlayerTeam(data); break;
+                    case 10:
+                        receivePlayerAttack(data); break;
                     default:
                         Main.Multiplayer.Log($"Data type '{type}' is not valid"); break;
                 }
@@ -234,6 +236,12 @@ namespace BlasClient
         public void sendPlayerTeam(byte team)
         {
             Send(new byte[] { team }, 9, false);
+        }
+
+        // Send this player's attack
+        public void sendPlayerAttack(byte attack)
+        {
+            Send(new byte[] { attack }, 10, false); // Needs to send more info
         }
 
         #endregion Send functions
@@ -353,6 +361,16 @@ namespace BlasClient
 
             // Update player's team
             Main.Multiplayer.playerTeamReceived(playerName, team);
+        }
+
+        // Received a player's attack
+        private void receivePlayerAttack(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            byte attack = data[startIdx];
+
+            // Process attack
+            Main.Multiplayer.playerAttackReceived(playerName, attack); // Process more data
         }
 
         #endregion Receive functions

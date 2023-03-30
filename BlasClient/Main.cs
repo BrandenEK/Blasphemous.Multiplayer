@@ -11,7 +11,7 @@ namespace BlasClient
         public const string MOD_NAME = "Multiplayer";
         public const string MOD_VERSION = "1.0.2";
 
-        public static Multiplayer Multiplayer;
+        public static Multiplayer Multiplayer { get; private set; }
 
         private void Start()
         {
