@@ -24,6 +24,7 @@ namespace BlasClient.Patches
             if (animator.name == "Body")
             {
                 Main.Multiplayer.attackManager.SwordAttack(0);
+                return true;
             }
             return false;
         }
@@ -47,6 +48,7 @@ namespace BlasClient.Patches
             if (animator.name == "Body")
             {
                 Main.Multiplayer.attackManager.SwordAttack(0);
+                return true;
             }
             return false;
         }
@@ -70,6 +72,7 @@ namespace BlasClient.Patches
             if (animator.name == "Body")
             {
                 Main.Multiplayer.attackManager.SwordAttack(0);
+                return true;
             }
             return false;
         }
@@ -99,6 +102,7 @@ namespace BlasClient.Patches
             if (animator.name == "Body")
             {
                 Main.Multiplayer.attackManager.SwordAttack(0);
+                return true;
             }
             return false;
         }
@@ -182,6 +186,7 @@ namespace BlasClient.Patches
             if (animator.name == "Body")
             {
                 Main.Multiplayer.attackManager.SwordAttack(0);
+                return true;
             }
             return false;
         }

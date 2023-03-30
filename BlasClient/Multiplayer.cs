@@ -493,6 +493,7 @@ namespace BlasClient
         public void playerAttackReceived(string playerName, byte attack)
         {
             LogWarning("Received attack from " + playerName);
+            attackManager.TakeHit(attack);
         }
 
         private void sendAllProgress()
