@@ -8,7 +8,7 @@ namespace BlasClient.Patches
     {
         public static void Postfix()
         {
-            Main.Multiplayer.SendNewAttack(0);
+            //Main.Multiplayer.SendNewAttack(0);
         }
     }
 }

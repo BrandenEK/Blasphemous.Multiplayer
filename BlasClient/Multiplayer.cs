@@ -22,6 +22,7 @@ namespace BlasClient
         public ProgressManager progressManager { get; private set; }
         public NotificationManager notificationManager { get; private set; }
         public MapScreenManager mapScreenManager { get; private set; }
+        public AttackManager attackManager { get; private set; }
 
         // Game status
         public PlayerList playerList { get; private set; }
@@ -63,6 +64,7 @@ namespace BlasClient
             progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
             mapScreenManager = new MapScreenManager();
+            attackManager = new AttackManager();
             client = new Client();
 
             // Initialize data
@@ -116,6 +118,7 @@ namespace BlasClient
             notificationManager.createMessageBox();
             playerManager.loadScene(newLevel);
             progressManager.sceneLoaded(newLevel);
+            attackManager.sceneLoaded();
             CanObtainStatUpgrades = true;
 
             if (inLevel && connectedToServer)
@@ -145,6 +148,7 @@ namespace BlasClient
 
             inLevel = false;
             playerManager.unloadScene();
+            attackManager.sceneUnloaded();
         }
 
         protected override void LateUpdate()
