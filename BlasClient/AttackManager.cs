@@ -10,8 +10,8 @@ namespace BlasClient.Managers
 
         private void OnPlayerAttack(PenitentAttack attacker)
         {
-            Main.Multiplayer.LogError("Attacking");
-            Main.Multiplayer.SendNewAttack(0);
+            //Main.Multiplayer.LogError("Attacking");
+            //Main.Multiplayer.SendNewAttack(0);
         }
 
         public void sceneLoaded()
@@ -23,6 +23,11 @@ namespace BlasClient.Managers
         {
             if (attacker != null)
                 attacker.OnAttackTriggered -= OnPlayerAttack;
+        }
+
+        public void SwordAttack(byte type)
+        {
+            Main.Multiplayer.LogError("Attacking");
         }
     }
 }

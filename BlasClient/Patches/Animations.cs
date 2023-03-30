@@ -19,7 +19,14 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(AirAttackBehaviour), "OnStateEnter")]
     public class AirAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.attackManager.SwordAttack(0);
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(AirAttackBehaviour), "OnStateUpdate")]
     public class AirAttackBehaviourUpdate_Patch
@@ -35,7 +42,14 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(AirUpwardAttackBehaviour), "OnStateEnter")]
     public class AirUpwardAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.attackManager.SwordAttack(0);
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(AirUpwardAttackBehaviour), "OnStateUpdate")]
     public class AirUpwardAttackBehaviourUpdate_Patch
@@ -51,7 +65,14 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(AttackBehaviour), "OnStateEnter")]
     public class AttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.attackManager.SwordAttack(0);
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(AttackBehaviour), "OnStateUpdate")]
     public class AttackBehaviourUpdate_Patch
@@ -73,7 +94,14 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(ChargedAttackBehaviour), "OnStateEnter")]
     public class ChargedAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.attackManager.SwordAttack(0);
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(ChargedAttackBehaviour), "OnStateUpdate")]
     public class ChargedAttackBehaviourUpdate_Patch
@@ -149,7 +177,14 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(GroundUpwardAttackBehaviour), "OnStateEnter")]
     public class GroundUpwardAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.attackManager.SwordAttack(0);
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(GroundUpwardAttackBehaviour), "OnStateUpdate")]
     public class GroundUpwardAttackBehaviourUpdate_Patch
