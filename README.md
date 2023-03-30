@@ -1,4 +1,7 @@
 # Blasphemous Multiplayer
+![Release version](https://img.shields.io/github/v/release/BrandenEK/Blasphemous-Multiplayer)
+![Last commit](https://img.shields.io/github/last-commit/BrandenEK/Blasphemous-Multiplayer?color=important)
+![Downloads](https://img.shields.io/github/downloads/BrandenEK/Blasphemous-Multiplayer/total?color=success)
 
 ## Table of Contents
 
