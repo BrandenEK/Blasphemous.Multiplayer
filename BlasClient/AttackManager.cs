@@ -1,5 +1,6 @@
 ﻿using Framework.Managers;
 using Gameplay.GameControllers.Entities;
+using Gameplay.GameControllers.Penitent;
 using Gameplay.GameControllers.Penitent.Attack;
 
 namespace BlasClient.Managers
@@ -28,14 +29,19 @@ namespace BlasClient.Managers
         public void SwordAttack(byte type)
         {
             Main.Multiplayer.LogError("Attacking");
+            Main.Multiplayer.SendNewAttack(0);
         }
 
         public void TakeHit(byte attack)
         {
+            Penitent penitent = Core.Logic.Penitent;
+            if (penitent == null) return;
+
             Hit hit = new Hit()
             {
+                AttackingEntity = penitent.gameObject,
                 DamageAmount = 20,
-                Force = 1,
+                //Force = 1,
                 DamageElement = DamageArea.DamageElement.Normal,
                 DamageType = DamageArea.DamageType.Normal,
                 Unparriable = true,
@@ -44,7 +50,7 @@ namespace BlasClient.Managers
                 // Sound
             };
 
-            Core.Logic.Penitent.Damage(hit);
+            penitent.Damage(hit);
         }
     }
 }
