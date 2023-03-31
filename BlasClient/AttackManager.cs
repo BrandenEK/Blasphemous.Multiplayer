@@ -22,9 +22,12 @@ namespace BlasClient.Managers
             // Play attack animation based on the attack type
             other.PlayAttackAnimation(attack);
 
+            // Calculate delay
+            float delay = attack == 10 ? 0.35f : 0.15f; // Longer for charged attack
+
             // Apply damage to player if the attack connects and they are on the other team
             if (Main.Multiplayer.playerTeam != Main.Multiplayer.playerList.getPlayerTeam(playerName))
-                Main.Instance.StartCoroutine(CauseDamageAfterDelay(other, attack, 0.15f));
+                Main.Instance.StartCoroutine(CauseDamageAfterDelay(other, attack, delay));
         }
 
         private void ProcessHit(byte attack, OtherPenitent attacker)
@@ -61,6 +64,11 @@ namespace BlasClient.Managers
                 Unnavoidable = true,
                 // Sound
             };
+            if (attack == 10)
+            {
+                hit.DamageType = DamageArea.DamageType.Heavy;
+                hit.Force = 2;
+            }
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
@@ -72,5 +80,7 @@ namespace BlasClient.Managers
                 yield return new WaitForSecondsRealtime(delay);
             ProcessHit(attack, attacker);
         }
+
+        // Store all attack data (Delay, damage, hitbox) in separate classes
     }
 }

@@ -254,6 +254,11 @@ namespace BlasClient.MonoBehaviours
                 AttackCollider.size = new Vector2(1.4f, 2.8f);
                 AttackCollider.offset = new Vector2(0, 2);
             }
+            else if (attack == 10) // Charged attack
+            {
+                AttackCollider.size = new Vector2(2.4f, 3f);
+                AttackCollider.offset = new Vector2(CharacterRenderer.flipX ? -1.6f : 1.6f, 1.5f);
+            }
             else
             {
                 // Invalid attack, dont return attack area
