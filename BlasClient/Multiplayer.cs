@@ -158,7 +158,7 @@ namespace BlasClient
                 //PlayerStatus test = new PlayerStatus();
                 //test.currentScene = "D05Z02S06";
                 //connectedPlayers.Add("Test", test);
-                attackManager.TakeHit(0);
+                attackManager.TakeHit("", 0);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
@@ -494,7 +494,7 @@ namespace BlasClient
         public void playerAttackReceived(string playerName, byte attack)
         {
             LogWarning("Received attack from " + playerName);
-            attackManager.TakeHit(attack);
+            attackManager.TakeHit(playerName, attack);
         }
 
         private void sendAllProgress()

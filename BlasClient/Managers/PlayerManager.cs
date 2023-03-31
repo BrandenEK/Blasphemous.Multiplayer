@@ -333,7 +333,7 @@ namespace BlasClient.Managers
         }
 
         // Finds a specified player in the scene
-        private OtherPenitent getPlayerObject(string name)
+        public OtherPenitent getPlayerObject(string name)
         {
             for (int i = 0; i < players.Count; i++)
             {

@@ -2,6 +2,7 @@
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent;
 using Gameplay.GameControllers.Penitent.Attack;
+using BlasClient.MonoBehaviours;
 
 namespace BlasClient.Managers
 {
@@ -32,15 +33,16 @@ namespace BlasClient.Managers
             Main.Multiplayer.SendNewAttack(0);
         }
 
-        public void TakeHit(byte attack)
+        public void TakeHit(string playerName, byte attack)
         {
             Penitent penitent = Core.Logic.Penitent;
-            if (penitent == null) return;
+            OtherPenitent other = Main.Multiplayer.playerManager.getPlayerObject(playerName);
+            if (penitent == null || other == null) return;
 
             Hit hit = new Hit()
             {
-                AttackingEntity = penitent.gameObject,
-                DamageAmount = 20,
+                AttackingEntity = other.gameObject,
+                DamageAmount = 10,
                 //Force = 1,
                 DamageElement = DamageArea.DamageElement.Normal,
                 DamageType = DamageArea.DamageType.Normal,
