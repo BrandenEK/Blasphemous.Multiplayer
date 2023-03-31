@@ -9,11 +9,12 @@ namespace BlasClient.MonoBehaviours
         private string penitentName;
 
         private SpriteRenderer renderer;
-        private Animator anim;
+        private Animator CharacterAnim { get; set; }
+        private Animator SwordAnim { get; set; }
         private RuntimeAnimatorController penitentAnimatorController;
 
         // Adds necessary components & initializes them
-        public void createPenitent(string name, RuntimeAnimatorController animatorController, Material material)
+        public void createPenitent(string name, RuntimeAnimatorController animatorController, RuntimeAnimatorController swordAnimatorController, Material material)
         {
             penitentName = name;
             Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(name, 2);
@@ -25,9 +26,17 @@ namespace BlasClient.MonoBehaviours
             renderer.enabled = false;
 
             // Animation
-            anim = gameObject.AddComponent<Animator>();
-            anim.runtimeAnimatorController = animatorController;
+            CharacterAnim = gameObject.AddComponent<Animator>();
+            CharacterAnim.runtimeAnimatorController = animatorController;
             penitentAnimatorController = animatorController;
+
+            // Sword handler
+            GameObject sword = new GameObject("Sword");
+            sword.transform.SetParent(transform);
+            sword.transform.localPosition = Vector3.zero;
+            sword.AddComponent<SpriteRenderer>();
+            SwordAnim = sword.AddComponent<Animator>();
+            SwordAnim.runtimeAnimatorController = swordAnimatorController;
         }
 
         public void updatePosition(Vector2 positon)
@@ -43,10 +52,10 @@ namespace BlasClient.MonoBehaviours
                 if (Main.Multiplayer.playerList.getPlayerSpecialAnimation(penitentName) > 0)
                 {
                     // Change back to regular animations
-                    anim.runtimeAnimatorController = penitentAnimatorController;
+                    CharacterAnim.runtimeAnimatorController = penitentAnimatorController;
                     Main.Multiplayer.playerList.setPlayerSpecialAnimation(penitentName, 0);
                 }
-                anim.SetBool("IS_CROUCH", false);
+                CharacterAnim.SetBool("IS_CROUCH", false);
 
                 // Logic for ladder climbing
 
@@ -54,9 +63,9 @@ namespace BlasClient.MonoBehaviours
                 PlayerAnimState animState = AnimationStates.animations[animation];
                 for (int i = 0; i < animState.parameterNames.Length; i++)
                 {
-                    anim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
+                    CharacterAnim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
                 }
-                anim.Play(animState.name);
+                CharacterAnim.Play(animState.name);
             }
             else
             {
@@ -92,18 +101,18 @@ namespace BlasClient.MonoBehaviours
                 if (priedieu == null)
                     return false;
 
-                anim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
+                CharacterAnim.runtimeAnimatorController = priedieu.transform.GetChild(4).GetComponent<Animator>().runtimeAnimatorController;
                 if (type == 240)
                 {
-                    anim.SetTrigger("ACTIVATION");
+                    CharacterAnim.SetTrigger("ACTIVATION");
                 }
                 else if (type == 241)
                 {
-                    anim.SetTrigger("KNEE_START");
+                    CharacterAnim.SetTrigger("KNEE_START");
                 }
                 else
                 {
-                    anim.Play("Stand Up");
+                    CharacterAnim.Play("Stand Up");
                 }
             }
             else if (type == 243 || type == 244)
@@ -113,8 +122,8 @@ namespace BlasClient.MonoBehaviours
                 if (item == null)
                     return false;
 
-                anim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
-                anim.Play(type == 244 ? "Floor Collection" : "Halfheight Collection");
+                CharacterAnim.runtimeAnimatorController = item.transform.GetChild(1).GetComponent<Animator>().runtimeAnimatorController;
+                CharacterAnim.Play(type == 244 ? "Floor Collection" : "Halfheight Collection");
             }
             else if (type == 245)
             {
@@ -123,8 +132,8 @@ namespace BlasClient.MonoBehaviours
                 if (chest == null)
                     return false;
 
-                anim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
-                anim.SetTrigger("USED");
+                CharacterAnim.runtimeAnimatorController = chest.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                CharacterAnim.SetTrigger("USED");
             }
             else if (type == 246)
             {
@@ -133,8 +142,8 @@ namespace BlasClient.MonoBehaviours
                 if (lever == null)
                     return false;
 
-                anim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
-                anim.SetTrigger("DOWN");
+                CharacterAnim.runtimeAnimatorController = lever.transform.GetChild(2).GetComponent<Animator>().runtimeAnimatorController;
+                CharacterAnim.SetTrigger("DOWN");
             }
             else if (type == 247 || type == 248 || type == 249)
             {
@@ -143,18 +152,18 @@ namespace BlasClient.MonoBehaviours
                 if (door == null)
                     return false;
 
-                anim.runtimeAnimatorController = door.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
+                CharacterAnim.runtimeAnimatorController = door.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
                 if (type == 247)
                 {
-                    anim.SetTrigger("OPEN_ENTER");
+                    CharacterAnim.SetTrigger("OPEN_ENTER");
                 }
                 else if (type == 248)
                 {
-                    anim.SetTrigger("CLOSED_ENTER");
+                    CharacterAnim.SetTrigger("CLOSED_ENTER");
                 }
                 else
                 {
-                    anim.SetTrigger("KEY_ENTER");
+                    CharacterAnim.SetTrigger("KEY_ENTER");
                 }
             }
             else if (type == 250 || type == 251)
@@ -164,8 +173,8 @@ namespace BlasClient.MonoBehaviours
                 if (logic == null)
                     return false;
 
-                anim.runtimeAnimatorController = logic.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
-                anim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
+                CharacterAnim.runtimeAnimatorController = logic.transform.GetChild(3).GetComponent<Animator>().runtimeAnimatorController;
+                CharacterAnim.Play(type == 250 ? "FakePenitent laydown" : "FakePenitent gettingUp");
             }
             else
             {
@@ -191,10 +200,10 @@ namespace BlasClient.MonoBehaviours
         // If the death animation has ended, disable the animator
         private void Update()
         {
-            AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+            AnimatorStateInfo state = CharacterAnim.GetCurrentAnimatorStateInfo(0);
             if (state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall")))
             {
-                anim.enabled = false;
+                CharacterAnim.enabled = false;
             }
         }
 
@@ -203,6 +212,12 @@ namespace BlasClient.MonoBehaviours
         {
             if (eventName == "INTERACTION_END")
                 finishSpecialAnimation();
+        }
+
+        // When receiving an attack from another player, make their character play the sword/prayer animation
+        public void PlayAttackAnimation(byte attack)
+        {
+            SwordAnim.Play("Basic1_Lv1");
         }
     }
 }

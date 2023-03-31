@@ -52,6 +52,7 @@ namespace BlasClient.Managers
                 // Sound
             };
 
+            other.PlayAttackAnimation(attack);
             penitent.Damage(hit);
         }
     }

@@ -15,6 +15,17 @@ using HarmonyLib;
 
 namespace BlasClient.Patches
 {
+    // Default attack
+    [HarmonyPatch(typeof(DefaultSwordSlashBehaviour), "OnStateEnter")]
+    public class DefaultSwordSlashBehaviourEnter_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Slash"; }
+    }
+    [HarmonyPatch(typeof(DefaultSwordSlashBehaviour), "OnStateExit")]
+    public class DefaultSwordSlashBehaviourExit_Patch
+    {
+        public static bool Prefix(Animator animator) { return animator.name == "Slash"; }
+    }
     // Air attack
     [HarmonyPatch(typeof(AirAttackBehaviour), "OnStateEnter")]
     public class AirAttackBehaviourEnter_Patch
