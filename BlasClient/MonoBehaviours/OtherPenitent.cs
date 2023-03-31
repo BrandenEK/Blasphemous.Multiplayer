@@ -9,10 +9,9 @@ namespace BlasClient.MonoBehaviours
         private string penitentName;
 
         private SpriteRenderer CharacterRenderer { get; set; }
-        private SpriteRenderer SwordRenderer { get; set; }
         private Animator CharacterAnim { get; set; }
-        private Animator SwordAnim { get; set; }
-        private BoxCollider2D AttackCollider { get; set; }
+
+        public OtherPenitentAttack OtherPenitentAttack { get; private set; }
 
         private RuntimeAnimatorController penitentAnimatorController;
 
@@ -36,19 +35,11 @@ namespace BlasClient.MonoBehaviours
             CharacterAnim.runtimeAnimatorController = animatorController;
             penitentAnimatorController = animatorController;
 
-            // Collider (Now used for attack area)
-            AttackCollider = gameObject.AddComponent<BoxCollider2D>();
-            AttackCollider.offset = new Vector2(0, 0.92f);
-            AttackCollider.size = new Vector2(0.665f, 1.866f);
-            AttackCollider.isTrigger = true;
-
             // Sword handler
             GameObject sword = new GameObject("Sword");
             sword.transform.SetParent(transform);
-            sword.transform.localPosition = Vector3.zero;
-            SwordRenderer = sword.AddComponent<SpriteRenderer>();
-            SwordAnim = sword.AddComponent<Animator>();
-            SwordAnim.runtimeAnimatorController = swordAnimatorController;
+            OtherPenitentAttack = sword.AddComponent<OtherPenitentAttack>();
+            OtherPenitentAttack.CreatePenitentAttack(swordAnimatorController);
         }
 
         public void updatePosition(Vector2 positon)
@@ -224,48 +215,6 @@ namespace BlasClient.MonoBehaviours
         {
             if (eventName == "INTERACTION_END")
                 finishSpecialAnimation();
-        }
-
-        // When receiving an attack from another player, make their character play the sword/prayer animation
-        public void PlayAttackAnimation(byte attack)
-        {
-            SwordRenderer.flipX = CharacterRenderer.flipX;
-
-            switch (attack)
-            {
-                case 0: SwordAnim.Play("Basic1_Lv1"); break;
-                case 1: SwordAnim.Play("BasicUpward_Lv1"); break;
-                case 2: SwordAnim.Play("Air1_Lv1"); break;
-                case 3: SwordAnim.Play("AirUpward_Lv1"); break;
-                case 4: SwordAnim.Play("Crouch_Lv1"); break;
-            }
-        }
-
-        // Returns the collider of the attack area
-        public Collider2D GetAttackArea(byte attack)
-        {
-            if (attack == 0 || attack == 2 || attack == 4) // Sideways slash grounded or air or crouched
-            {
-                AttackCollider.size = new Vector2(2.8f, 1);
-                AttackCollider.offset = new Vector2(CharacterRenderer.flipX ? -1.3f : 1.3f, attack == 4 ? 0.5f : 1.175f);
-            }
-            else if (attack == 1 || attack == 3) // Upwards slash grounded or air
-            {
-                AttackCollider.size = new Vector2(1.4f, 2.8f);
-                AttackCollider.offset = new Vector2(0, 2);
-            }
-            else if (attack == 10) // Charged attack
-            {
-                AttackCollider.size = new Vector2(2.4f, 3f);
-                AttackCollider.offset = new Vector2(CharacterRenderer.flipX ? -1.6f : 1.6f, 1.5f);
-            }
-            else
-            {
-                // Invalid attack, dont return attack area
-                return null;
-            }
-
-            return AttackCollider;
         }
     }
 }
