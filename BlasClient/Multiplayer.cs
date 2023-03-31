@@ -118,7 +118,6 @@ namespace BlasClient
             notificationManager.createMessageBox();
             playerManager.loadScene(newLevel);
             progressManager.sceneLoaded(newLevel);
-            attackManager.sceneLoaded();
             CanObtainStatUpgrades = true;
 
             if (inLevel && connectedToServer)
@@ -148,7 +147,6 @@ namespace BlasClient
 
             inLevel = false;
             playerManager.unloadScene();
-            attackManager.sceneUnloaded();
         }
 
         protected override void LateUpdate()

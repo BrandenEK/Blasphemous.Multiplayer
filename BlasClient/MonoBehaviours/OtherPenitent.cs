@@ -8,7 +8,8 @@ namespace BlasClient.MonoBehaviours
     {
         private string penitentName;
 
-        private SpriteRenderer renderer;
+        private SpriteRenderer CharacterRenderer { get; set; }
+        private SpriteRenderer SwordRenderer { get; set; }
         private Animator CharacterAnim { get; set; }
         private Animator SwordAnim { get; set; }
         private RuntimeAnimatorController penitentAnimatorController;
@@ -20,10 +21,10 @@ namespace BlasClient.MonoBehaviours
             Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(name, 2);
 
             // Rendering
-            renderer = gameObject.AddComponent<SpriteRenderer>();
-            renderer.material = material;
-            renderer.sortingLayerName = "Player";
-            renderer.enabled = false;
+            CharacterRenderer = gameObject.AddComponent<SpriteRenderer>();
+            CharacterRenderer.material = material;
+            CharacterRenderer.sortingLayerName = "Player";
+            CharacterRenderer.enabled = false;
 
             // Animation
             CharacterAnim = gameObject.AddComponent<Animator>();
@@ -34,7 +35,7 @@ namespace BlasClient.MonoBehaviours
             GameObject sword = new GameObject("Sword");
             sword.transform.SetParent(transform);
             sword.transform.localPosition = Vector3.zero;
-            sword.AddComponent<SpriteRenderer>();
+            SwordRenderer = sword.AddComponent<SpriteRenderer>();
             SwordAnim = sword.AddComponent<Animator>();
             SwordAnim.runtimeAnimatorController = swordAnimatorController;
         }
@@ -82,13 +83,13 @@ namespace BlasClient.MonoBehaviours
 
         public void updateDirection(bool facingDirection)
         {
-            renderer.flipX = facingDirection;
+            CharacterRenderer.flipX = facingDirection;
         }
 
         public void updateSkin(Texture2D skin)
         {
-            renderer.enabled = true;
-            renderer.material.SetTexture("_PaletteTex", skin);
+            CharacterRenderer.enabled = true;
+            CharacterRenderer.material.SetTexture("_PaletteTex", skin);
         }
 
         // Gets the animator controller of an interactable object in the scene & plays special animation
@@ -191,7 +192,7 @@ namespace BlasClient.MonoBehaviours
             if (currentSpecialAnimation >= 247 && currentSpecialAnimation <= 249)
             {
                 // If finished entering door, disable renderer
-                renderer.enabled = false;
+                CharacterRenderer.enabled = false;
             }
 
             updateAnimation(0);
@@ -217,7 +218,16 @@ namespace BlasClient.MonoBehaviours
         // When receiving an attack from another player, make their character play the sword/prayer animation
         public void PlayAttackAnimation(byte attack)
         {
-            SwordAnim.Play("Basic1_Lv1");
+            SwordRenderer.flipX = CharacterRenderer.flipX;
+
+            switch (attack)
+            {
+                case 0: SwordAnim.Play("Basic1_Lv1"); break;
+                case 1: SwordAnim.Play("BasicUpward_Lv1"); break;
+                case 2: SwordAnim.Play("Air1_Lv1"); break;
+                case 3: SwordAnim.Play("AirUpward_Lv1"); break;
+                case 4: SwordAnim.Play("Crouch_Lv1"); break;
+            }
         }
     }
 }

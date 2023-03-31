@@ -12,10 +12,13 @@ namespace BlasClient
         public const string MOD_VERSION = "1.0.2";
 
         public static Multiplayer Multiplayer { get; private set; }
+        public static Main Instance { get; private set; }
 
         private void Start()
         {
             Multiplayer = new Multiplayer(MOD_ID, MOD_NAME, MOD_VERSION);
+            if (Instance == null)
+                Instance = this;
         }
 
         // Recursive method that returns the entire hierarchy of an object

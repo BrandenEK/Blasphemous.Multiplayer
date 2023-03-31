@@ -34,7 +34,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(0);
+                Main.Multiplayer.attackManager.SwordAttack(2);
                 return true;
             }
             return false;
@@ -58,7 +58,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(0);
+                Main.Multiplayer.attackManager.SwordAttack(3);
                 return true;
             }
             return false;
@@ -112,7 +112,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(0);
+                Main.Multiplayer.attackManager.SwordAttack(10);
                 return true;
             }
             return false;
@@ -196,7 +196,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(0);
+                Main.Multiplayer.attackManager.SwordAttack(1);
                 return true;
             }
             return false;
@@ -427,7 +427,15 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(CrouchAttackBehaviour), "OnStateEnter")]
     public class CrouchAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.attackManager.SwordAttack(4);
+                return true;
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(CrouchAttackBehaviour), "OnStateUpdate")]
     public class CrouchAttackBehaviourUpdate_Patch
