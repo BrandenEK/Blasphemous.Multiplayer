@@ -1,5 +1,6 @@
 ﻿using Framework.Managers;
 using Gameplay.GameControllers.Entities;
+using Gameplay.GameControllers.Effects.Player.Sparks;
 using BlasClient.MonoBehaviours;
 using System.Collections;
 using UnityEngine;
@@ -18,6 +19,13 @@ namespace BlasClient.Managers
         {
             OtherPenitent other = Main.Multiplayer.playerManager.getPlayerObject(playerName);
             if (Core.Logic.Penitent == null || other == null) return;
+
+            // If attack is 255, that means this is not an attack and simply an acknowledgment that the player 'playerName' was hit
+            if (attack == 255)
+            {
+                AcknowledgeHit(other);
+                return;
+            }
 
             // Play attack animation based on the attack type
             other.PlayAttackAnimation(attack);
@@ -59,6 +67,7 @@ namespace BlasClient.Managers
                 //Force = 1,
                 DamageElement = DamageArea.DamageElement.Normal,
                 DamageType = DamageArea.DamageType.Normal,
+                ThrowbackDirByOwnerPosition = true,
                 Unparriable = true,
                 Unblockable = true,
                 Unnavoidable = true,
@@ -72,6 +81,7 @@ namespace BlasClient.Managers
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
+            Main.Multiplayer.SendNewAttack(255);
         }
 
         private IEnumerator CauseDamageAfterDelay(OtherPenitent attacker, byte attack, float delay)
@@ -79,6 +89,16 @@ namespace BlasClient.Managers
             if (delay > 0)
                 yield return new WaitForSecondsRealtime(delay);
             ProcessHit(attack, attacker);
+        }
+
+        private void AcknowledgeHit(OtherPenitent attackedPlayer)
+        {
+            Main.Multiplayer.LogWarning("Player " + attackedPlayer.name + " was hit!  Drawing blood effects!");
+            Vector3 effectPosition = attackedPlayer.transform.position + Vector3.up;
+
+            Core.Logic.Penitent.GetComponentInChildren<SwordSparkSpawner>().GetSwordSpark(effectPosition);
+            GameObject blood = Core.Logic.Penitent.GetComponentInChildren<BloodSpawner>().GetBloodFX(BloodSpawner.BLOOD_FX_TYPES.SMALL);
+            blood.transform.position = effectPosition;
         }
 
         // Store all attack data (Delay, damage, hitbox) in separate classes
