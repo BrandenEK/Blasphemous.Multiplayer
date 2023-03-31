@@ -244,10 +244,22 @@ namespace BlasClient.MonoBehaviours
         // Returns the collider of the attack area
         public Collider2D GetAttackArea(byte attack)
         {
-            // Do this based on attack type !!!
+            if (attack == 0 || attack == 2 || attack == 4) // Sideways slash grounded or air or crouched
+            {
+                AttackCollider.size = new Vector2(2.8f, 1);
+                AttackCollider.offset = new Vector2(CharacterRenderer.flipX ? -1.3f : 1.3f, attack == 4 ? 0.5f : 1.175f);
+            }
+            else if (attack == 1 || attack == 3) // Upwards slash grounded or air
+            {
+                AttackCollider.size = new Vector2(1.4f, 2.8f);
+                AttackCollider.offset = new Vector2(0, 2);
+            }
+            else
+            {
+                // Invalid attack, dont return attack area
+                return null;
+            }
 
-            AttackCollider.size = new Vector2(2.8f, 1);
-            AttackCollider.offset = new Vector2(CharacterRenderer.flipX ? -1.3f : 1.3f, 1.8f);
             return AttackCollider;
         }
     }

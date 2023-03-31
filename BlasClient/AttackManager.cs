@@ -34,6 +34,8 @@ namespace BlasClient.Managers
 
             // Calculate attack area based on attack
             Collider2D attackerArea = attacker.GetAttackArea(attack);
+            if (attackerArea == null) return;
+
             bool hitPlayer = false;
             Collider2D[] colliders = Physics2D.OverlapAreaAll(attackerArea.bounds.min, attackerArea.bounds.max, 1 << 18);
             foreach (Collider2D col in colliders)
