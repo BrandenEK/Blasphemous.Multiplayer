@@ -102,6 +102,7 @@ namespace BlasClient.MonoBehaviours
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
+            Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
             Main.Multiplayer.SendNewAttack(255);
         }
     }

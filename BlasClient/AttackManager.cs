@@ -46,6 +46,7 @@ namespace BlasClient.Managers
             Core.Logic.Penitent.GetComponentInChildren<SwordSparkSpawner>().GetSwordSpark(effectPosition);
             GameObject blood = Core.Logic.Penitent.GetComponentInChildren<BloodSpawner>().GetBloodFX(BloodSpawner.BLOOD_FX_TYPES.SMALL);
             blood.transform.position = effectPosition;
+            Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
         }
 
         // Store all attack data (Delay, damage, hitbox) in separate classes
