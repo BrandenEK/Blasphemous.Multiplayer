@@ -33,11 +33,18 @@ namespace BlasClient.Managers
                 return;
 
             // Calculate attack area based on attack
-            Vector3 playerPosition = Core.Logic.Penitent.transform.position;
-            Vector3 attackerPosition = attacker.transform.position;
-
-
-            // Return if attack doesnt connect
+            Collider2D attackerArea = attacker.GetAttackArea(attack);
+            bool hitPlayer = false;
+            Collider2D[] colliders = Physics2D.OverlapAreaAll(attackerArea.bounds.min, attackerArea.bounds.max, 1 << 18);
+            foreach (Collider2D col in colliders)
+            {
+                if (col.gameObject.name == "Body")
+                {
+                    hitPlayer = true;
+                    break;
+                }
+            }
+            if (!hitPlayer) return;
 
             // Calculate hit data based on attack & parameters
             Hit hit = new Hit()

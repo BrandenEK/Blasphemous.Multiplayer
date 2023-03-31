@@ -12,12 +12,17 @@ namespace BlasClient.MonoBehaviours
         private SpriteRenderer SwordRenderer { get; set; }
         private Animator CharacterAnim { get; set; }
         private Animator SwordAnim { get; set; }
+        private BoxCollider2D AttackCollider { get; set; }
+
         private RuntimeAnimatorController penitentAnimatorController;
+
+        public bool IsFacingRight => !CharacterRenderer.flipX;
 
         // Adds necessary components & initializes them
         public void createPenitent(string name, RuntimeAnimatorController animatorController, RuntimeAnimatorController swordAnimatorController, Material material)
         {
             penitentName = name;
+            //gameObject.layer = 1 << 28;
             Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(name, 2);
 
             // Rendering
@@ -30,6 +35,12 @@ namespace BlasClient.MonoBehaviours
             CharacterAnim = gameObject.AddComponent<Animator>();
             CharacterAnim.runtimeAnimatorController = animatorController;
             penitentAnimatorController = animatorController;
+
+            // Collider (Now used for attack area)
+            AttackCollider = gameObject.AddComponent<BoxCollider2D>();
+            AttackCollider.offset = new Vector2(0, 0.92f);
+            AttackCollider.size = new Vector2(0.665f, 1.866f);
+            AttackCollider.isTrigger = true;
 
             // Sword handler
             GameObject sword = new GameObject("Sword");
@@ -228,6 +239,16 @@ namespace BlasClient.MonoBehaviours
                 case 3: SwordAnim.Play("AirUpward_Lv1"); break;
                 case 4: SwordAnim.Play("Crouch_Lv1"); break;
             }
+        }
+
+        // Returns the collider of the attack area
+        public Collider2D GetAttackArea(byte attack)
+        {
+            // Do this based on attack type !!!
+
+            AttackCollider.size = new Vector2(2.8f, 1);
+            AttackCollider.offset = new Vector2(CharacterRenderer.flipX ? -1.3f : 1.3f, 1.8f);
+            return AttackCollider;
         }
     }
 }

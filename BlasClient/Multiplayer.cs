@@ -156,7 +156,7 @@ namespace BlasClient
                 //PlayerStatus test = new PlayerStatus();
                 //test.currentScene = "D05Z02S06";
                 //connectedPlayers.Add("Test", test);
-                attackManager.TakeHit("", 0);
+                //attackManager.TakeHit("", 0);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
