@@ -220,8 +220,8 @@ namespace BlasClient.MonoBehaviours
                 finishSpecialAnimation();
         }
 
-        public bool BleedOnImpact() { return true; }  // Might have to not show blood and sparks here and only show them in damage if pvp
-        public bool SparkOnImpact() { return true; }
+        public bool BleedOnImpact() { return false; }
+        public bool SparkOnImpact() { return false; }
         public Vector3 GetPosition() { return transform.position; }
 
         public void Damage(Hit hit)
@@ -235,22 +235,20 @@ namespace BlasClient.MonoBehaviours
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
             if (penitentState.IsName("Charged Attack"))
             {
-                Main.Multiplayer.LogError("Using charged attack");
                 attack = 10;
             }
             else if (Core.Logic.Penitent.LungeAttack.IsUsingAbility)
             {
-                Main.Multiplayer.LogError("Using lunge attack");
                 attack = 11;
             }
             else if (Core.Logic.Penitent.VerticalAttack.IsUsingAbility)
             {
-                Main.Multiplayer.LogError("Using vertical attack");
                 attack = 12;
             }
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
+            Main.Multiplayer.attackManager.ShowDamageEffects(penitentName);
             Main.Multiplayer.SendNewAttack(penitentName, attack);
         }
     }

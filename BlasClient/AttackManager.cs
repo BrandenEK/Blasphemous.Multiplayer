@@ -31,11 +31,7 @@ namespace BlasClient.Managers
             else
             {
                 // It was a different player that got hit
-                OtherPenitent receiver = Main.Multiplayer.playerManager.getPlayerObject(receiverName);
-                if (receiver == null) return;
-
-                Main.Multiplayer.LogWarning("Player " + receiverName + " was hit!  Drawing blood effects!"); // remove later
-                ShowDamageEffects(receiver.gameObject);
+                ShowDamageEffects(receiverName);
             }
         }
 
@@ -68,10 +64,12 @@ namespace BlasClient.Managers
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
         }
 
-        private void ShowDamageEffects(GameObject receiver)
+        public void ShowDamageEffects(string receiverName)
         {
-            Vector3 effectPosition = receiver.transform.position + Vector3.up;
+            OtherPenitent receiver = Main.Multiplayer.playerManager.getPlayerObject(receiverName);
+            if (receiver == null) return;
 
+            Vector3 effectPosition = receiver.transform.position + Vector3.up;
             Core.Logic.Penitent.GetComponentInChildren<SwordSparkSpawner>().GetSwordSpark(effectPosition);
             GameObject blood = Core.Logic.Penitent.GetComponentInChildren<BloodSpawner>().GetBloodFX(BloodSpawner.BLOOD_FX_TYPES.SMALL);
             blood.transform.position = effectPosition;
