@@ -25,9 +25,9 @@ namespace BlasClient.MonoBehaviours
         }
 
         // Upon death, the hitbox should be disabled
-        public void DisableHitbox()
+        public void SetHitboxStatus(bool active)
         {
-            DamageArea.enabled = false;
+            DamageArea.enabled = active;
         }
 
         // When receiving an attack from another player, make their character play the sword/prayer animation

@@ -10,6 +10,7 @@ namespace BlasClient.MonoBehaviours
     public class OtherPenitent : MonoBehaviour, IDamageable
     {
         private string penitentName;
+        private bool playerDead = false;
 
         private SpriteRenderer CharacterRenderer { get; set; }
         private Animator CharacterAnim { get; set; }
@@ -51,6 +52,12 @@ namespace BlasClient.MonoBehaviours
 
         public void updateAnimation(byte animation)
         {
+            // If this player was previously assumed dead but now they are receiving another anim, turn them alive again
+            if (playerDead)
+            {
+                SetDeathStatus(false);
+            }
+
             if (animation < 240)
             {
                 // Regular animation
@@ -202,15 +209,30 @@ namespace BlasClient.MonoBehaviours
             updateAnimation(0);
         }
 
-        // If the death animation has ended, disable the animator
+        // Check if death animation is playing
         private void Update()
         {
             AnimatorStateInfo state = CharacterAnim.GetCurrentAnimatorStateInfo(0);
-            if (state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall")))
+            if (!playerDead && state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall")))
             {
-                CharacterAnim.enabled = false;
-                OtherPenitentAttack.DisableHitbox();
+                SetDeathStatus(true);
+                playerDead = true;
             }
+            else if (!playerDead && state.normalizedTime >= 0.9f && state.IsName("Grounding Over"))
+            {
+                SetDeathStatus(true);
+                playerDead = true;
+            }
+            else
+            {
+                playerDead = false;
+            }
+        }
+
+        private void SetDeathStatus(bool dead)
+        {
+            CharacterAnim.enabled = !dead;
+            OtherPenitentAttack.SetHitboxStatus(!dead);
         }
 
         // Finish a special animation when the event is received
