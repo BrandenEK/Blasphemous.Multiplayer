@@ -5,6 +5,7 @@ using Gameplay.GameControllers.Entities;
 using UnityEngine;
 using BlasClient.MonoBehaviours;
 using BlasClient.PvP;
+using BlasClient.Structures;
 
 namespace BlasClient.Managers
 {
@@ -19,6 +20,10 @@ namespace BlasClient.Managers
                 // This is the player that got hit
                 OtherPenitent attacker = Main.Multiplayer.playerManager.getPlayerObject(attackerName);
                 if (attacker == null) return;
+
+                Config config = Main.Multiplayer.config;
+                if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(attackerName)))
+                    return;
 
                 Main.Multiplayer.Log($"Receiving hit {attack} from {attackerName}");
                 DamagePlayer(attack, attacker.gameObject);
