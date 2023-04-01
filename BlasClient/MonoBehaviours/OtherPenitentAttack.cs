@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
-using Framework.Managers;
-using Gameplay.GameControllers.Entities;
-using BlasClient.PvP;
+﻿using UnityEngine;
 
 namespace BlasClient.MonoBehaviours
 {
@@ -10,6 +6,7 @@ namespace BlasClient.MonoBehaviours
     {
         private SpriteRenderer SwordRenderer { get; set; }
         private Animator SwordAnim { get; set; }
+        private BoxCollider2D DamageArea { get; set; }
 
         public void CreatePenitentAttack(RuntimeAnimatorController swordController)
         {
@@ -21,10 +18,16 @@ namespace BlasClient.MonoBehaviours
 
             // Create damage area collider
             gameObject.layer = LayerMask.NameToLayer("Enemy");
-            BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
-            collider.offset = new Vector2(0, 0.92f);
-            collider.size = new Vector2(0.665f, 1.866f);
-            collider.isTrigger = true;
+            DamageArea = gameObject.AddComponent<BoxCollider2D>();
+            DamageArea.offset = new Vector2(0, 0.92f);
+            DamageArea.size = new Vector2(0.665f, 1.866f);
+            DamageArea.isTrigger = true;
+        }
+
+        // Upon death, the hitbox should be disabled
+        public void DisableHitbox()
+        {
+            DamageArea.enabled = false;
         }
 
         // When receiving an attack from another player, make their character play the sword/prayer animation

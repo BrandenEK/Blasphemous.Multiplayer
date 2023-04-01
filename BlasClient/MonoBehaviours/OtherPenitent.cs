@@ -23,7 +23,6 @@ namespace BlasClient.MonoBehaviours
         public void createPenitent(string name, RuntimeAnimatorController animatorController, RuntimeAnimatorController swordAnimatorController, Material material)
         {
             penitentName = name;
-            //gameObject.layer = 1 << 28;
             Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(name, 2);
 
             // Rendering
@@ -209,6 +208,7 @@ namespace BlasClient.MonoBehaviours
             if (state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall")))
             {
                 CharacterAnim.enabled = false;
+                OtherPenitentAttack.DisableHitbox();
             }
         }
 
@@ -219,15 +219,9 @@ namespace BlasClient.MonoBehaviours
                 finishSpecialAnimation();
         }
 
-        public bool BleedOnImpact()
-        {
-            return true;
-        }
-
-        public bool SparkOnImpact()
-        {
-            return true;
-        }
+        public bool BleedOnImpact() { return true; }
+        public bool SparkOnImpact() { return true; }
+        public Vector3 GetPosition() { return transform.position; }
 
         public void Damage(Hit hit)
         {
@@ -236,11 +230,6 @@ namespace BlasClient.MonoBehaviours
             byte attack = 0;
 
             Main.Multiplayer.SendNewAttack(penitentName, attack);
-        }
-
-        public Vector3 GetPosition()
-        {
-            return transform.position;
         }
     }
 }
