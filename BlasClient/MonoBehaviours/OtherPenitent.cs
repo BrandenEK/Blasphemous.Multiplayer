@@ -226,7 +226,9 @@ namespace BlasClient.MonoBehaviours
         public void Damage(Hit hit)
         {
             byte attack = 0;
-            if (Core.Logic.Penitent.ChargedAttack.IsUsingAbility)
+
+            AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
+            if (penitentState.IsName("Charged Attack"))
             {
                 Main.Multiplayer.LogError("Using charged attack");
                 attack = 10;
@@ -242,7 +244,8 @@ namespace BlasClient.MonoBehaviours
                 attack = 12;
             }
 
-            Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName} {hit.HitSoundId}");
+            Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");
+            Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
             Main.Multiplayer.SendNewAttack(penitentName, attack);
         }
     }
