@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using BlasClient.Data;
+using BlasClient.Structures;
 using Tools.Level.Interactables;
 using Gameplay.GameControllers.Entities;
 using Framework.Managers;
@@ -219,12 +220,16 @@ namespace BlasClient.MonoBehaviours
                 finishSpecialAnimation();
         }
 
-        public bool BleedOnImpact() { return true; }
+        public bool BleedOnImpact() { return true; }  // Might have to not show blood and sparks here and only show them in damage if pvp
         public bool SparkOnImpact() { return true; }
         public Vector3 GetPosition() { return transform.position; }
 
         public void Damage(Hit hit)
         {
+            Config config = Main.Multiplayer.config;
+            if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(penitentName)))
+                return;
+
             byte attack = 0;
 
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
