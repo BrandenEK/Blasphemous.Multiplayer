@@ -68,6 +68,11 @@ namespace BlasClient.Managers
             hit.DamageAmount = 20;
             hit.DamageType = DamageArea.DamageType.Normal;
             hit.Force = 1;
+            if (attack == 10)
+            {
+                hit.DamageType = DamageArea.DamageType.Heavy;
+                hit.Force = 5;
+            }
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);

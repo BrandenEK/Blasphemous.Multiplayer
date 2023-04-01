@@ -228,6 +228,11 @@ namespace BlasClient.MonoBehaviours
             Main.Multiplayer.LogWarning(name + " got hit!");
             // Calculate attack based on penitent's animation / properties
             byte attack = 0;
+            if (Core.Logic.Penitent.ChargedAttack)
+            {
+                Main.Multiplayer.LogError("Using charged attack");
+                attack = 10;
+            }
 
             Main.Multiplayer.SendNewAttack(penitentName, attack);
         }
