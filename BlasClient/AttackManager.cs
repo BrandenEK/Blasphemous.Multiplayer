@@ -71,7 +71,12 @@ namespace BlasClient.Managers
             if (attack == 10)
             {
                 hit.DamageType = DamageArea.DamageType.Heavy;
-                hit.Force = 5;
+                hit.Force = 3;
+            }
+            else if (attack == 11)
+            {
+                hit.DamageType = DamageArea.DamageType.Heavy;
+                hit.Force = 1;
             }
 
             // Actually damage player
