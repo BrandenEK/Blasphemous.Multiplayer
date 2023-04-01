@@ -500,8 +500,6 @@ namespace BlasClient
 
         public void playerAttackReceived(string attackerName, string receiverName, byte attack)
         {
-            //if (attack != 255)
-                LogWarning(receiverName + " got hit by " + attackerName);
             attackManager.AttackReceived(attackerName, receiverName, attack);
         }
 

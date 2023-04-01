@@ -225,8 +225,6 @@ namespace BlasClient.MonoBehaviours
 
         public void Damage(Hit hit)
         {
-            Main.Multiplayer.LogWarning(name + " got hit!");
-            // Calculate attack based on penitent's animation / properties
             byte attack = 0;
             if (Core.Logic.Penitent.ChargedAttack.IsUsingAbility)
             {
@@ -238,7 +236,13 @@ namespace BlasClient.MonoBehaviours
                 Main.Multiplayer.LogError("Using lunge attack");
                 attack = 11;
             }
+            else if (Core.Logic.Penitent.VerticalAttack.IsUsingAbility)
+            {
+                Main.Multiplayer.LogError("Using vertical attack");
+                attack = 12;
+            }
 
+            Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName} {hit.HitSoundId}");
             Main.Multiplayer.SendNewAttack(penitentName, attack);
         }
     }

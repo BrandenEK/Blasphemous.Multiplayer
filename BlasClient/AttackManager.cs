@@ -12,7 +12,7 @@ namespace BlasClient.Managers
     {
         public void AttackReceived(string attackerName, string receiverName, byte attack)
         {
-            if (Core.Logic.Penitent == null) return;
+            if (Core.Logic.Penitent == null || !attackTypes.ContainsKey(attack)) return;
 
             if (receiverName == Main.Multiplayer.playerName)
             {
@@ -20,6 +20,7 @@ namespace BlasClient.Managers
                 OtherPenitent attacker = Main.Multiplayer.playerManager.getPlayerObject(attackerName);
                 if (attacker == null) return;
 
+                Main.Multiplayer.Log($"Receiving hit {attack} from {attackerName}");
                 DamagePlayer(attack, attacker.gameObject);
             }
             else
@@ -31,17 +32,6 @@ namespace BlasClient.Managers
                 Main.Multiplayer.LogWarning("Player " + receiverName + " was hit!  Drawing blood effects!"); // remove later
                 ShowDamageEffects(receiver.gameObject);
             }
-
-            //OtherPenitent other = Main.Multiplayer.playerManager.getPlayerObject(attackerName);
-            // If attack is 255, that means this is not an attack and simply an acknowledgment that the player 'playerName' was hit
-            //if (attack == 255)
-            //{
-            //    AcknowledgeHit(other);
-            //    return;
-            //}
-
-            // If invalid attack type, return
-            //if (!attackTypes.ContainsKey(attack)) return;
         }
 
         public void EffectReceived(string playerName, byte effect)
@@ -63,21 +53,10 @@ namespace BlasClient.Managers
                 Unparriable = true,
                 Unblockable = true,
                 Unnavoidable = true,
-                // Sound
             };
-            hit.DamageAmount = 20;
-            hit.DamageType = DamageArea.DamageType.Normal;
-            hit.Force = 1;
-            if (attack == 10)
-            {
-                hit.DamageType = DamageArea.DamageType.Heavy;
-                hit.Force = 3;
-            }
-            else if (attack == 11)
-            {
-                hit.DamageType = DamageArea.DamageType.Heavy;
-                hit.Force = 1;
-            }
+            hit.DamageAmount = attackTypes[attack].BaseDamage;
+            hit.DamageType = attackTypes[attack].DamageType;
+            hit.Force = attackTypes[attack].Force;
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
@@ -94,15 +73,13 @@ namespace BlasClient.Managers
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
         }
 
-        // Store all attack data (Delay, damage, hitbox) in separate classes
+        // Store all attack data in separate classes
         private readonly Dictionary<byte, PlayerAttack> attackTypes = new Dictionary<byte, PlayerAttack>()
         {
-            { 0, new SidewaysAttack() },
-            { 1, new UpwardsAttack() },
-            { 2, new SidewaysAttack() },
-            { 3, new UpwardsAttack() },
-            { 4, new CrouchAttack() },
+            { 0, new NormalAttack() },
             { 10, new ChargedAttack() },
+            { 11, new LungeAttack() },
+            { 12, new VerticalAttack() },
         };
     }
 }
