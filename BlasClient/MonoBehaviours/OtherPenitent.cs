@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using BlasClient.Data;
 using Tools.Level.Interactables;
+using Gameplay.GameControllers.Entities;
+using Framework.Managers;
 
 namespace BlasClient.MonoBehaviours
 {
-    public class OtherPenitent : MonoBehaviour
+    public class OtherPenitent : MonoBehaviour, IDamageable
     {
         private string penitentName;
 
@@ -215,6 +217,30 @@ namespace BlasClient.MonoBehaviours
         {
             if (eventName == "INTERACTION_END")
                 finishSpecialAnimation();
+        }
+
+        public bool BleedOnImpact()
+        {
+            return true;
+        }
+
+        public bool SparkOnImpact()
+        {
+            return true;
+        }
+
+        public void Damage(Hit hit)
+        {
+            Main.Multiplayer.LogWarning(name + " got hit!");
+            // Calculate attack based on penitent's animation / properties
+            byte attack = 0;
+
+            Main.Multiplayer.SendNewAttack(penitentName, attack);
+        }
+
+        public Vector3 GetPosition()
+        {
+            return transform.position;
         }
     }
 }

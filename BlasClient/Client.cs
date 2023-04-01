@@ -239,9 +239,12 @@ namespace BlasClient
         }
 
         // Send this player's attack
-        public void sendPlayerAttack(byte attack)
+        public void sendPlayerAttack(string playerName, byte attack)
         {
-            Send(new byte[] { attack }, 10, false); // Needs to send more info
+            List<byte> bytes = new List<byte>();
+            bytes.Add(attack);
+            bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
+            Send(bytes.ToArray(), 10, false); // Needs to send more info
         }
 
         #endregion Send functions
@@ -368,9 +371,10 @@ namespace BlasClient
         {
             int startIdx = getPlayerNameFromData(data, out string playerName);
             byte attack = data[startIdx];
+            string hitName = Encoding.UTF8.GetString(data, startIdx + 1, data.Length - startIdx - 1);
 
             // Process attack
-            Main.Multiplayer.playerAttackReceived(playerName, attack); // Process more data
+            Main.Multiplayer.playerAttackReceived(playerName, hitName, attack); // Process more data
         }
 
         #endregion Receive functions

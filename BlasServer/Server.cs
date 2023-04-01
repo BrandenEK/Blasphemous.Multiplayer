@@ -196,10 +196,10 @@ namespace BlasServer
             bytes.Add(player.team);
             return bytes.ToArray();
         }
-        private byte[] getAttackPacket(PlayerStatus player, byte attack)
+        private byte[] getAttackPacket(PlayerStatus player, byte[] attackData)
         {
             List<byte> bytes = addPlayerNameToData(player.name);
-            bytes.Add(attack);
+            bytes.AddRange(attackData);
             return bytes.ToArray();
         }
 
@@ -402,7 +402,7 @@ namespace BlasServer
         }
 
         // Send a player attack
-        private void sendPlayerAttack(string playerIp, byte attack)
+        private void sendPlayerAttack(string playerIp, byte[] attackData)
         {
             PlayerStatus current = getCurrentPlayer(playerIp);
             foreach (string ip in connectedPlayers.Keys)
@@ -410,7 +410,7 @@ namespace BlasServer
                 if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's attack
-                    Send(ip, getAttackPacket(current, attack), 10);
+                    Send(ip, getAttackPacket(current, attackData), 10);
                 }
             }
         }
@@ -610,7 +610,7 @@ namespace BlasServer
         // Received a player's attack
         private void receivePlayerAttack(string playerIp, byte[] data)
         {
-            sendPlayerAttack(playerIp, data[0]);
+            sendPlayerAttack(playerIp, data);
         }
 
         #endregion Receive functions
