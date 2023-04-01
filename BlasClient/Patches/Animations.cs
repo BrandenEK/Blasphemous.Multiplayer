@@ -34,7 +34,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(2);
+                Main.Multiplayer.SendNewEffect(2);
                 return true;
             }
             return false;
@@ -58,7 +58,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(3);
+                Main.Multiplayer.SendNewEffect(3);
                 return true;
             }
             return false;
@@ -82,7 +82,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(0);
+                Main.Multiplayer.SendNewEffect(0);
                 return true;
             }
             return false;
@@ -108,15 +108,7 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(ChargedAttackBehaviour), "OnStateEnter")]
     public class ChargedAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator)
-        {
-            if (animator.name == "Body")
-            {
-                Main.Multiplayer.attackManager.SwordAttack(10);
-                return true;
-            }
-            return false;
-        }
+        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
     }
     [HarmonyPatch(typeof(ChargedAttackBehaviour), "OnStateUpdate")]
     public class ChargedAttackBehaviourUpdate_Patch
@@ -196,7 +188,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(1);
+                Main.Multiplayer.SendNewEffect(1);
                 return true;
             }
             return false;
@@ -431,7 +423,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.attackManager.SwordAttack(4);
+                Main.Multiplayer.SendNewEffect(4);
                 return true;
             }
             return false;

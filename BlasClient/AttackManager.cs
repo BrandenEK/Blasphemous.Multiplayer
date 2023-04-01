@@ -10,12 +10,6 @@ namespace BlasClient.Managers
 {
     public class AttackManager
     {
-        public void SwordAttack(byte type)
-        {
-            //Main.Multiplayer.LogError("Attacking");
-            //Main.Multiplayer.SendNewAttack(type);
-        }
-
         public void AttackReceived(string attackerName, string receiverName, byte attack)
         {
             if (Core.Logic.Penitent == null) return;
@@ -48,9 +42,14 @@ namespace BlasClient.Managers
 
             // If invalid attack type, return
             //if (!attackTypes.ContainsKey(attack)) return;
+        }
 
-            // Play attack animation based on the attack type
-            //other.OtherPenitentAttack.PlayAttackAnimation(attack, other.IsFacingRight);
+        public void EffectReceived(string playerName, byte effect)
+        {
+            OtherPenitent other = Main.Multiplayer.playerManager.getPlayerObject(playerName);
+            if (other == null) return;
+
+            other.OtherPenitentAttack.PlayAttackAnimation(effect, other.IsFacingRight);
         }
 
         private void DamagePlayer(byte attack, GameObject attacker)

@@ -149,6 +149,8 @@ namespace BlasClient
                         receivePlayerTeam(data); break;
                     case 10:
                         receivePlayerAttack(data); break;
+                    case 11:
+                        receivePlayerEffect(data); break;
                     default:
                         Main.Multiplayer.Log($"Data type '{type}' is not valid"); break;
                 }
@@ -245,6 +247,12 @@ namespace BlasClient
             bytes.Add(attack);
             bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
             Send(bytes.ToArray(), 10, false); // Needs to send more info
+        }
+
+        // Send this player's effect
+        public void sendPlayerEffect(string playerName, byte effect)
+        {
+            Send(new byte[] { effect }, 11, false);
         }
 
         #endregion Send functions
@@ -375,6 +383,16 @@ namespace BlasClient
 
             // Process attack
             Main.Multiplayer.playerAttackReceived(playerName, hitName, attack); // Process more data
+        }
+
+        // Received a player's effect
+        private void receivePlayerEffect(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            byte effect = data[startIdx];
+
+            // Process effect
+            Main.Multiplayer.playerEffectReceived(playerName, effect);
         }
 
         #endregion Receive functions

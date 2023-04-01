@@ -332,11 +332,20 @@ namespace BlasClient
         }
 
         // Creates and sends a new attack to other players in the same scene
-        public void SendNewAttack(string playerName, byte attack)
+        public void SendNewAttack(string hitPlayerName, byte attack)
         {
             if (connectedToServer)
             {
-                client.sendPlayerAttack(playerName, attack);
+                client.sendPlayerAttack(hitPlayerName, attack);
+            }
+        }
+
+        // Sends a new attacking effect to other players in the same scene
+        public void SendNewEffect(byte effect)
+        {
+            if (connectedToServer)
+            {
+                client.sendPlayerEffect(playerName, effect);
             }
         }
 
@@ -494,6 +503,11 @@ namespace BlasClient
             //if (attack != 255)
                 LogWarning(receiverName + " got hit by " + attackerName);
             attackManager.AttackReceived(attackerName, receiverName, attack);
+        }
+
+        public void playerEffectReceived(string playerName, byte effect)
+        {
+            attackManager.EffectReceived(playerName, effect);
         }
 
         private void sendAllProgress()
