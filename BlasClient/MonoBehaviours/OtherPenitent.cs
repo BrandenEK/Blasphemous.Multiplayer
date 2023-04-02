@@ -252,6 +252,7 @@ namespace BlasClient.MonoBehaviours
             if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(penitentName)))
                 return;
 
+            Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
             byte attack = 0;
 
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
@@ -266,6 +267,10 @@ namespace BlasClient.MonoBehaviours
             else if (Core.Logic.Penitent.VerticalAttack.IsUsingAbility)
             {
                 attack = 12;
+            }
+            else if (hit.AttackingEntity.name == "Range Attack") // Change later
+            {
+                attack = 20;
             }
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");

@@ -45,4 +45,13 @@ namespace BlasClient.PvP
 
         public override int Force => 1;
     }
+
+    public class RangedAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
 }

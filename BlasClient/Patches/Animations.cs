@@ -755,7 +755,15 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(GroundRangeAttackBehaviour), "OnStateEnter")]
     public class GroundRangeAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.SendNewEffect(20);
+                return true;
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(GroundRangeAttackBehaviour), "OnStateUpdate")]
     public class GroundRangeAttackBehaviourUpdate_Patch
@@ -771,7 +779,15 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(MidAirRangeAttackBehaviour), "OnStateEnter")]
     public class MidAirRangeAttackBehaviourEnter_Patch
     {
-        public static bool Prefix(Animator animator) { return animator.name == "Body"; }
+        public static bool Prefix(Animator animator)
+        {
+            if (animator.name == "Body")
+            {
+                Main.Multiplayer.SendNewEffect(20);
+                return true;
+            }
+            return false;
+        }
     }
     [HarmonyPatch(typeof(MidAirRangeAttackBehaviour), "OnStateUpdate")]
     public class MidAirRangeAttackBehaviourUpdate_Patch

@@ -83,6 +83,7 @@ namespace BlasClient.Managers
             { 10, new ChargedAttack() },
             { 11, new LungeAttack() },
             { 12, new VerticalAttack() },
+            { 20, new RangedAttack() },
         };
     }
 }

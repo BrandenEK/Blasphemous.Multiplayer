@@ -42,6 +42,9 @@ namespace BlasClient.MonoBehaviours
                 case 2: SwordAnim.Play("Air1_Lv1"); break;
                 case 3: SwordAnim.Play("AirUpward_Lv1"); break;
                 case 4: SwordAnim.Play("Crouch_Lv1"); break;
+                case 20:
+                    Main.Multiplayer.LogError("Spawning range attack effect!");
+                    break;
             }
         }        
     }
