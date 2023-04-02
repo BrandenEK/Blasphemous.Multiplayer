@@ -254,6 +254,7 @@ namespace BlasClient.MonoBehaviours
                 return;
 
             Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
+            Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
             AttackType attack = AttackType.Slash;
 
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
@@ -287,6 +288,7 @@ namespace BlasClient.MonoBehaviours
             {
                 attack = AttackType.Taranto;
             }
+            // Lorquiana
             else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap"))
             {
                 attack = AttackType.Tirana;
@@ -307,6 +309,8 @@ namespace BlasClient.MonoBehaviours
             {
                 attack = AttackType.Aubade;
             }
+            // Cherubs
+            // Cante Jondo
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();

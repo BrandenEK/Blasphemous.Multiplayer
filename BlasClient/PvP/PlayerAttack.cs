@@ -9,6 +9,7 @@ namespace BlasClient.PvP
         public abstract DamageArea.DamageElement DamageElement { get; }
         public abstract int BaseDamage { get; }
         public abstract int Force { get; }
+        public abstract string SoundId { get; }
     }
 
     public class NormalAttack : PlayerAttack
@@ -20,6 +21,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 10;
 
         public override int Force => 1;
+
+        public override string SoundId => "PenitentSimpleEnemyHit";
     }
 
     public class ChargedAttack : PlayerAttack
@@ -31,6 +34,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 40;
 
         public override int Force => 2;
+
+        public override string SoundId => "PenitentHeavyEnemyHit";
     }
 
     public class LungeAttack : PlayerAttack
@@ -42,6 +47,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 30;
 
         public override int Force => 1;
+
+        public override string SoundId => "PenitentLungeAttackHit";
     }
 
     public class VerticalAttack : PlayerAttack
@@ -53,6 +60,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 20;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class RangedAttack : PlayerAttack
@@ -64,6 +73,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 20;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     // Prayers
@@ -77,6 +88,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => "PenitentMagicDamage";
     }
 
     public class VerdialesAttack : PlayerAttack
@@ -88,6 +101,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class TarantoAttack : PlayerAttack
@@ -99,6 +114,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class TiranaAttack : PlayerAttack
@@ -110,6 +127,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class PoisonMistAttack : PlayerAttack
@@ -121,6 +140,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class ShieldAttack : PlayerAttack
@@ -132,6 +153,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class MiriamAttack : PlayerAttack
@@ -143,6 +166,8 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+
+        public override string SoundId => null;
     }
 
     public class AubadeAttack : PlayerAttack
@@ -154,5 +179,7 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 2;
+
+        public override string SoundId => null;
     }
 }

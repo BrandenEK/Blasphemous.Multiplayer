@@ -61,7 +61,8 @@ namespace BlasClient.Managers
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
-            Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
+            if (attackTypes[attack].SoundId != null) // Can remove later
+            Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + attackTypes[attack].SoundId);
         }
 
         public void ShowDamageEffects(string receiverName)
