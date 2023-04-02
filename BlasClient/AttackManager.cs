@@ -25,7 +25,7 @@ namespace BlasClient.Managers
                 if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(attackerName)))
                     return;
 
-                Main.Multiplayer.Log($"Receiving hit {attack} from {attackerName}");
+                Main.Multiplayer.LogWarning($"Receiving hit {attack} from {attackerName}");
                 DamagePlayer(attack, attacker.gameObject);
             }
             else
@@ -85,6 +85,13 @@ namespace BlasClient.Managers
             { AttackType.Vertical, new VerticalAttack() },
             { AttackType.Ranged, new RangedAttack() },
             { AttackType.Debla, new DeblaAttack() },
+            { AttackType.Verdiales, new VerdialesAttack() },
+            { AttackType.Taranto, new TarantoAttack() },
+            { AttackType.Tirana, new TiranaAttack() },
+            { AttackType.PoisonMist, new PoisonMistAttack() },
+            { AttackType.Shield, new ShieldAttack() },
+            { AttackType.Miriam, new MiriamAttack() },
+            { AttackType.Aubade, new AubadeAttack() },
         };
     }
 }

@@ -55,6 +55,8 @@ namespace BlasClient.PvP
         public override int Force => 1;
     }
 
+    // Prayers
+
     public class DeblaAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
@@ -62,5 +64,68 @@ namespace BlasClient.PvP
         public override int BaseDamage => 60;
 
         public override int Force => 1;
+    }
+
+    public class VerdialesAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
+
+    public class TarantoAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
+
+    public class TiranaAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
+
+    public class PoisonMistAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
+
+    public class ShieldAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
+
+    public class MiriamAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 1;
+    }
+
+    public class AubadeAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
+
+        public override int BaseDamage => 60;
+
+        public override int Force => 2;
     }
 }

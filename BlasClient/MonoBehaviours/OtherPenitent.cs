@@ -257,6 +257,8 @@ namespace BlasClient.MonoBehaviours
             AttackType attack = AttackType.Slash;
 
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
+            string attackerObject = hit.AttackingEntity.name;
+
             if (penitentState.IsName("Charged Attack"))
             {
                 attack = AttackType.Charged;
@@ -269,13 +271,41 @@ namespace BlasClient.MonoBehaviours
             {
                 attack = AttackType.Vertical;
             }
-            else if (hit.AttackingEntity.name == "RangeAttackProjectile(Clone)")
+            else if (attackerObject == "RangeAttackProjectile(Clone)")
             {
                 attack = AttackType.Ranged;
             }
-            else if (hit.AttackingEntity.name == "VerticalLightBeam") // Debla ??
+            else if (attackerObject == "PenitentVerticalBeam(Clone)")
             {
                 attack = AttackType.Debla;
+            }
+            else if (attackerObject == "CrawlerBullet_Base(Clone)")
+            {
+                attack = AttackType.Verdiales;
+            }
+            else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
+            {
+                attack = AttackType.Taranto;
+            }
+            else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap"))
+            {
+                attack = AttackType.Tirana;
+            }
+            else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
+            {
+                attack = AttackType.PoisonMist;
+            }
+            else if (attackerObject.StartsWith("PenitentShield"))
+            {
+                attack = AttackType.Shield;
+            }
+            else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike"))
+            {
+                attack = AttackType.Miriam;
+            }
+            else if (attackerObject == "GuardianPrayer(Clone)")
+            {
+                attack = AttackType.Aubade;
             }
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");

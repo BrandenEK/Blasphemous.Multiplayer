@@ -12,11 +12,19 @@ namespace BlasClient.PvP
         Ranged = 20,
 
         Debla = 40,
-        Taranto = 41,
-        Lorquiana = 42,
+        Taranto = 50,
+        Verdiales = 60,
+        Lorquiana = 70,
+        Tirana = 80,
+        PoisonMist = 90,
+        Shield = 100,
+        Miriam = 110,
+        Aubade = 120,
+        Cherubs = 130,
+        CanteJondo = 140,
     }
 
-    public enum EffectType
+public enum EffectType
     {
         SidewaysGrounded= 0,
         UpwardsGrounded = 1,
