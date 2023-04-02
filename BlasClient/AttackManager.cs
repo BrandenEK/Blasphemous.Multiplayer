@@ -11,7 +11,7 @@ namespace BlasClient.Managers
 {
     public class AttackManager
     {
-        public void AttackReceived(string attackerName, string receiverName, byte attack)
+        public void AttackReceived(string attackerName, string receiverName, AttackType attack)
         {
             if (Core.Logic.Penitent == null || !attackTypes.ContainsKey(attack)) return;
 
@@ -35,15 +35,15 @@ namespace BlasClient.Managers
             }
         }
 
-        public void EffectReceived(string playerName, byte effect)
+        public void EffectReceived(string playerName, EffectType effect)
         {
             OtherPenitent other = Main.Multiplayer.playerManager.getPlayerObject(playerName);
             if (other == null) return;
 
-            other.OtherPenitentAttack.PlayAttackAnimation(effect, other.IsFacingRight);
+            other.OtherPenitentAttack.PlayEffectAnimation(effect, other.IsFacingRight);
         }
 
-        private void DamagePlayer(byte attack, GameObject attacker)
+        private void DamagePlayer(AttackType attack, GameObject attacker)
         {
             // Calculate hit data based on attack & parameters
             Hit hit = new Hit()
@@ -77,13 +77,14 @@ namespace BlasClient.Managers
         }
 
         // Store all attack data in separate classes
-        private readonly Dictionary<byte, PlayerAttack> attackTypes = new Dictionary<byte, PlayerAttack>()
+        private readonly Dictionary<AttackType, PlayerAttack> attackTypes = new Dictionary<AttackType, PlayerAttack>()
         {
-            { 0, new NormalAttack() },
-            { 10, new ChargedAttack() },
-            { 11, new LungeAttack() },
-            { 12, new VerticalAttack() },
-            { 20, new RangedAttack() },
+            { AttackType.Slash, new NormalAttack() },
+            { AttackType.Charged, new ChargedAttack() },
+            { AttackType.Lunge, new LungeAttack() },
+            { AttackType.Vertical, new VerticalAttack() },
+            { AttackType.Ranged, new RangedAttack() },
+            { AttackType.Debla, new DeblaAttack() },
         };
     }
 }

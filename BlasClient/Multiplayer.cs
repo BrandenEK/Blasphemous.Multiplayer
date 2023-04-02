@@ -7,6 +7,7 @@ using Tools.Level.Interactables;
 using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
+using BlasClient.PvP;
 using ModdingAPI;
 
 namespace BlasClient
@@ -332,20 +333,20 @@ namespace BlasClient
         }
 
         // Creates and sends a new attack to other players in the same scene
-        public void SendNewAttack(string hitPlayerName, byte attack)
+        public void SendNewAttack(string hitPlayerName, AttackType attack)
         {
             if (connectedToServer)
             {
-                client.sendPlayerAttack(hitPlayerName, attack);
+                client.sendPlayerAttack(hitPlayerName, (byte)attack);
             }
         }
 
         // Sends a new attacking effect to other players in the same scene
-        public void SendNewEffect(byte effect)
+        public void SendNewEffect(EffectType effect)
         {
             if (connectedToServer)
             {
-                client.sendPlayerEffect(playerName, effect);
+                client.sendPlayerEffect(playerName, (byte)effect);
             }
         }
 
@@ -500,12 +501,12 @@ namespace BlasClient
 
         public void playerAttackReceived(string attackerName, string receiverName, byte attack)
         {
-            attackManager.AttackReceived(attackerName, receiverName, attack);
+            attackManager.AttackReceived(attackerName, receiverName, (AttackType)attack);
         }
 
         public void playerEffectReceived(string playerName, byte effect)
         {
-            attackManager.EffectReceived(playerName, effect);
+            attackManager.EffectReceived(playerName, (EffectType)effect);
         }
 
         private void sendAllProgress()

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using BlasClient.Data;
 using BlasClient.Structures;
+using BlasClient.PvP;
 using Tools.Level.Interactables;
 using Gameplay.GameControllers.Entities;
 using Framework.Managers;
@@ -253,24 +254,28 @@ namespace BlasClient.MonoBehaviours
                 return;
 
             Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
-            byte attack = 0;
+            AttackType attack = AttackType.Slash;
 
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
             if (penitentState.IsName("Charged Attack"))
             {
-                attack = 10;
+                attack = AttackType.Charged;
             }
             else if (Core.Logic.Penitent.LungeAttack.IsUsingAbility)
             {
-                attack = 11;
+                attack = AttackType.Lunge;
             }
             else if (Core.Logic.Penitent.VerticalAttack.IsUsingAbility)
             {
-                attack = 12;
+                attack = AttackType.Vertical;
             }
-            else if (hit.AttackingEntity.name == "Range Attack") // Change later
+            else if (hit.AttackingEntity.name == "RangeAttackProjectile(Clone)")
             {
-                attack = 20;
+                attack = AttackType.Ranged;
+            }
+            else if (hit.AttackingEntity.name == "VerticalLightBeam") // Debla ??
+            {
+                attack = AttackType.Debla;
             }
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");

@@ -12,6 +12,7 @@ using Gameplay.GameControllers.AnimationBehaviours.Player.Run;
 using Gameplay.GameControllers.AnimationBehaviours.Player.SubStatesBehaviours;
 using UnityEngine;
 using HarmonyLib;
+using BlasClient.PvP;
 
 namespace BlasClient.Patches
 {
@@ -34,7 +35,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(2);
+                Main.Multiplayer.SendNewEffect(EffectType.SidewaysAir);
                 return true;
             }
             return false;
@@ -58,7 +59,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(3);
+                Main.Multiplayer.SendNewEffect(EffectType.UpwardsAir);
                 return true;
             }
             return false;
@@ -82,7 +83,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(0);
+                Main.Multiplayer.SendNewEffect(EffectType.SidewaysGrounded);
                 return true;
             }
             return false;
@@ -188,7 +189,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(1);
+                Main.Multiplayer.SendNewEffect(EffectType.UpwardsGrounded);
                 return true;
             }
             return false;
@@ -423,7 +424,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(4);
+                Main.Multiplayer.SendNewEffect(EffectType.Crouch);
                 return true;
             }
             return false;
@@ -759,7 +760,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(20);
+                Main.Multiplayer.SendNewEffect(EffectType.Ranged);
                 return true;
             }
             return false;
@@ -783,7 +784,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(20);
+                Main.Multiplayer.SendNewEffect(EffectType.Ranged);
                 return true;
             }
             return false;

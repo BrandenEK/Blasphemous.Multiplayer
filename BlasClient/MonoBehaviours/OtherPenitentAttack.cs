@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using BlasClient.PvP;
 
 namespace BlasClient.MonoBehaviours
 {
@@ -31,18 +32,28 @@ namespace BlasClient.MonoBehaviours
         }
 
         // When receiving an attack from another player, make their character play the sword/prayer animation
-        public void PlayAttackAnimation(byte attack, bool facingRight)
+        public void PlayEffectAnimation(EffectType effect, bool facingRight)
         {
             SwordRenderer.flipX = !facingRight;
 
-            switch (attack)
+            switch (effect)
             {
-                case 0: SwordAnim.Play("Basic1_Lv1"); break;
-                case 1: SwordAnim.Play("BasicUpward_Lv1"); break;
-                case 2: SwordAnim.Play("Air1_Lv1"); break;
-                case 3: SwordAnim.Play("AirUpward_Lv1"); break;
-                case 4: SwordAnim.Play("Crouch_Lv1"); break;
-                case 20:
+                case EffectType.SidewaysGrounded:
+                    SwordAnim.Play("Basic1_Lv1");
+                    break;
+                case EffectType.UpwardsGrounded:
+                    SwordAnim.Play("BasicUpward_Lv1");
+                    break;
+                case EffectType.SidewaysAir:
+                    SwordAnim.Play("Air1_Lv1");
+                    break;
+                case EffectType.UpwardsAir:
+                    SwordAnim.Play("AirUpward_Lv1");
+                    break;
+                case EffectType.Crouch:
+                    SwordAnim.Play("Crouch_Lv1");
+                    break;
+                case EffectType.Ranged:
                     Main.Multiplayer.LogError("Spawning range attack effect!");
                     break;
             }

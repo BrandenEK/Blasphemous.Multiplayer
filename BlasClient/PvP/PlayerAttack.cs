@@ -50,6 +50,15 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
 
+        public override int BaseDamage => 20;
+
+        public override int Force => 1;
+    }
+
+    public class DeblaAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
         public override int BaseDamage => 60;
 
         public override int Force => 1;
