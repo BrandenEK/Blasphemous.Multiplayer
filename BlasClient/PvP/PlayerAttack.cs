@@ -6,6 +6,7 @@ namespace BlasClient.PvP
     public abstract class PlayerAttack
     {
         public abstract DamageArea.DamageType DamageType { get; }
+        public abstract DamageArea.DamageElement DamageElement { get; }
         public abstract int BaseDamage { get; }
         public abstract int Force { get; }
     }
@@ -13,6 +14,8 @@ namespace BlasClient.PvP
     public class NormalAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
 
         public override int BaseDamage => 10;
 
@@ -23,6 +26,8 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
 
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
+
         public override int BaseDamage => 40;
 
         public override int Force => 2;
@@ -31,6 +36,8 @@ namespace BlasClient.PvP
     public class LungeAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
 
         public override int BaseDamage => 30;
 
@@ -41,6 +48,8 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
 
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
+
         public override int BaseDamage => 20;
 
         public override int Force => 1;
@@ -49,6 +58,8 @@ namespace BlasClient.PvP
     public class RangedAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
 
         public override int BaseDamage => 20;
 
@@ -61,6 +72,8 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
 
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Magic;
+
         public override int BaseDamage => 60;
 
         public override int Force => 1;
@@ -69,6 +82,8 @@ namespace BlasClient.PvP
     public class VerdialesAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Magic;
 
         public override int BaseDamage => 60;
 
@@ -79,6 +94,8 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
 
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Lightning;
+
         public override int BaseDamage => 60;
 
         public override int Force => 1;
@@ -87,6 +104,8 @@ namespace BlasClient.PvP
     public class TiranaAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Lightning;
 
         public override int BaseDamage => 60;
 
@@ -97,6 +116,8 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
 
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Toxic;
+
         public override int BaseDamage => 60;
 
         public override int Force => 1;
@@ -105,6 +126,8 @@ namespace BlasClient.PvP
     public class ShieldAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
 
         public override int BaseDamage => 60;
 
@@ -115,6 +138,8 @@ namespace BlasClient.PvP
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Normal;
 
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
+
         public override int BaseDamage => 60;
 
         public override int Force => 1;
@@ -123,6 +148,8 @@ namespace BlasClient.PvP
     public class AubadeAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
 
         public override int BaseDamage => 60;
 

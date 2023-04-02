@@ -49,7 +49,6 @@ namespace BlasClient.Managers
             Hit hit = new Hit()
             {
                 AttackingEntity = attacker,
-                DamageElement = DamageArea.DamageElement.Normal,
                 ThrowbackDirByOwnerPosition = true,
                 Unparriable = true,
                 Unblockable = true,
@@ -57,6 +56,7 @@ namespace BlasClient.Managers
             };
             hit.DamageAmount = attackTypes[attack].BaseDamage;
             hit.DamageType = attackTypes[attack].DamageType;
+            hit.DamageElement = attackTypes[attack].DamageElement;
             hit.Force = attackTypes[attack].Force;
 
             // Actually damage player
