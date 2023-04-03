@@ -81,10 +81,15 @@ namespace BlasClient.Managers
         private readonly Dictionary<AttackType, PlayerAttack> attackTypes = new Dictionary<AttackType, PlayerAttack>()
         {
             { AttackType.Slash, new NormalAttack() },
+            { AttackType.ComboNormal, new ComboNormalAttack() },
+            { AttackType.ComboUp, new ComboUpAttack() },
+            { AttackType.ComboDown, new ComboDownAttack() },
+
             { AttackType.Charged, new ChargedAttack() },
             { AttackType.Lunge, new LungeAttack() },
             { AttackType.Vertical, new VerticalAttack() },
             { AttackType.Ranged, new RangedAttack() },
+
             { AttackType.Debla, new DeblaAttack() },
             { AttackType.Verdiales, new VerdialesAttack() },
             { AttackType.Taranto, new TarantoAttack() },

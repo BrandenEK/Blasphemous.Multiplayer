@@ -214,16 +214,16 @@ namespace BlasClient.MonoBehaviours
         private void Update()
         {
             AnimatorStateInfo state = CharacterAnim.GetCurrentAnimatorStateInfo(0);
-            if (!playerDead && state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall")))
+            if (!playerDead && state.normalizedTime >= 0.95f && (state.IsName("Death") || state.IsName("Death Spike") || state.IsName("Death Fall") || state.IsName("Grounding Over")))
             {
                 SetDeathStatus(true);
                 playerDead = true;
             }
-            else if (!playerDead && state.normalizedTime >= 0.9f && state.IsName("Grounding Over"))
-            {
-                SetDeathStatus(true);
-                playerDead = true;
-            }
+            //else if (!playerDead && state.normalizedTime >= 0.9f && )
+            //{
+            //    SetDeathStatus(true);
+            //    playerDead = true;
+            //}
             else
             {
                 playerDead = false;
@@ -260,7 +260,19 @@ namespace BlasClient.MonoBehaviours
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
             string attackerObject = hit.AttackingEntity.name;
 
-            if (penitentState.IsName("Charged Attack"))
+            if (penitentState.IsName("Combo_4"))
+            {
+                attack = AttackType.ComboNormal;
+            }
+            else if (penitentState.IsName("ComboFinisherUp"))
+            {
+                attack = AttackType.ComboUp;
+            }
+            else if (penitentState.IsName("ComboFinisherDown"))
+            {
+                attack = AttackType.ComboDown;
+            }
+            else if (penitentState.IsName("Charged Attack"))
             {
                 attack = AttackType.Charged;
             }

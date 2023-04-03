@@ -25,6 +25,45 @@ namespace BlasClient.PvP
         public override string SoundId => "PenitentSimpleEnemyHit";
     }
 
+    public class ComboNormalAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
+
+        public override int BaseDamage => 20;
+
+        public override int Force => 0;
+
+        public override string SoundId => "PenitentHeavyEnemyHit";
+    }
+
+    public class ComboUpAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
+
+        public override int BaseDamage => 40;
+
+        public override int Force => 1;
+
+        public override string SoundId => "PenitentHeavyEnemyHit";
+    }
+
+    public class ComboDownAttack : PlayerAttack
+    {
+        public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;
+
+        public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Normal;
+
+        public override int BaseDamage => 40;
+
+        public override int Force => 0;
+
+        public override string SoundId => "PenitentHeavyEnemyHit";
+    }
+
     public class ChargedAttack : PlayerAttack
     {
         public override DamageArea.DamageType DamageType => DamageArea.DamageType.Heavy;

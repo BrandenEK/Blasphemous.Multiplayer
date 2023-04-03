@@ -4,12 +4,15 @@ namespace BlasClient.PvP
     public enum AttackType
     {
         Slash = 0,
-        // Combos
         
-        Charged = 10,
-        Lunge = 11,
-        Vertical = 12,
-        Ranged = 20,
+        ComboNormal = 10,
+        ComboUp = 11,
+        ComboDown = 12,
+        
+        Charged = 20,
+        Lunge = 21,
+        Vertical = 22,
+        Ranged = 23,
 
         Debla = 40,
         Taranto = 50,
