@@ -272,6 +272,11 @@ namespace BlasClient.MonoBehaviours
             {
                 attack = AttackType.Vertical;
             }
+            else if (Core.Logic.Penitent.PrayerCast.IsUsingAbility)
+            {
+                Main.Multiplayer.LogWarning("Not applying damage for prayer use!");
+                return;
+            }
             else if (attackerObject == "RangeAttackProjectile(Clone)")
             {
                 attack = AttackType.Ranged;

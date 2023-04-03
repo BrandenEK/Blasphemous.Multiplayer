@@ -85,7 +85,7 @@ namespace BlasClient.PvP
 
         public override DamageArea.DamageElement DamageElement => DamageArea.DamageElement.Magic;
 
-        public override int BaseDamage => 60;
+        public override int BaseDamage => 20;
 
         public override int Force => 1;
 
