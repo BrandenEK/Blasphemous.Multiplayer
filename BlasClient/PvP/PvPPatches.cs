@@ -12,7 +12,6 @@ namespace BlasClient.PvP
             switch (prayer.id)
             {
                 case "PR03":
-                    Main.Multiplayer.LogError("Sending debla effect!");
                     Main.Multiplayer.SendNewEffect(EffectType.Debla);
                     break;
             }

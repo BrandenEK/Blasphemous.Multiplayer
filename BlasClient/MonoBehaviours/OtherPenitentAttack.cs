@@ -7,12 +7,11 @@ namespace BlasClient.MonoBehaviours
 {
     public class OtherPenitentAttack : MonoBehaviour
     {
+        private const float DEBLA_DURATION = 1.2f;
+
         private SpriteRenderer SwordRenderer { get; set; }
         private Animator SwordAnim { get; set; }
         private BoxCollider2D DamageArea { get; set; }
-
-        //private GameObject DeblaAttack { get; set; }
-        private float deblaLength = 1.2f;
 
         public void CreatePenitentAttack(RuntimeAnimatorController swordController)
         {
@@ -28,22 +27,6 @@ namespace BlasClient.MonoBehaviours
             DamageArea.offset = new Vector2(0, 0.92f);
             DamageArea.size = new Vector2(0.665f, 1.866f);
             DamageArea.isTrigger = true;
-
-            // Set up debla
-            
-
-            //DeblaAttack = new GameObject("Debla");
-            //DeblaAttack.transform.SetParent(transform);
-            //DeblaAttack.transform.localPosition = Vector3.zero;
-            ////DeblaAttack.AddComponent<SpriteRenderer>();
-            //GameObject deblaChild = new GameObject("Body", typeof(SpriteRenderer));
-            //deblaChild.transform.SetParent(DeblaAttack.transform);
-            //deblaChild.transform.localPosition = Vector3.zero;
-            //Animator deblaAnim = DeblaAttack.AddComponent<Animator>();
-            //deblaAnim.runtimeAnimatorController = Core.Logic.Penitent.PrayerCast.lightBeamPrayer.areaPrefab.GetComponent<Animator>().runtimeAnimatorController;
-            //deblaAnim.SetTrigger("LOOP");
-            //deblaAnim.Play("AttackLoop");
-            //DeblaAttack.SetActive(false);
         }
 
         // Upon death, the hitbox should be disabled
@@ -78,7 +61,6 @@ namespace BlasClient.MonoBehaviours
                     Main.Multiplayer.LogError("Spawning range attack effect!");
                     break;
                 case EffectType.Debla:
-                    Main.Multiplayer.LogError("Spawning debla");
                     StartCoroutine(DisplayDebla());
                     break;
             }
@@ -86,27 +68,18 @@ namespace BlasClient.MonoBehaviours
 
         private IEnumerator DisplayDebla()
         {
-            Main.Multiplayer.LogError("Starting debla corroutine");
+            Main.Multiplayer.Log("Spawning debla object for " + transform.parent.name);
+            if (Core.Logic.Penitent == null)
+                yield break;
+
             GameObject debla = Instantiate(Core.Logic.Penitent.PrayerCast.lightBeamPrayer.areaPrefab, transform);
             debla.name = "Debla";
             debla.transform.localPosition = Vector3.zero;
             Destroy(debla.GetComponent<Gameplay.GameControllers.Bosses.Quirce.Attack.BossSpawnedAreaAttack>());
             Destroy(debla.transform.GetChild(0).GetChild(0).gameObject);
-            //debla.GetComponent<Animator>().SetTrigger("LOOP");
             debla.GetComponent<Animator>().Play("AttackLoop");
-            Main.Multiplayer.LogError("Created debla object");
-            //debla.SetActive(false);
-
-            //DeblaAttack.SetActive(true);
-            //Main.Multiplayer.LogError("After enabling object");
-            Main.Multiplayer.LogWarning(Main.displayHierarchy(transform.parent, "", 0, 6, true));
-            //DeblaAttack.GetComponent<Animator>().Play("AttackLoop");
-            //GameObject child = DeblaAttack.transform.GetChild(0).gameObject;
-            //Main.Multiplayer.LogError((child.GetComponent<SpriteRenderer>().sprite != null) + ": " + (child.GetComponent<SpriteRenderer>().enabled && child.activeSelf).ToString());
-            yield return new WaitForSecondsRealtime(deblaLength);
+            yield return new WaitForSecondsRealtime(DEBLA_DURATION);
             Destroy(debla.gameObject);
-            Main.Multiplayer.LogError("Destroyed debla object");
-            //debla.SetActive(false);
         }
     }
 }
