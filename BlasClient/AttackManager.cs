@@ -18,7 +18,7 @@ namespace BlasClient.Managers
             if (receiverName == Main.Multiplayer.playerName)
             {
                 // This is the player that got hit
-                OtherPenitent attacker = Main.Multiplayer.playerManager.getPlayerObject(attackerName);
+                OtherPenitent attacker = Main.Multiplayer.playerManager.FindPlayerObject(attackerName);
                 if (attacker == null) return;
 
                 Config config = Main.Multiplayer.config;
@@ -37,7 +37,7 @@ namespace BlasClient.Managers
 
         public void EffectReceived(string playerName, EffectType effect)
         {
-            OtherPenitent other = Main.Multiplayer.playerManager.getPlayerObject(playerName);
+            OtherPenitent other = Main.Multiplayer.playerManager.FindPlayerObject(playerName);
             if (other == null) return;
 
             other.OtherPenitentAttack.PlayEffectAnimation(effect, other.IsFacingRight);
@@ -67,7 +67,7 @@ namespace BlasClient.Managers
 
         public void ShowDamageEffects(string receiverName)
         {
-            OtherPenitent receiver = Main.Multiplayer.playerManager.getPlayerObject(receiverName);
+            OtherPenitent receiver = Main.Multiplayer.playerManager.FindPlayerObject(receiverName);
             if (receiver == null) return;
 
             Vector3 effectPosition = receiver.transform.position + Vector3.up;

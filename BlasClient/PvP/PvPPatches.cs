@@ -22,18 +22,18 @@ namespace BlasClient.PvP
     }
 
     // Bypass iframes when getting attacked by another player
-    [HarmonyPatch(typeof(PenitentDamageArea), "TakeDamage")]
-    public class PenitentDamageIframes_Patch
-    {
-        public static void Prefix(Hit hit, ref float ___DeltaRecoverTime, float ___RecoverTime)
-        {
-            if (hit.AttackingEntity != null && hit.AttackingEntity.name.StartsWith("_"))
-            {
-                Main.Multiplayer.LogWarning("Bypassing iframes for player attack!");
-                ___DeltaRecoverTime = ___RecoverTime;
-            }
-        }
-    }
+    //[HarmonyPatch(typeof(PenitentDamageArea), "TakeDamage")]
+    //public class PenitentDamageIframes_Patch
+    //{
+    //    public static void Prefix(Hit hit, ref float ___DeltaRecoverTime, float ___RecoverTime)
+    //    {
+    //        if (hit.AttackingEntity != null && hit.AttackingEntity.name.StartsWith("_"))
+    //        {
+    //            Main.Multiplayer.LogWarning("Bypassing iframes for player attack!");
+    //            ___DeltaRecoverTime = ___RecoverTime;
+    //        }
+    //    }
+    //}
 
     // Prevent knockback when getting attacked by another player
     //[HarmonyPatch(typeof(PenitentDamageArea), "HitDisplacementForce")]

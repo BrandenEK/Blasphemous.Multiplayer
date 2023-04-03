@@ -334,7 +334,7 @@ namespace BlasClient.Managers
         }
 
         // Finds a specified player in the scene
-        public OtherPenitent getPlayerObject(string name)
+        private OtherPenitent getPlayerObject(string name)
         {
             for (int i = 0; i < players.Count; i++)
             {
@@ -342,6 +342,11 @@ namespace BlasClient.Managers
                     return players[i];
             }
             return null;
+        }
+        // When finding a player publicly, like after receiving an attack for example, lock its pos/anim/dir while it is found
+        public OtherPenitent FindPlayerObject(string name)
+        {
+            lock (positionLock) { lock (animationLock) { lock (directionLock) { return getPlayerObject(name); } } }
         }
 
         // Find a specified player's nametag
