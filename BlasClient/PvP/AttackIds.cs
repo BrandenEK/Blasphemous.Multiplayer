@@ -32,5 +32,7 @@ public enum EffectType
         UpwardsAir = 11,
         Crouch = 20,
         Ranged = 30,
+
+        Debla = 40,
     }
 }

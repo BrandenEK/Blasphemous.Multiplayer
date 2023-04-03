@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections;
+using Framework.Managers;
 using BlasClient.PvP;
 
 namespace BlasClient.MonoBehaviours
@@ -8,6 +10,9 @@ namespace BlasClient.MonoBehaviours
         private SpriteRenderer SwordRenderer { get; set; }
         private Animator SwordAnim { get; set; }
         private BoxCollider2D DamageArea { get; set; }
+
+        private GameObject DeblaAttack { get; set; }
+        private float deblaLength = 1.6f;
 
         public void CreatePenitentAttack(RuntimeAnimatorController swordController)
         {
@@ -23,6 +28,14 @@ namespace BlasClient.MonoBehaviours
             DamageArea.offset = new Vector2(0, 0.92f);
             DamageArea.size = new Vector2(0.665f, 1.866f);
             DamageArea.isTrigger = true;
+
+            // Set up debla
+            DeblaAttack = new GameObject("Debla");
+            DeblaAttack.AddComponent<SpriteRenderer>();
+            Animator deblaAnim = DeblaAttack.AddComponent<Animator>();
+            deblaAnim.runtimeAnimatorController = Core.Logic.Penitent.PrayerCast.lightBeamPrayer.areaPrefab.GetComponent<Animator>().runtimeAnimatorController;
+            deblaAnim.SetTrigger("LOOP");
+            DeblaAttack.SetActive(false);
         }
 
         // Upon death, the hitbox should be disabled
@@ -56,7 +69,18 @@ namespace BlasClient.MonoBehaviours
                 case EffectType.Ranged:
                     Main.Multiplayer.LogError("Spawning range attack effect!");
                     break;
+                case EffectType.Debla:
+                    Main.Multiplayer.LogError("Spawning debla");
+                    StartCoroutine(DisplayDebla());
+                    break;
             }
-        }        
+        }
+
+        private IEnumerator DisplayDebla()
+        {
+            DeblaAttack.SetActive(true);
+            yield return new WaitForSecondsRealtime(deblaLength);
+            DeblaAttack.SetActive(false);
+        }
     }
 }
