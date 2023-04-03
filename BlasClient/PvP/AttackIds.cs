@@ -37,5 +37,6 @@ public enum EffectType
         Ranged = 30,
 
         Debla = 40,
+        Verdiales = 60,
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections;
 using Framework.Managers;
 using BlasClient.PvP;
+using Gameplay.GameControllers.Entities;
+using Gameplay.GameControllers.Enemies.Projectiles;
 
 namespace BlasClient.MonoBehaviours
 {
@@ -63,6 +65,9 @@ namespace BlasClient.MonoBehaviours
                 case EffectType.Debla:
                     StartCoroutine(DisplayDebla());
                     break;
+                case EffectType.Verdiales:
+                    StartCoroutine(DisplayVerdiales());
+                    break;
             }
         }
 
@@ -80,6 +85,29 @@ namespace BlasClient.MonoBehaviours
             debla.GetComponent<Animator>().Play("AttackLoop");
             yield return new WaitForSecondsRealtime(DEBLA_DURATION);
             Destroy(debla.gameObject);
+        }
+
+        private IEnumerator DisplayVerdiales()
+        {
+            Main.Multiplayer.Log("Spawning verdiales object for " + transform.parent.name);
+            if (Core.Logic.Penitent == null)
+                yield break;
+
+            GameObject crawler = Instantiate(Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab, transform);
+            crawler.name = "Crawler right";
+            crawler.transform.localPosition = Vector3.zero;
+            crawler.GetComponentInChildren<AttackArea>().enabled = false;
+            crawler.GetComponentInChildren<StraightProjectile>().Init(crawler.transform.position, crawler.transform.position + Vector3.right, 5); // Need to change speed
+            crawler.transform.position += Vector3.right * 0.01f;
+
+            crawler = Instantiate(Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab, transform);
+            crawler.name = "Crawler left";
+            crawler.transform.localPosition = Vector3.zero;
+            crawler.GetComponentInChildren<AttackArea>().enabled = false;
+            crawler.GetComponentInChildren<StraightProjectile>().Init(crawler.transform.position, crawler.transform.position + Vector3.left, 5); // Need to change speed
+            crawler.transform.position += Vector3.left * 0.01f;
+
+            // Maybe have to wait for some time and destroy them ?
         }
     }
 }

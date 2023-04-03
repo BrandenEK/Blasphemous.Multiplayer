@@ -17,6 +17,9 @@ namespace BlasClient.PvP
                 case "PR03":
                     Main.Multiplayer.SendNewEffect(EffectType.Debla);
                     break;
+                case "PR14":
+                    Main.Multiplayer.SendNewEffect(EffectType.Verdiales);
+                    break;
             }
         }
     }
