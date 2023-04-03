@@ -161,9 +161,9 @@ namespace BlasClient
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                GameObject prayer = Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab;
-                if (prayer != null)
-                    Main.Multiplayer.LogError("Verdiales speed: " + Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectileSpeed);
+                //GameObject prayer = Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab;
+                //if (prayer != null)
+                //    Main.Multiplayer.LogError("Verdiales speed: " + Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectileSpeed);
                     //Main.Multiplayer.LogError(Main.displayHierarchy(prayer.transform, "", 0, 5, true));
                 //List<GameObject> prayers = Core.Logic.Penitent.PrayerCast.lightBeamPrayer.areaPrefabs;
                 //if (prayers != null)

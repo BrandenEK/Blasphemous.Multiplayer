@@ -10,6 +10,7 @@ namespace BlasClient.MonoBehaviours
     public class OtherPenitentAttack : MonoBehaviour
     {
         private const float DEBLA_DURATION = 1.2f;
+        private const float VERDIALES_DURATION = 2f;
 
         private SpriteRenderer SwordRenderer { get; set; }
         private Animator SwordAnim { get; set; }
@@ -84,7 +85,7 @@ namespace BlasClient.MonoBehaviours
             Destroy(debla.transform.GetChild(0).GetChild(0).gameObject);
             debla.GetComponent<Animator>().Play("AttackLoop");
             yield return new WaitForSecondsRealtime(DEBLA_DURATION);
-            Destroy(debla.gameObject);
+            Destroy(debla);
         }
 
         private IEnumerator DisplayVerdiales()
@@ -93,21 +94,25 @@ namespace BlasClient.MonoBehaviours
             if (Core.Logic.Penitent == null)
                 yield break;
 
-            GameObject crawler = Instantiate(Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab, transform);
-            crawler.name = "Crawler right";
-            crawler.transform.localPosition = Vector3.zero;
-            crawler.GetComponentInChildren<AttackArea>().enabled = false;
-            crawler.GetComponentInChildren<StraightProjectile>().Init(crawler.transform.position, crawler.transform.position + Vector3.right, 5); // Need to change speed
-            crawler.transform.position += Vector3.right * 0.01f;
+            GameObject crawlerright = Instantiate(Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab, transform);
+            crawlerright.name = "Crawler right";
+            crawlerright.transform.localPosition = Vector3.zero;
+            crawlerright.GetComponentInChildren<AttackArea>().enabled = false;
+            crawlerright.GetComponentInChildren<PolygonCollider2D>().enabled = false;
+            crawlerright.GetComponentInChildren<StraightProjectile>().Init(crawlerright.transform.position, crawlerright.transform.position + Vector3.right, 16);
+            crawlerright.transform.position += Vector3.right * 0.01f;
 
-            crawler = Instantiate(Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab, transform);
-            crawler.name = "Crawler left";
-            crawler.transform.localPosition = Vector3.zero;
-            crawler.GetComponentInChildren<AttackArea>().enabled = false;
-            crawler.GetComponentInChildren<StraightProjectile>().Init(crawler.transform.position, crawler.transform.position + Vector3.left, 5); // Need to change speed
-            crawler.transform.position += Vector3.left * 0.01f;
+            GameObject crawlerleft = Instantiate(Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab, transform);
+            crawlerleft.name = "Crawler left";
+            crawlerleft.transform.localPosition = Vector3.zero;
+            crawlerleft.GetComponentInChildren<AttackArea>().enabled = false;
+            crawlerleft.GetComponentInChildren<PolygonCollider2D>().enabled = false;
+            crawlerleft.GetComponentInChildren<StraightProjectile>().Init(crawlerleft.transform.position, crawlerleft.transform.position + Vector3.left, 16);
+            crawlerleft.transform.position += Vector3.left * 0.01f;
 
-            // Maybe have to wait for some time and destroy them ?
+            yield return new WaitForSecondsRealtime(VERDIALES_DURATION);
+            Destroy(crawlerright);
+            Destroy(crawlerleft); // Will probably have to leave colliders active to detect walls, maybe just change layermask to exlude enemy layer ?
         }
     }
 }

@@ -284,7 +284,7 @@ namespace BlasClient.MonoBehaviours
             {
                 attack = AttackType.Vertical;
             }
-            else if (Core.Logic.Penitent.PrayerCast.IsUsingAbility)
+            else if (Core.Logic.Penitent.PrayerCast.IsUsingAbility && attackerObject == "Penitent(Clone)")
             {
                 Main.Multiplayer.LogWarning("Not applying damage for prayer use!");
                 return;
