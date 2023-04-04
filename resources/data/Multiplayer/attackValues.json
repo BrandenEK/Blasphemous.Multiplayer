@@ -7,7 +7,30 @@
 		"Force": 1,
 		"SoundId": "PenitentSimpleEnemyHit"
 	},
-	
+	{
+		"AttackName": "ComboNormal",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 20,
+		"Force": 0,
+		"SoundId": "PenitentHeavyEnemyHit"
+	},
+	{
+		"AttackName": "ComboUp",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 40,
+		"Force": 1,
+		"SoundId": "PenitentHeavyEnemyHit"
+	},
+	{
+		"AttackName": "ComboDown",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 40,
+		"Force": 0,
+		"SoundId": "PenitentHeavyEnemyHit"
+	},
 	{
 		"AttackName": "Charged",
 		"DamageType": 1,
@@ -23,5 +46,76 @@
 		"BaseDamage": 30,
 		"Force": 1,
 		"SoundId": "PenitentLungeAttackHit"
+	},
+	{
+		"AttackName": "Vertical",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 20,
+		"Force": 1
+	},
+	{
+		"AttackName": "Ranged",
+		"DamageType": 0,
+		"DamageElement": 0,
+		"BaseDamage": 20,
+		"Force": 1
+	},
+	{
+		"AttackName": "Debla",
+		"DamageType": 0,
+		"DamageElement": 3,
+		"BaseDamage": 60,
+		"Force": 1,
+		"SoundId": "PenitentMagicDamage"
+	},
+	{
+		"AttackName": "Verdiales",
+		"DamageType": 0,
+		"DamageElement": 3,
+		"BaseDamage": 60,
+		"Force": 1
+	},
+	{
+		"AttackName": "Taranto",
+		"DamageType": 0,
+		"DamageElement": 4,
+		"BaseDamage": 60,
+		"Force": 1
+	},
+	{
+		"AttackName": "Tirana",
+		"DamageType": 0,
+		"DamageElement": 4,
+		"BaseDamage": 80,
+		"Force": 1
+	},
+	{
+		"AttackName": "PoisonMist",
+		"DamageType": 0,
+		"DamageElement": 2,
+		"BaseDamage": 40,
+		"Force": 1
+	},
+	{
+		"AttackName": "Shield",
+		"DamageType": 0,
+		"DamageElement": 0,
+		"BaseDamage": 40,
+		"Force": 1
+	},
+	{
+		"AttackName": "Miriam",
+		"DamageType": 0,
+		"DamageElement": 0,
+		"BaseDamage": 60,
+		"Force": 1
+	},
+	{
+		"AttackName": "Aubade",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 100,
+		"Force": 2
 	},
 ]
