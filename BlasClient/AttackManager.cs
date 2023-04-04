@@ -11,9 +11,17 @@ namespace BlasClient.Managers
 {
     public class AttackManager
     {
+        private Dictionary<AttackType, PlayerAttack> allAttacks;
+
+        public AttackManager()
+        {
+            allAttacks = new Dictionary<AttackType, PlayerAttack>();
+            LoadAttacks();
+        }
+
         public void AttackReceived(string attackerName, string receiverName, AttackType attack)
         {
-            if (Core.Logic.Penitent == null || !attackTypes.ContainsKey(attack)) return;
+            if (Core.Logic.Penitent == null || !allAttacks.ContainsKey(attack)) return;
 
             if (receiverName == Main.Multiplayer.playerName)
             {
@@ -54,15 +62,16 @@ namespace BlasClient.Managers
                 Unblockable = true,
                 Unnavoidable = true,
             };
-            hit.DamageAmount = attackTypes[attack].BaseDamage;
-            hit.DamageType = attackTypes[attack].DamageType;
-            hit.DamageElement = attackTypes[attack].DamageElement;
-            hit.Force = attackTypes[attack].Force;
+            PlayerAttack currentAttack = allAttacks[attack];
+            hit.DamageAmount = currentAttack.BaseDamage;
+            hit.DamageType = currentAttack.GetDamageType();
+            hit.DamageElement = currentAttack.GetDamageElement();
+            hit.Force = currentAttack.Force;
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
-            if (attackTypes[attack].SoundId != null) // Can remove later
-            Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + attackTypes[attack].SoundId);
+            if (currentAttack.SoundId != null) // Can remove later
+            Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + currentAttack.SoundId);
         }
 
         public void ShowDamageEffects(string receiverName)
@@ -77,27 +86,21 @@ namespace BlasClient.Managers
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
         }
 
-        // Store all attack data in separate classes
-        private readonly Dictionary<AttackType, PlayerAttack> attackTypes = new Dictionary<AttackType, PlayerAttack>()
+        private void LoadAttacks()
         {
-            { AttackType.Slash, new NormalAttack() },
-            { AttackType.ComboNormal, new ComboNormalAttack() },
-            { AttackType.ComboUp, new ComboUpAttack() },
-            { AttackType.ComboDown, new ComboDownAttack() },
-
-            { AttackType.Charged, new ChargedAttack() },
-            { AttackType.Lunge, new LungeAttack() },
-            { AttackType.Vertical, new VerticalAttack() },
-            { AttackType.Ranged, new RangedAttack() },
-
-            { AttackType.Debla, new DeblaAttack() },
-            { AttackType.Verdiales, new VerdialesAttack() },
-            { AttackType.Taranto, new TarantoAttack() },
-            { AttackType.Tirana, new TiranaAttack() },
-            { AttackType.PoisonMist, new PoisonMistAttack() },
-            { AttackType.Shield, new ShieldAttack() },
-            { AttackType.Miriam, new MiriamAttack() },
-            { AttackType.Aubade, new AubadeAttack() },
-        };
+            if (!Main.Multiplayer.FileUtil.loadDataText("attackValues.json", out string text))
+            {
+                Main.Multiplayer.LogDisplay("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                Main.Multiplayer.LogError("Failed to load attack data!");
+                return;
+            }
+            
+            PlayerAttack[] attacks = Main.Multiplayer.FileUtil.jsonObject<PlayerAttack[]>(text);
+            foreach (PlayerAttack attack in attacks)
+            {
+                allAttacks.Add(attack.GetAttackType(), attack);
+            }
+            Main.Multiplayer.Log("Successfully loaded all attack data!");
+        }
     }
 }

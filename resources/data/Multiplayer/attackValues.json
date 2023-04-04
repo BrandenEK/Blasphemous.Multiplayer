@@ -1,0 +1,27 @@
+[
+	{
+		"AttackName": "Slash",
+		"DamageType": 0,
+		"DamageElement": 0,
+		"BaseDamage": 10,
+		"Force": 1,
+		"SoundId": "PenitentSimpleEnemyHit"
+	},
+	
+	{
+		"AttackName": "Charged",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 40,
+		"Force": 2,
+		"SoundId": "PenitentHeavyEnemyHit"
+	},
+	{
+		"AttackName": "Lunge",
+		"DamageType": 1,
+		"DamageElement": 0,
+		"BaseDamage": 30,
+		"Force": 1,
+		"SoundId": "PenitentLungeAttackHit"
+	},
+]
