@@ -306,7 +306,7 @@ namespace BlasClient.MonoBehaviours
                 attack = AttackType.Taranto;
             }
             // Lorquiana
-            else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap"))
+            else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
             {
                 attack = AttackType.Tirana;
             }
@@ -318,7 +318,7 @@ namespace BlasClient.MonoBehaviours
             {
                 attack = AttackType.Shield;
             }
-            else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike"))
+            else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
             {
                 attack = AttackType.Miriam;
             }
