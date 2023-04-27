@@ -59,8 +59,10 @@
 ## Connecting
 
 First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
-<br>
+<br><br>
 However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding, Hamachi (https://vpn.net/), or ZeroTier (https://www.zerotier.com/)
+<br><br>
+If using Hamachi, you may have to follow this [setup guide](https://github.com/BrandenEK/Windwaker-coop#how-to-set-up-hamachi-to-simulate-a-local-network) for it to work.  Then when connecting, use the IP address that Hamachi assigned to the machine running the server.
 
 ---
 
