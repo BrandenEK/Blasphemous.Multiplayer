@@ -234,9 +234,9 @@ namespace BlasClient.Patches
     [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
     public class SpawnManager_Patch
     {
-        public static void Postfix(string teleportId)
+        public static void Postfix(string teleportId, bool active)
         {
-            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState)
+            if (!ProgressManager.updatingProgress && Main.Multiplayer.config.syncSettings.worldState && active)
             {
                 Main.Multiplayer.obtainedGameProgress(teleportId, ProgressManager.ProgressType.Teleport, 0);
             }
