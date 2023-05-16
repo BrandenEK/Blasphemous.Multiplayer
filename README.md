@@ -49,6 +49,13 @@
 3. Unzip the BlasServer.zip file anywhere on the host machine
 
 #### Client:
+
+Automatic installation
+- This mod can be automatically installed using the [Blasphemous Mod Installer](https://github.com/BrandenEK/Blasphemous-Mod-Installer)<br>
+- **Note:** Make sure to also enable the Modding API<br>
+<br>
+
+Manual installation
 1. Download the latest release of the Modding API from https://github.com/BrandenEK/Blasphemous-Modding-API/releases
 2. Follow the instructions there on how to install the api
 3. Download the latest release of the Multiplayer client from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
