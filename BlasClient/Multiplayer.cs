@@ -8,6 +8,7 @@ using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
 using BlasClient.PvP;
+using BlasClient.Map;
 using ModdingAPI;
 
 namespace BlasClient
@@ -22,7 +23,7 @@ namespace BlasClient
         public PlayerManager playerManager { get; private set; }
         public ProgressManager progressManager { get; private set; }
         public NotificationManager notificationManager { get; private set; }
-        public MapScreenManager mapScreenManager { get; private set; }
+        public Map.MapManager MapManager { get; private set; }
         public AttackManager attackManager { get; private set; }
 
         // Game status
@@ -64,7 +65,7 @@ namespace BlasClient
             playerManager = new PlayerManager();
             progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
-            mapScreenManager = new MapScreenManager();
+            MapManager = new Map.MapManager();
             attackManager = new AttackManager();
             client = new Client();
 
@@ -224,8 +225,7 @@ namespace BlasClient
             if (notificationManager != null)
                 notificationManager.updateNotifications();
             // Update map screen
-            if (mapScreenManager != null)
-                mapScreenManager.updateMap();
+            MapManager.Update();
         }
 
         private bool positionHasChanged(out Vector2 newPosition)
@@ -303,7 +303,7 @@ namespace BlasClient
         private void updatePlayerColors()
         {
             playerManager.refreshNametagColors();
-            mapScreenManager.queueMapUpdate();
+            MapManager.QueueMapUpdate();
         }
 
         // Obtained new item, upgraded stat, set flag, etc...
@@ -416,7 +416,7 @@ namespace BlasClient
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
                 playerManager.queuePlayer(playerName, true);
-            mapScreenManager.queueMapUpdate();
+            MapManager.QueueMapUpdate();
         }
 
         // Received leftScene data from server
@@ -426,7 +426,7 @@ namespace BlasClient
                 playerManager.queuePlayer(playerName, false);
 
             playerList.setPlayerScene(playerName, "");
-            mapScreenManager.queueMapUpdate();
+            MapManager.QueueMapUpdate();
         }
 
         // Received introResponse data from server

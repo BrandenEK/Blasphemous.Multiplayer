@@ -3,50 +3,37 @@ using UnityEngine.UI;
 using Framework.Managers;
 using Framework.Map;
 using Gameplay.UI.Others.MenuLogic;
-using BlasClient.Structures;
 
-namespace BlasClient.Managers
+namespace BlasClient.Map
 {
-    public class MapScreenManager
+    public class MapManager
     {
-        private Vector2 activePlayerPosition;
+        // Temporarily holds the most recent player map position
+        public Vector2 ActivePlayerPosition { get; set; }
+
+        // A map update is queued whenever player changes team, enters/leaves a scene, etc.
         private bool mapUpdateQueued;
 
+        // UI created after first time opening the map
         private Transform playerMarks;
         private Sprite[] playerSprites;
 
-        // Temporarily holds the most recent player map position
-        public void setActivePlayerPosition(Vector2 position)
-        {
-            activePlayerPosition = position;
-        }
-
-        // Gets and clears the most recent player map position
-        public Vector2 getActivePlayerPosition()
-        {
-            return activePlayerPosition;
-        }
-
-        public void queueMapUpdate()
+        public void QueueMapUpdate()
         {
             mapUpdateQueued = true;
         }
 
-        public void updateMap()
+        public void Update()
         {
             // If on map screen & just received an update, refresh map
             if (mapUpdateQueued && Core.Logic.IsPaused)
             {
-                NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
-                if (widget != null && widget.CherubsText.isActiveAndEnabled)
-                {
-                    createPlayerMarks(false);
-                }
+                RefreshMap(false);
             }
             mapUpdateQueued = false;
         }
 
-        public void createPlayerMarks(bool forceRecalculate)
+        public void RefreshMap(bool forceRecalculate)
         {
             // Only add marks for other players if config enabled
             if (!Main.Multiplayer.config.showPlayersOnMap)
@@ -63,17 +50,7 @@ namespace BlasClient.Managers
             // If holder doesn't exist yet, create it
             if (playerMarks == null || playerSprites == null)
             {
-                NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
-                if (widget == null) return;
-                Transform rootRenderer = widget.transform.Find("Background/Map/MapMask/MapRoot/RootRenderer_0");
-                if (rootRenderer == null) return;
-
-                GameObject holder = new GameObject("PlayerMarks", typeof(RectTransform));
-                holder.transform.SetParent(rootRenderer, false);
-
-                playerMarks = holder.transform;
-                MapRendererConfig cfg = widget.RendererConfigs[0];
-                playerSprites = new Sprite[3] { cfg.Marks[MapData.MarkType.Blue], cfg.Marks[MapData.MarkType.Green], cfg.Marks[MapData.MarkType.Red] };
+                CreateMapUI();
             }
 
             // Destroy all old player marks
@@ -82,10 +59,11 @@ namespace BlasClient.Managers
                 Object.Destroy(playerMarks.GetChild(i).gameObject);
             }
 
-            // Create new marks for each player
+            // Create a new mark for each player
             foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
-                string playerScene = Main.Multiplayer.playerList.getPlayerScene(playerName), playerLastMapScene = Main.Multiplayer.playerList.getPlayerMapScene(playerName);
+                string playerScene = Main.Multiplayer.playerList.getPlayerScene(playerName);
+                string playerLastMapScene = Main.Multiplayer.playerList.getPlayerMapScene(playerName);
                 byte playerTeam = Main.Multiplayer.playerList.getPlayerTeam(playerName);
 
                 // Only show other teams if config option
@@ -94,9 +72,9 @@ namespace BlasClient.Managers
 
                 // Calling this function with -1000 will calculate the center position of the scene
                 Core.NewMapManager.GetCellKeyFromPosition(playerLastMapScene, new Vector2(-1000, 0));
-                Vector2 cellPosition = getActivePlayerPosition();
+                Vector2 cellPosition = ActivePlayerPosition;
                 if (cellPosition.x < 0 || cellPosition.y < 0)
-                    return;
+                    continue;
 
                 // Calculate which icon to use
                 Sprite icon = playerSprites[0];
@@ -120,6 +98,23 @@ namespace BlasClient.Managers
                 rect.gameObject.AddComponent<Image>().sprite = icon;
                 Main.Multiplayer.Log($"Creating mark at " + rect.localPosition);
             }
+        }
+
+        private void CreateMapUI()
+        {
+            // Find Map widget
+            NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
+            if (widget == null) return;
+            Transform rootRenderer = widget.transform.Find("Background/Map/MapMask/MapRoot/RootRenderer_0");
+            if (rootRenderer == null) return;
+
+            // Create child of renderer
+            playerMarks = new GameObject("PlayerMarks", typeof(RectTransform)).transform;
+            playerMarks.SetParent(rootRenderer, false);
+
+            // Get player images
+            MapRendererConfig cfg = widget.RendererConfigs[0];
+            playerSprites = new Sprite[3] { cfg.Marks[MapData.MarkType.Blue], cfg.Marks[MapData.MarkType.Green], cfg.Marks[MapData.MarkType.Red] };
         }
     }
 }
