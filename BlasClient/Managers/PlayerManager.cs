@@ -40,7 +40,8 @@ namespace BlasClient.Managers
             // Load stored objects
             Transform tempCanvas = storedCanvas;
             GameObject tempText = storedTextPrefab;
-            RuntimeAnimatorController tempAnimator = storedPenitentAnimator;
+            RuntimeAnimatorController tempPenitentAnimator = storedPenitentAnimator;
+            RuntimeAnimatorController tempSwordAnimator = storedSwordAnimator;
             Material tempMaterial = storedPenitentMaterial;
 
             // Add special animation checker to certain interactors
@@ -197,7 +198,7 @@ namespace BlasClient.Managers
             // Create & setup new penitent object
             GameObject playerObject = new GameObject("_" + name);
             OtherPenitent penitent = playerObject.AddComponent<OtherPenitent>();
-            penitent.createPenitent(name, storedPenitentAnimator, storedPenitentMaterial);
+            penitent.createPenitent(name, storedPenitentAnimator, storedSwordAnimator, storedPenitentMaterial);
             players.Add(penitent);
 
             // If in beginning room, add fake penitent controller
@@ -342,6 +343,11 @@ namespace BlasClient.Managers
             }
             return null;
         }
+        // When finding a player publicly, like after receiving an attack for example, lock its pos/anim/dir while it is found
+        public OtherPenitent FindPlayerObject(string name)
+        {
+            lock (positionLock) { lock (animationLock) { lock (directionLock) { return getPlayerObject(name); } } }
+        }
 
         // Find a specified player's nametag
         private Text getPlayerNametag(string name)
@@ -441,6 +447,21 @@ namespace BlasClient.Managers
                         m_penitentAnimator = Core.Logic.Penitent.Animator.runtimeAnimatorController;
                 }
                 return m_penitentAnimator;
+            }
+        }
+
+        private RuntimeAnimatorController m_SwordAnimator;
+        private RuntimeAnimatorController storedSwordAnimator
+        {
+            get
+            {
+                if (m_SwordAnimator == null)
+                {
+                    Main.Multiplayer.LogWarning("Sword animator controller was null - Loading now");
+                    if (Core.Logic.Penitent != null)
+                        m_SwordAnimator = Core.Logic.Penitent.GetComponentInChildren<Gameplay.GameControllers.Penitent.Attack.SwordAnimatorInyector>().GetComponent<Animator>().runtimeAnimatorController;
+                }
+                return m_SwordAnimator;
             }
         }
 

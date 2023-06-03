@@ -206,13 +206,20 @@ namespace BlasClient.Managers
             for (int i = 0; i < ownedQuestItems.Count; i++)
                 Main.Multiplayer.obtainedGameProgress(ownedQuestItems[i].id, ProgressType.QuestItem, 0);
             // Player stats
-            Main.Multiplayer.obtainedGameProgress("LIFE", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Life.GetUpgrades());
-            Main.Multiplayer.obtainedGameProgress("FERVOUR", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Fervour.GetUpgrades());
-            Main.Multiplayer.obtainedGameProgress("STRENGTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Strength.GetUpgrades());
-            Main.Multiplayer.obtainedGameProgress("MEACULPA", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.MeaCulpa.GetUpgrades());
-            Main.Multiplayer.obtainedGameProgress("BEADSLOTS", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.BeadSlots.GetUpgrades());
-            Main.Multiplayer.obtainedGameProgress("FLASK", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.Flask.GetUpgrades());
-            Main.Multiplayer.obtainedGameProgress("FLASKHEALTH", ProgressType.PlayerStat, (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades());
+            byte life = (byte)Core.Logic.Penitent.Stats.Life.GetUpgrades();
+            if (life > 0) Main.Multiplayer.obtainedGameProgress("LIFE", ProgressType.PlayerStat, life);
+            byte fervour = (byte)Core.Logic.Penitent.Stats.Fervour.GetUpgrades();
+            if (fervour > 0) Main.Multiplayer.obtainedGameProgress("FERVOUR", ProgressType.PlayerStat, fervour);
+            byte strength = (byte)Core.Logic.Penitent.Stats.Strength.GetUpgrades();
+            if (strength > 0) Main.Multiplayer.obtainedGameProgress("STRENGTH", ProgressType.PlayerStat, strength);
+            byte meaculpa = (byte)Core.Logic.Penitent.Stats.MeaCulpa.GetUpgrades();
+            if (meaculpa > 0) Main.Multiplayer.obtainedGameProgress("MEACULPA", ProgressType.PlayerStat, meaculpa);
+            byte beadslots = (byte)Core.Logic.Penitent.Stats.BeadSlots.GetUpgrades();
+            if (beadslots > 0) Main.Multiplayer.obtainedGameProgress("BEADSLOTS", ProgressType.PlayerStat, beadslots);
+            byte flask = (byte)Core.Logic.Penitent.Stats.Flask.GetUpgrades();
+            if (flask > 0) Main.Multiplayer.obtainedGameProgress("FLASK", ProgressType.PlayerStat, flask);
+            byte flaskhealth = (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades();
+            if (flaskhealth > 0) Main.Multiplayer.obtainedGameProgress("FLASKHEALTH", ProgressType.PlayerStat, flaskhealth);
             // Sword skills
             Core.SkillManager.GetCurrentPersistentState("intro", false);
             // Map cells

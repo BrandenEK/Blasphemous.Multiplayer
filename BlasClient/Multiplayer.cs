@@ -7,6 +7,7 @@ using Tools.Level.Interactables;
 using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
+using BlasClient.PvP;
 using ModdingAPI;
 
 namespace BlasClient
@@ -22,6 +23,7 @@ namespace BlasClient
         public ProgressManager progressManager { get; private set; }
         public NotificationManager notificationManager { get; private set; }
         public MapScreenManager mapScreenManager { get; private set; }
+        public AttackManager attackManager { get; private set; }
 
         // Game status
         public PlayerList playerList { get; private set; }
@@ -63,6 +65,7 @@ namespace BlasClient
             progressManager = new ProgressManager();
             notificationManager = new NotificationManager();
             mapScreenManager = new MapScreenManager();
+            attackManager = new AttackManager();
             client = new Client();
 
             // Initialize data
@@ -154,10 +157,23 @@ namespace BlasClient
                 //PlayerStatus test = new PlayerStatus();
                 //test.currentScene = "D05Z02S06";
                 //connectedPlayers.Add("Test", test);
+                //attackManager.TakeHit("", 0);
             }
             else if (Input.GetKeyDown(KeyCode.Keypad6))
             {
-                
+                //GameObject prayer = Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab;
+                //if (prayer != null)
+                //    Main.Multiplayer.LogError("Verdiales speed: " + Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectileSpeed);
+                    //Main.Multiplayer.LogError(Main.displayHierarchy(prayer.transform, "", 0, 5, true));
+                //List<GameObject> prayers = Core.Logic.Penitent.PrayerCast.lightBeamPrayer.areaPrefabs;
+                //if (prayers != null)
+                //{
+                //    Main.Multiplayer.LogWarning("Using list");
+                //    foreach (GameObject pray in prayers)
+                //    {
+                //        Main.Multiplayer.LogError(Main.displayHierarchy(pray.transform, "", 0, 5, true));
+                //    }
+                //}
             }
 
             if (inLevel && connectedToServer && Core.Logic.Penitent != null)
@@ -328,6 +344,24 @@ namespace BlasClient
             client.sendPlayerSkin(data);
         }
 
+        // Creates and sends a new attack to other players in the same scene
+        public void SendNewAttack(string hitPlayerName, AttackType attack)
+        {
+            if (connectedToServer)
+            {
+                client.sendPlayerAttack(hitPlayerName, (byte)attack);
+            }
+        }
+
+        // Sends a new attacking effect to other players in the same scene
+        public void SendNewEffect(EffectType effect)
+        {
+            if (connectedToServer)
+            {
+                client.sendPlayerEffect(playerName, (byte)effect);
+            }
+        }
+
         // Sends the current position/animation/direction when first entering a scene or joining server
         // Make sure you are connected to server first
         private void SendAllLocationData()
@@ -475,6 +509,16 @@ namespace BlasClient
             playerList.setPlayerTeam(playerName, team);
             if (inLevel)
                 updatePlayerColors();
+        }
+
+        public void playerAttackReceived(string attackerName, string receiverName, byte attack)
+        {
+            attackManager.AttackReceived(attackerName, receiverName, (AttackType)attack);
+        }
+
+        public void playerEffectReceived(string playerName, byte effect)
+        {
+            attackManager.EffectReceived(playerName, (EffectType)effect);
         }
 
         private void sendAllProgress()

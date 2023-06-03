@@ -23,7 +23,6 @@ namespace BlasServer
             {
                 string json = File.ReadAllText(configPath);
                 config = JsonConvert.DeserializeObject<Config>(json);
-                displayMessage("Loaded config from " + configPath);
             }
             else
             {

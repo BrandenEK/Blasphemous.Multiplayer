@@ -147,6 +147,10 @@ namespace BlasClient
                         receivePlayerProgress(data); break;
                     case 9:
                         receivePlayerTeam(data); break;
+                    case 10:
+                        receivePlayerAttack(data); break;
+                    case 11:
+                        receivePlayerEffect(data); break;
                     default:
                         Main.Multiplayer.Log($"Data type '{type}' is not valid"); break;
                 }
@@ -234,6 +238,21 @@ namespace BlasClient
         public void sendPlayerTeam(byte team)
         {
             Send(new byte[] { team }, 9, false);
+        }
+
+        // Send this player's attack
+        public void sendPlayerAttack(string playerName, byte attack)
+        {
+            List<byte> bytes = new List<byte>();
+            bytes.Add(attack);
+            bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
+            Send(bytes.ToArray(), 10, false); // Needs to send more info
+        }
+
+        // Send this player's effect
+        public void sendPlayerEffect(string playerName, byte effect)
+        {
+            Send(new byte[] { effect }, 11, false);
         }
 
         #endregion Send functions
@@ -353,6 +372,27 @@ namespace BlasClient
 
             // Update player's team
             Main.Multiplayer.playerTeamReceived(playerName, team);
+        }
+
+        // Received a player's attack
+        private void receivePlayerAttack(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            byte attack = data[startIdx];
+            string hitName = Encoding.UTF8.GetString(data, startIdx + 1, data.Length - startIdx - 1);
+
+            // Process attack
+            Main.Multiplayer.playerAttackReceived(playerName, hitName, attack); // Process more data
+        }
+
+        // Received a player's effect
+        private void receivePlayerEffect(byte[] data)
+        {
+            int startIdx = getPlayerNameFromData(data, out string playerName);
+            byte effect = data[startIdx];
+
+            // Process effect
+            Main.Multiplayer.playerEffectReceived(playerName, effect);
         }
 
         #endregion Receive functions

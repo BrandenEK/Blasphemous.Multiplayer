@@ -45,6 +45,8 @@
 
 #### Server:
 1. Download and install Microsoft .NET Core 3.1 from https://dotnet.microsoft.com/en-us/download/dotnet/3.1
+    - On Windows you most likely need the Hosting Bundle for ASP.NET Core Runtime 3.1.32 ([Direct link](https://download.visualstudio.microsoft.com/download/pr/6744eb9d-dcd4-4386-9d87-b03b70fc58ce/818fadf3f3d919c17ba845b2195bfd9b/dotnet-hosting-3.1.32-win.exe
+))
 2. Download the latest release of the Multiplayer server from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
 3. Unzip the BlasServer.zip file anywhere on the host machine
 
