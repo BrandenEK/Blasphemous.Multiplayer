@@ -60,15 +60,15 @@ namespace BlasClient.MonoBehaviours
                 case EffectType.Crouch:
                     SwordAnim.Play("Crouch_Lv1");
                     break;
-                case EffectType.Ranged:
-                    Main.Multiplayer.LogError("Spawning range attack effect!");
-                    break;
+                //case EffectType.Ranged:
+                //    Main.Multiplayer.LogError("Spawning range attack effect!");
+                //    break;
                 case EffectType.Debla:
                     StartCoroutine(DisplayDebla());
                     break;
-                case EffectType.Verdiales:
-                    StartCoroutine(DisplayVerdiales());
-                    break;
+                //case EffectType.Verdiales:
+                //    StartCoroutine(DisplayVerdiales());
+                //    break;
             }
         }
 

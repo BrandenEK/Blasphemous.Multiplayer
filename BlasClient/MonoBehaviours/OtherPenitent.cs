@@ -243,9 +243,9 @@ namespace BlasClient.MonoBehaviours
                 finishSpecialAnimation();
         }
 
-        public bool BleedOnImpact() { return false; }
-        public bool SparkOnImpact() { return false; }
-        public Vector3 GetPosition() { return transform.position; }
+        public bool BleedOnImpact() => false;
+        public bool SparkOnImpact() => false;
+        public Vector3 GetPosition() => transform.position;
 
         public void Damage(Hit hit)
         {
@@ -289,43 +289,43 @@ namespace BlasClient.MonoBehaviours
                 Main.Multiplayer.LogWarning("Not applying damage for prayer use!");
                 return;
             }
-            else if (attackerObject == "RangeAttackProjectile(Clone)")
-            {
-                attack = AttackType.Ranged;
-            }
+            //else if (attackerObject == "RangeAttackProjectile(Clone)")
+            //{
+            //    attack = AttackType.Ranged;
+            //}
             else if (attackerObject == "PenitentVerticalBeam(Clone)")
             {
                 attack = AttackType.Debla;
             }
-            else if (attackerObject == "CrawlerBullet_Base(Clone)")
-            {
-                attack = AttackType.Verdiales;
-            }
-            else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
-            {
-                attack = AttackType.Taranto;
-            }
+            //else if (attackerObject == "CrawlerBullet_Base(Clone)")
+            //{
+            //    attack = AttackType.Verdiales;
+            //}
+            //else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
+            //{
+            //    attack = AttackType.Taranto;
+            //}
             // Lorquiana
-            else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
-            {
-                attack = AttackType.Tirana;
-            }
-            else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
-            {
-                attack = AttackType.PoisonMist;
-            }
-            else if (attackerObject.StartsWith("PenitentShield"))
-            {
-                attack = AttackType.Shield;
-            }
-            else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
-            {
-                attack = AttackType.Miriam;
-            }
-            else if (attackerObject == "GuardianPrayer(Clone)")
-            {
-                attack = AttackType.Aubade;
-            }
+            //else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
+            //{
+            //    attack = AttackType.Tirana;
+            //}
+            //else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
+            //{
+            //    attack = AttackType.PoisonMist;
+            //}
+            //else if (attackerObject.StartsWith("PenitentShield"))
+            //{
+            //    attack = AttackType.Shield;
+            //}
+            //else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
+            //{
+            //    attack = AttackType.Miriam;
+            //}
+            //else if (attackerObject == "GuardianPrayer(Clone)")
+            //{
+            //    attack = AttackType.Aubade;
+            //}
             // Cherubs
             // Cante Jondo
 

@@ -3,8 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <AssemblyName>BlasClient</AssemblyName>
+    <BepInExPluginGuid>com.damocles.blasphemous.multiplayer</BepInExPluginGuid>
+    <BepInExPluginName>Multiplayer</BepInExPluginName>
     <Description>A multiplayer client for the game Blasphemous</Description>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -46,4 +48,46 @@
       <HintPath>..\lib\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Development" AfterTargets="PostBuildEvent">
+
+    <!-- Get resource files -->
+    <PropertyGroup>
+      <ResourcesFolder>$(SolutionDir)resources\</ResourcesFolder>
+    </PropertyGroup>
+    <ItemGroup>
+      <Config Include="$(ResourcesFolder)config\*" />
+      <DataDlls Include="$(ResourcesFolder)data\*" />
+      <DataFiles Include="$(ResourcesFolder)data\$(BepInExPluginName)\*" />
+      <Keybindings Include="$(ResourcesFolder)keybindings\*" />
+      <Levels Include="$(ResourcesFolder)levels\$(BepInExPluginName)\*" />
+      <Localization Include="$(ResourcesFolder)localization\*" />
+    </ItemGroup>
+
+    <!-- Copy plugin & resources to development folder -->
+    <PropertyGroup>
+      <DevFolder>C:\Users\Damocles\Documents\Speedrunning\Blasphemous\Modding Dev\Modding\</DevFolder>
+    </PropertyGroup>
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DevFolder)plugins" />
+    <Copy SourceFiles="@(Config)" DestinationFolder="$(DevFolder)config" />
+    <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(DevFolder)data" />
+    <Copy SourceFiles="@(DataFiles)" DestinationFolder="$(DevFolder)data\$(BepInExPluginName)" />
+    <Copy SourceFiles="@(Keybindings)" DestinationFolder="$(DevFolder)keybindings" />
+    <Copy SourceFiles="@(Levels)" DestinationFolder="$(DevFolder)levels\$(BepInExPluginName)" />
+    <Copy SourceFiles="@(Localization)" DestinationFolder="$(DevFolder)localization" />
+
+    <!-- Export & zip all mod files -->
+    <PropertyGroup>
+      <ExportFolder>$(SolutionDir)export\$(TargetName)\</ExportFolder>
+    </PropertyGroup>
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ExportFolder)plugins" />
+    <Copy SourceFiles="@(Config)" DestinationFolder="$(ExportFolder)config" />
+    <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(ExportFolder)data" />
+    <Copy SourceFiles="@(DataFiles)" DestinationFolder="$(ExportFolder)data\$(BepInExPluginName)" />
+    <Copy SourceFiles="@(Keybindings)" DestinationFolder="$(ExportFolder)keybindings" />
+    <Copy SourceFiles="@(Levels)" DestinationFolder="$(ExportFolder)levels\$(BepInExPluginName)" />
+    <Copy SourceFiles="@(Localization)" DestinationFolder="$(ExportFolder)localization" />
+    <ZipDirectory SourceDirectory="$(ExportFolder)" DestinationFile="$(ExportFolder)..\$(TargetName).zip" Overwrite="true"/>
+
+  </Target>
 </Project>

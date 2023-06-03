@@ -13,17 +13,10 @@ namespace BlasClient.PvP
         public int Force { get; set; }
         public string SoundId { get; set; }
 
-        public DamageArea.DamageType GetDamageType()
-        {
-            return (DamageArea.DamageType)DamageType;
-        }
-        public DamageArea.DamageElement GetDamageElement()
-        {
-            return (DamageArea.DamageElement)DamageElement;
-        }
-        public AttackType GetAttackType()
-        {
-            return (AttackType)System.Enum.Parse(typeof(AttackType), AttackName);
-        }
+        public DamageArea.DamageType GetDamageType() => (DamageArea.DamageType)DamageType;
+
+        public DamageArea.DamageElement GetDamageElement() => (DamageArea.DamageElement)DamageElement;
+
+        public AttackType GetAttackType() => (AttackType)System.Enum.Parse(typeof(AttackType), AttackName);
     }
 }

@@ -16,6 +16,10 @@
 # Mono auto generated files
 mono_crash.*
 
+# Blas Modding
+[Ll]ib/
+[Ee]xport/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
