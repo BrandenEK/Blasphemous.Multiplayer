@@ -8,7 +8,10 @@ using BlasClient.Managers;
 using BlasClient.Structures;
 using BlasClient.Data;
 using BlasClient.PvP;
+
+
 using BlasClient.Map;
+using BlasClient.Notifications;
 using ModdingAPI;
 
 namespace BlasClient
@@ -20,10 +23,12 @@ namespace BlasClient
         public Config config { get; private set; }
 
         // Managers
+        public Map.MapManager MapManager { get; private set; }
+        public NotificationManager NotificationManager { get; private set; }
+
+
         public PlayerManager playerManager { get; private set; }
         public ProgressManager progressManager { get; private set; }
-        public NotificationManager notificationManager { get; private set; }
-        public Map.MapManager MapManager { get; private set; }
         public AttackManager attackManager { get; private set; }
 
         // Game status
@@ -64,7 +69,7 @@ namespace BlasClient
             // Create managers
             playerManager = new PlayerManager();
             progressManager = new ProgressManager();
-            notificationManager = new NotificationManager();
+            NotificationManager = new NotificationManager();
             MapManager = new Map.MapManager();
             attackManager = new AttackManager();
             client = new Client();
@@ -94,7 +99,7 @@ namespace BlasClient
             {
                 yield return new WaitForEndOfFrame();
                 yield return new WaitForEndOfFrame();
-                notificationManager.showNotification(notification);
+                NotificationManager.DisplayNotification(notification);
             }
         }
 
@@ -107,7 +112,7 @@ namespace BlasClient
         public void onDisconnect(bool showNotification)
         {
             if (showNotification)
-                notificationManager.showNotification(Localize("dcon"));
+                NotificationManager.DisplayNotification(Localize("dcon"));
             playerList.ClearPlayers();
             playerManager.destroyPlayers();
             playerName = "";
@@ -117,7 +122,7 @@ namespace BlasClient
         protected override void LevelLoaded(string oldLevel, string newLevel)
         {
             inLevel = newLevel != "MainMenu";
-            notificationManager.createMessageBox();
+            NotificationManager.LevelLoaded();
             playerManager.loadScene(newLevel);
             progressManager.sceneLoaded(newLevel);
             CanObtainStatUpgrades = true;
@@ -222,10 +227,8 @@ namespace BlasClient
             if (playerManager != null && inLevel)
                 playerManager.updatePlayers();
             // Update notifications
-            if (notificationManager != null)
-                notificationManager.updateNotifications();
-            // Update map screen
             MapManager.Update();
+            NotificationManager.Update();
         }
 
         private bool positionHasChanged(out Vector2 newPosition)
@@ -448,7 +451,7 @@ namespace BlasClient
                     sendAllProgress();
                 }
 
-                notificationManager.showNotification(Localize("con"));
+                NotificationManager.DisplayNotification(Localize("con"));
                 return;
             }
 
@@ -462,7 +465,7 @@ namespace BlasClient
             else if (response == 5) reason = "refnam"; // Duplicate name
             else reason = "refunk"; // Unknown reason
 
-            notificationManager.showNotification(Localize("refuse") + ": " + Localize(reason));
+            NotificationManager.DisplayNotification(Localize("refuse") + ": " + Localize(reason));
         }
 
         // Received player connection status from server
@@ -479,7 +482,7 @@ namespace BlasClient
                 playerLeftScene(playerName);
                 playerList.RemovePlayer(playerName);
             }
-            notificationManager.showNotification($"{playerName} {Localize(connected ? "join" : "leave")}");
+            NotificationManager.DisplayNotification($"{playerName} {Localize(connected ? "join" : "leave")}");
         }
 
         public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
@@ -490,7 +493,7 @@ namespace BlasClient
             if (playerName == "*") return;
 
             // Show notification for new progress
-            notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
+            NotificationManager.DisplayProgressNotification(playerName, progressType, progressId, progressValue);
 
             // Set stat obtained status
             if (inLevel && progressType == (byte)ProgressManager.ProgressType.PlayerStat && !inRando && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
