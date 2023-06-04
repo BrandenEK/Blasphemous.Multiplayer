@@ -2,11 +2,7 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Gameplay.UI.Others.UIGameLogic;
-using Framework.Managers;
-using Framework.Inventory;
-using Framework.FrameworkCore;
-using BlasClient.Managers;
-using BlasClient.Data;
+using BlasClient.ProgressSync;
 
 namespace BlasClient.Notifications
 {
@@ -41,67 +37,9 @@ namespace BlasClient.Notifications
         }
 
         // Add a new notification for a progress update, but calculate it first
-        public void DisplayProgressNotification(string playerName, byte progressType, string progressId, byte progressValue)
+        public void DisplayProgressNotification(string playerName, ProgressUpdate progress)
         {
-            string notification = null;
-            switch ((ProgressManager.ProgressType)progressType)
-            {
-                case ProgressManager.ProgressType.Bead:
-                    RosaryBead bead = Core.InventoryManager.GetRosaryBead(progressId);
-                    if (bead != null && progressValue == 0)
-                        notification = Main.Multiplayer.Localize("itmnot") + " " + bead.caption;
-                    break;
-                case ProgressManager.ProgressType.Prayer:
-                    Prayer prayer = Core.InventoryManager.GetPrayer(progressId);
-                    if (prayer != null && progressValue == 0)
-                        notification = Main.Multiplayer.Localize("itmnot") + " " + prayer.caption;
-                    break;
-                case ProgressManager.ProgressType.Relic:
-                    Relic relic = Core.InventoryManager.GetRelic(progressId);
-                    if (relic != null && progressValue == 0)
-                        notification = Main.Multiplayer.Localize("itmnot") + " " + relic.caption;
-                    break;
-                case ProgressManager.ProgressType.Heart:
-                    Sword sword = Core.InventoryManager.GetSword(progressId);
-                    if (sword != null && progressValue == 0)
-                        notification = Main.Multiplayer.Localize("itmnot") + " " + sword.caption;
-                    break;
-                case ProgressManager.ProgressType.Collectible:
-                    Framework.Inventory.CollectibleItem collectible = Core.InventoryManager.GetCollectibleItem(progressId);
-                    if (collectible != null && progressValue == 0)
-                        notification = Main.Multiplayer.Localize("itmnot") + " " + collectible.caption;
-                    break;
-                case ProgressManager.ProgressType.QuestItem:
-                    QuestItem quest = Core.InventoryManager.GetQuestItem(progressId);
-                    if (quest != null && progressValue == 0)
-                        notification = Main.Multiplayer.Localize("itmnot") + " " + quest.caption;
-                    break;
-                case ProgressManager.ProgressType.PlayerStat:
-                    string stat = null;
-                    if (progressId == "LIFE") stat = "stlife";
-                    else if (progressId == "FERVOUR") stat = "stferv";
-                    else if (progressId == "STRENGTH") stat = "stmeas";
-                    else if (progressId == "MEACULPA") stat = "stmeat";
-                    else if (progressId == "BEADSLOTS") stat = "stbead";
-                    else if (progressId == "FLASK") stat = "stfknm";
-                    else if (progressId == "FLASKHEALTH") stat = "stfkhl";
-                    if (stat != null)
-                        notification = Main.Multiplayer.Localize("stnot") + " " + Main.Multiplayer.Localize(stat);
-                    break;
-                case ProgressManager.ProgressType.SwordSkill:
-                    UnlockableSkill skill = Core.SkillManager.GetSkill(progressId);
-                    if (skill != null)
-                        notification = Main.Multiplayer.Localize("sklnot") + " " + skill.caption;
-                    break;
-                case ProgressManager.ProgressType.Flag:
-                    FlagState flag = FlagStates.getFlagState(progressId);
-                    if (flag != null)
-                        notification = flag.notification;
-                    break;
-
-                // Unlocked teleports
-                // Church donations
-            }
+            string notification = Main.Multiplayer.ProgressManager.GetProgressNotification(progress);
 
             if (notification != null)
                 DisplayNotification($"{playerName} {notification}");

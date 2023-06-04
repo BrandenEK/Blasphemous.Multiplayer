@@ -11,7 +11,9 @@ using BlasClient.PvP;
 
 
 using BlasClient.Map;
+using BlasClient.Network;
 using BlasClient.Notifications;
+using BlasClient.ProgressSync;
 using ModdingAPI;
 
 namespace BlasClient
@@ -24,20 +26,23 @@ namespace BlasClient
 
         // Managers
         public Map.MapManager MapManager { get; private set; }
+        public NetworkManager NetworkManager { get; private set; }
         public NotificationManager NotificationManager { get; private set; }
+        public ProgressManager ProgressManager { get; private set; }
 
 
         public PlayerManager playerManager { get; private set; }
-        public ProgressManager progressManager { get; private set; }
         public AttackManager attackManager { get; private set; }
 
         // Game status
+        public bool RandomizerMode => IsModLoaded("com.damocles.blasphemous.randomizer");
+
+
         public PlayerList playerList { get; private set; }
         public string playerName { get; private set; }
         public bool inLevel { get; private set; }
         public byte playerTeam { get; private set; }
         public string serverIp => client.serverIp;
-        public bool inRando => IsModLoaded("com.damocles.blasphemous.randomizer");
         private List<string> interactedPersistenceObjects;
         private bool sentAllProgress;
 
@@ -68,7 +73,8 @@ namespace BlasClient
 
             // Create managers
             playerManager = new PlayerManager();
-            progressManager = new ProgressManager();
+            ProgressManager = new ProgressManager();
+            NetworkManager = new NetworkManager();
             NotificationManager = new NotificationManager();
             MapManager = new Map.MapManager();
             attackManager = new AttackManager();
@@ -124,7 +130,7 @@ namespace BlasClient
             inLevel = newLevel != "MainMenu";
             NotificationManager.LevelLoaded();
             playerManager.loadScene(newLevel);
-            progressManager.sceneLoaded(newLevel);
+            ProgressManager.LevelLoaded(newLevel);
             CanObtainStatUpgrades = true;
 
             if (inLevel && connectedToServer)
@@ -220,15 +226,13 @@ namespace BlasClient
             if (currentTimeBeforeSendAnimation > 0)
                 currentTimeBeforeSendAnimation -= Time.deltaTime;
 
-            // Update game progress
-            if (progressManager != null && inLevel)
-                progressManager.updateProgress();
-            // Update other player's data
-            if (playerManager != null && inLevel)
-                playerManager.updatePlayers();
-            // Update notifications
             MapManager.Update();
             NotificationManager.Update();
+            if (inLevel)
+            {
+                playerManager.updatePlayers();
+                ProgressManager.Update();
+            }
         }
 
         private bool positionHasChanged(out Vector2 newPosition)
@@ -310,14 +314,14 @@ namespace BlasClient
         }
 
         // Obtained new item, upgraded stat, set flag, etc...
-        public void obtainedGameProgress(string progressId, ProgressManager.ProgressType progressType, byte progressValue)
-        {
-            if (connectedToServer)
-            {
-                Log("Sending new game progress: " + progressId);
-                client.sendPlayerProgress((byte)progressType, progressValue, progressId);
-            }
-        }
+        //public void obtainedGameProgress(string progressId, ProgressType progressType, byte progressValue)
+        //{
+        //    if (connectedToServer)
+        //    {
+        //        Log("Sending new game progress: " + progressId);
+        //        client.sendPlayerProgress((byte)progressType, progressValue, progressId);
+        //    }
+        //}
 
         // Interacting with an object using a special animation
         public void usingSpecialAnimation(byte animation)
@@ -487,16 +491,18 @@ namespace BlasClient
 
         public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
         {
+            ProgressUpdate progress = new ProgressUpdate(progressId, (ProgressType)progressType, progressValue);
+
             // Apply the progress update
-            progressManager.receiveProgress(progressId, progressType, progressValue);
+            ProgressManager.ReceiveProgress(progress);
 
             if (playerName == "*") return;
 
             // Show notification for new progress
-            NotificationManager.DisplayProgressNotification(playerName, progressType, progressId, progressValue);
+            NotificationManager.DisplayProgressNotification(playerName, progress);
 
             // Set stat obtained status
-            if (inLevel && progressType == (byte)ProgressManager.ProgressType.PlayerStat && !inRando && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
+            if (inLevel && progressType == (byte)ProgressType.PlayerStat && !RandomizerMode && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
             {
                 if (progressId == "LIFE" || progressId == "FERVOUR" || progressId == "STRENGTH" || progressId == "MEACULPA")
                 {
@@ -531,7 +537,7 @@ namespace BlasClient
 
             // This is the first time loading a scene after connecting - send all player progress
             Log("Sending all player progress");
-            progressManager.loadAllProgress();
+            ProgressManager.SendAllProgress();
         }
 
         // If loading the rooftops elevator scene, set levers if they have been unlocked by someone else
