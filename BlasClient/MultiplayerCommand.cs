@@ -39,7 +39,7 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 0)) return;
 
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
             {
                 Write("Connected to " + Main.Multiplayer.NetworkManager.ServerIP);
             }
@@ -52,7 +52,7 @@ namespace BlasClient
         private void Connect(string[] parameters)
         {
             // Already connected
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
             {
                 Write("You are already connected to " + Main.Multiplayer.NetworkManager.ServerIP);
                 return;
@@ -125,7 +125,7 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 0)) return;
 
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
             {
                 Write("Disconnecting from server");
                 Main.Multiplayer.NetworkManager.Disconnect();
@@ -153,7 +153,7 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 0)) return;
 
-            if (!Main.Multiplayer.connectedToServer)
+            if (!Main.Multiplayer.NetworkManager.IsConnected)
             {
                 Write("Not connected to a server!");
                 return;
