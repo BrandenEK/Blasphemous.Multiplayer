@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using BlasClient.Data;
-using BlasClient.Structures;
 using BlasClient.PvP;
 using Tools.Level.Interactables;
 using Gameplay.GameControllers.Entities;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using BlasClient.Structures;
+using BlasClient.Players;
 
 namespace BlasClient
 {

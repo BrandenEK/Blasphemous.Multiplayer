@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Framework.Managers;
 
-namespace BlasClient.Structures
+namespace BlasClient.Players
 {
     public class SkinStatus
     {

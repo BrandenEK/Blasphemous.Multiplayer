@@ -48,6 +48,10 @@
       <HintPath>..\lib\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Managers\" />
+  </ItemGroup>
 
   <Target Name="Development" AfterTargets="PostBuildEvent">
 
@@ -87,7 +91,7 @@
     <Copy SourceFiles="@(Keybindings)" DestinationFolder="$(ExportFolder)keybindings" />
     <Copy SourceFiles="@(Levels)" DestinationFolder="$(ExportFolder)levels\$(BepInExPluginName)" />
     <Copy SourceFiles="@(Localization)" DestinationFolder="$(ExportFolder)localization" />
-    <ZipDirectory SourceDirectory="$(ExportFolder)" DestinationFile="$(ExportFolder)..\$(TargetName).zip" Overwrite="true"/>
+    <ZipDirectory SourceDirectory="$(ExportFolder)" DestinationFile="$(ExportFolder)..\$(TargetName).zip" Overwrite="true" />
 
   </Target>
 </Project>

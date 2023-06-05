@@ -4,10 +4,8 @@ using Gameplay.GameControllers.Effects.Player.Sparks;
 using Gameplay.GameControllers.Entities;
 using UnityEngine;
 using BlasClient.MonoBehaviours;
-using BlasClient.PvP;
-using BlasClient.Structures;
 
-namespace BlasClient.Managers
+namespace BlasClient.PvP
 {
     public class AttackManager
     {

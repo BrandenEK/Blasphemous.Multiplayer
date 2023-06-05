@@ -7,7 +7,7 @@ using Tools.Level;
 using Tools.Level.Interactables;
 using BlasClient.MonoBehaviours;
 
-namespace BlasClient.Managers
+namespace BlasClient.Players
 {
     public class PlayerManager
     {
@@ -362,6 +362,8 @@ namespace BlasClient.Managers
 
         public void queuePlayer(string playerName, bool addition)
         {
+            if (!Main.Multiplayer.CurrentlyInLevel) return;
+
             lock (playerLock)
             {
                 queuedPlayers.Add(playerName, addition);

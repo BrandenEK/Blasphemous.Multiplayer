@@ -1,5 +1,5 @@
 ﻿
-namespace BlasClient.Structures
+namespace BlasClient.Players
 {
     public class PlayerStatus
     {

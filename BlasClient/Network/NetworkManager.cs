@@ -205,7 +205,10 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             string scene = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
 
-            // Call enter scene
+            Main.Multiplayer.playerList.setPlayerScene(playerName, scene);
+            if (Core.LevelManager.currentLevel.LevelName == scene)
+                Main.Multiplayer.PlayerManager.queuePlayer(playerName, true);
+            Main.Multiplayer.MapManager.QueueMapUpdate();
         }
 
         // Leave scene
@@ -217,9 +220,12 @@ namespace BlasClient.Network
 
         private void ReceiveLeaveScene(byte[] data)
         {
-            int startIdx = ExtractNameFromData(data, out string playerName);
+            ExtractNameFromData(data, out string playerName);
 
-            // Call leave scene
+            if (Core.LevelManager.currentLevel.LevelName == Main.Multiplayer.playerList.getPlayerScene(playerName))
+                Main.Multiplayer.PlayerManager.queuePlayer(playerName, false);
+            Main.Multiplayer.playerList.setPlayerScene(playerName, "");
+            Main.Multiplayer.MapManager.QueueMapUpdate();
         }
 
         // Skin
@@ -264,7 +270,9 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             byte team = data[startIdx];
 
-            // Call team receveied
+            Main.Multiplayer.playerList.setPlayerTeam(playerName, team);
+            if (Main.Multiplayer.CurrentlyInLevel)
+                Main.Multiplayer.RefreshPlayerColors();
         }
 
         // Connection
@@ -279,7 +287,18 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             bool connected = BitConverter.ToBoolean(data, startIdx);
 
-            // Call connecection receive
+            if (connected)
+            {
+                // Add this player to the list of connected players
+                Main.Multiplayer.playerList.AddPlayer(playerName);
+            }
+            else
+            {
+                // Remove this player from the list of connected players
+                // playerLeftScene(playerName); // Need to actually remove the player object if same scene
+                Main.Multiplayer.playerList.RemovePlayer(playerName);
+            }
+            Main.Multiplayer.NotificationManager.DisplayNotification($"{playerName} {Main.Multiplayer.Localize(connected ? "join" : "leave")}");
         }
 
         // Intro
@@ -317,6 +336,7 @@ namespace BlasClient.Network
             }
 
             // Call intro receive
+            Main.Multiplayer.ProcessIntroResponse(response);
         }
 
         // Progress
