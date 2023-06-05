@@ -35,7 +35,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.SidewaysAir);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.SidewaysAir);
                 return true;
             }
             return false;
@@ -59,7 +59,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.UpwardsAir);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.UpwardsAir);
                 return true;
             }
             return false;
@@ -83,7 +83,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.SidewaysGrounded);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.SidewaysGrounded);
                 return true;
             }
             return false;
@@ -189,7 +189,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.UpwardsGrounded);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.UpwardsGrounded);
                 return true;
             }
             return false;
@@ -424,7 +424,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.Crouch);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.Crouch);
                 return true;
             }
             return false;
@@ -760,7 +760,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.Ranged);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.Ranged);
                 return true;
             }
             return false;
@@ -784,7 +784,7 @@ namespace BlasClient.Patches
         {
             if (animator.name == "Body")
             {
-                Main.Multiplayer.SendNewEffect(EffectType.Ranged);
+                Main.Multiplayer.NetworkManager.SendEffect(EffectType.Ranged);
                 return true;
             }
             return false;

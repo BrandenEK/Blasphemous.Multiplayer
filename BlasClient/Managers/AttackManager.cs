@@ -19,14 +19,14 @@ namespace BlasClient.Managers
             LoadAttacks();
         }
 
-        public void AttackReceived(string attackerName, string receiverName, AttackType attack)
+        public void ReceiveAttack(string attackerName, string receiverName, AttackType attack)
         {
             if (Core.Logic.Penitent == null || !allAttacks.ContainsKey(attack)) return;
 
             if (receiverName == Main.Multiplayer.playerName)
             {
                 // This is the player that got hit
-                OtherPenitent attacker = Main.Multiplayer.playerManager.FindPlayerObject(attackerName);
+                OtherPenitent attacker = Main.Multiplayer.PlayerManager.FindPlayerObject(attackerName);
                 if (attacker == null) return;
 
                 Config config = Main.Multiplayer.config;
@@ -43,9 +43,9 @@ namespace BlasClient.Managers
             }
         }
 
-        public void EffectReceived(string playerName, EffectType effect)
+        public void ReceiveEffect(string playerName, EffectType effect)
         {
-            OtherPenitent other = Main.Multiplayer.playerManager.FindPlayerObject(playerName);
+            OtherPenitent other = Main.Multiplayer.PlayerManager.FindPlayerObject(playerName);
             if (other == null) return;
 
             other.OtherPenitentAttack.PlayEffectAnimation(effect, other.IsFacingRight);
@@ -76,7 +76,7 @@ namespace BlasClient.Managers
 
         public void ShowDamageEffects(string receiverName)
         {
-            OtherPenitent receiver = Main.Multiplayer.playerManager.FindPlayerObject(receiverName);
+            OtherPenitent receiver = Main.Multiplayer.PlayerManager.FindPlayerObject(receiverName);
             if (receiver == null) return;
 
             Vector3 effectPosition = receiver.transform.position + Vector3.up;

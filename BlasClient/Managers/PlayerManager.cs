@@ -368,8 +368,10 @@ namespace BlasClient.Managers
             }
         }
 
-        public void queuePosition(string playerName, Vector2 position)
+        public void ReceivePosition(string playerName, Vector2 position)
         {
+            if (!Main.Multiplayer.CurrentlyInLevel) return;
+
             lock (positionLock)
             {
                 if (queuedPositions.ContainsKey(playerName))
@@ -379,8 +381,10 @@ namespace BlasClient.Managers
             }
         }
 
-        public void queueAnimation(string playerName, byte animation)
+        public void ReceiveAnimation(string playerName, byte animation)
         {
+            if (!Main.Multiplayer.CurrentlyInLevel) return;
+
             lock (animationLock)
             {
                 if (queuedAnimations.ContainsKey(playerName))
@@ -390,8 +394,10 @@ namespace BlasClient.Managers
             }
         }
 
-        public void queueDirection(string playerName, bool direction)
+        public void ReceiveDirection(string playerName, bool direction)
         {
+            if (!Main.Multiplayer.CurrentlyInLevel) return;
+
             lock (directionLock)
             {
                 if (queuedDirections.ContainsKey(playerName))

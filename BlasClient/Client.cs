@@ -250,7 +250,7 @@ namespace BlasClient
         }
 
         // Send this player's effect
-        public void sendPlayerEffect(string playerName, byte effect)
+        public void sendPlayerEffect(byte effect)
         {
             Send(new byte[] { effect }, 11, false);
         }
@@ -267,7 +267,7 @@ namespace BlasClient
             float yPos = BitConverter.ToSingle(data, startIdx + 4);
 
             // Update specified player with new data
-            Main.Multiplayer.playerPositionUpdated(playerName, xPos, yPos);
+            Main.Multiplayer.NetworkManager.ReceivePosition(data);
         }
 
         // Recieved a player's updated animation
@@ -277,7 +277,7 @@ namespace BlasClient
             byte animation = data[startIdx];
 
             // Update specified player with new data
-            Main.Multiplayer.playerAnimationUpdated(playerName, animation);
+            Main.Multiplayer.NetworkManager.ReceiveAnimation(data);
         }
 
         // Received that a player entered a scene
@@ -304,7 +304,7 @@ namespace BlasClient
             bool direction = BitConverter.ToBoolean(data, startIdx);
 
             // Update specified player with new data
-            Main.Multiplayer.playerDirectionUpdated(playerName, direction);
+            Main.Multiplayer.NetworkManager.ReceiveDirection(data);
         }
 
         // Received a player's updated skin
@@ -318,7 +318,7 @@ namespace BlasClient
             }
 
             // Update specified player with new data
-            Main.Multiplayer.playerSkinUpdated(playerName, skin);
+            Main.Multiplayer.NetworkManager.ReceiveSkin(data);
         }
 
         // Received their intro response
@@ -361,7 +361,7 @@ namespace BlasClient
             string id = Encoding.UTF8.GetString(data, startIdx + 2, data.Length - startIdx - 2);
 
             // Give new progress update
-            Main.Multiplayer.playerProgressReceived(playerName, id, type, value);
+            Main.Multiplayer.NetworkManager.ReceiveProgress(data);
         }
 
         // Received a player's new team number
@@ -382,7 +382,7 @@ namespace BlasClient
             string hitName = Encoding.UTF8.GetString(data, startIdx + 1, data.Length - startIdx - 1);
 
             // Process attack
-            Main.Multiplayer.playerAttackReceived(playerName, hitName, attack); // Process more data
+            Main.Multiplayer.NetworkManager.ReceiveAttack(data); // Process more data
         }
 
         // Received a player's effect
@@ -392,7 +392,7 @@ namespace BlasClient
             byte effect = data[startIdx];
 
             // Process effect
-            Main.Multiplayer.playerEffectReceived(playerName, effect);
+            Main.Multiplayer.NetworkManager.ReceiveEffect(data);
         }
 
         #endregion Receive functions

@@ -331,8 +331,8 @@ namespace BlasClient.MonoBehaviours
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
-            Main.Multiplayer.attackManager.ShowDamageEffects(penitentName);
-            Main.Multiplayer.SendNewAttack(penitentName, attack);
+            Main.Multiplayer.AttackManager.ShowDamageEffects(penitentName);
+            Main.Multiplayer.NetworkManager.SendAttack(penitentName, attack);
         }
     }
 }

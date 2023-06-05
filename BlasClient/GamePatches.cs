@@ -3,7 +3,7 @@ using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Damage;
 
-namespace BlasClient.Patches
+namespace BlasClient
 {    
     // Send updated skin when picking a new one
     [HarmonyPatch(typeof(ColorPaletteManager), "SetCurrentColorPaletteId")]

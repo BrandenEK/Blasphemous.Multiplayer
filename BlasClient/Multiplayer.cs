@@ -25,22 +25,21 @@ namespace BlasClient
         public Config config { get; private set; }
 
         // Managers
+        public AttackManager AttackManager { get; private set; }
         public Map.MapManager MapManager { get; private set; }
         public NetworkManager NetworkManager { get; private set; }
         public NotificationManager NotificationManager { get; private set; }
+        public PlayerManager PlayerManager { get; private set; }
         public ProgressManager ProgressManager { get; private set; }
-
-
-        public PlayerManager playerManager { get; private set; }
-        public AttackManager attackManager { get; private set; }
 
         // Game status
         public bool RandomizerMode => IsModLoaded("com.damocles.blasphemous.randomizer");
+        public bool CurrentlyInLevel => inLevel;
+        public bool inLevel { get; private set; } // CHnage this !!
 
 
         public PlayerList playerList { get; private set; }
         public string playerName { get; private set; }
-        public bool inLevel { get; private set; }
         public byte playerTeam { get; private set; }
         public string serverIp => client.serverIp;
         private List<string> interactedPersistenceObjects;
@@ -72,12 +71,13 @@ namespace BlasClient
             RegisterCommand(new MultiplayerCommand());
 
             // Create managers
-            playerManager = new PlayerManager();
-            ProgressManager = new ProgressManager();
+            AttackManager = new AttackManager();
+            MapManager = new Map.MapManager();
             NetworkManager = new NetworkManager();
             NotificationManager = new NotificationManager();
-            MapManager = new Map.MapManager();
-            attackManager = new AttackManager();
+            PlayerManager = new PlayerManager();
+            ProgressManager = new ProgressManager();
+
             client = new Client();
 
             // Initialize data
@@ -85,7 +85,7 @@ namespace BlasClient
             PersistentStates.loadPersistentObjects();
             playerList = new PlayerList();
             interactedPersistenceObjects = new List<string>();
-            playerName = "";
+            playerName = string.Empty;
             playerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
             sentAllProgress = false;
         }
@@ -120,7 +120,7 @@ namespace BlasClient
             if (showNotification)
                 NotificationManager.DisplayNotification(Localize("dcon"));
             playerList.ClearPlayers();
-            playerManager.destroyPlayers();
+            PlayerManager.destroyPlayers();
             playerName = "";
             sentAllProgress = false;
         }
@@ -129,7 +129,7 @@ namespace BlasClient
         {
             inLevel = newLevel != "MainMenu";
             NotificationManager.LevelLoaded();
-            playerManager.loadScene(newLevel);
+            PlayerManager.loadScene(newLevel);
             ProgressManager.LevelLoaded(newLevel);
             CanObtainStatUpgrades = true;
 
@@ -159,7 +159,7 @@ namespace BlasClient
             }
 
             inLevel = false;
-            playerManager.unloadScene();
+            PlayerManager.unloadScene();
         }
 
         protected override void LateUpdate()
@@ -193,8 +193,7 @@ namespace BlasClient
                 // Check & send updated position
                 if (positionHasChanged(out Vector2 newPosition))
                 {
-                    //Main.Multiplayer.Log("Sending new player position");
-                    client.sendPlayerPostition(newPosition.x, newPosition.y);
+                    NetworkManager.SendPosition(newPosition);
                     lastPosition = newPosition;
                 }
 
@@ -204,8 +203,7 @@ namespace BlasClient
                     // Don't send new animations right after a special animation
                     if (currentTimeBeforeSendAnimation <= 0 && newAnimation != 255)
                     {
-                        //Main.Multiplayer.Log("Sending new player animation");
-                        client.sendPlayerAnimation(newAnimation);
+                        NetworkManager.SendAnimation(newAnimation);
                     }
                     lastAnimation = newAnimation;
                 }
@@ -213,8 +211,7 @@ namespace BlasClient
                 // Check & send updated facing direction
                 if (directionHasChanged(out bool newDirection))
                 {
-                    //Main.Multiplayer.Log("Sending new player direction");
-                    client.sendPlayerDirection(newDirection);
+                    NetworkManager.SendDirection(newDirection);
                     lastDirection = newDirection;
                 }
 
@@ -230,7 +227,7 @@ namespace BlasClient
             NotificationManager.Update();
             if (inLevel)
             {
-                playerManager.updatePlayers();
+                PlayerManager.updatePlayers();
                 ProgressManager.Update();
             }
         }
@@ -309,7 +306,7 @@ namespace BlasClient
         // Refresh players' nametags & map icons when someone changed teams
         private void updatePlayerColors()
         {
-            playerManager.refreshNametagColors();
+            PlayerManager.refreshNametagColors();
             MapManager.QueueMapUpdate();
         }
 
@@ -352,67 +349,63 @@ namespace BlasClient
         }
 
         // Creates and sends a new attack to other players in the same scene
-        public void SendNewAttack(string hitPlayerName, AttackType attack)
-        {
-            if (connectedToServer)
-            {
-                client.sendPlayerAttack(hitPlayerName, (byte)attack);
-            }
-        }
+        //public void SendNewAttack(string hitPlayerName, AttackType attack)
+        //{
+        //    if (connectedToServer)
+        //    {
+        //        client.sendPlayerAttack(hitPlayerName, (byte)attack);
+        //    }
+        //}
 
         // Sends a new attacking effect to other players in the same scene
-        public void SendNewEffect(EffectType effect)
-        {
-            if (connectedToServer)
-            {
-                client.sendPlayerEffect(playerName, (byte)effect);
-            }
-        }
+        //public void SendNewEffect(EffectType effect)
+        //{
+        //    if (connectedToServer)
+        //    {
+        //        client.sendPlayerEffect(playerName, (byte)effect);
+        //    }
+        //}
 
         // Sends the current position/animation/direction when first entering a scene or joining server
         // Make sure you are connected to server first
         private void SendAllLocationData()
         {
-            lastPosition = getCurrentPosition();
-            client.sendPlayerPostition(lastPosition.x, lastPosition.y);
-            lastAnimation = 0;
-            client.sendPlayerAnimation(lastAnimation);
-            lastDirection = getCurrentDirection();
-            client.sendPlayerDirection(lastDirection);
+            NetworkManager.SendPosition(lastPosition = getCurrentPosition());
+            NetworkManager.SendAnimation(lastAnimation = 0);
+            NetworkManager.SendDirection(lastDirection = getCurrentDirection());
         }
 
-        // Received position data from server
-        public void playerPositionUpdated(string playerName, float xPos, float yPos)
-        {
-            if (inLevel)
-                playerManager.queuePosition(playerName, new Vector2(xPos, yPos));
-        }
+        //// Received position data from server
+        //public void playerPositionUpdated(string playerName, float xPos, float yPos)
+        //{
+        //    if (inLevel)
+        //        PlayerManager.queuePosition(playerName, new Vector2(xPos, yPos));
+        //}
 
-        // Received animation data from server
-        public void playerAnimationUpdated(string playerName, byte animation)
-        {
-            if (inLevel)
-                playerManager.queueAnimation(playerName, animation);
-        }
+        //// Received animation data from server
+        //public void playerAnimationUpdated(string playerName, byte animation)
+        //{
+        //    if (inLevel)
+        //        PlayerManager.queueAnimation(playerName, animation);
+        //}
 
-        // Received direction data from server
-        public void playerDirectionUpdated(string playerName, bool direction)
-        {
-            if (inLevel)
-                playerManager.queueDirection(playerName, direction);
-        }
+        //// Received direction data from server
+        //public void playerDirectionUpdated(string playerName, bool direction)
+        //{
+        //    if (inLevel)
+        //        PlayerManager.queueDirection(playerName, direction);
+        //}
 
-        // Received skin data from server
-        public void playerSkinUpdated(string playerName, byte[] skin)
+        public void UpdateSkinData(string playerName, byte[] skinData)
         {
             Log("Updating player skin for " + playerName);
-            UIController.instance.StartCoroutine(delaySkinUpdate());
+            Main.Instance.StartCoroutine(delaySkinUpdate());
 
             IEnumerator delaySkinUpdate()
             {
                 yield return new WaitForEndOfFrame();
                 yield return new WaitForEndOfFrame();
-                playerList.setPlayerSkinTexture(playerName, skin);
+                playerList.setPlayerSkinTexture(playerName, skinData);
             }
         }
 
@@ -422,7 +415,7 @@ namespace BlasClient
             playerList.setPlayerScene(playerName, scene);
 
             if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
-                playerManager.queuePlayer(playerName, true);
+                PlayerManager.queuePlayer(playerName, true);
             MapManager.QueueMapUpdate();
         }
 
@@ -430,7 +423,7 @@ namespace BlasClient
         public void playerLeftScene(string playerName)
         {
             if (inLevel && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
-                playerManager.queuePlayer(playerName, false);
+                PlayerManager.queuePlayer(playerName, false);
 
             playerList.setPlayerScene(playerName, "");
             MapManager.QueueMapUpdate();
@@ -451,7 +444,7 @@ namespace BlasClient
                 {
                     SendAllLocationData();
                     client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
-                    playerManager.createPlayerNameTag();
+                    PlayerManager.createPlayerNameTag();
                     sendAllProgress();
                 }
 
@@ -489,22 +482,13 @@ namespace BlasClient
             NotificationManager.DisplayNotification($"{playerName} {Localize(connected ? "join" : "leave")}");
         }
 
-        public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
+        // Whenever you receive a stat upgrade, it needs to check if you are in the same room as the player who sent it.
+        // If so, you can no longer obtain stat upgrades in the same room
+        public void ProcessRecievedStat(ProgressUpdate progress)
         {
-            ProgressUpdate progress = new ProgressUpdate(progressId, (ProgressType)progressType, progressValue);
-
-            // Apply the progress update
-            ProgressManager.ReceiveProgress(progress);
-
-            if (playerName == "*") return;
-
-            // Show notification for new progress
-            NotificationManager.DisplayProgressNotification(playerName, progress);
-
-            // Set stat obtained status
-            if (inLevel && progressType == (byte)ProgressType.PlayerStat && !RandomizerMode && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
+            if (inLevel && progress.Type == ProgressType.PlayerStat && !RandomizerMode && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
             {
-                if (progressId == "LIFE" || progressId == "FERVOUR" || progressId == "STRENGTH" || progressId == "MEACULPA")
+                if (progress.Id == "LIFE" || progress.Id == "FERVOUR" || progress.Id == "STRENGTH" || progress.Id == "MEACULPA")
                 {
                     CanObtainStatUpgrades = false;
                     LogWarning("Received stat upgrade from player in the same room!");
@@ -520,15 +504,15 @@ namespace BlasClient
                 updatePlayerColors();
         }
 
-        public void playerAttackReceived(string attackerName, string receiverName, byte attack)
-        {
-            attackManager.AttackReceived(attackerName, receiverName, (AttackType)attack);
-        }
+        //public void playerAttackReceived(string attackerName, string receiverName, byte attack)
+        //{
+        //    attackManager.AttackReceived(attackerName, receiverName, (AttackType)attack);
+        //}
 
-        public void playerEffectReceived(string playerName, byte effect)
-        {
-            attackManager.EffectReceived(playerName, (EffectType)effect);
-        }
+        //public void playerEffectReceived(string playerName, byte effect)
+        //{
+        //    attackManager.EffectReceived(playerName, (EffectType)effect);
+        //}
 
         private void sendAllProgress()
         {
