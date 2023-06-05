@@ -16,6 +16,10 @@ namespace BlasClient.ProgressSync
         private readonly List<ProgressUpdate> queuedProgressUpdates = new ();
         private static readonly object progressLock = new ();
 
+        // Whether or not all of this player's progress has been sent to the server
+        // Reset whenever disconnecting or changing teams
+        private bool _sentAllProgress = false;
+
         // Helper interfaces for applying / obtaining progress updates
         private readonly Dictionary<ProgressType, IProgressHelper> progressHelpers = new ()
         {
@@ -104,6 +108,9 @@ namespace BlasClient.ProgressSync
         // Called when sending all data upon connecting to server and loading game
         public void SendAllProgress()
         {
+            if (_sentAllProgress) return;
+            _sentAllProgress = true;
+
             Main.Multiplayer.DisableFileLogging = true;
 
             foreach (IProgressHelper helper in progressHelpers.Values)
@@ -112,6 +119,11 @@ namespace BlasClient.ProgressSync
             }
 
             Main.Multiplayer.DisableFileLogging = false;
+        }
+
+        public void ResetProgressSentStatus()
+        {
+            _sentAllProgress = false;
         }
 
         public void LevelLoaded(string scene)

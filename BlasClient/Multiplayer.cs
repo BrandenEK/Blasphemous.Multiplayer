@@ -32,20 +32,19 @@ namespace BlasClient
         // Game status
         public bool RandomizerMode => IsModLoaded("com.damocles.blasphemous.randomizer");
         public Config config { get; private set; }
-        public bool CurrentlyInLevel => inLevel;
-        public bool inLevel { get; private set; } // CHnage this !!
-
-        public string PlayerName { get; private set; }
-        public byte PlayerTeam { get; private set; }
-
-        public PlayerList playerList { get; private set; }
-        private List<string> interactedPersistenceObjects;
-        private bool sentAllProgress;
+        public bool CurrentlyInLevel { get; private set; }
 
         // Player status
+        public string PlayerName { get; private set; }
+        public byte PlayerTeam { get; private set; }
         private Vector2 lastPosition;
         private byte lastAnimation;
         private bool lastDirection;
+
+        public PlayerList playerList { get; private set; }
+        private List<string> interactedPersistenceObjects;
+
+        // Timers
         private float totalTimeBeforeSendAnimation = 0.5f;
         private float currentTimeBeforeSendAnimation = 0;
 
@@ -77,7 +76,6 @@ namespace BlasClient
             interactedPersistenceObjects = new List<string>();
             PlayerName = string.Empty;
             PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
-            sentAllProgress = false;
         }
 
         public void connectCommand(string ipAddress, string playerName, string password)
@@ -107,21 +105,21 @@ namespace BlasClient
         public void OnDisconnect()
         {
             NotificationManager.DisplayNotification(Localize("dcon"));
+            ProgressManager.ResetProgressSentStatus();
             playerList.ClearPlayers();
             PlayerManager.destroyPlayers();
             PlayerName = string.Empty;
-            sentAllProgress = false;
         }
 
         protected override void LevelLoaded(string oldLevel, string newLevel)
         {
-            inLevel = newLevel != "MainMenu";
+            CurrentlyInLevel = newLevel != "MainMenu";
             NotificationManager.LevelLoaded();
             PlayerManager.loadScene(newLevel);
             ProgressManager.LevelLoaded(newLevel);
             CanObtainStatUpgrades = true;
 
-            if (inLevel && NetworkManager.IsConnected)
+            if (CurrentlyInLevel && NetworkManager.IsConnected)
             {
                 // Entered a new scene
                 Log("Entering new scene: " + newLevel);
@@ -130,7 +128,7 @@ namespace BlasClient
                 SendAllLocationData();
 
                 NetworkManager.SendEnterScene(newLevel);
-                sendAllProgress();
+                ProgressManager.SendAllProgress();
             }
 
             if (newLevel == "D06Z01S01")
@@ -139,14 +137,14 @@ namespace BlasClient
 
         protected override void LevelUnloaded(string oldLevel, string newLevel)
         {
-            if (inLevel && NetworkManager.IsConnected)
+            if (CurrentlyInLevel && NetworkManager.IsConnected)
             {
                 // Left a scene
                 Log("Leaving old scene");
                 NetworkManager.SendLeaveScene();
             }
 
-            inLevel = false;
+            CurrentlyInLevel = false;
             PlayerManager.unloadScene();
         }
 
@@ -176,7 +174,7 @@ namespace BlasClient
                 //}
             }
 
-            if (inLevel && NetworkManager.IsConnected && Core.Logic.Penitent != null)
+            if (CurrentlyInLevel && NetworkManager.IsConnected && Core.Logic.Penitent != null)
             {
                 // Check & send updated position
                 if (positionHasChanged(out Vector2 newPosition))
@@ -210,7 +208,7 @@ namespace BlasClient
 
             MapManager.Update();
             NotificationManager.Update();
-            if (inLevel)
+            if (CurrentlyInLevel)
             {
                 PlayerManager.updatePlayers();
                 ProgressManager.Update();
@@ -268,7 +266,7 @@ namespace BlasClient
         public void changeTeam(byte teamNumber)
         {
             PlayerTeam = teamNumber;
-            sentAllProgress = false;
+            ProgressManager.ResetProgressSentStatus();
 
             if (NetworkManager.IsConnected)
             {
@@ -276,7 +274,7 @@ namespace BlasClient
                 if (CurrentlyInLevel)
                 {
                     RefreshPlayerColors();
-                    sendAllProgress();
+                    ProgressManager.SendAllProgress();
                 }
             }
         }
@@ -331,7 +329,7 @@ namespace BlasClient
                     SendAllLocationData();
                     NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
                     PlayerManager.createPlayerNameTag();
-                    sendAllProgress();
+                    ProgressManager.SendAllProgress();
                 }
 
                 NotificationManager.DisplayNotification(Localize("con"));
@@ -362,16 +360,6 @@ namespace BlasClient
                     LogWarning("Received stat upgrade from player in the same room!");
                 }
             }
-        }
-
-        private void sendAllProgress()
-        {
-            if (sentAllProgress) return;
-            sentAllProgress = true;
-
-            // This is the first time loading a scene after connecting - send all player progress
-            Log("Sending all player progress");
-            ProgressManager.SendAllProgress();
         }
 
         // If loading the rooftops elevator scene, set levers if they have been unlocked by someone else
