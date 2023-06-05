@@ -23,14 +23,14 @@ namespace BlasClient.Managers
         {
             if (Core.Logic.Penitent == null || !allAttacks.ContainsKey(attack)) return;
 
-            if (receiverName == Main.Multiplayer.playerName)
+            if (receiverName == Main.Multiplayer.PlayerName)
             {
                 // This is the player that got hit
                 OtherPenitent attacker = Main.Multiplayer.PlayerManager.FindPlayerObject(attackerName);
                 if (attacker == null) return;
 
                 Config config = Main.Multiplayer.config;
-                if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(attackerName)))
+                if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == Main.Multiplayer.playerList.getPlayerTeam(attackerName)))
                     return;
 
                 Main.Multiplayer.LogWarning($"Receiving hit {attack} from {attackerName}");

@@ -67,7 +67,7 @@ namespace BlasClient.Map
                 byte playerTeam = Main.Multiplayer.playerList.getPlayerTeam(playerName);
 
                 // Only show other teams if config option
-                if (playerTeam != Main.Multiplayer.playerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
+                if (playerTeam != Main.Multiplayer.PlayerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
                     continue;
 
                 // Calling this function with -1000 will calculate the center position of the scene
@@ -82,7 +82,7 @@ namespace BlasClient.Map
                 {
                     icon = playerSprites[1];
                 }
-                else if (playerTeam != Main.Multiplayer.playerTeam)
+                else if (playerTeam != Main.Multiplayer.PlayerTeam)
                 {
                     icon = playerSprites[2];
                 }

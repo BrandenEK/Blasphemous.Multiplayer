@@ -39,30 +39,30 @@ namespace BlasClient.MonoBehaviours
             switch (anim)
             {
                 case "Turning ON":
-                    Main.Multiplayer.usingSpecialAnimation(240); return;
+                    Main.Multiplayer.UseSpecialAnimation(240); return;
                 case "Kneeing":
-                    Main.Multiplayer.usingSpecialAnimation(241); return;
+                    Main.Multiplayer.UseSpecialAnimation(241); return;
                 case "Stand Up":
-                    Main.Multiplayer.usingSpecialAnimation(242); return;
+                    Main.Multiplayer.UseSpecialAnimation(242); return;
                 case "Halfheight Collection":
-                    Main.Multiplayer.usingSpecialAnimation(243); return;
+                    Main.Multiplayer.UseSpecialAnimation(243); return;
                 case "Floor Collection":
-                    Main.Multiplayer.usingSpecialAnimation(244); return;
+                    Main.Multiplayer.UseSpecialAnimation(244); return;
                 case "Opening":
-                    Main.Multiplayer.usingSpecialAnimation(245); return;
+                    Main.Multiplayer.UseSpecialAnimation(245); return;
                 case "Lever Down":
                 case "Lever Up":
-                    Main.Multiplayer.usingSpecialAnimation(246); return;
+                    Main.Multiplayer.UseSpecialAnimation(246); return;
                 case "(Open) Entering":
-                    Main.Multiplayer.usingSpecialAnimation(247); return;
+                    Main.Multiplayer.UseSpecialAnimation(247); return;
                 case "(Closed) Entering":
-                    Main.Multiplayer.usingSpecialAnimation(248); return;
+                    Main.Multiplayer.UseSpecialAnimation(248); return;
                 case "(KEY) Entering":
-                    Main.Multiplayer.usingSpecialAnimation(249); return;
+                    Main.Multiplayer.UseSpecialAnimation(249); return;
                 case "FakePenitent laydown":
-                    Main.Multiplayer.usingSpecialAnimation(250); return;
+                    Main.Multiplayer.UseSpecialAnimation(250); return;
                 case "FakePenitent gettingUp":
-                    Main.Multiplayer.usingSpecialAnimation(251); return;
+                    Main.Multiplayer.UseSpecialAnimation(251); return;
                     // Perpetva chest
                     // Pick gemino flower
                     // Place altasgracias item

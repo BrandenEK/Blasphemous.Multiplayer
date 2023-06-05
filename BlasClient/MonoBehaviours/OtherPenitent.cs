@@ -250,7 +250,7 @@ namespace BlasClient.MonoBehaviours
         public void Damage(Hit hit)
         {
             Config config = Main.Multiplayer.config;
-            if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(penitentName)))
+            if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == Main.Multiplayer.playerList.getPlayerTeam(penitentName)))
                 return;
 
             Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);

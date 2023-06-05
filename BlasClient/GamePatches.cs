@@ -11,7 +11,7 @@ namespace BlasClient
     {
         public static void Postfix(string colorPaletteId)
         {
-            Main.Multiplayer.changeSkin(colorPaletteId);
+            Main.Multiplayer.NetworkManager.SendSkin(colorPaletteId);
         }
     }
 

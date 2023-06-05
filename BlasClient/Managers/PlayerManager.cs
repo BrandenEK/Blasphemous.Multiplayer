@@ -73,7 +73,7 @@ namespace BlasClient.Managers
             Main.Multiplayer.Log("Adding special animation checkers to " + count + " objects!");
 
             // Create main player's nametag
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
                 createPlayerNameTag();
         }
 
@@ -156,7 +156,7 @@ namespace BlasClient.Managers
 
                 // Get player with this name
                 GameObject player = null;
-                if (name == Main.Multiplayer.playerName)
+                if (name == Main.Multiplayer.PlayerName)
                 {
                     player = Core.Logic.Penitent.gameObject;
                 }
@@ -207,7 +207,7 @@ namespace BlasClient.Managers
 
             // Set up name tag
             if (Main.Multiplayer.config.displayNametags)
-                createNameTag(name, Main.Multiplayer.playerList.getPlayerTeam(name) == Main.Multiplayer.playerTeam);
+                createNameTag(name, Main.Multiplayer.playerList.getPlayerTeam(name) == Main.Multiplayer.PlayerTeam);
 
             Main.Multiplayer.Log("Created new player object for " + name);
         }
@@ -305,7 +305,7 @@ namespace BlasClient.Managers
         public void createPlayerNameTag()
         {
             if (Main.Multiplayer.config.displayNametags && Main.Multiplayer.config.displayOwnNametag)
-                createNameTag(Main.Multiplayer.playerName, true);
+                createNameTag(Main.Multiplayer.PlayerName, true);
         }
 
         // Updates the colors of all nametags in the scene when someone changes teams
@@ -313,7 +313,7 @@ namespace BlasClient.Managers
         {
             for (int i = 0; i < nametags.Count; i++)
             {
-                bool friendlyTeam = nametags[i].name == Main.Multiplayer.playerName || Main.Multiplayer.playerTeam == Main.Multiplayer.playerList.getPlayerTeam(nametags[i].name);
+                bool friendlyTeam = nametags[i].name == Main.Multiplayer.PlayerName || Main.Multiplayer.PlayerTeam == Main.Multiplayer.playerList.getPlayerTeam(nametags[i].name);
                 nametags[i].GetComponent<Text>().color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
             }
         }

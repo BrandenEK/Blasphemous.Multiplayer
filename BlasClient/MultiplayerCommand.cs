@@ -41,7 +41,7 @@ namespace BlasClient
 
             if (Main.Multiplayer.connectedToServer)
             {
-                Write("Connected to " + Main.Multiplayer.serverIp);
+                Write("Connected to " + Main.Multiplayer.NetworkManager.ServerIP);
             }
             else
             {
@@ -54,7 +54,7 @@ namespace BlasClient
             // Already connected
             if (Main.Multiplayer.connectedToServer)
             {
-                Write("You are already connected to " + Main.Multiplayer.serverIp);
+                Write("You are already connected to " + Main.Multiplayer.NetworkManager.ServerIP);
                 return;
             }
 
@@ -118,7 +118,7 @@ namespace BlasClient
             if (!ValidateStringParameter(name, 1, 16)) return;
 
             Write($"Attempting to connect to {parameters[0]} as {name}...");
-            Main.Multiplayer.connectCommand(parameters[0], name, password);
+            Main.Multiplayer.NetworkManager.Connect(parameters[0], name, password);
         }
 
         private void Disconnect(string[] parameters)
@@ -128,7 +128,7 @@ namespace BlasClient
             if (Main.Multiplayer.connectedToServer)
             {
                 Write("Disconnecting from server");
-                Main.Multiplayer.disconnectCommand();
+                Main.Multiplayer.NetworkManager.Disconnect();
             }
             else
                 Write("Not connected to a server!");
@@ -138,7 +138,7 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 1) || !ValidateIntParameter(parameters[0], 1, 10, out int newTeam)) return;
 
-            if (newTeam == Main.Multiplayer.playerTeam)
+            if (newTeam == Main.Multiplayer.PlayerTeam)
             {
                 Write("You are already on team " + newTeam);
             }
@@ -160,7 +160,7 @@ namespace BlasClient
             }
 
             Write("Connected players:");
-            Write(Main.Multiplayer.playerName + ": Team " + Main.Multiplayer.playerTeam);
+            Write(Main.Multiplayer.PlayerName + ": Team " + Main.Multiplayer.PlayerTeam);
             foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
                 Write(playerName + ": Team " + Main.Multiplayer.playerList.getPlayerTeam(playerName));
