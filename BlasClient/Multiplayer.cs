@@ -115,7 +115,7 @@ namespace BlasClient
         {
             CurrentlyInLevel = newLevel != "MainMenu";
             NotificationManager.LevelLoaded();
-            PlayerManager.loadScene(newLevel);
+            PlayerManager.LevelLoaded(newLevel);
             ProgressManager.LevelLoaded(newLevel);
             CanObtainStatUpgrades = true;
 
@@ -145,7 +145,6 @@ namespace BlasClient
             }
 
             CurrentlyInLevel = false;
-            PlayerManager.unloadScene();
         }
 
         protected override void LateUpdate()
@@ -210,7 +209,7 @@ namespace BlasClient
             NotificationManager.Update();
             if (CurrentlyInLevel)
             {
-                PlayerManager.updatePlayers();
+                PlayerManager.Update();
                 ProgressManager.Update();
             }
 

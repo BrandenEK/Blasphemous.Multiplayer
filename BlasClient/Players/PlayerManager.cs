@@ -25,7 +25,7 @@ namespace BlasClient.Players
         private static readonly object animationLock = new object();
         private static readonly object directionLock = new object();
 
-        public void loadScene(string scene)
+        public void LevelLoaded(string scene)
         {
             // Remove all existing player objects and nametags
             destroyPlayers();
@@ -77,13 +77,8 @@ namespace BlasClient.Players
                 createPlayerNameTag();
         }
 
-        public void unloadScene()
-        {
-            
-        }
-
         // Should be optimized to not use dictionaries
-        public void updatePlayers()
+        public void Update()
         {
             // Add or remove any new player objects
             lock (playerLock)

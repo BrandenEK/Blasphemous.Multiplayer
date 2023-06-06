@@ -30,7 +30,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static bool Prefix(NewMapManager __instance, Vector2 position, MapData ___CurrentMap)
         {
-            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
             {
                 // Received this new cell from other player, skip other stuff
                 int cellIdx = Mathf.RoundToInt(position.x);
