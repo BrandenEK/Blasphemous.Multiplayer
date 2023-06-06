@@ -18,8 +18,12 @@ namespace BlasServer
 
         public bool DelayDisabled
         {
-            get { return server != null && server.DelayDisabled; }
-            set { if (server != null) server.DelayDisabled = value; }
+            get => server != null && server.DelayDisabled;
+            set
+            {
+                if (server != null)
+                    server.DelayDisabled = value;
+            }
         }
 
         public bool Start()
@@ -42,12 +46,12 @@ namespace BlasServer
             return true;
         }
 
-        private void Send(string ip, byte[] data, byte dataType)
+        private void Send(string ip, byte[] data, NetworkType dataType)
         {
             if (data != null && data.Length > 0)
             {
                 List<byte> list = new List<byte>(BitConverter.GetBytes((ushort)data.Length));
-                list.Add(dataType);
+                list.Add((byte)dataType);
                 list.AddRange(data);
 
                 try
@@ -71,7 +75,7 @@ namespace BlasServer
             while (startIdx < e.data.Length - 3)
             {
                 ushort length = BitConverter.ToUInt16(e.data, startIdx);
-                byte type = e.data[startIdx + 2];
+                NetworkType type = (NetworkType)e.data[startIdx + 2];
                 byte[] messageData = e.data[(startIdx + 3)..(startIdx + 3 + length)];
 
                 processDataReceived(type, messageData);
@@ -81,32 +85,21 @@ namespace BlasServer
                 Core.displayError("Received data was formatted incorrectly");
 
             // Determines which received function to call based on the type
-            void processDataReceived(byte type, byte[] data)
+            void processDataReceived(NetworkType type, byte[] data)
             {
                 switch (type)
                 {
-                    case 0:
-                        receivePlayerPostition(e.ip, data); break;
-                    case 1:
-                        receivePlayerAnimation(e.ip, data); break;
-                    case 2:
-                        receivePlayerEnterScene(e.ip, data); break;
-                    case 3:
-                        receivePlayerLeaveScene(e.ip, data); break;
-                    case 4:
-                        receivePlayerDirection(e.ip, data); break;
-                    case 5:
-                        receivePlayerSkin(e.ip, data); break;
-                    case 6:
-                        receivePlayerIntro(e.ip, data); break;
-                    case 8:
-                        receivePlayerProgress(e.ip, data); break;
-                    case 9:
-                        receivePlayerTeam(e.ip, data); break;
-                    case 10:
-                        receivePlayerAttack(e.ip, data); break;
-                    case 11:
-                        receivePlayerEffect(e.ip, data); break;
+                    case NetworkType.Position:      receivePlayerPostition(e.ip, data); break;
+                    case NetworkType.Animation:     receivePlayerAnimation(e.ip, data); break;
+                    case NetworkType.EnterScene:    receivePlayerEnterScene(e.ip, data); break;
+                    case NetworkType.LeaveScene:    receivePlayerLeaveScene(e.ip, data); break;
+                    case NetworkType.Direction:     receivePlayerDirection(e.ip, data); break;
+                    case NetworkType.Skin:          receivePlayerSkin(e.ip, data); break;
+                    case NetworkType.Intro:         receivePlayerIntro(e.ip, data); break;
+                    case NetworkType.Progress:      receivePlayerProgress(e.ip, data); break;
+                    case NetworkType.Team:          receivePlayerTeam(e.ip, data); break;
+                    case NetworkType.Attack:        receivePlayerAttack(e.ip, data); break;
+                    case NetworkType.Effect:        receivePlayerEffect(e.ip, data); break;
                     default:
                         Core.displayError($"Data type '{type}' is not valid"); break;
                 }
@@ -234,7 +227,7 @@ namespace BlasServer
                 if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated position
-                    Send(ip, getPositionPacket(current), 0);
+                    Send(ip, getPositionPacket(current), NetworkType.Position);
                 }
             }
         }
@@ -248,7 +241,7 @@ namespace BlasServer
                 if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated animation
-                    Send(ip, getAnimationPacket(current), 1);
+                    Send(ip, getAnimationPacket(current), NetworkType.Animation);
                 }
             }
         }
@@ -262,18 +255,18 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     // Send that this player has entered a new scene
-                    Send(ip, getScenePacket(current), 2);
+                    Send(ip, getScenePacket(current), NetworkType.EnterScene);
 
                     if (current.isInSameScene(connectedPlayers[ip]))
                     {
                         // If in same scene, also send position data to each one
-                        Send(ip, getPositionPacket(current), 0);
-                        Send(ip, getAnimationPacket(current), 1);
-                        Send(ip, getDirectionPacket(current), 4);
+                        Send(ip, getPositionPacket(current), NetworkType.Position);
+                        Send(ip, getAnimationPacket(current), NetworkType.Animation);
+                        Send(ip, getDirectionPacket(current), NetworkType.Direction);
 
-                        Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
-                        Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
-                        Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                        Send(playerIp, getPositionPacket(connectedPlayers[ip]), NetworkType.Position);
+                        Send(playerIp, getAnimationPacket(connectedPlayers[ip]), NetworkType.Animation);
+                        Send(playerIp, getDirectionPacket(connectedPlayers[ip]), NetworkType.Direction);
                     }
                 }
             }
@@ -293,7 +286,7 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     // Send that this player has left their old scene
-                    Send(ip, Encoding.UTF8.GetBytes(current.name), 3);
+                    Send(ip, Encoding.UTF8.GetBytes(current.name), NetworkType.LeaveScene);
                 }
             }
         }
@@ -307,7 +300,7 @@ namespace BlasServer
                 if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's updated direction
-                    Send(ip, getDirectionPacket(current), 4);
+                    Send(ip, getDirectionPacket(current), NetworkType.Direction);
                 }
             }
         }
@@ -321,7 +314,7 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     // Send this player's updated skin
-                    Send(ip, getSkinPacket(current), 5);
+                    Send(ip, getSkinPacket(current), NetworkType.Skin);
                 }
             }
         }
@@ -329,7 +322,7 @@ namespace BlasServer
         // Send a player's intro response
         private void sendPlayerIntro(string playerIp, byte response)
         {
-            Send(playerIp, getIntroPacket(response), 6);
+            Send(playerIp, getIntroPacket(response), NetworkType.Intro);
 
             // Only send rest of data if successful connection
             if (response > 0)
@@ -341,17 +334,17 @@ namespace BlasServer
                 if (playerIp != ip)
                 {
                     // Send all other connected players and their important data
-                    Send(playerIp, getConnectionPacket(connectedPlayers[ip], true), 7);
-                    Send(playerIp, getSkinPacket(connectedPlayers[ip]), 5);
-                    Send(playerIp, getTeamPacket(connectedPlayers[ip]), 9);
+                    Send(playerIp, getConnectionPacket(connectedPlayers[ip], true), NetworkType.Connection);
+                    Send(playerIp, getSkinPacket(connectedPlayers[ip]), NetworkType.Skin);
+                    Send(playerIp, getTeamPacket(connectedPlayers[ip]), NetworkType.Team);
                     if (connectedPlayers[ip].sceneName != "")
                     {
-                        Send(playerIp, getScenePacket(connectedPlayers[ip]), 2);
+                        Send(playerIp, getScenePacket(connectedPlayers[ip]), NetworkType.EnterScene);
                         if (current.isInSameScene(connectedPlayers[ip]))
                         {
-                            Send(playerIp, getPositionPacket(connectedPlayers[ip]), 0);
-                            Send(playerIp, getAnimationPacket(connectedPlayers[ip]), 1);
-                            Send(playerIp, getDirectionPacket(connectedPlayers[ip]), 4);
+                            Send(playerIp, getPositionPacket(connectedPlayers[ip]), NetworkType.Position);
+                            Send(playerIp, getAnimationPacket(connectedPlayers[ip]), NetworkType.Animation);
+                            Send(playerIp, getDirectionPacket(connectedPlayers[ip]), NetworkType.Direction);
                         }
                     }
                 }
@@ -367,7 +360,7 @@ namespace BlasServer
             {
                 if (playerIp != ip)
                 {
-                    Send(ip, getConnectionPacket(current, connected), 7);
+                    Send(ip, getConnectionPacket(current, connected), NetworkType.Connection);
                 }
             }
         }
@@ -380,7 +373,7 @@ namespace BlasServer
             {
                 if (playerIp != ip && current.team == getCurrentPlayer(ip).team)
                 {
-                    Send(ip, getProgressPacket(current.name, type, value, id), 8);
+                    Send(ip, getProgressPacket(current.name, type, value, id), NetworkType.Progress);
                 }
             }
         }
@@ -393,7 +386,7 @@ namespace BlasServer
             {
                 if (playerIp != ip)
                 {
-                    Send(ip, getTeamPacket(current), 9);
+                    Send(ip, getTeamPacket(current), NetworkType.Team);
                 }
             }
 
@@ -404,7 +397,7 @@ namespace BlasServer
                 Dictionary<string, byte> progressSet = Core.getTeamData(current.team).getProgressSet(i);
                 foreach (string id in progressSet.Keys)
                 {
-                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), 8);
+                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), NetworkType.Progress);
                 }
             }
         }
@@ -418,7 +411,7 @@ namespace BlasServer
                 if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's attack
-                    Send(ip, getAttackPacket(current, attackData), 10);
+                    Send(ip, getAttackPacket(current, attackData), NetworkType.Attack);
                 }
             }
         }
@@ -432,7 +425,7 @@ namespace BlasServer
                 if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
                 {
                     // Send this player's attack
-                    Send(ip, getEffectPacket(current, effect), 11);
+                    Send(ip, getEffectPacket(current, effect), NetworkType.Effect);
                 }
             }
         }
