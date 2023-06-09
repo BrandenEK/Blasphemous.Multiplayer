@@ -11,7 +11,6 @@ namespace BlasClient.Players
 {
     public class PlayerManager
     {
-        private List<OtherPenitent> players = new List<OtherPenitent>();
         private List<Text> nametags = new List<Text>();
 
         // Queued player updates
@@ -20,10 +19,6 @@ namespace BlasClient.Players
         private Dictionary<string, byte> queuedAnimations = new Dictionary<string, byte>();
         private Dictionary<string, bool> queuedDirections = new Dictionary<string, bool>();
 
-        private static readonly object playerLock = new object();
-        private static readonly object positionLock = new object();
-        private static readonly object animationLock = new object();
-        private static readonly object directionLock = new object();
 
         public void LevelLoaded(string scene)
         {
@@ -80,52 +75,6 @@ namespace BlasClient.Players
         // Should be optimized to not use dictionaries
         public void Update()
         {
-            // Add or remove any new player objects
-            lock (playerLock)
-            {
-                if (queuedPlayers.Count > 0)
-                {
-                    foreach (string name in queuedPlayers.Keys)
-                    {
-                        if (queuedPlayers[name])
-                            addPlayer(name);
-                        else
-                            removePlayer(name);
-                    }
-                    queuedPlayers.Clear();
-                }
-            }
-            // Update any player's new position
-            lock (positionLock)
-            {
-                if (queuedPositions.Count > 0)
-                {
-                    foreach (string name in queuedPositions.Keys)
-                        updatePlayerPosition(name, queuedPositions[name]);
-                    queuedPositions.Clear();
-                }
-            }
-            // Update any player's new animation
-            lock (animationLock)
-            {
-                if (queuedAnimations.Count > 0)
-                {
-                    foreach (string name in queuedAnimations.Keys)
-                        updatePlayerAnimation(name, queuedAnimations[name]);
-                    queuedAnimations.Clear();
-                }
-            }
-            // Update any player's new direction
-            lock (directionLock)
-            {
-                if (queuedDirections.Count > 0)
-                {
-                    foreach (string name in queuedDirections.Keys)
-                        updatePlayerDirection(name, queuedDirections[name]);
-                    queuedDirections.Clear();
-                }
-            }
-
             // Check status of player skins and potentially update the textures
             foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
             {
@@ -170,110 +119,7 @@ namespace BlasClient.Players
             }
         }
 
-        // When disconnected from server or loading new scene, remove all players
-        public void destroyPlayers()
-        {
-            for (int i = 0; i < players.Count; i++)
-            {
-                if (players[i] != null)
-                    Object.Destroy(players[i].gameObject);
-            }
-            players.Clear();
-            for (int i = 0; i < nametags.Count; i++)
-            {
-                if (nametags[i] != null)
-                    Object.Destroy(nametags[i].gameObject);
-            }
-            nametags.Clear();
-        }
-
-        // When a player enters a scene, create a new player object
-        private void addPlayer(string name)
-        {
-            // Create & setup new penitent object
-            GameObject playerObject = new GameObject("_" + name);
-            OtherPenitent penitent = playerObject.AddComponent<OtherPenitent>();
-            penitent.createPenitent(name, storedPenitentAnimator, storedSwordAnimator, storedPenitentMaterial);
-            players.Add(penitent);
-
-            // If in beginning room, add fake penitent controller
-            if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
-                playerObject.AddComponent<FakePenitentIntro>();
-
-            // Set up name tag
-            if (Main.Multiplayer.config.displayNametags)
-                createNameTag(name, Main.Multiplayer.playerList.getPlayerTeam(name) == Main.Multiplayer.PlayerTeam);
-
-            Main.Multiplayer.Log("Created new player object for " + name);
-        }
-
-        // When a player leaves a scene, destroy the player object
-        private void removePlayer(string name)
-        {
-            OtherPenitent penitent = getPlayerObject(name);
-            if (penitent != null)
-            {
-                players.Remove(penitent);
-                Object.Destroy(penitent.gameObject);
-                Main.Multiplayer.Log("Removed player object for " + name);
-            }
-            else
-            {
-                Main.Multiplayer.LogWarning("Error: Can't remove player object for " + name);
-            }
-            Text nametag = getPlayerNametag(name);
-            if (nametag != null)
-            {
-                nametags.Remove(nametag);
-                Object.Destroy(nametag);
-                Main.Multiplayer.Log("Removed nametag for " + name);
-            }
-        }
-
-        // When receiving a player position update, find the player and change its position
-        private void updatePlayerPosition(string name, Vector2 position)
-        {
-            OtherPenitent penitent = getPlayerObject(name);
-            if (penitent != null)
-            {
-                penitent.updatePosition(position);
-                //Main.Multiplayer.Log("Updating player object position for " + name);
-            }
-            else
-            {
-                Main.Multiplayer.LogWarning("Error: Can't update object position for " + name);
-            }
-        }
-
-        // When receiving a player position update, find the player and change its position
-        private void updatePlayerAnimation(string name, byte animation)
-        {
-            OtherPenitent penitent = getPlayerObject(name);
-            if (penitent != null)
-            {
-                penitent.updateAnimation(animation);
-                //Main.Multiplayer.Log("Updating player object animation for " + name);
-            }
-            else
-            {
-                Main.Multiplayer.LogWarning("Error: Can't update object animation for " + name);
-            }
-        }
-
-        // When receiving a player direction update, find the player and change its direction
-        private void updatePlayerDirection(string name, bool direction)
-        {
-            OtherPenitent penitent = getPlayerObject(name);
-            if (penitent != null)
-            {
-                penitent.updateDirection(direction);
-                //Main.Multiplayer.Log("Updating player object direction for " + name);
-            }
-            else
-            {
-                Main.Multiplayer.LogWarning("Error: Can't update object direction for " + name);
-            }
-        }
+        
 
         // Instantiates a nametag object
         private void createNameTag(string name, bool friendlyTeam)
@@ -328,22 +174,6 @@ namespace BlasClient.Players
             penitent.updateSkin(skinTexture);
         }
 
-        // Finds a specified player in the scene
-        private OtherPenitent getPlayerObject(string name)
-        {
-            for (int i = 0; i < players.Count; i++)
-            {
-                if (players[i].name == "_" + name)
-                    return players[i];
-            }
-            return null;
-        }
-        // When finding a player publicly, like after receiving an attack for example, lock its pos/anim/dir while it is found
-        public OtherPenitent FindPlayerObject(string name)
-        {
-            lock (positionLock) { lock (animationLock) { lock (directionLock) { return getPlayerObject(name); } } }
-        }
-
         // Find a specified player's nametag
         private Text getPlayerNametag(string name)
         {
@@ -354,55 +184,7 @@ namespace BlasClient.Players
             }
             return null;
         }
-
-        public void queuePlayer(string playerName, bool addition)
-        {
-            if (!Main.Multiplayer.CurrentlyInLevel) return;
-
-            lock (playerLock)
-            {
-                queuedPlayers.Add(playerName, addition);
-            }
-        }
-
-        public void ReceivePosition(string playerName, Vector2 position)
-        {
-            if (!Main.Multiplayer.CurrentlyInLevel) return;
-
-            lock (positionLock)
-            {
-                if (queuedPositions.ContainsKey(playerName))
-                    queuedPositions[playerName] = position;
-                else
-                    queuedPositions.Add(playerName, position);
-            }
-        }
-
-        public void ReceiveAnimation(string playerName, byte animation)
-        {
-            if (!Main.Multiplayer.CurrentlyInLevel) return;
-
-            lock (animationLock)
-            {
-                if (queuedAnimations.ContainsKey(playerName))
-                    queuedAnimations[playerName] = animation;
-                else
-                    queuedAnimations.Add(playerName, animation);
-            }
-        }
-
-        public void ReceiveDirection(string playerName, bool direction)
-        {
-            if (!Main.Multiplayer.CurrentlyInLevel) return;
-
-            lock (directionLock)
-            {
-                if (queuedDirections.ContainsKey(playerName))
-                    queuedDirections[playerName] = direction;
-                else
-                    queuedDirections.Add(playerName, direction);
-            }
-        }
+        
 
         private Transform m_canvas;
         private Transform storedCanvas

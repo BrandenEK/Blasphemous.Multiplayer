@@ -3,7 +3,7 @@ using Framework.Managers;
 using Gameplay.GameControllers.Effects.Player.Sparks;
 using Gameplay.GameControllers.Entities;
 using UnityEngine;
-using BlasClient.MonoBehaviours;
+using BlasClient.Players;
 
 namespace BlasClient.PvP
 {
@@ -24,7 +24,7 @@ namespace BlasClient.PvP
             if (receiverName == Main.Multiplayer.PlayerName)
             {
                 // This is the player that got hit
-                OtherPenitent attacker = Main.Multiplayer.PlayerManager.FindPlayerObject(attackerName);
+                OtherPlayerScript attacker = Main.Multiplayer.OtherPlayerManager.FindActivePlayer(attackerName);
                 if (attacker == null) return;
 
                 Config config = Main.Multiplayer.config;
@@ -43,10 +43,10 @@ namespace BlasClient.PvP
 
         public void ReceiveEffect(string playerName, EffectType effect)
         {
-            OtherPenitent other = Main.Multiplayer.PlayerManager.FindPlayerObject(playerName);
+            OtherPlayerScript other = Main.Multiplayer.OtherPlayerManager.FindActivePlayer(playerName);
             if (other == null) return;
 
-            other.OtherPenitentAttack.PlayEffectAnimation(effect, other.IsFacingRight);
+            other.OtherPlayerAttack.PlayEffectAnimation(effect, other.IsFacingRight);
         }
 
         private void DamagePlayer(AttackType attack, GameObject attacker)
@@ -74,7 +74,7 @@ namespace BlasClient.PvP
 
         public void ShowDamageEffects(string receiverName)
         {
-            OtherPenitent receiver = Main.Multiplayer.PlayerManager.FindPlayerObject(receiverName);
+            OtherPlayerScript receiver = Main.Multiplayer.OtherPlayerManager.FindActivePlayer(receiverName);
             if (receiver == null) return;
 
             Vector3 effectPosition = receiver.transform.position + Vector3.up;

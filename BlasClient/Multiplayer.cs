@@ -27,7 +27,7 @@ namespace BlasClient
         public Map.MapManager MapManager { get; private set; }
         public NetworkManager NetworkManager { get; private set; }
         public NotificationManager NotificationManager { get; private set; }
-        public PlayerManager PlayerManager { get; private set; }
+        public OtherPlayerManager OtherPlayerManager { get; private set; }
         public ProgressManager ProgressManager { get; private set; }
 
         // Game status
@@ -61,7 +61,7 @@ namespace BlasClient
             MapManager = new Map.MapManager();
             NetworkManager = new NetworkManager();
             NotificationManager = new NotificationManager();
-            PlayerManager = new PlayerManager();
+            OtherPlayerManager = new OtherPlayerManager();
             ProgressManager = new ProgressManager();
 
             // Initialize data
@@ -101,8 +101,8 @@ namespace BlasClient
         {
             NotificationManager.DisplayNotification(Localize("dcon"));
             ProgressManager.ResetProgressSentStatus();
-            playerList.ClearPlayers();
-            PlayerManager.destroyPlayers();
+            OtherPlayerManager.RemoveAllConnectedPlayers();
+            OtherPlayerManager.RemoveAllActivePlayers();
             PlayerName = string.Empty;
         }
 
@@ -203,19 +203,6 @@ namespace BlasClient
         {
             PlayerManager.refreshNametagColors();
             MapManager.QueueMapUpdate();
-        }
-
-        public void UpdateSkinData(string playerName, byte[] skinData)
-        {
-            Log("Updating player skin for " + playerName);
-            Main.Instance.StartCoroutine(delaySkinUpdate());
-
-            IEnumerator delaySkinUpdate()
-            {
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                playerList.setPlayerSkinTexture(playerName, skinData);
-            }
         }
 
         // Received introResponse data from server

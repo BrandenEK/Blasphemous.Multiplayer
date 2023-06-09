@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using BlasClient.Players;
 using Framework.Managers;
 using Framework.Map;
 using Gameplay.UI.Others.MenuLogic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace BlasClient.Map
 {
@@ -60,35 +61,31 @@ namespace BlasClient.Map
             }
 
             // Create a new mark for each player
-            foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
+            foreach (PlayerStatus player in Main.Multiplayer.OtherPlayerManager.AllConnectedPlayers)
             {
-                string playerScene = Main.Multiplayer.playerList.getPlayerScene(playerName);
-                string playerLastMapScene = Main.Multiplayer.playerList.getPlayerMapScene(playerName);
-                byte playerTeam = Main.Multiplayer.playerList.getPlayerTeam(playerName);
-
                 // Only show other teams if config option
-                if (playerTeam != Main.Multiplayer.PlayerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
+                if (player.Team != Main.Multiplayer.PlayerTeam && !Main.Multiplayer.config.showOtherTeamOnMap)
                     continue;
 
                 // Calling this function with -1000 will calculate the center position of the scene
-                Core.NewMapManager.GetCellKeyFromPosition(playerLastMapScene, new Vector2(-1000, 0));
+                Core.NewMapManager.GetCellKeyFromPosition(player.LastMapScene, new Vector2(-1000, 0));
                 Vector2 cellPosition = ActivePlayerPosition;
                 if (cellPosition.x < 0 || cellPosition.y < 0)
                     continue;
 
                 // Calculate which icon to use
                 Sprite icon = playerSprites[0];
-                if (playerScene != playerLastMapScene)
+                if (player.CurrentScene != player.LastMapScene)
                 {
                     icon = playerSprites[1];
                 }
-                else if (playerTeam != Main.Multiplayer.PlayerTeam)
+                else if (player.Team != Main.Multiplayer.PlayerTeam)
                 {
                     icon = playerSprites[2];
                 }
 
                 // Create new image for this player
-                GameObject obj = new GameObject(playerName, typeof(RectTransform));
+                GameObject obj = new GameObject(player.Name, typeof(RectTransform));
                 RectTransform rect = obj.GetComponent<RectTransform>();
                 rect.SetParent(playerMarks, false);
                 rect.localRotation = Quaternion.identity;

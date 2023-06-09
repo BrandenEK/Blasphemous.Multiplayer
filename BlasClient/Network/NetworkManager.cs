@@ -1,4 +1,5 @@
-﻿using BlasClient.ProgressSync;
+﻿using BlasClient.Players;
+using BlasClient.ProgressSync;
 using BlasClient.PvP;
 using Framework.Managers;
 using SimpleTCP;
@@ -11,7 +12,6 @@ namespace BlasClient.Network
 {
     public class NetworkManager
     {
-        // For now the receive functions are public, make them private once client is implemented
         // Check for connection is all of these
 
         private ConnectionStatus _connectionStatus = ConnectionStatus.Disconnected;
@@ -179,7 +179,7 @@ namespace BlasClient.Network
             float xpos = BitConverter.ToSingle(data, startIdx);
             float ypos = BitConverter.ToSingle(data, startIdx + 4);
 
-            Main.Multiplayer.PlayerManager.ReceivePosition(playerName, new Vector2(xpos, ypos));
+            Main.Multiplayer.OtherPlayerManager.ReceivePosition(playerName, new Vector2(xpos, ypos));
         }
         
         // Animation
@@ -194,7 +194,7 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             byte animation = data[startIdx];
 
-            Main.Multiplayer.PlayerManager.ReceiveAnimation(playerName, animation);
+            Main.Multiplayer.OtherPlayerManager.ReceiveAnimation(playerName, animation);
         }
 
         // Direction
@@ -209,7 +209,7 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             bool directon = BitConverter.ToBoolean(data, startIdx);
 
-            Main.Multiplayer.PlayerManager.ReceiveDirection(playerName, directon);
+            Main.Multiplayer.OtherPlayerManager.ReceiveDirection(playerName, directon);
         }
 
         // Enter scene
@@ -224,11 +224,7 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             string scene = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
 
-            // TODO
-            Main.Multiplayer.playerList.setPlayerScene(playerName, scene);
-            if (Core.LevelManager.currentLevel.LevelName == scene)
-                Main.Multiplayer.PlayerManager.queuePlayer(playerName, true);
-            Main.Multiplayer.MapManager.QueueMapUpdate();
+            Main.Multiplayer.OtherPlayerManager.ReceiveEnterScene(playerName, scene);
         }
 
         // Leave scene
@@ -242,41 +238,52 @@ namespace BlasClient.Network
         {
             string playerName = Encoding.UTF8.GetString(data);
 
-            // TODO
-            if (Core.LevelManager.currentLevel.LevelName == Main.Multiplayer.playerList.getPlayerScene(playerName))
-                Main.Multiplayer.PlayerManager.queuePlayer(playerName, false);
-            Main.Multiplayer.playerList.setPlayerScene(playerName, "");
-            Main.Multiplayer.MapManager.QueueMapUpdate();
+            Main.Multiplayer.OtherPlayerManager.ReceiveLeaveScene(playerName);
         }
 
         // Skin
 
         public void SendSkin(string skinName)
         {
-            bool originalSkin = false;
-            foreach (string ogskin in originalSkins)
+            bool originalSkin = PlayerStatus.IsOriginalSkin(skinName);
+            List<byte> bytes = new ();
+
+            if (originalSkin)
             {
-                if (skinName == ogskin)
-                {
-                    originalSkin = true;
-                    break;
-                }
+                bytes.Add(0);
+                bytes.AddRange(Encoding.UTF8.GetBytes(skinName));
+            }
+            else
+            {
+                bytes.Add(1);
+                bytes.AddRange(Core.ColorPaletteManager.GetColorPaletteById(skinName).texture.EncodeToPNG());
             }
 
-            byte[] skinData = originalSkin ? Encoding.UTF8.GetBytes(skinName) : Core.ColorPaletteManager.GetColorPaletteById(skinName).texture.EncodeToPNG();
-            QueueMesssage(skinData, NetworkType.Skin);
+            QueueMesssage(bytes.ToArray(), NetworkType.Skin);
         }
 
         private void ReceiveSkin(byte[] data)
         {
             int startIdx = ExtractNameFromData(data, out string playerName);
-            byte[] skinData = new byte[data.Length - startIdx];
-            for (int i = 0; i < skinData.Length; i++)
-            {
-                skinData[i] = data[i + startIdx];
-            }
 
-            Main.Multiplayer.UpdateSkinData(playerName, skinData);
+            PlayerStatus player = Main.Multiplayer.OtherPlayerManager.FindConnectedPlayer(playerName);
+            if (player == null) return;
+
+            bool originalSkin = data[startIdx] == 0;
+            if (originalSkin)
+            {
+                string skinName = Encoding.UTF8.GetString(data, startIdx + 1, data.Length - startIdx - 1);
+                player.SetSkinTexture(skinName);
+            }
+            else
+            {
+                byte[] skinData = new byte[data.Length - startIdx - 1];
+                for (int i = 0; i < skinData.Length; i++)
+                {
+                    skinData[i] = data[i + startIdx + 1];
+                }
+                player.SetSkinTexture(skinData);
+            }
         }
 
         // Team
@@ -291,9 +298,7 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             byte team = data[startIdx];
 
-            Main.Multiplayer.playerList.setPlayerTeam(playerName, team);
-            if (Main.Multiplayer.CurrentlyInLevel)
-                Main.Multiplayer.RefreshPlayerColors();
+            Main.Multiplayer.OtherPlayerManager.ReceiveTeam(playerName, team);
         }
 
         // Connection
@@ -311,13 +316,13 @@ namespace BlasClient.Network
             if (connected)
             {
                 // Add this player to the list of connected players
-                Main.Multiplayer.playerList.AddPlayer(playerName);
+                Main.Multiplayer.OtherPlayerManager.AddConnectedPlayer(playerName);
             }
             else
             {
                 // Remove this player from the list of connected players
                 // playerLeftScene(playerName); // Need to actually remove the player object if same scene
-                Main.Multiplayer.playerList.RemovePlayer(playerName);
+                Main.Multiplayer.OtherPlayerManager.RemoveConnectedPlayer(playerName);
             }
             Main.Multiplayer.NotificationManager.DisplayNotification($"{playerName} {Main.Multiplayer.Localize(connected ? "join" : "leave")}");
         }
@@ -421,29 +426,5 @@ namespace BlasClient.Network
 
             Main.Multiplayer.AttackManager.ReceiveEffect(playerName, effectType);
         }
-
-        // Temp data
-
-        private string[] originalSkins = new string[]
-        {
-            "PENITENT_DEFAULT",
-            "PENITENT_ENDING_A",
-            "PENITENT_ENDING_B",
-            "PENITENT_OSSUARY",
-            "PENITENT_BACKER",
-            "PENITENT_DELUXE",
-            "PENITENT_ALMS",
-            "PENITENT_PE01",
-            "PENITENT_PE02",
-            "PENITENT_PE03",
-            "PENITENT_BOSSRUSH",
-            "PENITENT_DEMAKE",
-            "PENITENT_ENDING_C",
-            "PENITENT_SIERPES",
-            "PENITENT_ISIDORA",
-            "PENITENT_BOSSRUSH_S",
-            "PENITENT_GAMEBOY",
-            "PENITENT_KONAMI"
-        };
     }
 }
