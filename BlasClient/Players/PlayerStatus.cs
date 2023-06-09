@@ -37,10 +37,7 @@ namespace BlasClient.Players
         public Texture2D SkinTexture => _skinTexture;
 
         // Determines whether to set player objects skin texture in an update cycle
-        // 0 - Already updated, do nothing
-        // 1 - When object is first created
-        // 2 - First update cycle
-        public byte SkinUpdateStatus { get; set; }
+        public SkinStatus SkinUpdateStatus { get; set; }
 
         public PlayerStatus(string name)
         {
@@ -51,7 +48,7 @@ namespace BlasClient.Players
             _lastMapScene = string.Empty;
 
             SetSkinTexture("PENITENT_DEFAULT");
-            SkinUpdateStatus = 0;
+            SkinUpdateStatus = SkinStatus.Updated;
         }
 
         public void SetSkinTexture(string skinName)
@@ -105,5 +102,12 @@ namespace BlasClient.Players
             "PENITENT_GAMEBOY",
             "PENITENT_KONAMI"
         };
+
+        public enum SkinStatus
+        {
+            Updated = 0,
+            YesUpdate = 1,
+            NoUpdate = 2,
+        }
     }
 }

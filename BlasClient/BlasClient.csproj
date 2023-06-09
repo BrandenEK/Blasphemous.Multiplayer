@@ -13,8 +13,11 @@
 
   <ItemGroup>
     <Compile Remove="Managers\**" />
+    <Compile Remove="MonoBehaviours\**" />
     <EmbeddedResource Remove="Managers\**" />
+    <EmbeddedResource Remove="MonoBehaviours\**" />
     <None Remove="Managers\**" />
+    <None Remove="MonoBehaviours\**" />
   </ItemGroup>
 
   <ItemGroup>

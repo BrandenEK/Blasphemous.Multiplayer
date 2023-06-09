@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Framework.Managers;
-using Gameplay.UI;
+using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;
 
 
@@ -39,7 +39,6 @@ namespace BlasClient
         public string PlayerName { get; private set; }
         public byte PlayerTeam { get; private set; }
 
-        public PlayerList playerList { get; private set; }
         private List<string> interactedPersistenceObjects;
 
         // Set to false when receiving a stat upgrade from someone in the same room & not in randomizer
@@ -67,7 +66,6 @@ namespace BlasClient
             // Initialize data
             config = FileUtil.loadConfig<Config>();
             PersistentStates.loadPersistentObjects();
-            playerList = new PlayerList();
             interactedPersistenceObjects = new List<string>();
             PlayerName = string.Empty;
             PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
@@ -110,7 +108,7 @@ namespace BlasClient
         {
             CurrentlyInLevel = newLevel != "MainMenu";
             NotificationManager.LevelLoaded();
-            PlayerManager.LevelLoaded(newLevel);
+            OtherPlayerManager.LevelLoaded(newLevel);
             ProgressManager.LevelLoaded(newLevel);
             CanObtainStatUpgrades = true;
 
@@ -173,7 +171,7 @@ namespace BlasClient
             NotificationManager.Update();
             if (CurrentlyInLevel)
             {
-                PlayerManager.Update();
+                OtherPlayerManager.Update();
                 MainPlayerManager.Update();
                 ProgressManager.Update();
             }
@@ -201,7 +199,7 @@ namespace BlasClient
         // Refresh players' nametags & map icons when someone changed teams
         public void RefreshPlayerColors()
         {
-            PlayerManager.refreshNametagColors();
+            OtherPlayerManager.RefreshNametagColors();
             MapManager.QueueMapUpdate();
         }
 
@@ -220,7 +218,7 @@ namespace BlasClient
                 {
                     MainPlayerManager.SendAllLocationData();
                     NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
-                    PlayerManager.createPlayerNameTag();
+                    OtherPlayerManager.AddNametag(PlayerName, true);
                     ProgressManager.SendAllProgress();
                 }
 
@@ -242,15 +240,18 @@ namespace BlasClient
 
         // Whenever you receive a stat upgrade, it needs to check if you are in the same room as the player who sent it.
         // If so, you can no longer obtain stat upgrades in the same room
-        public void ProcessRecievedStat(ProgressUpdate progress)
+        public void ProcessRecievedStat(string playerName, ProgressUpdate progress)
         {
-            if (CurrentlyInLevel && progress.Type == ProgressType.PlayerStat && !RandomizerMode && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(PlayerName))
+            PlayerStatus player = OtherPlayerManager.FindConnectedPlayer(playerName);
+            if (player == null) return;
+
+            if (!CurrentlyInLevel || RandomizerMode || progress.Type != ProgressType.PlayerStat || Core.LevelManager.currentLevel.LevelName != player.CurrentScene)
+                return;
+
+            if (progress.Id == "LIFE" || progress.Id == "FERVOUR" || progress.Id == "STRENGTH" || progress.Id == "MEACULPA")
             {
-                if (progress.Id == "LIFE" || progress.Id == "FERVOUR" || progress.Id == "STRENGTH" || progress.Id == "MEACULPA")
-                {
-                    CanObtainStatUpgrades = false;
-                    LogWarning("Received stat upgrade from player in the same room!");
-                }
+                CanObtainStatUpgrades = false;
+                LogWarning("Received stat upgrade from player in the same room!");
             }
         }
 
@@ -336,5 +337,84 @@ namespace BlasClient
         }
 
         public override void NewGame(bool NGPlus) { }
+
+        private Transform m_canvas;
+        public Transform CanvasObject
+        {
+            get
+            {
+                if (m_canvas == null)
+                {
+                    foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
+                    {
+                        if (c.name == "Game UI")
+                        {
+                            m_canvas = c.transform;
+                            break;
+                        }
+                    }
+                }
+                return m_canvas;
+            }
+        }
+
+        private GameObject m_textPrefab;
+        public GameObject TextObject
+        {
+            get
+            {
+                if (m_textPrefab == null)
+                {
+                    foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
+                    {
+                        if (obj.name == "PurgePoints")
+                        {
+                            m_textPrefab = obj.transform.GetChild(1).gameObject;
+                            break;
+                        }
+                    }
+                }
+                return m_textPrefab;
+            }
+        }
+
+        private RuntimeAnimatorController m_penitentAnimator;
+        public RuntimeAnimatorController PlayerAnimator
+        {
+            get
+            {
+                if (m_penitentAnimator == null)
+                {
+                    m_penitentAnimator = Core.Logic.Penitent?.Animator.runtimeAnimatorController;
+                }
+                return m_penitentAnimator;
+            }
+        }
+
+        private RuntimeAnimatorController m_SwordAnimator;
+        public RuntimeAnimatorController PlayerSwordAnimator
+        {
+            get
+            {
+                if (m_SwordAnimator == null)
+                {
+                    m_SwordAnimator = Core.Logic.Penitent?.GetComponentInChildren<Gameplay.GameControllers.Penitent.Attack.SwordAnimatorInyector>().GetComponent<Animator>().runtimeAnimatorController;
+                }
+                return m_SwordAnimator;
+            }
+        }
+
+        private Material m_penitentMaterial;
+        public Material PlayerMaterial
+        {
+            get
+            {
+                if (m_penitentMaterial == null)
+                {
+                    m_penitentMaterial = Core.Logic.Penitent?.SpriteRenderer.material;
+                }
+                return m_penitentMaterial;
+            }
+        }
     }
 }

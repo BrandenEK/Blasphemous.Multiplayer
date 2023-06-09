@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace BlasClient.MonoBehaviours
+namespace BlasClient.Players
 {
     public class FakePenitentIntro : MonoBehaviour
     {
@@ -16,7 +16,7 @@ namespace BlasClient.MonoBehaviours
             if (anim.GetCurrentAnimatorStateInfo(0).IsName("FakePenitent end"))
             {
                 // Once the player reaches this animation, finish it and return to idle
-                gameObject.GetComponent<OtherPenitent>().finishSpecialAnimation();
+                gameObject.GetComponent<OtherPlayerScript>().FinishSpecialAnimation();
             }
         }
     }

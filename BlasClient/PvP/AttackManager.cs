@@ -28,7 +28,8 @@ namespace BlasClient.PvP
                 if (attacker == null) return;
 
                 Config config = Main.Multiplayer.config;
-                if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == Main.Multiplayer.playerList.getPlayerTeam(attackerName)))
+                byte attackerTeam = Main.Multiplayer.OtherPlayerManager.FindConnectedPlayer(attackerName).Team;
+                if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == attackerTeam))
                     return;
 
                 Main.Multiplayer.LogWarning($"Receiving hit {attack} from {attackerName}");

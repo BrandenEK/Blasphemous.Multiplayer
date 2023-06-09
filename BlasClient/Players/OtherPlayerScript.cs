@@ -9,7 +9,7 @@ namespace BlasClient.Players
 {
     public class OtherPlayerScript : MonoBehaviour, IDamageable
     {
-        private string penitentName;
+        private PlayerStatus playerStatus;
         private bool playerDead = false;
 
         private SpriteRenderer CharacterRenderer { get; set; }
@@ -17,84 +17,90 @@ namespace BlasClient.Players
 
         public OtherPlayerAttackScript OtherPlayerAttack { get; private set; }
 
-        private RuntimeAnimatorController penitentAnimatorController;
-
         public bool IsFacingRight => !CharacterRenderer.flipX;
 
         // Adds necessary components & initializes them
-        public void createPenitent(string name, RuntimeAnimatorController animatorController, RuntimeAnimatorController swordAnimatorController, Material material)
+        public void SetupPlayer(PlayerStatus status)
         {
-            penitentName = name;
-            Main.Multiplayer.playerList.setPlayerSkinUpdateStatus(name, 2);
+            playerStatus = status;
+            playerStatus.SkinUpdateStatus = PlayerStatus.SkinStatus.NoUpdate;
 
             // Rendering
             CharacterRenderer = gameObject.AddComponent<SpriteRenderer>();
-            CharacterRenderer.material = material;
+            CharacterRenderer.material = Main.Multiplayer.PlayerMaterial;
             CharacterRenderer.sortingLayerName = "Player";
             CharacterRenderer.enabled = false;
 
             // Animation
             CharacterAnim = gameObject.AddComponent<Animator>();
-            CharacterAnim.runtimeAnimatorController = animatorController;
-            penitentAnimatorController = animatorController;
+            CharacterAnim.runtimeAnimatorController = Main.Multiplayer.PlayerAnimator;
 
             // Sword handler
             GameObject sword = new GameObject("Sword");
             sword.transform.SetParent(transform);
             OtherPlayerAttack = sword.AddComponent<OtherPlayerAttackScript>();
-            OtherPlayerAttack.CreatePenitentAttack(swordAnimatorController);
+            OtherPlayerAttack.SetupAttack();
         }
 
-        public void updatePosition(Vector2 positon)
+        public Vector2 CurrentPosition
         {
-            transform.position = positon;
+            set
+            {
+                transform.position = value;
+            }
         }
 
-        public void updateAnimation(byte animation)
+        public byte CurrentAnimation
         {
-            // If this player was previously assumed dead but now they are receiving another anim, turn them alive again
-            if (playerDead)
+            set
             {
-                SetDeathStatus(false);
-            }
-
-            if (animation < 240)
-            {
-                // Regular animation
-                if (Main.Multiplayer.playerList.getPlayerSpecialAnimation(penitentName) > 0)
+                // If this player was previously assumed dead but now they are receiving another anim, turn them alive again
+                if (playerDead)
                 {
-                    // Change back to regular animations
-                    CharacterAnim.runtimeAnimatorController = penitentAnimatorController;
-                    Main.Multiplayer.playerList.setPlayerSpecialAnimation(penitentName, 0);
+                    SetDeathStatus(false);
                 }
-                CharacterAnim.SetBool("IS_CROUCH", false);
 
-                // Logic for ladder climbing
+                if (value < 240)
+                {
+                    // Regular animation
+                    if (playerStatus.SpecialAnimation > 0)
+                    {
+                        // Change back to regular animations
+                        CharacterAnim.runtimeAnimatorController = Main.Multiplayer.PlayerAnimator;
+                        playerStatus.SpecialAnimation = 0;
+                    }
+                    CharacterAnim.SetBool("IS_CROUCH", false);
 
-                // Set required parameters to keep player object in this animation
-                PlayerAnimState animState = AnimationStates.animations[animation];
-                for (int i = 0; i < animState.parameterNames.Length; i++)
-                {
-                    CharacterAnim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
-                }
-                CharacterAnim.Play(animState.name);
-            }
-            else
-            {
-                // Special animation
-                if (playSpecialAnimation(animation))
-                {
-                    Main.Multiplayer.playerList.setPlayerSpecialAnimation(penitentName, animation);
-                    Main.Multiplayer.Log("Playing special animation for " + name);
+                    // Logic for ladder climbing
+
+                    // Set required parameters to keep player object in this animation
+                    PlayerAnimState animState = AnimationStates.animations[value];
+                    for (int i = 0; i < animState.parameterNames.Length; i++)
+                    {
+                        CharacterAnim.SetBool(animState.parameterNames[i], animState.parameterValues[i]);
+                    }
+                    CharacterAnim.Play(animState.name);
                 }
                 else
-                    Main.Multiplayer.LogWarning("Failed to play special animation for " + name);
+                {
+                    // Special animation
+                    if (PlaySpecialAnimation(value))
+                    {
+                        playerStatus.SpecialAnimation = value;
+                        Main.Multiplayer.Log("Playing special animation for " + name);
+                    }
+                    else
+                        Main.Multiplayer.LogWarning("Failed to play special animation for " + name);
+                }
             }
         }
 
-        public void updateDirection(bool facingDirection)
+        public bool CurrentDirection
         {
-            CharacterRenderer.flipX = facingDirection;
+            set
+            {
+                CharacterRenderer.flipX = value;
+            }
         }
 
         public void updateSkin(Texture2D skin)
@@ -104,7 +110,7 @@ namespace BlasClient.Players
         }
 
         // Gets the animator controller of an interactable object in the scene & plays special animation
-        private bool playSpecialAnimation(byte type)
+        private bool PlaySpecialAnimation(byte type)
         {
             if (type == 240 || type == 241 || type == 242)
             {
@@ -197,16 +203,15 @@ namespace BlasClient.Players
         }
 
         // Finishes playing a special animation and returns to idle
-        public void finishSpecialAnimation()
+        public void FinishSpecialAnimation()
         {
-            byte currentSpecialAnimation = Main.Multiplayer.playerList.getPlayerSpecialAnimation(penitentName);
-            if (currentSpecialAnimation >= 247 && currentSpecialAnimation <= 249)
+            if (playerStatus.SpecialAnimation >= 247 && playerStatus.SpecialAnimation <= 249)
             {
                 // If finished entering door, disable renderer
                 CharacterRenderer.enabled = false;
             }
 
-            updateAnimation(0);
+            CurrentAnimation = 0;
         }
 
         // Check if death animation is playing
@@ -218,11 +223,6 @@ namespace BlasClient.Players
                 SetDeathStatus(true);
                 playerDead = true;
             }
-            //else if (!playerDead && state.normalizedTime >= 0.9f && )
-            //{
-            //    SetDeathStatus(true);
-            //    playerDead = true;
-            //}
             else
             {
                 playerDead = false;
@@ -239,7 +239,7 @@ namespace BlasClient.Players
         public void LaunchEvent(string eventName)
         {
             if (eventName == "INTERACTION_END")
-                finishSpecialAnimation();
+                FinishSpecialAnimation();
         }
 
         public bool BleedOnImpact() => false;
@@ -249,7 +249,7 @@ namespace BlasClient.Players
         public void Damage(Hit hit)
         {
             Config config = Main.Multiplayer.config;
-            if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == Main.Multiplayer.playerList.getPlayerTeam(penitentName)))
+            if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == playerStatus.Team))
                 return;
 
             Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
@@ -328,10 +328,10 @@ namespace BlasClient.Players
             // Cherubs
             // Cante Jondo
 
-            Main.Multiplayer.LogWarning($"Sending hit {attack} to {penitentName}");
+            Main.Multiplayer.LogWarning($"Sending hit {attack} to {playerStatus.Name}");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
-            Main.Multiplayer.AttackManager.ShowDamageEffects(penitentName);
-            Main.Multiplayer.NetworkManager.SendAttack(penitentName, attack);
+            Main.Multiplayer.AttackManager.ShowDamageEffects(playerStatus.Name);
+            Main.Multiplayer.NetworkManager.SendAttack(playerStatus.Name, attack);
         }
     }
 }

@@ -321,7 +321,7 @@ namespace BlasClient.Network
             else
             {
                 // Remove this player from the list of connected players
-                // playerLeftScene(playerName); // Need to actually remove the player object if same scene
+                Main.Multiplayer.OtherPlayerManager.ReceiveLeaveScene(playerName);
                 Main.Multiplayer.OtherPlayerManager.RemoveConnectedPlayer(playerName);
             }
             Main.Multiplayer.NotificationManager.DisplayNotification($"{playerName} {Main.Multiplayer.Localize(connected ? "join" : "leave")}");
@@ -386,7 +386,7 @@ namespace BlasClient.Network
 
             ProgressUpdate progress = new ProgressUpdate(progressId, progressType, progressValue);
             Main.Multiplayer.ProgressManager.ReceiveProgress(progress);
-            Main.Multiplayer.ProcessRecievedStat(progress);
+            Main.Multiplayer.ProcessRecievedStat(playerName, progress);
 
             if (playerName != "*")
                 Main.Multiplayer.NotificationManager.DisplayProgressNotification(playerName, progress);

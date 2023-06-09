@@ -16,13 +16,13 @@ namespace BlasClient.Players
         private Animator SwordAnim { get; set; }
         private BoxCollider2D DamageArea { get; set; }
 
-        public void CreatePenitentAttack(RuntimeAnimatorController swordController)
+        public void SetupAttack()
         {
             // Add components
             transform.localPosition = Vector3.zero;
             SwordRenderer = gameObject.AddComponent<SpriteRenderer>();
             SwordAnim = gameObject.AddComponent<Animator>();
-            SwordAnim.runtimeAnimatorController = swordController;
+            SwordAnim.runtimeAnimatorController = Main.Multiplayer.PlayerSwordAnimator;
 
             // Create damage area collider
             gameObject.layer = LayerMask.NameToLayer("Enemy");

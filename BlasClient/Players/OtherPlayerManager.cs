@@ -1,7 +1,8 @@
-﻿using BlasClient.MonoBehaviours;
-using Framework.Managers;
+﻿using Framework.Managers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Tools.Level;
+using Tools.Level.Interactables;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,116 @@ namespace BlasClient.Players
         private readonly List<OtherPlayerScript> activePlayers = new();
         public ReadOnlyCollection<OtherPlayerScript> AllActivePlayers => activePlayers.AsReadOnly();
 
+        private readonly List<Text> nametags = new ();
+        public ReadOnlyCollection<Text> AllNametags => nametags.AsReadOnly();
+
+
+        public void LevelLoaded(string scene)
+        {
+            // Remove all existing player objects and nametags
+            RemoveAllActivePlayers();
+
+            // Create any players that are already in this scene
+            foreach (PlayerStatus player in connectedPlayers)
+            {
+                if (player.CurrentScene == scene)
+                    AddActivePlayer(player.Name);
+            }
+
+            // Add special animation checkers to certain interactors
+            int count = 0;
+            foreach (Interactable interactable in Object.FindObjectsOfType<Interactable>())
+            {
+                System.Type type = interactable.GetType();
+                if (type != typeof(PrieDieu) && type != typeof(CollectibleItem) && type != typeof(Chest) && type != typeof(Lever) && type != typeof(Door))
+                    continue;
+
+                foreach (Transform child in interactable.transform)
+                {
+                    if (child.name.ToLower().Contains("interactor"))
+                    {
+                        // Only add this to the interactor animator of certain interactables
+                        child.gameObject.AddComponent<SpecialAnimationChecker>();
+                        count++;
+                        break;
+                    }
+                }
+            }
+
+            // Add this to the fake penitent intro animator
+            if (scene == "D17Z01S01")
+            {
+                GameObject fakePenitent = GameObject.Find("FakePenitent");
+                if (fakePenitent != null)
+                {
+                    fakePenitent.AddComponent<SpecialAnimationChecker>();
+                    count++;
+                }
+            }
+            Main.Multiplayer.Log("Adding special animation checkers to " + count + " objects!");
+
+            // Create main player's nametag
+            if (Main.Multiplayer.NetworkManager.IsConnected)
+                AddNametag(Main.Multiplayer.PlayerName, true);
+        }
+
+        public void Update()
+        {
+            // Check status of player skins and potentially update the textures
+            foreach (PlayerStatus player in connectedPlayers)
+            {
+                PlayerStatus.SkinStatus currentSkinStatus = player.SkinUpdateStatus;
+                if (currentSkinStatus == PlayerStatus.SkinStatus.NoUpdate)
+                {
+                    // Set that one update cycle has passed
+                    player.SkinUpdateStatus = PlayerStatus.SkinStatus.YesUpdate;
+                }
+                else if (currentSkinStatus == PlayerStatus.SkinStatus.YesUpdate)
+                {
+                    // Set the player texture
+                    ApplySkinTexture(player);
+                    player.SkinUpdateStatus = PlayerStatus.SkinStatus.Updated;
+                }
+            }
+
+            // Update position of all name tags
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                RectTransform nametag = nametags[i].rectTransform;
+                string name = nametags[i].name;
+
+                // Get player with this name
+                Vector3 position;
+                if (name == Main.Multiplayer.PlayerName)
+                {
+                    position = Core.Logic.Penitent.transform.position;
+                }
+                else
+                {
+                    OtherPlayerScript player = FindActivePlayer(name);
+                    if (player != null)
+                        position = player.transform.position;
+                    else
+                        continue;
+                }
+
+                Vector3 viewPosition = Camera.main.WorldToViewportPoint(position + Vector3.up * 3.1f);
+                nametag.anchorMin = viewPosition;
+                nametag.anchorMax = viewPosition;
+                nametag.anchoredPosition = Vector2.zero;
+            }
+        }
+
+        // Sets the skin texture of a player's object - must be delayed until after object creation
+        private void ApplySkinTexture(PlayerStatus player)
+        {
+            // Get player object with this name
+            OtherPlayerScript activePlayer = FindActivePlayer(player.Name);
+            if (player == null) return;
+
+            Main.Multiplayer.Log("Setting skin texture for " + player.Name);
+            activePlayer.updateSkin(player.SkinTexture);
+        }
 
         #region Connected players
 
@@ -70,19 +181,21 @@ namespace BlasClient.Players
         // When a player enters a scene, create a new player object
         public void AddActivePlayer(string name)
         {
+            PlayerStatus player = FindConnectedPlayer(name);
+            if (player == null) return;
+
             // Create & setup new penitent object
             GameObject playerObject = new GameObject("_" + name);
-            OtherPlayerScript player = playerObject.AddComponent<OtherPlayerScript>();
-            player.createPenitent(name, storedPenitentAnimator, storedSwordAnimator, storedPenitentMaterial);
-            activePlayers.Add(player);
+            OtherPlayerScript activePlayer = playerObject.AddComponent<OtherPlayerScript>();
+            activePlayer.SetupPlayer(player);
+            activePlayers.Add(activePlayer);
 
             // If in beginning room, add fake penitent controller
             if (Core.LevelManager.currentLevel.LevelName == "D17Z01S01")
                 playerObject.AddComponent<FakePenitentIntro>();
 
             // Set up name tag
-            if (Main.Multiplayer.config.displayNametags)
-                createNameTag(name, Main.Multiplayer.playerList.getPlayerTeam(name) == Main.Multiplayer.PlayerTeam);
+            AddNametag(name, Main.Multiplayer.PlayerTeam == player.Team);
 
             Main.Multiplayer.Log("Created new player object for " + name);
         }
@@ -98,13 +211,7 @@ namespace BlasClient.Players
                 Main.Multiplayer.Log("Removed player object for " + name);
             }
 
-            Text nametag = getPlayerNametag(name);
-            if (nametag != null)
-            {
-                nametags.Remove(nametag);
-                Object.Destroy(nametag);
-                Main.Multiplayer.Log("Removed nametag for " + name);
-            }
+            RemoveNametag(name);
         }
 
         // When disconnected from server or loading new scene, remove all players
@@ -116,6 +223,61 @@ namespace BlasClient.Players
                     Object.Destroy(activePlayers[i].gameObject);
             }
             activePlayers.Clear();
+
+            RemoveAllNametags();
+        }
+
+        #endregion Active players
+
+        #region Nametags
+
+        public Text FindNametag(string name)
+        {
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                if (nametags[i].name == name)
+                    return nametags[i];
+            }
+
+            Main.Multiplayer.LogWarning("Couldn't find nametag: " + name);
+            return null;
+        }
+
+        public void AddNametag(string name, bool friendlyTeam)
+        {
+            if (!Main.Multiplayer.config.displayNametags || !Main.Multiplayer.config.displayOwnNametag && name == Main.Multiplayer.PlayerName)
+                return;
+
+            Transform parent = Main.Multiplayer.CanvasObject; GameObject text = Main.Multiplayer.TextObject;
+            if (parent == null || text == null)
+            {
+                Main.Multiplayer.LogWarning("Error: Failed to create nametag for " + name);
+                return;
+            }
+
+            Text nametag = Object.Instantiate(text, parent).GetComponent<Text>();
+            nametag.rectTransform.sizeDelta = new Vector2(100, 50);
+            nametag.rectTransform.SetAsFirstSibling();
+            nametag.name = name;
+            nametag.text = name;
+            nametag.alignment = TextAnchor.LowerCenter;
+            nametag.color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
+            nametags.Add(nametag);
+        }
+
+        public void RemoveNametag(string name)
+        {
+            Text nametag = FindNametag(name);
+            if (nametag != null)
+            {
+                nametags.Remove(nametag);
+                Object.Destroy(nametag.gameObject);
+                Main.Multiplayer.Log("Removed nametag for " + name);
+            }
+        }
+
+        public void RemoveAllNametags()
+        {
             for (int i = 0; i < nametags.Count; i++)
             {
                 if (nametags[i] != null)
@@ -124,7 +286,32 @@ namespace BlasClient.Players
             nametags.Clear();
         }
 
-        #endregion Active players
+        // Updates the colors of all nametags in the scene when someone changes teams
+        public void RefreshNametagColors()
+        {
+            for (int i = 0; i < nametags.Count; i++)
+            {
+                string name = nametags[i].name;
+                bool friendlyTeam;
+
+                if (name == Main.Multiplayer.PlayerName)
+                {
+                    friendlyTeam = true;
+                }
+                else
+                {
+                    PlayerStatus player = FindConnectedPlayer(name);
+                    if (player != null)
+                        friendlyTeam = Main.Multiplayer.PlayerTeam == player.Team;
+                    else
+                        continue;
+                }
+                
+                nametags[i].GetComponent<Text>().color = friendlyTeam ? new Color(0.671f, 0.604f, 0.247f) : Color.red;
+            }
+        }
+
+        #endregion Nametags
 
         #region Receive updates
 
@@ -135,7 +322,7 @@ namespace BlasClient.Players
             OtherPlayerScript player = FindActivePlayer(playerName);
             if (player != null)
             {
-                player.updatePosition(position);
+                player.CurrentPosition = position;
             }
         }
 
@@ -146,7 +333,7 @@ namespace BlasClient.Players
             OtherPlayerScript player = FindActivePlayer(playerName);
             if (player != null)
             {
-                player.updateAnimation(animation);
+                player.CurrentAnimation = animation;
             }
         }
 
@@ -157,7 +344,7 @@ namespace BlasClient.Players
             OtherPlayerScript player = FindActivePlayer(playerName);
             if (player != null)
             {
-                player.updateDirection(direction);
+                player.CurrentDirection = direction;
             }
         }
 
