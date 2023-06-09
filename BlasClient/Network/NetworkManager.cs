@@ -21,7 +21,9 @@ namespace BlasClient.Network
         public bool IsConnected => _connectionStatus == ConnectionStatus.Connected && _client != null;
         public string ServerIP => _serverIp;
 
-        private readonly List<byte> messageQueue = new ();
+        private readonly List<byte> sendingQueue = new ();
+        private readonly List<byte> receivingQueue = new ();
+        private static readonly object datalock = new object();
 
         // Connection
 
@@ -33,7 +35,7 @@ namespace BlasClient.Network
             {
                 _client = new SimpleTcpClient();
                 _client.Connect(ipAddress, Main.Multiplayer.config.serverPort);
-                _client.DataReceived += Receive;
+                _client.DataReceived += ReceiveMessage;
                 _client.TcpClient.NoDelay = true;
             }
             catch (System.Net.Sockets.SocketException)
@@ -66,6 +68,8 @@ namespace BlasClient.Network
             _connectionStatus = ConnectionStatus.Disconnected;
             _serverIp = string.Empty;
             _client = null;
+            sendingQueue.Clear();
+            receivingQueue.Clear();
 
             Main.Multiplayer.Log("Disconnected from server");
             Main.Multiplayer.OnDisconnect();
@@ -82,16 +86,16 @@ namespace BlasClient.Network
             bytes.Add((byte)type);
             bytes.AddRange(data);
 
-            messageQueue.AddRange(bytes);
+            sendingQueue.AddRange(bytes);
         }
 
         public void SendQueue()
         {
-            if (messageQueue.Count == 0 || _connectionStatus == ConnectionStatus.Disconnected) return;
+            if (sendingQueue.Count == 0 || _connectionStatus == ConnectionStatus.Disconnected) return;
 
             try
             {
-                _client.Write(messageQueue.ToArray());
+                _client.Write(sendingQueue.ToArray());
             }
             catch (System.IO.IOException)
             {
@@ -99,42 +103,57 @@ namespace BlasClient.Network
             }
             finally
             {
-                messageQueue.Clear();
+                sendingQueue.Clear();
             }
         }
 
         // Data should be formatted as length length type data
-        private void Receive(object sender, DataReceivedEventArgs message)
+        private void ReceiveMessage(object sender, DataReceivedEventArgs message)
         {
-            int startIdx = 0;
-            while (startIdx < message.data.Length - 3)
+            lock (datalock)
             {
-                ushort length = BitConverter.ToUInt16(message.data, startIdx);
-                byte type = message.data[startIdx + 2];
-                byte[] messageData = new byte[length];
-                for (int i = 0; i < messageData.Length; i++)
-                    messageData[i] = message.data[startIdx + 3 + i];
-
-                switch ((NetworkType)type)
-                {
-                    case NetworkType.Position:      ReceivePosition(messageData); break;
-                    case NetworkType.Animation:     ReceiveAnimation(messageData); break;
-                    case NetworkType.Direction:     ReceiveDirection(messageData); break;
-                    case NetworkType.EnterScene:    ReceiveEnterScene(messageData); break;
-                    case NetworkType.LeaveScene:    ReceiveLeaveScene(messageData); break;
-                    case NetworkType.Skin:          ReceiveSkin(messageData); break;
-                    case NetworkType.Team:          ReceiveTeam(messageData); break;
-                    case NetworkType.Connection:    ReceiveConnection(messageData); break;
-                    case NetworkType.Intro:         ReceiveIntro(messageData); break;
-                    case NetworkType.Progress:      ReceiveProgress(messageData); break;
-                    case NetworkType.Attack:        ReceiveAttack(messageData); break;
-                    case NetworkType.Effect:        ReceiveEffect(messageData); break;
-
-                }
-                startIdx += 3 + length;
+                receivingQueue.AddRange(message.data);
             }
-            if (startIdx != message.data.Length)
-                Main.Multiplayer.Log("Received data was formatted incorrectly");
+        }
+
+        public void ProcessQueue()
+        {
+            lock (datalock)
+            {
+                if (receivingQueue.Count == 0) return;
+
+                int startIdx = 0;
+                while (startIdx < receivingQueue.Count - 3)
+                {
+                    ushort length = BitConverter.ToUInt16(receivingQueue.GetRange(startIdx, 2).ToArray(), 0);
+                    byte type = receivingQueue[startIdx + 2];
+                    byte[] messageData = new byte[length];
+                    for (int i = 0; i < length; i++)
+                        messageData[i] = receivingQueue[startIdx + 3 + i];
+
+                    switch ((NetworkType)type)
+                    {
+                        case NetworkType.Position: ReceivePosition(messageData); break;
+                        case NetworkType.Animation: ReceiveAnimation(messageData); break;
+                        case NetworkType.Direction: ReceiveDirection(messageData); break;
+                        case NetworkType.EnterScene: ReceiveEnterScene(messageData); break;
+                        case NetworkType.LeaveScene: ReceiveLeaveScene(messageData); break;
+                        case NetworkType.Skin: ReceiveSkin(messageData); break;
+                        case NetworkType.Team: ReceiveTeam(messageData); break;
+                        case NetworkType.Connection: ReceiveConnection(messageData); break;
+                        case NetworkType.Intro: ReceiveIntro(messageData); break;
+                        case NetworkType.Progress: ReceiveProgress(messageData); break;
+                        case NetworkType.Attack: ReceiveAttack(messageData); break;
+                        case NetworkType.Effect: ReceiveEffect(messageData); break;
+
+                    }
+                    startIdx += 3 + length;
+                }
+                if (startIdx != receivingQueue.Count)
+                    Main.Multiplayer.Log("Received data was formatted incorrectly");
+
+                receivingQueue.Clear();
+            }
         }
 
         private int ExtractNameFromData(byte[] data, out string name)
