@@ -13,7 +13,7 @@ namespace BlasClient.ProgressSync.Helpers
             if (!Main.Multiplayer.config.syncSettings.worldState)
                 return;
 
-            Main.Multiplayer.addPersistentObject(progress.Id);
+            Main.Multiplayer.ProgressManager.AddInteractedObject(progress.Id);
             string[] sections = progress.Id.Split('~');
             string objectScene = sections[0];
             int objectSceneIdx = int.Parse(sections[1]);
@@ -48,7 +48,7 @@ namespace BlasClient.ProgressSync.Helpers
 
         public void SendAllProgress()
         {
-            List<string> objects = Main.Multiplayer.getAllPersistentObjects();
+            List<string> objects = Main.Multiplayer.ProgressManager.GetAllInteractedObjects();
             for (int i = 0; i < objects.Count; i++)
             {
                 ProgressUpdate progress = new ProgressUpdate(objects[i], ProgressType.PersistentObject, 0);

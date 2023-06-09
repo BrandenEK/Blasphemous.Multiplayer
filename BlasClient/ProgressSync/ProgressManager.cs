@@ -16,6 +16,12 @@ namespace BlasClient.ProgressSync
         // Reset whenever disconnecting or changing teams
         private bool _sentAllProgress = false;
 
+        // Save data of pers. object ids that have been interacted with
+        private List<string> interactedPersistenceObjects = new ();
+        public List<string> SaveInteractedObjects() => interactedPersistenceObjects;
+        public void LoadInteractedObjects(List<string> objects) => interactedPersistenceObjects = objects;
+        public void ClearInteractedObjects() => interactedPersistenceObjects.Clear();
+
         // Helper interfaces for applying / obtaining progress updates
         private readonly Dictionary<ProgressType, IProgressHelper> progressHelpers = new ()
         {
@@ -78,10 +84,10 @@ namespace BlasClient.ProgressSync
             string objectSceneId = scene + "~" + objectSceneIdx;
 
             // Make sure this pers. object should sync & isn't already activated
-            if (objectSceneIdx < 0 || Main.Multiplayer.checkPersistentObject(objectSceneId)) return;
+            if (objectSceneIdx < 0 || IsObjectInteracted(objectSceneId)) return;
 
             // Update save game data & send this object
-            Main.Multiplayer.addPersistentObject(objectSceneId);
+            AddInteractedObject(objectSceneId);
             if (Main.Multiplayer.config.syncSettings.worldState)
             {
                 ProgressUpdate progress = new ProgressUpdate(objectSceneId, ProgressType.PersistentObject, 0);
@@ -118,11 +124,27 @@ namespace BlasClient.ProgressSync
                 string objectSceneId = scene + "~" + objectSceneIdx;
 
                 // This object does not even sync or hasn't been interacted with yet
-                if (objectSceneIdx < 0 || !Main.Multiplayer.checkPersistentObject(objectSceneId)) continue;
+                if (objectSceneIdx < 0 || !IsObjectInteracted(objectSceneId)) continue;
 
                 // Calling setPersistence() with null data means to play instant animation
                 persistence.SetCurrentPersistentState(null, false, null);
             }
+        }
+
+        // Checks whether or not a persistent object has been interacted with
+        public bool IsObjectInteracted(string objectSceneId)
+        {
+            return interactedPersistenceObjects.Contains(objectSceneId);
+        }
+
+        public void AddInteractedObject(string objectSceneId)
+        {
+            interactedPersistenceObjects.Add(objectSceneId);
+        }
+
+        public List<string> GetAllInteractedObjects()
+        {
+            return interactedPersistenceObjects;
         }
     }
 }

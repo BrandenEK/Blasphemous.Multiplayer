@@ -1,26 +1,20 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Framework.Managers;
-using Gameplay.UI.Others.UIGameLogic;
-using Tools.Level.Interactables;
-
-
-using BlasClient.Data;
+﻿using BlasClient.Data;
 using BlasClient.Map;
 using BlasClient.Network;
 using BlasClient.Notifications;
 using BlasClient.Players;
 using BlasClient.ProgressSync;
 using BlasClient.PvP;
+using Framework.Managers;
+using Gameplay.UI.Others.UIGameLogic;
 using ModdingAPI;
+using Tools.Level.Interactables;
+using UnityEngine;
 
 namespace BlasClient
 {
     public class Multiplayer : PersistentMod
     {
-        // Application status
-
         // Managers
         public AttackManager AttackManager { get; private set; }
         public MainPlayerManager MainPlayerManager { get; private set; }
@@ -38,8 +32,6 @@ namespace BlasClient
         // Player status
         public string PlayerName { get; private set; }
         public byte PlayerTeam { get; private set; }
-
-        private List<string> interactedPersistenceObjects;
 
         // Set to false when receiving a stat upgrade from someone in the same room & not in randomizer
         // Set to true upon loading a new scene
@@ -66,7 +58,6 @@ namespace BlasClient
             // Initialize data
             config = FileUtil.loadConfig<Config>();
             PersistentStates.loadPersistentObjects();
-            interactedPersistenceObjects = new List<string>();
             PlayerName = string.Empty;
             PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
         }
@@ -171,8 +162,8 @@ namespace BlasClient
             NotificationManager.Update();
             if (CurrentlyInLevel)
             {
-                OtherPlayerManager.Update();
                 MainPlayerManager.Update();
+                OtherPlayerManager.Update();
                 ProgressManager.Update();
             }
 
@@ -296,30 +287,13 @@ namespace BlasClient
             }
         }
 
-        // Add a new persistent object that has been interacted with
-        public void addPersistentObject(string objectSceneId)
-        {
-            if (!interactedPersistenceObjects.Contains(objectSceneId))
-                interactedPersistenceObjects.Add(objectSceneId);
-        }
-
-        // Checks whether or not a persistent object has been interacted with
-        public bool checkPersistentObject(string objectSceneId)
-        {
-            return interactedPersistenceObjects.Contains(objectSceneId);
-        }
-
-        // Allows progress manager to send all interacted objects on connect
-        public List<string> getAllPersistentObjects()
-        {
-            return interactedPersistenceObjects;
-        }
-
         // Save list of interacted persistent objects
         public override ModPersistentData SaveGame()
         {
-            MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
-            multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
+            MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData()
+            {
+                interactedPersistenceObjects = ProgressManager.SaveInteractedObjects()
+            };
             return multiplayerData;
         }
 
@@ -327,13 +301,13 @@ namespace BlasClient
         public override void LoadGame(ModPersistentData data)
         {
             MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
-            interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
+            ProgressManager.LoadInteractedObjects(multiplayerData.interactedPersistenceObjects);
         }
 
         // Reset list of interacted persistent objects
         public override void ResetGame()
         {
-            interactedPersistenceObjects.Clear();
+            ProgressManager.ClearInteractedObjects();
         }
 
         public override void NewGame(bool NGPlus) { }

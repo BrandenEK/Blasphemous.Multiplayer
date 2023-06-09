@@ -37,7 +37,7 @@ namespace BlasClient.ProgressSync.Helpers.PersistentObjects
             if (data != null)
             {
                 // This method is being called normally - only execute if object hasn't been interacted with
-                return !Main.Multiplayer.checkPersistentObject(__instance.GetPersistenID());
+                return !Main.Multiplayer.ProgressManager.IsObjectInteracted(__instance.GetPersistenID());
             }
 
             __instance.destroyed = true;

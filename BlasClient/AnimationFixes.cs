@@ -1,4 +1,6 @@
-﻿using Gameplay.GameControllers.AnimationBehaviours.Player.Attack;
+﻿using BlasClient.PvP;
+using HarmonyLib;
+using Gameplay.GameControllers.AnimationBehaviours.Player.Attack;
 using Gameplay.GameControllers.AnimationBehaviours.Player.ClimbClifLede;
 using Gameplay.GameControllers.AnimationBehaviours.Player.ClimbLadder;
 using Gameplay.GameControllers.AnimationBehaviours.Player.Crouch;
@@ -11,10 +13,8 @@ using Gameplay.GameControllers.AnimationBehaviours.Player.RangeAttack;
 using Gameplay.GameControllers.AnimationBehaviours.Player.Run;
 using Gameplay.GameControllers.AnimationBehaviours.Player.SubStatesBehaviours;
 using UnityEngine;
-using HarmonyLib;
-using BlasClient.PvP;
 
-namespace BlasClient.Patches
+namespace BlasClient
 {
     // Default attack
     [HarmonyPatch(typeof(DefaultSwordSlashBehaviour), "OnStateEnter")]

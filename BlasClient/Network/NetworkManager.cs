@@ -12,8 +12,6 @@ namespace BlasClient.Network
 {
     public class NetworkManager
     {
-        // Check for connection is all of these
-
         private ConnectionStatus _connectionStatus = ConnectionStatus.Disconnected;
         private SimpleTcpClient _client;
         private string _serverIp = string.Empty;
