@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using BlasClient.Players;
 using Framework.Managers;
 using Gameplay.GameControllers.Effects.Player.Sparks;
 using Gameplay.GameControllers.Entities;
+using System.Collections.Generic;
 using UnityEngine;
-using BlasClient.Players;
 
 namespace BlasClient.PvP
 {
     public class AttackManager
     {
-        private Dictionary<AttackType, PlayerAttack> allAttacks;
+        private readonly Dictionary<AttackType, PlayerAttack> allAttacks;
 
         public AttackManager()
         {
@@ -70,7 +70,7 @@ namespace BlasClient.PvP
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
             if (currentAttack.SoundId != null) // Can remove later
-            Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + currentAttack.SoundId);
+                Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + currentAttack.SoundId);
         }
 
         public void ShowDamageEffects(string receiverName)

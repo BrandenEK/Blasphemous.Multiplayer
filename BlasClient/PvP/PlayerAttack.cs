@@ -6,16 +6,16 @@ namespace BlasClient.PvP
     public class PlayerAttack
     {
         public string AttackName { get; set; }
-        public byte DamageType { get; set; }
-        public byte DamageElement { get; set; }
+        public string DamageType { get; set; }
+        public string DamageElement { get; set; }
 
         public int BaseDamage { get; set; }
         public int Force { get; set; }
         public string SoundId { get; set; }
 
-        public DamageArea.DamageType GetDamageType() => (DamageArea.DamageType)DamageType;
+        public DamageArea.DamageType GetDamageType() => (DamageArea.DamageType)System.Enum.Parse(typeof(DamageArea.DamageType), DamageType);
 
-        public DamageArea.DamageElement GetDamageElement() => (DamageArea.DamageElement)DamageElement;
+        public DamageArea.DamageElement GetDamageElement() => (DamageArea.DamageElement)System.Enum.Parse(typeof(DamageArea.DamageElement), DamageElement);
 
         public AttackType GetAttackType() => (AttackType)System.Enum.Parse(typeof(AttackType), AttackName);
     }
