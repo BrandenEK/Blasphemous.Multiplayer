@@ -205,6 +205,7 @@ namespace BlasClient.Network
             int startIdx = ExtractNameFromData(data, out string playerName);
             string scene = Encoding.UTF8.GetString(data, startIdx, data.Length - startIdx);
 
+            // TODO
             Main.Multiplayer.playerList.setPlayerScene(playerName, scene);
             if (Core.LevelManager.currentLevel.LevelName == scene)
                 Main.Multiplayer.PlayerManager.queuePlayer(playerName, true);
@@ -222,6 +223,7 @@ namespace BlasClient.Network
         {
             ExtractNameFromData(data, out string playerName);
 
+            // TODO
             if (Core.LevelManager.currentLevel.LevelName == Main.Multiplayer.playerList.getPlayerScene(playerName))
                 Main.Multiplayer.PlayerManager.queuePlayer(playerName, false);
             Main.Multiplayer.playerList.setPlayerScene(playerName, "");

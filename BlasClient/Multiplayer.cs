@@ -23,6 +23,7 @@ namespace BlasClient
 
         // Managers
         public AttackManager AttackManager { get; private set; }
+        public MainPlayerManager MainPlayerManager { get; private set; }
         public Map.MapManager MapManager { get; private set; }
         public NetworkManager NetworkManager { get; private set; }
         public NotificationManager NotificationManager { get; private set; }
@@ -37,16 +38,9 @@ namespace BlasClient
         // Player status
         public string PlayerName { get; private set; }
         public byte PlayerTeam { get; private set; }
-        private Vector2 lastPosition;
-        private byte lastAnimation;
-        private bool lastDirection;
 
         public PlayerList playerList { get; private set; }
         private List<string> interactedPersistenceObjects;
-
-        // Timers
-        private float totalTimeBeforeSendAnimation = 0.5f;
-        private float currentTimeBeforeSendAnimation = 0;
 
         // Set to false when receiving a stat upgrade from someone in the same room & not in randomizer
         // Set to true upon loading a new scene
@@ -63,6 +57,7 @@ namespace BlasClient
 
             // Create managers
             AttackManager = new AttackManager();
+            MainPlayerManager = new MainPlayerManager();
             MapManager = new Map.MapManager();
             NetworkManager = new NetworkManager();
             NotificationManager = new NotificationManager();
@@ -124,9 +119,8 @@ namespace BlasClient
                 // Entered a new scene
                 Log("Entering new scene: " + newLevel);
 
-                // Send initial position, animation, & direction before scene enter
-                SendAllLocationData();
-
+                // Send location, scene, and progress
+                MainPlayerManager.SendAllLocationData();
                 NetworkManager.SendEnterScene(newLevel);
                 ProgressManager.SendAllProgress();
             }
@@ -173,92 +167,16 @@ namespace BlasClient
                 //}
             }
 
-            if (CurrentlyInLevel && NetworkManager.IsConnected && Core.Logic.Penitent != null)
-            {
-                // Check & send updated position
-                if (positionHasChanged(out Vector2 newPosition))
-                {
-                    NetworkManager.SendPosition(newPosition);
-                    lastPosition = newPosition;
-                }
-
-                // Check & send updated animation clip
-                if (animationHasChanged(out byte newAnimation))
-                {
-                    // Don't send new animations right after a special animation
-                    if (currentTimeBeforeSendAnimation <= 0 && newAnimation != 255)
-                    {
-                        NetworkManager.SendAnimation(newAnimation);
-                    }
-                    lastAnimation = newAnimation;
-                }
-
-                // Check & send updated facing direction
-                if (directionHasChanged(out bool newDirection))
-                {
-                    NetworkManager.SendDirection(newDirection);
-                    lastDirection = newDirection;
-                }
-            }
-
-            // Decrease frame counter for special animation delay
-            if (currentTimeBeforeSendAnimation > 0)
-                currentTimeBeforeSendAnimation -= Time.deltaTime;
-
             MapManager.Update();
             NotificationManager.Update();
             if (CurrentlyInLevel)
             {
                 PlayerManager.Update();
+                MainPlayerManager.Update();
                 ProgressManager.Update();
             }
 
             NetworkManager.SendQueue();
-        }
-
-        private bool positionHasChanged(out Vector2 newPosition)
-        {
-            float cutoff = 0.03f;
-            newPosition = getCurrentPosition();
-            return Mathf.Abs(newPosition.x - lastPosition.x) > cutoff || Mathf.Abs(newPosition.y - lastPosition.y) > cutoff;
-        }
-
-        private bool animationHasChanged(out byte newAnimation)
-        {
-            newAnimation = getCurrentAnimation();
-            return newAnimation != lastAnimation;
-        }
-
-        private bool directionHasChanged(out bool newDirection)
-        {
-            newDirection = getCurrentDirection();
-            return newDirection != lastDirection;
-        }
-
-        private Vector2 getCurrentPosition()
-        {
-            return Core.Logic.Penitent.transform.position;
-        }
-
-        private byte getCurrentAnimation()
-        {
-            AnimatorStateInfo state = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
-            for (byte i = 0; i < AnimationStates.animations.Length; i++)
-            {
-                if (state.IsName(AnimationStates.animations[i].name))
-                {
-                    return i;
-                }
-            }
-
-            // This animation could not be found
-            Log("Error: Animation doesn't exist!");
-            return 255;
-        }
-
-        private bool getCurrentDirection()
-        {
-            return Core.Logic.Penitent.SpriteRenderer.flipX;
         }
 
         // Changed team number from command
@@ -283,20 +201,6 @@ namespace BlasClient
         {
             PlayerManager.refreshNametagColors();
             MapManager.QueueMapUpdate();
-        }
-
-        public void UseSpecialAnimation(byte animation)
-        {
-            currentTimeBeforeSendAnimation = totalTimeBeforeSendAnimation;
-            NetworkManager.SendAnimation(animation);
-        }
-
-        // Sends the current position/animation/direction when first entering a scene or joining server
-        private void SendAllLocationData()
-        {
-            NetworkManager.SendPosition(lastPosition = getCurrentPosition());
-            NetworkManager.SendAnimation(lastAnimation = 0);
-            NetworkManager.SendDirection(lastDirection = getCurrentDirection());
         }
 
         public void UpdateSkinData(string playerName, byte[] skinData)
@@ -325,7 +229,7 @@ namespace BlasClient
                 // If already in game, send enter scene data & game progress
                 if (CurrentlyInLevel)
                 {
-                    SendAllLocationData();
+                    MainPlayerManager.SendAllLocationData();
                     NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
                     PlayerManager.createPlayerNameTag();
                     ProgressManager.SendAllProgress();
