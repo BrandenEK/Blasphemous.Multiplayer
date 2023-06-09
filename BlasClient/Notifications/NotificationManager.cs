@@ -17,23 +17,19 @@ namespace BlasClient.Notifications
 
         // Current message status
         private readonly List<NotificationLine> currentMessages = new ();
-        private static readonly object notificationLock = new ();
 
         // Add a new notification to the list
         public void DisplayNotification(string notification)
         {
-            lock (notificationLock)
-            {
-                Main.Multiplayer.Log("Notification: " + notification);
+            Main.Multiplayer.Log("Notification: " + notification);
 
-                // Add new line to list
-                NotificationLine line = new NotificationLine(notification, Main.Multiplayer.config.notificationDisplaySeconds);
-                currentMessages.Insert(0, line);
+            // Add new line to list
+            NotificationLine line = new NotificationLine(notification, Main.Multiplayer.config.notificationDisplaySeconds);
+            currentMessages.Insert(0, line);
 
-                // Remove first one if overfull
-                if (currentMessages.Count > MAX_LINES)
-                    currentMessages.RemoveAt(currentMessages.Count - 1);
-            }
+            // Remove first one if overfull
+            if (currentMessages.Count > MAX_LINES)
+                currentMessages.RemoveAt(currentMessages.Count - 1);
         }
 
         // Add a new notification for a progress update, but calculate it first
@@ -50,51 +46,48 @@ namespace BlasClient.Notifications
         {
             if (messageBox == null) return;
 
-            lock (notificationLock)
+            // Loop over each line of text
+            float maxWidth = 0;
+            float timeBeforeFade = Main.Multiplayer.config.notificationDisplaySeconds / 2;
+
+            for (int i = 0; i < textLines.Length; i++)
             {
-                // Loop over each line of text
-                float maxWidth = 0;
-                float timeBeforeFade = Main.Multiplayer.config.notificationDisplaySeconds / 2;
-
-                for (int i = 0; i < textLines.Length; i++)
+                // There aren't this many notifications
+                if (i >= currentMessages.Count)
                 {
-                    // There aren't this many notifications
-                    if (i >= currentMessages.Count)
-                    {
-                        textLines[i].text = string.Empty;
-                        continue;
-                    }
-
-                    // Update text
-                    NotificationLine currentLine = currentMessages[i];
-                    textLines[i].text = currentLine.text;
-                    if (textLines[i].preferredWidth > maxWidth)
-                        maxWidth = textLines[i].preferredWidth;
-
-                    // Decrease the amount of time left on this notification line
-                    currentLine.timeLeft -= Time.unscaledDeltaTime;
-                    if (currentLine.timeLeft <= 0)
-                    {
-                        // Time is over, remove this message
-                        currentMessages.RemoveAt(i);
-                    }
-                    else if (currentLine.timeLeft <= timeBeforeFade)
-                    {
-                        // Enough time has passed, fade this text away
-                        textLines[i].color = new Color(1, 1, 1, currentLine.timeLeft / timeBeforeFade);
-                    }
-                    else
-                    {
-                        // This text line is pretty new, keep at full opacity
-                        textLines[i].color = Color.white;
-                    }
+                    textLines[i].text = string.Empty;
+                    continue;
                 }
 
-                // Set size of message box based on notifications
-                if (maxWidth > 0)
-                    maxWidth += 10;
-                messageBox.sizeDelta = new Vector2(maxWidth, currentMessages.Count * LINE_HEIGHT);
+                // Update text
+                NotificationLine currentLine = currentMessages[i];
+                textLines[i].text = currentLine.text;
+                if (textLines[i].preferredWidth > maxWidth)
+                    maxWidth = textLines[i].preferredWidth;
+
+                // Decrease the amount of time left on this notification line
+                currentLine.timeLeft -= Time.unscaledDeltaTime;
+                if (currentLine.timeLeft <= 0)
+                {
+                    // Time is over, remove this message
+                    currentMessages.RemoveAt(i);
+                }
+                else if (currentLine.timeLeft <= timeBeforeFade)
+                {
+                    // Enough time has passed, fade this text away
+                    textLines[i].color = new Color(1, 1, 1, currentLine.timeLeft / timeBeforeFade);
+                }
+                else
+                {
+                    // This text line is pretty new, keep at full opacity
+                    textLines[i].color = Color.white;
+                }
             }
+
+            // Set size of message box based on notifications
+            if (maxWidth > 0)
+                maxWidth += 10;
+            messageBox.sizeDelta = new Vector2(maxWidth, currentMessages.Count * LINE_HEIGHT);
         }
 
         public void LevelLoaded()

@@ -240,7 +240,7 @@ namespace BlasClient.Network
 
         private void ReceiveLeaveScene(byte[] data)
         {
-            ExtractNameFromData(data, out string playerName);
+            string playerName = Encoding.UTF8.GetString(data);
 
             // TODO
             if (Core.LevelManager.currentLevel.LevelName == Main.Multiplayer.playerList.getPlayerScene(playerName))

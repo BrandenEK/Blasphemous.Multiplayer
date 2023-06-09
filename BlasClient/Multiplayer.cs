@@ -167,6 +167,8 @@ namespace BlasClient
                 //}
             }
 
+            NetworkManager.ProcessQueue();
+
             MapManager.Update();
             NotificationManager.Update();
             if (CurrentlyInLevel)

@@ -12,10 +12,6 @@ namespace BlasClient.ProgressSync
         // Only enabled when processing & applying the queued progress updates
         public bool CurrentlyUpdatingProgress { get; private set; }
 
-        // Locked queue of received progress updates
-        private readonly List<ProgressUpdate> queuedProgressUpdates = new ();
-        private static readonly object progressLock = new ();
-
         // Whether or not all of this player's progress has been sent to the server
         // Reset whenever disconnecting or changing teams
         private bool _sentAllProgress = false;
@@ -41,27 +37,15 @@ namespace BlasClient.ProgressSync
 
         public void ReceiveProgress(ProgressUpdate progress)
         {
-            lock (progressLock)
-            {
-                Main.Multiplayer.Log("Received new game progress: " + progress.Id);
-                queuedProgressUpdates.Add(progress);
-            }
+            Main.Multiplayer.Log("Received new game progress: " + progress.Id);
+            CurrentlyUpdatingProgress = true;
+            ApplyProgress(progress);
+            CurrentlyUpdatingProgress = false;
         }
 
         public void Update()
         {
-            lock (progressLock)
-            {
-                CurrentlyUpdatingProgress = true;
 
-                for (int i = 0; i < queuedProgressUpdates.Count; i++)
-                {
-                    ApplyProgress(queuedProgressUpdates[i]);
-                }
-                queuedProgressUpdates.Clear();
-
-                CurrentlyUpdatingProgress = false;
-            }
         }
 
         private void ApplyProgress(ProgressUpdate progress)
