@@ -278,7 +278,7 @@ namespace BlasClient.Network
                 byte[] skinData = new byte[data.Length - startIdx - 1];
                 for (int i = 0; i < skinData.Length; i++)
                 {
-                    skinData[i] = data[i + startIdx + 1];
+                    skinData[i] = data[startIdx + 1 + i];
                 }
                 player.SetSkinTexture(skinData);
             }

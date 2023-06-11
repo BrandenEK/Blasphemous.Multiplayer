@@ -29,6 +29,8 @@ namespace BlasClient.ProgressSync.Helpers
             while (attribute.GetUpgrades() < progress.Value)
             {
                 attribute.Upgrade();
+                if (progress.Id == "FLASKHEALTH")
+                    Core.Logic.Penitent.Stats.Flask.SetPermanentBonus(Core.Logic.Penitent.Stats.Flask.PermanetBonus - 1f);
             }
         }
 
@@ -127,9 +129,9 @@ namespace BlasClient.ProgressSync.Helpers
             else if (__instance.GetType() == typeof(BeadSlots)) type = "BEADSLOTS";
             else if (__instance.GetType() == typeof(Flask)) type = "FLASK";
             else if (__instance.GetType() == typeof(FlaskHealth)) type = "FLASKHEALTH";
-            byte upgradeLevel = (byte)(__instance.GetUpgrades() + 1);
+            byte upgradeLevel = (byte)__instance.GetUpgrades();
 
-            if (type != null && upgradeLevel > 1)
+            if (type != null && upgradeLevel > 0)
             {
                 ProgressUpdate progress = new ProgressUpdate(type, ProgressType.PlayerStat, upgradeLevel);
                 Main.Multiplayer.NetworkManager.SendProgress(progress);

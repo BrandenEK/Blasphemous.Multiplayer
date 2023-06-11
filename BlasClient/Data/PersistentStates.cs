@@ -468,7 +468,13 @@ namespace BlasClient.Data
                 // Ladder triggers
 
                 // Deambulatory
-                new PersistenceState("696e70f3-5cf8-4713-abb5-e5f62d6a49e2", "D07Z01S01", 0) // PD
+                new PersistenceState("696e70f3-5cf8-4713-abb5-e5f62d6a49e2", "D07Z01S01", 0), // PD
+
+                // Mods
+                new PersistenceState("ITEM-PICKUP-QI38", "D01Z04S19", 1), // Randomizer
+                new PersistenceState("ITEM-PICKUP-QI39", "D03Z03S16", 1),
+                new PersistenceState("ITEM-PICKUP-QI40", "D02Z03S21", 1),
+                new PersistenceState("ITEM-PICKUP-RE402", "D04Z02S01", 1), // Double Jump
             };
         }
     }

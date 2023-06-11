@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using BlasClient.Data;
+﻿using BlasClient.Data;
 using BlasClient.PvP;
-using Tools.Level.Interactables;
-using Gameplay.GameControllers.Entities;
 using Framework.Managers;
+using Gameplay.GameControllers.Entities;
+using Tools.Level.Interactables;
+using UnityEngine;
 
 namespace BlasClient.Players
 {
@@ -103,10 +103,10 @@ namespace BlasClient.Players
             }
         }
 
-        public void updateSkin(Texture2D skin)
+        public void ApplySkinTexture()
         {
             CharacterRenderer.enabled = true;
-            CharacterRenderer.material.SetTexture("_PaletteTex", skin);
+            CharacterRenderer.material.SetTexture("_PaletteTex", playerStatus.SkinTexture);
         }
 
         // Gets the animator controller of an interactable object in the scene & plays special animation

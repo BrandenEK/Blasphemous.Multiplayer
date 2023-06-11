@@ -83,7 +83,7 @@ namespace BlasClient.Players
                 else if (currentSkinStatus == PlayerStatus.SkinStatus.YesUpdate)
                 {
                     // Set the player texture
-                    ApplySkinTexture(player);
+                    ApplySkinTexture(player.Name);
                     player.SkinUpdateStatus = PlayerStatus.SkinStatus.Updated;
                 }
             }
@@ -117,14 +117,14 @@ namespace BlasClient.Players
         }
 
         // Sets the skin texture of a player's object - must be delayed until after object creation
-        private void ApplySkinTexture(PlayerStatus player)
+        private void ApplySkinTexture(string playerName)
         {
             // Get player object with this name
-            OtherPlayerScript activePlayer = FindActivePlayer(player.Name);
-            if (player == null) return;
+            OtherPlayerScript activePlayer = FindActivePlayer(playerName);
+            if (activePlayer == null) return;
 
-            Main.Multiplayer.Log("Setting skin texture for " + player.Name);
-            activePlayer.updateSkin(player.SkinTexture);
+            Main.Multiplayer.Log("Setting skin texture for " + playerName);
+            activePlayer.ApplySkinTexture();
         }
 
         #region Connected players
