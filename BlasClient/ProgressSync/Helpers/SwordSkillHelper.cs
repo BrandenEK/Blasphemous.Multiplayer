@@ -9,8 +9,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.swordSkills) return;
-
             Core.SkillManager.UnlockSkill(progress.Id, true);
         }
 
@@ -41,11 +39,8 @@ namespace BlasClient.ProgressSync.Helpers
             if (!Main.Multiplayer.RandomizerMode || ignoreChecks)
             {
                 // Actually obtaining item, send to other players
-                if (Main.Multiplayer.config.syncSettings.swordSkills)
-                {
-                    ProgressUpdate progress = new ProgressUpdate(skill, ProgressType.SwordSkill, 0);
-                    Main.Multiplayer.NetworkManager.SendProgress(progress);
-                }
+                ProgressUpdate progress = new ProgressUpdate(skill, ProgressType.SwordSkill, 0);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
             }
             return true;
         }

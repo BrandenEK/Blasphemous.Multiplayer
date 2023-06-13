@@ -10,9 +10,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.worldState)
-                return;
-
             Main.Multiplayer.ProgressManager.AddInteractedObject(progress.Id);
             string[] sections = progress.Id.Split('~');
             string objectScene = sections[0];

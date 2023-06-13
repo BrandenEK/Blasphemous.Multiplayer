@@ -9,8 +9,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.playerStats) return;
-
             Attribute attribute;
             switch (progress.Id)
             {
@@ -113,7 +111,7 @@ namespace BlasClient.ProgressSync.Helpers
         public static bool Prefix(Attribute __instance)
         {
             // If receiving upgrade, then just upgrade and skip send
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.playerStats)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return true;
 
             // If shouldn't upgrade because received upgrade from same room, skip upgrade and skip send
@@ -122,14 +120,14 @@ namespace BlasClient.ProgressSync.Helpers
 
             // If you can upgrade and found this naturally, upgrade and send
             string type = null;
-            if (__instance.GetType() == typeof(Life)) type = "LIFE";
-            else if (__instance.GetType() == typeof(Fervour)) type = "FERVOUR";
-            else if (__instance.GetType() == typeof(Strength)) type = "STRENGTH";
-            else if (__instance.GetType() == typeof(MeaCulpa)) type = "MEACULPA";
-            else if (__instance.GetType() == typeof(BeadSlots)) type = "BEADSLOTS";
-            else if (__instance.GetType() == typeof(Flask)) type = "FLASK";
-            else if (__instance.GetType() == typeof(FlaskHealth)) type = "FLASKHEALTH";
-            byte upgradeLevel = (byte)__instance.GetUpgrades();
+            if (__instance.GetType() == typeof(Life))               type = "LIFE";
+            else if (__instance.GetType() == typeof(Fervour))       type = "FERVOUR";
+            else if (__instance.GetType() == typeof(Strength))      type = "STRENGTH";
+            else if (__instance.GetType() == typeof(MeaCulpa))      type = "MEACULPA";
+            else if (__instance.GetType() == typeof(BeadSlots))     type = "BEADSLOTS";
+            else if (__instance.GetType() == typeof(Flask))         type = "FLASK";
+            else if (__instance.GetType() == typeof(FlaskHealth))   type = "FLASKHEALTH";
+            byte upgradeLevel = (byte)(__instance.GetUpgrades() + 1); // This is before the upgrade so increase by one
 
             if (type != null && upgradeLevel > 0)
             {

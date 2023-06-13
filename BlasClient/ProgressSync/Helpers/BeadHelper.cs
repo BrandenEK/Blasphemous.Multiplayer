@@ -8,8 +8,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.inventoryItems) return;
-
             if (progress.Value == 1)
                 Core.InventoryManager.RemoveRosaryBead(progress.Id);
             else
@@ -37,11 +35,11 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(RosaryBead rosaryBead)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.inventoryItems)
-                return;
-
-            ProgressUpdate progress = new ProgressUpdate(rosaryBead.id, ProgressType.Bead, 0);
-            Main.Multiplayer.NetworkManager.SendProgress(progress);
+            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            {
+                ProgressUpdate progress = new ProgressUpdate(rosaryBead.id, ProgressType.Bead, 0);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
+            }
         }
     }
     [HarmonyPatch(typeof(InventoryManager), "RemoveRosaryBead", typeof(RosaryBead))]
@@ -49,11 +47,11 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(RosaryBead bead)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.inventoryItems)
-                return;
-
-            ProgressUpdate progress = new ProgressUpdate(bead.id, ProgressType.Bead, 1);
-            Main.Multiplayer.NetworkManager.SendProgress(progress);
+            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            {
+                ProgressUpdate progress = new ProgressUpdate(bead.id, ProgressType.Bead, 1);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
+            }
         }
     }
 }

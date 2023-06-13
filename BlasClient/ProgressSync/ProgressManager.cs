@@ -44,9 +44,12 @@ namespace BlasClient.ProgressSync
         public void ReceiveProgress(ProgressUpdate progress)
         {
             Main.Multiplayer.Log("Received new game progress: " + progress.Id);
-            CurrentlyUpdatingProgress = true;
-            ApplyProgress(progress);
-            CurrentlyUpdatingProgress = false;
+            if (progress.ShouldSyncProgress(Main.Multiplayer.config))
+            {
+                CurrentlyUpdatingProgress = true;
+                ApplyProgress(progress);
+                CurrentlyUpdatingProgress = false;
+            }
         }
 
         public void Update()
@@ -88,11 +91,8 @@ namespace BlasClient.ProgressSync
 
             // Update save game data & send this object
             AddInteractedObject(objectSceneId);
-            if (Main.Multiplayer.config.syncSettings.worldState)
-            {
-                ProgressUpdate progress = new ProgressUpdate(objectSceneId, ProgressType.PersistentObject, 0);
-                Main.Multiplayer.NetworkManager.SendProgress(progress);
-            }
+            ProgressUpdate progress = new ProgressUpdate(objectSceneId, ProgressType.PersistentObject, 0);
+            Main.Multiplayer.NetworkManager.SendProgress(progress);
         }
 
         // Called when sending all data upon connecting to server and loading game

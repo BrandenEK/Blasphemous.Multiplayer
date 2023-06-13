@@ -9,8 +9,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.mapCells) return;
-
             Core.NewMapManager.RevealCellInPosition(new Vector2(int.Parse(progress.Id), 0));
         }
 
@@ -44,10 +42,6 @@ namespace BlasClient.ProgressSync.Helpers
             // Actually revealing a new cell
             if (___CurrentMap == null || !___CurrentMap.CellsByZone.ContainsKey(__instance.CurrentScene))
                 return false;
-
-            // Not syncing map cells
-            if (!Main.Multiplayer.config.syncSettings.mapCells)
-                return true;
 
             foreach (CellData cell in ___CurrentMap.CellsByZone[__instance.CurrentScene])
             {

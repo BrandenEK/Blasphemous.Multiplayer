@@ -9,8 +9,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.worldState) return;
-            
             Core.SpawnManager.SetTeleportActive(progress.Id, true);
         }
 
@@ -30,7 +28,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(string teleportId, bool active)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.worldState)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return;
 
             if (active)

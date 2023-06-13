@@ -18,5 +18,32 @@ namespace BlasClient.ProgressSync
             this.type = type;
             this.value = value;
         }
+
+        public bool ShouldSyncProgress(Config config)
+        {
+            return type switch
+            {
+                ProgressType.Bead or
+                ProgressType.Prayer or
+                ProgressType.Relic or
+                ProgressType.Heart or
+                ProgressType.Collectible or
+                ProgressType.QuestItem => config.syncSettings.inventoryItems,
+
+                ProgressType.PlayerStat => config.syncSettings.playerStats,
+
+                ProgressType.SwordSkill => config.syncSettings.swordSkills,
+
+                ProgressType.MapCell => config.syncSettings.mapCells,
+
+                ProgressType.Flag or
+                ProgressType.PersistentObject or
+                ProgressType.Teleport or
+                ProgressType.ChurchDonation or
+                ProgressType.MiriamStatus => config.syncSettings.worldState,
+
+                _ => false
+            };
+        }
     }
 }

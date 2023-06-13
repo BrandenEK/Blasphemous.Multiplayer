@@ -367,6 +367,9 @@ namespace BlasClient.Network
 
         public void SendProgress(ProgressUpdate progress)
         {
+            if (!progress.ShouldSyncProgress(Main.Multiplayer.config))
+                return;
+
             List<byte> bytes = new ();
             bytes.Add((byte)progress.Type);
             bytes.Add(progress.Value);

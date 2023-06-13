@@ -8,8 +8,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.inventoryItems) return;
-
             Core.InventoryManager.AddPrayer(progress.Id);
         }
 
@@ -34,11 +32,11 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(Prayer prayer)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.inventoryItems)
-                return;
-
-            ProgressUpdate progress = new ProgressUpdate(prayer.id, ProgressType.Prayer, 0);
-            Main.Multiplayer.NetworkManager.SendProgress(progress);
+            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            {
+                ProgressUpdate progress = new ProgressUpdate(prayer.id, ProgressType.Prayer, 0);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
+            }
         }
     }
 }

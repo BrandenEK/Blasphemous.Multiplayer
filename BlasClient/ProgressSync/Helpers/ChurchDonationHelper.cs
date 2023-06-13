@@ -7,8 +7,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.worldState) return;
-
             int tears = progress.Value * 1000;
             Core.Alms.DEBUG_SetTearsGiven(tears); // Not ideal
         }
@@ -30,7 +28,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(AlmsManager __instance)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.worldState)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return;
 
             ProgressUpdate progress = new ProgressUpdate("Tears", ProgressType.ChurchDonation, (byte)(__instance.TearsGiven / 1000));

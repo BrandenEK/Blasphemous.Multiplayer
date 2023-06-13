@@ -9,8 +9,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.worldState) return;
-
             Core.Events.SetFlag(progress.Id, progress.Value == 0, false);
         }
 
@@ -31,7 +29,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(EventManager __instance, string id, bool b)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.worldState)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return;
 
             string formatted = __instance.GetFormattedId(id);

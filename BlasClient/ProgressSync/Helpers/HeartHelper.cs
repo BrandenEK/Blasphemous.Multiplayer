@@ -8,8 +8,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.inventoryItems) return;
-
             Core.InventoryManager.AddSword(progress.Id);
         }
 
@@ -34,11 +32,11 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(Sword sword)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.inventoryItems)
-                return;
-
-            ProgressUpdate progress = new ProgressUpdate(sword.id, ProgressType.Heart, 0);
-            Main.Multiplayer.NetworkManager.SendProgress(progress);
+            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            {
+                ProgressUpdate progress = new ProgressUpdate(sword.id, ProgressType.Heart, 0);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
+            }
         }
     }
 }

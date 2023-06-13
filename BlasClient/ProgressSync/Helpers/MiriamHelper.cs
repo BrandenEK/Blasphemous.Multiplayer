@@ -8,8 +8,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.worldState) return;
-
             string status = progress.Id;
             if (status == "START")
                 Core.Events.StartMiriamQuest();
@@ -46,7 +44,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Prefix(EventManager __instance)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.worldState)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return;
 
             if (__instance.AreInMiriamLevel())
@@ -63,7 +61,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(bool __result)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.worldState)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return;
 
             if (__result)
@@ -80,7 +78,7 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(bool __result)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.worldState)
+            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
                 return;
 
             if (__result)

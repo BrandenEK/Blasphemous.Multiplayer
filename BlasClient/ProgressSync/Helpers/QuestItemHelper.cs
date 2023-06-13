@@ -8,8 +8,6 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public void ApplyProgress(ProgressUpdate progress)
         {
-            if (!Main.Multiplayer.config.syncSettings.inventoryItems) return;
-
             if (progress.Value == 1)
                 Core.InventoryManager.RemoveQuestItem(progress.Id);
             else
@@ -37,15 +35,15 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(QuestItem questItem)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.inventoryItems)
-                return;
+            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            {
+                // Don't sync chalice quest
+                if (questItem.id == "QI76" || questItem.id == "QI77")
+                    return;
 
-            // Dont send upgraded versions of the chalice
-            if (questItem.id == "QI76" || questItem.id == "QI77")
-                return;
-
-            ProgressUpdate progress = new ProgressUpdate(questItem.id, ProgressType.QuestItem, 0);
-            Main.Multiplayer.NetworkManager.SendProgress(progress);
+                ProgressUpdate progress = new ProgressUpdate(questItem.id, ProgressType.QuestItem, 0);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
+            }
         }
     }
     [HarmonyPatch(typeof(InventoryManager), "RemoveQuestItem", typeof(QuestItem))]
@@ -53,15 +51,15 @@ namespace BlasClient.ProgressSync.Helpers
     {
         public static void Postfix(QuestItem questItem)
         {
-            if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress || !Main.Multiplayer.config.syncSettings.inventoryItems)
-                return;
+            if (!Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress)
+            {
+                // Don't sync chalice quest
+                if (questItem.id == "QI75" || questItem.id == "QI76" || questItem.id == "QI77")
+                    return;
 
-            // Dont remove versions of the chalice
-            if (questItem.id == "QI75" || questItem.id == "QI76" || questItem.id == "QI77")
-                return;
-
-            ProgressUpdate progress = new ProgressUpdate(questItem.id, ProgressType.QuestItem, 1);
-            Main.Multiplayer.NetworkManager.SendProgress(progress);
+                ProgressUpdate progress = new ProgressUpdate(questItem.id, ProgressType.QuestItem, 1);
+                Main.Multiplayer.NetworkManager.SendProgress(progress);
+            }
         }
     }
 }
