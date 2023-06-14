@@ -4,21 +4,22 @@ namespace BlasServer
 {
     public class GameData
     {
-        private Dictionary<string, byte>[] progressSets;
-        public const int numberOfProgressTypes = 14;
+        public const int NUMBER_OF_PROGRESS_TYPES = 14;
+
+        private readonly Dictionary<string, byte>[] progressSets;
 
         public GameData()
         {
             // Create empty game data
-            progressSets = new Dictionary<string, byte>[numberOfProgressTypes];
-            for (int i = 0; i < numberOfProgressTypes; i++)
+            progressSets = new Dictionary<string, byte>[NUMBER_OF_PROGRESS_TYPES];
+            for (int i = 0; i < NUMBER_OF_PROGRESS_TYPES; i++)
             {
                 progressSets[i] = new Dictionary<string, byte>();
             }
         }
 
         // Adds the player progress to the server data and determines whether to send it to the rest of the players or not
-        public bool addPlayerProgress(string progressId, byte progressType, byte progressValue)
+        public bool AddTeamProgress(string progressId, byte progressType, byte progressValue)
         {
             Dictionary<string, byte> currentProgressSet = progressSets[progressType];
 
@@ -42,18 +43,31 @@ namespace BlasServer
         }
 
         // Used by the server to send all of the server data on player connection
-        public Dictionary<string, byte> getProgressSet(int progressType)
+        public Dictionary<string, byte> GetTeamProgressSet(int progressType)
         {
             if (progressType >= 0 && progressType < progressSets.Length)
             {
                 return progressSets[progressType];
             }
-            return null;
+            
+            throw new System.ArgumentOutOfRangeException("Tried to get an invalid team progress set: " + progressType);
         }
 
-        public void printGameProgress()
+        public byte GetTeamProgressValue(int progressType, string progressId)
         {
-            for (int i = 0; i < numberOfProgressTypes; i++)
+            Dictionary<string, byte> currentProgressSet = GetTeamProgressSet(progressType);
+
+            if (currentProgressSet.TryGetValue(progressId, out byte value))
+            {
+                return value;
+            }
+
+            throw new System.ArgumentException("Tried to get an invalid team progress value: " + progressId);
+        }
+
+        public void PrintTeamProgress()
+        {
+            for (int i = 0; i < progressSets.Length; i++)
             {
                 if (progressSets[i].Count == 0) continue;
 

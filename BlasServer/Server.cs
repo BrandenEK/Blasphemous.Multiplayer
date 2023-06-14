@@ -392,9 +392,9 @@ namespace BlasServer
 
             // Send all of the server data to this player for them to merge
             Core.displayMessage("Sending all server data to " + playerIp);
-            for (byte i = 0; i < GameData.numberOfProgressTypes; i++)
+            for (byte i = 0; i < GameData.NUMBER_OF_PROGRESS_TYPES; i++)
             {
-                Dictionary<string, byte> progressSet = Core.getTeamData(current.team).getProgressSet(i);
+                Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
                 foreach (string id in progressSet.Keys)
                 {
                     Send(playerIp, getProgressPacket("*", i, progressSet[id], id), NetworkType.Progress);
@@ -557,7 +557,7 @@ namespace BlasServer
             string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
 
             // Add the progress to the server data, and if it's new send it to the rest of the players
-            if (!Core.getTeamData(current.team).addPlayerProgress(progressId, progressType, progressValue))
+            if (!Core.getTeamData(current.team).AddTeamProgress(progressId, progressType, progressValue))
             {
                 Core.displayCustom($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}", ConsoleColor.DarkGreen);
                 return;
