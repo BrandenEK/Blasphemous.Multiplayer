@@ -306,8 +306,6 @@ namespace BlasServer
             current.sceneName = "";
         }
 
-
-
         // Skin
 
         private void sendPlayerSkin(string playerIp)

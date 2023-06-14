@@ -16,6 +16,9 @@ namespace BlasClient.ProgressSync
         // Reset whenever disconnecting or changing teams
         private bool _sentAllProgress = false;
 
+        // Progress updates are queued when received from the server until you are inside of a game
+        private readonly List<ProgressUpdate> progressQueue = new();
+
         // Save data of pers. object ids that have been interacted with
         private List<string> interactedPersistenceObjects = new ();
         public List<string> SaveInteractedObjects() => interactedPersistenceObjects;
@@ -46,15 +49,21 @@ namespace BlasClient.ProgressSync
             Main.Multiplayer.Log("Received new game progress: " + progress.Id);
             if (progress.ShouldSyncProgress(Main.Multiplayer.config))
             {
-                CurrentlyUpdatingProgress = true;
-                ApplyProgress(progress);
-                CurrentlyUpdatingProgress = false;
+                progressQueue.Add(progress);
             }
         }
 
         public void Update()
         {
+            CurrentlyUpdatingProgress = true;
+            
+            for (int i = 0; i < progressQueue.Count; i++)
+            {
+                ApplyProgress(progressQueue[i]);
+            }
+            progressQueue.Clear();
 
+            CurrentlyUpdatingProgress = false;
         }
 
         private void ApplyProgress(ProgressUpdate progress)
@@ -114,6 +123,7 @@ namespace BlasClient.ProgressSync
         public void ResetProgressSentStatus()
         {
             _sentAllProgress = false;
+            progressQueue.Clear();
         }
 
         public void LevelLoaded(string scene)
