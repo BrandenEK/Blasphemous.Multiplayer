@@ -117,8 +117,8 @@ namespace BlasClient
 
             if (!ValidateStringParameter(name, 1, 16)) return;
 
-            Write($"Attempting to connect to {parameters[0]} as {name}...");
-            Main.Multiplayer.NetworkManager.Connect(parameters[0], name, password);
+            bool result = Main.Multiplayer.NetworkManager.Connect(parameters[0], name, password);
+            Write(result ? $"Successfully connected to {parameters[0]} as {name}" : $"Failed to connect to {parameters[0]}");
         }
 
         private void Disconnect(string[] parameters)

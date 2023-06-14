@@ -62,25 +62,6 @@ namespace BlasClient
             PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
         }
 
-        public void connectCommand(string ipAddress, string playerName, string password)
-        {
-            //if (client.Connect(ip, name, password))
-            //{
-            //    playerName = name;
-            //}
-            //else
-            //{
-            //    UIController.instance.StartCoroutine(delayedNotificationCoroutine(Localize("conerr") + " " + ip));
-            //}
-
-            //IEnumerator delayedNotificationCoroutine(string notification)
-            //{
-            //    yield return new WaitForEndOfFrame();
-            //    yield return new WaitForEndOfFrame();
-            //    NotificationManager.DisplayNotification(notification);
-            //}
-        }
-
         public void OnConnect(string ipAddress, string playerName, string password)
         {
             PlayerName = playerName;
