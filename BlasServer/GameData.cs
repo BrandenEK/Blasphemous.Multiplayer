@@ -61,8 +61,10 @@ namespace BlasServer
             {
                 return value;
             }
-
-            throw new System.ArgumentException("Tried to get an invalid team progress value: " + progressId);
+            else
+            {
+                return 0;
+            }
         }
 
         public void PrintTeamProgress()

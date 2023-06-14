@@ -397,7 +397,14 @@ namespace BlasServer
                 Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
                 foreach (string id in progressSet.Keys)
                 {
-                    Send(playerIp, getProgressPacket("*", i, progressSet[id], id), NetworkType.Progress);
+                    byte value = progressSet[id];
+                    if (i == 6 && id == "FLASK")
+                    {
+                        Core.displayMessage("Send all server flask: " + value);
+                        value -= Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
+                        Core.displayMessage("Send all send flask: " + value);
+                    }
+                    Send(playerIp, getProgressPacket("*", i, value, id), NetworkType.Progress);
                 }
             }
         }
@@ -607,6 +614,25 @@ namespace BlasServer
             {
                 // Miriam status
                 Core.displayCustom($"Received new miriam status from {current.name}: {progressId}", ConsoleColor.Green);
+            }
+
+            // If this is a stat upgrade, might have to do something extra with flask/flaskhealth
+            if (progressType == 6)
+            {
+                if (progressId == "FLASK")
+                {
+                    Core.displayMessage("Received flask level: " + progressValue);
+                    byte flaskHealthUpgrades = Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
+                    progressValue -= flaskHealthUpgrades;
+                    Core.displayMessage("Flask level sent out: " + progressValue);
+                }
+                else if (progressId == "FLASKHEALTH")
+                {
+                    byte flaskUpgrades = Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASK");
+                    Core.displayMessage("Flask level stored: " + flaskUpgrades);
+                    Core.displayMessage("Flask level sent: " + (byte)(flaskUpgrades - progressValue));
+                    sendPlayerProgress(playerIp, 6, (byte)(flaskUpgrades - progressValue), "FLASK");
+                }
             }
 
             sendPlayerProgress(playerIp, progressType, progressValue, progressId);

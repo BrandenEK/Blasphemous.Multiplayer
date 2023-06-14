@@ -17,8 +17,13 @@ namespace BlasClient.ProgressSync.Helpers
                 case "STRENGTH":    attribute = Core.Logic.Penitent.Stats.Strength; break;
                 case "MEACULPA":    attribute = Core.Logic.Penitent.Stats.MeaCulpa; break;
                 case "BEADSLOTS":   attribute = Core.Logic.Penitent.Stats.BeadSlots; break;
-                case "FLASK":       attribute = Core.Logic.Penitent.Stats.Flask; break;
                 case "FLASKHEALTH": attribute = Core.Logic.Penitent.Stats.FlaskHealth; break;
+                case "FLASK":
+                    {
+                        // Flask is handled specially
+                        Core.Logic.Penitent.Stats.Flask.SetPermanentBonus(progress.Value == 255 ? -1 : progress.Value);
+                        return;
+                    }
                 default:
                     Main.Multiplayer.Log("Error: Unknown stat received - " + progress.Id);
                     return;
@@ -27,8 +32,6 @@ namespace BlasClient.ProgressSync.Helpers
             while (attribute.GetUpgrades() < progress.Value)
             {
                 attribute.Upgrade();
-                if (progress.Id == "FLASKHEALTH")
-                    Core.Logic.Penitent.Stats.Flask.SetPermanentBonus(Core.Logic.Penitent.Stats.Flask.PermanetBonus - 1f);
             }
         }
 
@@ -89,14 +92,13 @@ namespace BlasClient.ProgressSync.Helpers
                 Main.Multiplayer.NetworkManager.SendProgress(progress);
             }
 
-            byte flask = (byte)Core.Logic.Penitent.Stats.Flask.GetUpgrades();
+            byte flaskhealth = (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades();
+            byte flask = (byte)(Core.Logic.Penitent.Stats.Flask.GetUpgrades() + flaskhealth);
             if (flask > 0)
             {
                 ProgressUpdate progress = new ProgressUpdate("FLASK", ProgressType.PlayerStat, flask);
                 Main.Multiplayer.NetworkManager.SendProgress(progress);
             }
-
-            byte flaskhealth = (byte)Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades();
             if (flaskhealth > 0)
             {
                 ProgressUpdate progress = new ProgressUpdate("FLASKHEALTH", ProgressType.PlayerStat, flaskhealth);
@@ -127,11 +129,14 @@ namespace BlasClient.ProgressSync.Helpers
             else if (__instance.GetType() == typeof(BeadSlots))     type = "BEADSLOTS";
             else if (__instance.GetType() == typeof(Flask))         type = "FLASK";
             else if (__instance.GetType() == typeof(FlaskHealth))   type = "FLASKHEALTH";
-            byte upgradeLevel = (byte)(__instance.GetUpgrades() + 1); // This is before the upgrade so increase by one
+            
+            int upgradeLevel = __instance.GetUpgrades() + 1; // This is before the upgrade so increase by one
+            if (type == "FLASK")
+                upgradeLevel += Core.Logic.Penitent.Stats.FlaskHealth.GetUpgrades();
 
             if (type != null && upgradeLevel > 0)
             {
-                ProgressUpdate progress = new ProgressUpdate(type, ProgressType.PlayerStat, upgradeLevel);
+                ProgressUpdate progress = new ProgressUpdate(type, ProgressType.PlayerStat, (byte)upgradeLevel);
                 Main.Multiplayer.NetworkManager.SendProgress(progress);
             }
             return true;

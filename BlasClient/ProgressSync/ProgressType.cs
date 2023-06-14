@@ -18,5 +18,4 @@ namespace BlasClient.ProgressSync
         ChurchDonation = 12,
         MiriamStatus = 13,
     }
-
 }
