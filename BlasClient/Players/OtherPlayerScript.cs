@@ -328,10 +328,13 @@ namespace BlasClient.Players
             // Cherubs
             // Cante Jondo
 
-            Main.Multiplayer.LogWarning($"Sending hit {attack} to {playerStatus.Name}");
+            // Calculate damage amount based on attack type, sword level, and equipment
+            float damageAmount = Core.Logic.Penitent.Stats.Strength.Final;
+
+            Main.Multiplayer.LogWarning($"Sending hit {attack} to {playerStatus.Name} ({damageAmount} damage)");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
             Main.Multiplayer.AttackManager.ShowDamageEffects(playerStatus.Name);
-            Main.Multiplayer.NetworkManager.SendAttack(playerStatus.Name, attack);
+            Main.Multiplayer.NetworkManager.SendAttack(playerStatus.Name, attack, (byte)damageAmount);
         }
     }
 }

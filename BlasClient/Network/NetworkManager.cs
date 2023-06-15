@@ -395,10 +395,11 @@ namespace BlasClient.Network
 
         // Attack
 
-        public void SendAttack(string hitPlayerName, AttackType attackType)
+        public void SendAttack(string hitPlayerName, AttackType attackType, byte damageAmount)
         {
             List<byte> bytes = new ();
             bytes.Add((byte)attackType);
+            bytes.Add(damageAmount);
             bytes.AddRange(Encoding.UTF8.GetBytes(hitPlayerName));
 
             QueueMesssage(bytes.ToArray(), NetworkType.Attack);
@@ -408,9 +409,10 @@ namespace BlasClient.Network
         {
             int startIdx = ExtractNameFromData(data, out string attackerName);
             AttackType attackType = (AttackType)data[startIdx];
-            string receiverName = Encoding.UTF8.GetString(data, startIdx + 1, data.Length - startIdx - 1);
+            byte damageAmount = data[startIdx + 1];
+            string receiverName = Encoding.UTF8.GetString(data, startIdx + 2, data.Length - startIdx - 2);
 
-            Main.Multiplayer.AttackManager.ReceiveAttack(attackerName, receiverName, attackType);
+            Main.Multiplayer.AttackManager.ReceiveAttack(attackerName, receiverName, attackType, damageAmount);
         }
 
         // Effect

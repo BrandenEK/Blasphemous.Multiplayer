@@ -17,7 +17,7 @@ namespace BlasClient.PvP
             LoadAttacks();
         }
 
-        public void ReceiveAttack(string attackerName, string receiverName, AttackType attack)
+        public void ReceiveAttack(string attackerName, string receiverName, AttackType attack, byte damageAmount)
         {
             if (Core.Logic.Penitent == null || !allAttacks.ContainsKey(attack)) return;
 
@@ -33,7 +33,7 @@ namespace BlasClient.PvP
                     return;
 
                 Main.Multiplayer.LogWarning($"Receiving hit {attack} from {attackerName}");
-                DamagePlayer(attack, attacker.gameObject);
+                DamagePlayer(attack, damageAmount, attacker.gameObject);
             }
             else
             {
@@ -50,22 +50,22 @@ namespace BlasClient.PvP
             other.OtherPlayerAttack.PlayEffectAnimation(effect, other.IsFacingRight);
         }
 
-        private void DamagePlayer(AttackType attack, GameObject attacker)
+        private void DamagePlayer(AttackType attack, byte damageAmount, GameObject attacker)
         {
             // Calculate hit data based on attack & parameters
-            Hit hit = new Hit()
+            PlayerAttack currentAttack = GetAttackData(attack);
+            Hit hit = new()
             {
                 AttackingEntity = attacker,
+                DamageAmount = damageAmount,
+                DamageElement = currentAttack.GetDamageElement(),
+                DamageType = currentAttack.GetDamageType(),
+                Force = currentAttack.Force,
                 ThrowbackDirByOwnerPosition = true,
                 Unparriable = true,
                 Unblockable = true,
                 Unnavoidable = true,
             };
-            PlayerAttack currentAttack = allAttacks[attack];
-            hit.DamageAmount = currentAttack.BaseDamage;
-            hit.DamageType = currentAttack.GetDamageType();
-            hit.DamageElement = currentAttack.GetDamageElement();
-            hit.Force = currentAttack.Force;
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
@@ -83,6 +83,16 @@ namespace BlasClient.PvP
             GameObject blood = Core.Logic.Penitent.GetComponentInChildren<BloodSpawner>().GetBloodFX(BloodSpawner.BLOOD_FX_TYPES.SMALL);
             blood.transform.position = effectPosition;
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
+        }
+
+        public PlayerAttack GetAttackData(AttackType type)
+        {
+            if (allAttacks.TryGetValue(type, out PlayerAttack attack))
+            {
+                return attack;
+            }
+
+            throw new System.Exception($"Attack type \"{type}\" doesn't exist!");
         }
 
         private void LoadAttacks()
