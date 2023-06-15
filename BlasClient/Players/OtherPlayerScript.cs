@@ -329,7 +329,9 @@ namespace BlasClient.Players
             // Cante Jondo
 
             // Calculate damage amount based on attack type, sword level, and equipment
-            float damageAmount = Core.Logic.Penitent.Stats.Strength.Final;
+            PlayerAttack attackData = Main.Multiplayer.AttackManager.GetAttackData(attack);
+            float damageAmount = attackData.BaseDamage;
+            damageAmount += Core.Logic.Penitent.Stats.Strength.GetUpgrades() * attackData.DamageScaling;
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {playerStatus.Name} ({damageAmount} damage)");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();

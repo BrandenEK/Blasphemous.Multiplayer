@@ -10,6 +10,7 @@ namespace BlasClient.PvP
         public string DamageElement { get; set; }
 
         public int BaseDamage { get; set; }
+        public int DamageScaling { get; set; }
         public int Force { get; set; }
         public string SoundId { get; set; }
 

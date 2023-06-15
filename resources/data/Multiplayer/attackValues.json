@@ -4,6 +4,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
 		"BaseDamage": 10,
+		"DamageScaling": 4,
 		"Force": 1,
 		"SoundId": "PenitentSimpleEnemyHit"
 	},
@@ -12,6 +13,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 20,
+		"DamageScaling": 5,
 		"Force": 0,
 		"SoundId": "PenitentHeavyEnemyHit"
 	},
@@ -20,6 +22,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 40,
+		"DamageScaling": 5,
 		"Force": 1,
 		"SoundId": "PenitentHeavyEnemyHit"
 	},
@@ -28,6 +31,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 40,
+		"DamageScaling": 4,
 		"Force": 0,
 		"SoundId": "PenitentHeavyEnemyHit"
 	},
@@ -36,6 +40,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 40,
+		"DamageScaling": 6,
 		"Force": 2,
 		"SoundId": "PenitentHeavyEnemyHit"
 	},
@@ -44,6 +49,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 30,
+		"DamageScaling": 5,
 		"Force": 1,
 		"SoundId": "PenitentLungeAttackHit"
 	},
@@ -52,6 +58,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 20,
+		"DamageScaling": 4,
 		"Force": 1
 	},
 	{
@@ -59,6 +66,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
 		"BaseDamage": 20,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -66,6 +74,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Magic",
 		"BaseDamage": 60,
+		"DamageScaling": 0,
 		"Force": 1,
 		"SoundId": "PenitentMagicDamage"
 	},
@@ -74,6 +83,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Magic",
 		"BaseDamage": 60,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -81,6 +91,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Lightning",
 		"BaseDamage": 60,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -88,6 +99,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Lightning",
 		"BaseDamage": 80,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -95,6 +107,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Toxic",
 		"BaseDamage": 40,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -102,6 +115,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
 		"BaseDamage": 40,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -109,6 +123,7 @@
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
 		"BaseDamage": 60,
+		"DamageScaling": 0,
 		"Force": 1
 	},
 	{
@@ -116,6 +131,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 100,
+		"DamageScaling": 0,
 		"Force": 2
 	},
 ]
