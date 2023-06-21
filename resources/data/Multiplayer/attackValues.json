@@ -59,7 +59,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 20,
 		"DamageScaling": 4,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "Ranged",

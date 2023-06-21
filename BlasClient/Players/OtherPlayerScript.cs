@@ -252,8 +252,8 @@ namespace BlasClient.Players
             if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == playerStatus.Team))
                 return;
 
-            Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
-            Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
+            //Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
+            //Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
             AttackType attack = AttackType.Slash;
 
             AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);

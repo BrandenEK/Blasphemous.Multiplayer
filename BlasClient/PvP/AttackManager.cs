@@ -58,8 +58,8 @@ namespace BlasClient.PvP
             {
                 AttackingEntity = attacker,
                 DamageAmount = damageAmount,
-                DamageElement = currentAttack.GetDamageElement(),
-                DamageType = currentAttack.GetDamageType(),
+                DamageElement = currentAttack.DamageElement,
+                DamageType = currentAttack.DamageType,
                 Force = currentAttack.Force,
                 ThrowbackDirByOwnerPosition = true,
                 Unparriable = true,
@@ -107,7 +107,7 @@ namespace BlasClient.PvP
             PlayerAttack[] attacks = Main.Multiplayer.FileUtil.jsonObject<PlayerAttack[]>(text);
             foreach (PlayerAttack attack in attacks)
             {
-                allAttacks.Add(attack.GetAttackType(), attack);
+                allAttacks.Add(attack.AttackName, attack);
             }
             Main.Multiplayer.Log("Successfully loaded all attack data!");
         }
