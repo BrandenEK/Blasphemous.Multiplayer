@@ -39,9 +39,9 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 0)) return;
 
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
             {
-                Write("Connected to " + Main.Multiplayer.serverIp);
+                Write("Connected to " + Main.Multiplayer.NetworkManager.ServerIP);
             }
             else
             {
@@ -52,9 +52,9 @@ namespace BlasClient
         private void Connect(string[] parameters)
         {
             // Already connected
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
             {
-                Write("You are already connected to " + Main.Multiplayer.serverIp);
+                Write("You are already connected to " + Main.Multiplayer.NetworkManager.ServerIP);
                 return;
             }
 
@@ -117,18 +117,18 @@ namespace BlasClient
 
             if (!ValidateStringParameter(name, 1, 16)) return;
 
-            Write($"Attempting to connect to {parameters[0]} as {name}...");
-            Main.Multiplayer.connectCommand(parameters[0], name, password);
+            bool result = Main.Multiplayer.NetworkManager.Connect(parameters[0], name, password);
+            Write(result ? $"Successfully connected to {parameters[0]} as {name}" : $"Failed to connect to {parameters[0]}");
         }
 
         private void Disconnect(string[] parameters)
         {
             if (!ValidateParameterList(parameters, 0)) return;
 
-            if (Main.Multiplayer.connectedToServer)
+            if (Main.Multiplayer.NetworkManager.IsConnected)
             {
                 Write("Disconnecting from server");
-                Main.Multiplayer.disconnectCommand();
+                Main.Multiplayer.NetworkManager.Disconnect();
             }
             else
                 Write("Not connected to a server!");
@@ -138,7 +138,7 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 1) || !ValidateIntParameter(parameters[0], 1, 10, out int newTeam)) return;
 
-            if (newTeam == Main.Multiplayer.playerTeam)
+            if (newTeam == Main.Multiplayer.PlayerTeam)
             {
                 Write("You are already on team " + newTeam);
             }
@@ -153,17 +153,17 @@ namespace BlasClient
         {
             if (!ValidateParameterList(parameters, 0)) return;
 
-            if (!Main.Multiplayer.connectedToServer)
+            if (!Main.Multiplayer.NetworkManager.IsConnected)
             {
                 Write("Not connected to a server!");
                 return;
             }
 
             Write("Connected players:");
-            Write(Main.Multiplayer.playerName + ": Team " + Main.Multiplayer.playerTeam);
-            foreach (string playerName in Main.Multiplayer.playerList.getAllPlayers())
+            Write(Main.Multiplayer.PlayerName + ": Team " + Main.Multiplayer.PlayerTeam);
+            foreach (Players.PlayerStatus player in Main.Multiplayer.OtherPlayerManager.AllConnectedPlayers)
             {
-                Write(playerName + ": Team " + Main.Multiplayer.playerList.getPlayerTeam(playerName));
+                Write(player.Name + ": Team " + player.Team);
             }
         }
     }

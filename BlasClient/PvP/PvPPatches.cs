@@ -15,7 +15,7 @@ namespace BlasClient.PvP
             switch (prayer.id)
             {
                 case "PR03":
-                    Main.Multiplayer.SendNewEffect(EffectType.Debla);
+                    Main.Multiplayer.NetworkManager.SendEffect(EffectType.Debla);
                     break;
                 //case "PR14":
                 //    Main.Multiplayer.SendNewEffect(EffectType.Verdiales);

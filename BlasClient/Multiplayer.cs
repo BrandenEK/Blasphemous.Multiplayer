@@ -1,56 +1,42 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using Framework.Managers;
-using Gameplay.UI;
-using Tools.Level.Interactables;
-using BlasClient.Managers;
-using BlasClient.Structures;
-using BlasClient.Data;
+﻿using BlasClient.Data;
+using BlasClient.Map;
+using BlasClient.Network;
+using BlasClient.Notifications;
+using BlasClient.Players;
+using BlasClient.ProgressSync;
 using BlasClient.PvP;
+using Framework.Managers;
+using Gameplay.UI.Others.UIGameLogic;
 using ModdingAPI;
+using Tools.Level.Interactables;
+using UnityEngine;
 
 namespace BlasClient
 {
     public class Multiplayer : PersistentMod
     {
-        // Application status
-        private Client client;
-        public Config config { get; private set; }
-
         // Managers
-        public PlayerManager playerManager { get; private set; }
-        public ProgressManager progressManager { get; private set; }
-        public NotificationManager notificationManager { get; private set; }
-        public MapScreenManager mapScreenManager { get; private set; }
-        public AttackManager attackManager { get; private set; }
+        public AttackManager AttackManager { get; private set; }
+        public MainPlayerManager MainPlayerManager { get; private set; }
+        public Map.MapManager MapManager { get; private set; }
+        public NetworkManager NetworkManager { get; private set; }
+        public NotificationManager NotificationManager { get; private set; }
+        public OtherPlayerManager OtherPlayerManager { get; private set; }
+        public ProgressManager ProgressManager { get; private set; }
 
         // Game status
-        public PlayerList playerList { get; private set; }
-        public string playerName { get; private set; }
-        public bool inLevel { get; private set; }
-        public byte playerTeam { get; private set; }
-        public string serverIp => client.serverIp;
-        public bool inRando => IsModLoaded("com.damocles.blasphemous.randomizer");
-        private List<string> interactedPersistenceObjects;
-        private bool sentAllProgress;
+        public bool RandomizerMode => IsModLoaded("com.damocles.blasphemous.randomizer");
+        public Config config { get; private set; }
+        public bool CurrentlyInLevel { get; private set; }
 
         // Player status
-        private Vector2 lastPosition;
-        private byte lastAnimation;
-        private bool lastDirection;
-        private float totalTimeBeforeSendAnimation = 0.5f;
-        private float currentTimeBeforeSendAnimation = 0;
+        public string PlayerName { get; private set; }
+        public byte PlayerTeam { get; private set; }
 
         // Set to false when receiving a stat upgrade from someone in the same room & not in randomizer
         // Set to true upon loading a new scene
         // Must be true to naturally obtain stat upgrades and send them
         public bool CanObtainStatUpgrades { get; set; }
-
-        public bool connectedToServer
-        {
-            get { return client != null && client.connectionStatus == Client.ConnectionStatus.Connected; }
-        }
 
         public override string PersistentID => "ID_MULTIPLAYER";
 
@@ -61,76 +47,52 @@ namespace BlasClient
             RegisterCommand(new MultiplayerCommand());
 
             // Create managers
-            playerManager = new PlayerManager();
-            progressManager = new ProgressManager();
-            notificationManager = new NotificationManager();
-            mapScreenManager = new MapScreenManager();
-            attackManager = new AttackManager();
-            client = new Client();
+            AttackManager = new AttackManager();
+            MainPlayerManager = new MainPlayerManager();
+            MapManager = new Map.MapManager();
+            NetworkManager = new NetworkManager();
+            NotificationManager = new NotificationManager();
+            OtherPlayerManager = new OtherPlayerManager();
+            ProgressManager = new ProgressManager();
 
             // Initialize data
             config = FileUtil.loadConfig<Config>();
             PersistentStates.loadPersistentObjects();
-            playerList = new PlayerList();
-            interactedPersistenceObjects = new List<string>();
-            playerName = "";
-            playerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
-            sentAllProgress = false;
+            PlayerName = string.Empty;
+            PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
         }
 
-        public void connectCommand(string ip, string name, string password)
+        public void OnConnect(string ipAddress, string playerName, string password)
         {
-            if (client.Connect(ip, name, password))
-            {
-                playerName = name;
-            }
-            else
-            {
-                UIController.instance.StartCoroutine(delayedNotificationCoroutine(Localize("conerr") + " " + ip));
-            }
-
-            IEnumerator delayedNotificationCoroutine(string notification)
-            {
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                notificationManager.showNotification(notification);
-            }
+            PlayerName = playerName;
         }
 
-        public void disconnectCommand()
+        public void OnDisconnect()
         {
-            client.Disconnect();
-            onDisconnect(true);
-        }
-
-        public void onDisconnect(bool showNotification)
-        {
-            if (showNotification)
-                notificationManager.showNotification(Localize("dcon"));
-            playerList.ClearPlayers();
-            playerManager.destroyPlayers();
-            playerName = "";
-            sentAllProgress = false;
+            NotificationManager.DisplayNotification(Localize("dcon"));
+            ProgressManager.ResetProgressSentStatus();
+            OtherPlayerManager.RemoveAllConnectedPlayers();
+            OtherPlayerManager.RemoveAllActivePlayers();
+            PlayerName = string.Empty;
         }
 
         protected override void LevelLoaded(string oldLevel, string newLevel)
         {
-            inLevel = newLevel != "MainMenu";
-            notificationManager.createMessageBox();
-            playerManager.loadScene(newLevel);
-            progressManager.sceneLoaded(newLevel);
+            CurrentlyInLevel = newLevel != "MainMenu";
+            NotificationManager.LevelLoaded();
+            OtherPlayerManager.LevelLoaded(newLevel);
+            ProgressManager.LevelLoaded(newLevel);
             CanObtainStatUpgrades = true;
 
-            if (inLevel && connectedToServer)
+            if (CurrentlyInLevel && NetworkManager.IsConnected)
             {
                 // Entered a new scene
                 Log("Entering new scene: " + newLevel);
 
-                // Send initial position, animation, & direction before scene enter
-                SendAllLocationData();
-
-                client.sendPlayerEnterScene(newLevel);
-                sendAllProgress();
+                // Send location, scene, and progress
+                MainPlayerManager.SendAllLocationData();
+                NetworkManager.SendEnterScene(newLevel);
+                ProgressManager.SendAllProgress();
             }
 
             if (newLevel == "D06Z01S01")
@@ -139,15 +101,14 @@ namespace BlasClient
 
         protected override void LevelUnloaded(string oldLevel, string newLevel)
         {
-            if (inLevel && connectedToServer)
+            if (CurrentlyInLevel && NetworkManager.IsConnected)
             {
                 // Left a scene
                 Log("Leaving old scene");
-                client.sendPlayerLeaveScene();
+                NetworkManager.SendLeaveScene();
             }
 
-            inLevel = false;
-            playerManager.unloadScene();
+            CurrentlyInLevel = false;
         }
 
         protected override void LateUpdate()
@@ -176,359 +137,94 @@ namespace BlasClient
                 //}
             }
 
-            if (inLevel && connectedToServer && Core.Logic.Penitent != null)
+            NetworkManager.ProcessQueue();
+
+            MapManager.Update();
+            NotificationManager.Update();
+            if (CurrentlyInLevel)
             {
-                // Check & send updated position
-                if (positionHasChanged(out Vector2 newPosition))
-                {
-                    //Main.Multiplayer.Log("Sending new player position");
-                    client.sendPlayerPostition(newPosition.x, newPosition.y);
-                    lastPosition = newPosition;
-                }
-
-                // Check & send updated animation clip
-                if (animationHasChanged(out byte newAnimation))
-                {
-                    // Don't send new animations right after a special animation
-                    if (currentTimeBeforeSendAnimation <= 0 && newAnimation != 255)
-                    {
-                        //Main.Multiplayer.Log("Sending new player animation");
-                        client.sendPlayerAnimation(newAnimation);
-                    }
-                    lastAnimation = newAnimation;
-                }
-
-                // Check & send updated facing direction
-                if (directionHasChanged(out bool newDirection))
-                {
-                    //Main.Multiplayer.Log("Sending new player direction");
-                    client.sendPlayerDirection(newDirection);
-                    lastDirection = newDirection;
-                }
-
-                // Once all three of these updates are added, send the queue
-                client.SendQueue();
+                MainPlayerManager.Update();
+                OtherPlayerManager.Update();
+                ProgressManager.Update();
             }
 
-            // Decrease frame counter for special animation delay
-            if (currentTimeBeforeSendAnimation > 0)
-                currentTimeBeforeSendAnimation -= Time.deltaTime;
-
-            // Update game progress
-            if (progressManager != null && inLevel)
-                progressManager.updateProgress();
-            // Update other player's data
-            if (playerManager != null && inLevel)
-                playerManager.updatePlayers();
-            // Update notifications
-            if (notificationManager != null)
-                notificationManager.updateNotifications();
-            // Update map screen
-            if (mapScreenManager != null)
-                mapScreenManager.updateMap();
-        }
-
-        private bool positionHasChanged(out Vector2 newPosition)
-        {
-            float cutoff = 0.03f;
-            newPosition = getCurrentPosition();
-            return Mathf.Abs(newPosition.x - lastPosition.x) > cutoff || Mathf.Abs(newPosition.y - lastPosition.y) > cutoff;
-        }
-
-        private bool animationHasChanged(out byte newAnimation)
-        {
-            newAnimation = getCurrentAnimation();
-            return newAnimation != lastAnimation;
-        }
-
-        private bool directionHasChanged(out bool newDirection)
-        {
-            newDirection = getCurrentDirection();
-            return newDirection != lastDirection;
-        }
-
-        private Vector2 getCurrentPosition()
-        {
-            return Core.Logic.Penitent.transform.position;
-        }
-
-        private byte getCurrentAnimation()
-        {
-            AnimatorStateInfo state = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
-            for (byte i = 0; i < AnimationStates.animations.Length; i++)
-            {
-                if (state.IsName(AnimationStates.animations[i].name))
-                {
-                    return i;
-                }
-            }
-
-            // This animation could not be found
-            Log("Error: Animation doesn't exist!");
-            return 255;
-        }
-
-        private bool getCurrentDirection()
-        {
-            return Core.Logic.Penitent.SpriteRenderer.flipX;
-        }
-
-        // Changed skin from menu selector
-        public void changeSkin(string skin)
-        {
-            if (connectedToServer)
-            {
-                sendNewSkin(skin);
-            }
+            NetworkManager.SendQueue();
         }
 
         // Changed team number from command
         public void changeTeam(byte teamNumber)
         {
-            playerTeam = teamNumber;
-            sentAllProgress = false;
+            PlayerTeam = teamNumber;
+            ProgressManager.ResetProgressSentStatus();
 
-            if (connectedToServer)
+            if (NetworkManager.IsConnected)
             {
-                client.sendPlayerTeam(teamNumber);
-                if (inLevel)
+                NetworkManager.SendTeam(teamNumber);
+                if (CurrentlyInLevel)
                 {
-                    updatePlayerColors();
-                    sendAllProgress();
+                    RefreshPlayerColors();
+                    ProgressManager.SendAllProgress();
                 }
             }
         }
 
         // Refresh players' nametags & map icons when someone changed teams
-        private void updatePlayerColors()
+        public void RefreshPlayerColors()
         {
-            playerManager.refreshNametagColors();
-            mapScreenManager.queueMapUpdate();
-        }
-
-        // Obtained new item, upgraded stat, set flag, etc...
-        public void obtainedGameProgress(string progressId, ProgressManager.ProgressType progressType, byte progressValue)
-        {
-            if (connectedToServer)
-            {
-                Log("Sending new game progress: " + progressId);
-                client.sendPlayerProgress((byte)progressType, progressValue, progressId);
-            }
-        }
-
-        // Interacting with an object using a special animation
-        public void usingSpecialAnimation(byte animation)
-        {
-            if (connectedToServer)
-            {
-                Log("Sending special animation");
-                currentTimeBeforeSendAnimation = totalTimeBeforeSendAnimation;
-                client.sendPlayerAnimation(animation);
-            }
-        }
-
-        // Gets the byte[] that stores either an original skin name or a custom skin texture
-        public void sendNewSkin(string skinName)
-        {
-            bool custom = true;
-            for (int i = 0; i < originalSkins.Length; i++)
-            {
-                if (skinName == originalSkins[i])
-                {
-                    custom = false; break;
-                }
-            }
-
-            byte[] data = custom ? Core.ColorPaletteManager.GetColorPaletteById(skinName).texture.EncodeToPNG() : System.Text.Encoding.UTF8.GetBytes(skinName);
-            Log($"Sending new player skin ({data.Length} bytes)");
-            client.sendPlayerSkin(data);
-        }
-
-        // Creates and sends a new attack to other players in the same scene
-        public void SendNewAttack(string hitPlayerName, AttackType attack)
-        {
-            if (connectedToServer)
-            {
-                client.sendPlayerAttack(hitPlayerName, (byte)attack);
-            }
-        }
-
-        // Sends a new attacking effect to other players in the same scene
-        public void SendNewEffect(EffectType effect)
-        {
-            if (connectedToServer)
-            {
-                client.sendPlayerEffect(playerName, (byte)effect);
-            }
-        }
-
-        // Sends the current position/animation/direction when first entering a scene or joining server
-        // Make sure you are connected to server first
-        private void SendAllLocationData()
-        {
-            lastPosition = getCurrentPosition();
-            client.sendPlayerPostition(lastPosition.x, lastPosition.y);
-            lastAnimation = 0;
-            client.sendPlayerAnimation(lastAnimation);
-            lastDirection = getCurrentDirection();
-            client.sendPlayerDirection(lastDirection);
-        }
-
-        // Received position data from server
-        public void playerPositionUpdated(string playerName, float xPos, float yPos)
-        {
-            if (inLevel)
-                playerManager.queuePosition(playerName, new Vector2(xPos, yPos));
-        }
-
-        // Received animation data from server
-        public void playerAnimationUpdated(string playerName, byte animation)
-        {
-            if (inLevel)
-                playerManager.queueAnimation(playerName, animation);
-        }
-
-        // Received direction data from server
-        public void playerDirectionUpdated(string playerName, bool direction)
-        {
-            if (inLevel)
-                playerManager.queueDirection(playerName, direction);
-        }
-
-        // Received skin data from server
-        public void playerSkinUpdated(string playerName, byte[] skin)
-        {
-            Log("Updating player skin for " + playerName);
-            UIController.instance.StartCoroutine(delaySkinUpdate());
-
-            IEnumerator delaySkinUpdate()
-            {
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                playerList.setPlayerSkinTexture(playerName, skin);
-            }
-        }
-
-        // Received enterScene data from server
-        public void playerEnteredScene(string playerName, string scene)
-        {
-            playerList.setPlayerScene(playerName, scene);
-
-            if (inLevel && Core.LevelManager.currentLevel.LevelName == scene)
-                playerManager.queuePlayer(playerName, true);
-            mapScreenManager.queueMapUpdate();
-        }
-
-        // Received leftScene data from server
-        public void playerLeftScene(string playerName)
-        {
-            if (inLevel && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
-                playerManager.queuePlayer(playerName, false);
-
-            playerList.setPlayerScene(playerName, "");
-            mapScreenManager.queueMapUpdate();
+            OtherPlayerManager.RefreshNametagColors();
+            MapManager.QueueMapUpdate();
         }
 
         // Received introResponse data from server
-        public void playerIntroReceived(byte response)
+        public void ProcessIntroResponse(byte response)
         {
             // Connected succesfully
             if (response == 0)
             {
                 // Send all initial data
-                sendNewSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
-                client.sendPlayerTeam(playerTeam);
+                NetworkManager.SendSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+                NetworkManager.SendTeam(PlayerTeam);
 
                 // If already in game, send enter scene data & game progress
-                if (inLevel)
+                if (CurrentlyInLevel)
                 {
-                    SendAllLocationData();
-                    client.sendPlayerEnterScene(Core.LevelManager.currentLevel.LevelName);
-                    playerManager.createPlayerNameTag();
-                    sendAllProgress();
+                    MainPlayerManager.SendAllLocationData();
+                    NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
+                    OtherPlayerManager.AddNametag(PlayerName, true);
+                    ProgressManager.SendAllProgress();
                 }
 
-                notificationManager.showNotification(Localize("con"));
+                NotificationManager.DisplayNotification(Localize("con"));
                 return;
             }
 
-            // Failed to connect
-            onDisconnect(false);
-            string reason;
-            if (response == 1) reason = "refpas"; // Wrong password
-            else if (response == 2) reason = "refban"; // Banned player
-            else if (response == 3) reason = "refmax"; // Max player limit
-            else if (response == 4) reason = "refipa"; // Duplicate ip
-            else if (response == 5) reason = "refnam"; // Duplicate name
-            else reason = "refunk"; // Unknown reason
-
-            notificationManager.showNotification(Localize("refuse") + ": " + Localize(reason));
-        }
-
-        // Received player connection status from server
-        public void playerConnectionReceived(string playerName, bool connected)
-        {
-            if (connected)
+            string reason = response switch
             {
-                // Add this player to the list of connected players
-                playerList.AddPlayer(playerName);
-            }
-            else
+                1 => "refpas", // Wrong password
+                2 => "refban", // Banned player
+                3 => "refmax", // Max player limit
+                4 => "refipa", // Duplicate ip
+                5 => "refnam", // Duplicate name
+                _ => "refunk", // Unknown reason
+            };
+            NotificationManager.DisplayNotification(Localize("refuse") + ": " + Localize(reason));
+        }
+
+        // Whenever you receive a stat upgrade, it needs to check if you are in the same room as the player who sent it.
+        // If so, you can no longer obtain stat upgrades in the same room
+        public void ProcessRecievedStat(string playerName, ProgressUpdate progress)
+        {
+            PlayerStatus player = OtherPlayerManager.FindConnectedPlayer(playerName);
+            if (player == null) return;
+
+            if (!CurrentlyInLevel || RandomizerMode || progress.Type != ProgressType.PlayerStat || Core.LevelManager.currentLevel.LevelName != player.CurrentScene)
+                return;
+
+            if (progress.Id == "LIFE" || progress.Id == "FERVOUR" || progress.Id == "STRENGTH" || progress.Id == "MEACULPA")
             {
-                // Remove this player from the list of connected players
-                playerLeftScene(playerName);
-                playerList.RemovePlayer(playerName);
+                CanObtainStatUpgrades = false;
+                LogWarning("Received stat upgrade from player in the same room!");
             }
-            notificationManager.showNotification($"{playerName} {Localize(connected ? "join" : "leave")}");
-        }
-
-        public void playerProgressReceived(string playerName, string progressId, byte progressType, byte progressValue)
-        {
-            // Apply the progress update
-            progressManager.receiveProgress(progressId, progressType, progressValue);
-
-            if (playerName == "*") return;
-
-            // Show notification for new progress
-            notificationManager.showProgressNotification(playerName, progressType, progressId, progressValue);
-
-            // Set stat obtained status
-            if (inLevel && progressType == (byte)ProgressManager.ProgressType.PlayerStat && !inRando && Core.LevelManager.currentLevel.LevelName == playerList.getPlayerScene(playerName))
-            {
-                if (progressId == "LIFE" || progressId == "FERVOUR" || progressId == "STRENGTH" || progressId == "MEACULPA")
-                {
-                    CanObtainStatUpgrades = false;
-                    LogWarning("Received stat upgrade from player in the same room!");
-                }
-            }
-        }
-
-        public void playerTeamReceived(string playerName, byte team)
-        {
-            Log("Updating team number for " + playerName);
-            playerList.setPlayerTeam(playerName, team);
-            if (inLevel)
-                updatePlayerColors();
-        }
-
-        public void playerAttackReceived(string attackerName, string receiverName, byte attack)
-        {
-            attackManager.AttackReceived(attackerName, receiverName, (AttackType)attack);
-        }
-
-        public void playerEffectReceived(string playerName, byte effect)
-        {
-            attackManager.EffectReceived(playerName, (EffectType)effect);
-        }
-
-        private void sendAllProgress()
-        {
-            if (sentAllProgress) return;
-            sentAllProgress = true;
-
-            // This is the first time loading a scene after connecting - send all player progress
-            Log("Sending all player progress");
-            progressManager.loadAllProgress();
         }
 
         // If loading the rooftops elevator scene, set levers if they have been unlocked by someone else
@@ -572,30 +268,13 @@ namespace BlasClient
             }
         }
 
-        // Add a new persistent object that has been interacted with
-        public void addPersistentObject(string objectSceneId)
-        {
-            if (!interactedPersistenceObjects.Contains(objectSceneId))
-                interactedPersistenceObjects.Add(objectSceneId);
-        }
-
-        // Checks whether or not a persistent object has been interacted with
-        public bool checkPersistentObject(string objectSceneId)
-        {
-            return interactedPersistenceObjects.Contains(objectSceneId);
-        }
-
-        // Allows progress manager to send all interacted objects on connect
-        public List<string> getAllPersistentObjects()
-        {
-            return interactedPersistenceObjects;
-        }
-
         // Save list of interacted persistent objects
         public override ModPersistentData SaveGame()
         {
-            MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData();
-            multiplayerData.interactedPersistenceObjects = interactedPersistenceObjects;
+            MultiplayerPersistenceData multiplayerData = new MultiplayerPersistenceData()
+            {
+                interactedPersistenceObjects = ProgressManager.SaveInteractedObjects()
+            };
             return multiplayerData;
         }
 
@@ -603,37 +282,94 @@ namespace BlasClient
         public override void LoadGame(ModPersistentData data)
         {
             MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
-            interactedPersistenceObjects = multiplayerData.interactedPersistenceObjects;
+            ProgressManager.LoadInteractedObjects(multiplayerData.interactedPersistenceObjects);
         }
 
         // Reset list of interacted persistent objects
         public override void ResetGame()
         {
-            interactedPersistenceObjects.Clear();
+            ProgressManager.ClearInteractedObjects();
         }
 
         public override void NewGame(bool NGPlus) { }
 
-        private string[] originalSkins = new string[]
+        private Transform m_canvas;
+        public Transform CanvasObject
         {
-            "PENITENT_DEFAULT",
-            "PENITENT_ENDING_A",
-            "PENITENT_ENDING_B",
-            "PENITENT_OSSUARY",
-            "PENITENT_BACKER",
-            "PENITENT_DELUXE",
-            "PENITENT_ALMS",
-            "PENITENT_PE01",
-            "PENITENT_PE02",
-            "PENITENT_PE03",
-            "PENITENT_BOSSRUSH",
-            "PENITENT_DEMAKE",
-            "PENITENT_ENDING_C",
-            "PENITENT_SIERPES",
-            "PENITENT_ISIDORA",
-            "PENITENT_BOSSRUSH_S",
-            "PENITENT_GAMEBOY",
-            "PENITENT_KONAMI"
-        };
+            get
+            {
+                if (m_canvas == null)
+                {
+                    foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
+                    {
+                        if (c.name == "Game UI")
+                        {
+                            m_canvas = c.transform;
+                            break;
+                        }
+                    }
+                }
+                return m_canvas;
+            }
+        }
+
+        private GameObject m_textPrefab;
+        public GameObject TextObject
+        {
+            get
+            {
+                if (m_textPrefab == null)
+                {
+                    foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
+                    {
+                        if (obj.name == "PurgePoints")
+                        {
+                            m_textPrefab = obj.transform.GetChild(1).gameObject;
+                            break;
+                        }
+                    }
+                }
+                return m_textPrefab;
+            }
+        }
+
+        private RuntimeAnimatorController m_penitentAnimator;
+        public RuntimeAnimatorController PlayerAnimator
+        {
+            get
+            {
+                if (m_penitentAnimator == null)
+                {
+                    m_penitentAnimator = Core.Logic.Penitent?.Animator.runtimeAnimatorController;
+                }
+                return m_penitentAnimator;
+            }
+        }
+
+        private RuntimeAnimatorController m_SwordAnimator;
+        public RuntimeAnimatorController PlayerSwordAnimator
+        {
+            get
+            {
+                if (m_SwordAnimator == null)
+                {
+                    m_SwordAnimator = Core.Logic.Penitent?.GetComponentInChildren<Gameplay.GameControllers.Penitent.Attack.SwordAnimatorInyector>().GetComponent<Animator>().runtimeAnimatorController;
+                }
+                return m_SwordAnimator;
+            }
+        }
+
+        private Material m_penitentMaterial;
+        public Material PlayerMaterial
+        {
+            get
+            {
+                if (m_penitentMaterial == null)
+                {
+                    m_penitentMaterial = Core.Logic.Penitent?.SpriteRenderer.material;
+                }
+                return m_penitentMaterial;
+            }
+        }
     }
 }

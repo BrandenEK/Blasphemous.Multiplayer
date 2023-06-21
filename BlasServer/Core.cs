@@ -94,7 +94,7 @@ namespace BlasServer
             foreach (byte team in teamGameDatas.Keys)
             {
                 displayCustom("Team " + team + " data:", ConsoleColor.Cyan);
-                teamGameDatas[team].printGameProgress();
+                teamGameDatas[team].PrintTeamProgress();
             }
         }
 

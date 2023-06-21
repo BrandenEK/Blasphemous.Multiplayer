@@ -6,10 +6,19 @@
     <BepInExPluginGuid>com.damocles.blasphemous.multiplayer</BepInExPluginGuid>
     <BepInExPluginName>Multiplayer</BepInExPluginName>
     <Description>A multiplayer client for the game Blasphemous</Description>
-    <Version>1.1.0</Version>
+    <Version>2.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Managers\**" />
+    <Compile Remove="MonoBehaviours\**" />
+    <EmbeddedResource Remove="Managers\**" />
+    <EmbeddedResource Remove="MonoBehaviours\**" />
+    <None Remove="Managers\**" />
+    <None Remove="MonoBehaviours\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
@@ -87,7 +96,7 @@
     <Copy SourceFiles="@(Keybindings)" DestinationFolder="$(ExportFolder)keybindings" />
     <Copy SourceFiles="@(Levels)" DestinationFolder="$(ExportFolder)levels\$(BepInExPluginName)" />
     <Copy SourceFiles="@(Localization)" DestinationFolder="$(ExportFolder)localization" />
-    <ZipDirectory SourceDirectory="$(ExportFolder)" DestinationFile="$(ExportFolder)..\$(TargetName).zip" Overwrite="true"/>
+    <ZipDirectory SourceDirectory="$(ExportFolder)" DestinationFile="$(ExportFolder)..\$(TargetName).zip" Overwrite="true" />
 
   </Target>
 </Project>
