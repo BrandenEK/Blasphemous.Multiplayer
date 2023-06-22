@@ -21,7 +21,7 @@
 		"AttackName": "ComboUp",
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
-		"BaseDamage": 40,
+		"BaseDamage": 30,
 		"DamageScaling": 5,
 		"Force": 1,
 		"SoundId": "PenitentHeavyEnemyHit"
@@ -31,7 +31,7 @@
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
 		"BaseDamage": 40,
-		"DamageScaling": 4,
+		"DamageScaling": 5,
 		"Force": 0,
 		"SoundId": "PenitentHeavyEnemyHit"
 	},
@@ -48,8 +48,8 @@
 		"AttackName": "Lunge",
 		"DamageType": "Heavy",
 		"DamageElement": "Normal",
-		"BaseDamage": 30,
-		"DamageScaling": 5,
+		"BaseDamage": 20,
+		"DamageScaling": 4,
 		"Force": 1,
 		"SoundId": "PenitentLungeAttackHit"
 	},
