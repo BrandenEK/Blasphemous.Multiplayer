@@ -8,6 +8,7 @@
 - [Features](https://github.com/BrandenEK/Blasphemous-Multiplayer#features)
 - [Sync details](https://github.com/BrandenEK/Blasphemous-Multiplayer#sync-details)
 - [Installation](https://github.com/BrandenEK/Blasphemous-Multiplayer#installation)
+- [PvP](https://github.com/BrandenEK/Blasphemous-Multiplayer#pvp)
 - [Connecting](https://github.com/BrandenEK/Blasphemous-Multiplayer#connecting)
 - [Available commands](https://github.com/BrandenEK/Blasphemous-Multiplayer#available-commands)
 - [Configuration settings](https://github.com/BrandenEK/Blasphemous-Multiplayer#configuration-settings)
@@ -20,7 +21,7 @@
 - See other players as you both move around the world of Cvstodia
 - Sync items, stats, skills, and other game progress across all players
 - Compatible with randomizer (Make sure to use the same seed and settings)
-- [Coming soon] Enable PvP to fight other players
+- Enable PvP to fight other players
 
 ---
 
@@ -62,6 +63,12 @@ Manual installation
 2. Follow the instructions there on how to install the api
 3. Download the latest release of the Multiplayer client from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
 4. Extract the contents of the BlasClient.zip file into the "Modding" folder
+
+---
+
+## PvP
+
+PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, change to a different team than them by either editing your config file or using the ```multiplayer team NUMBER``` command
 
 ---
 
