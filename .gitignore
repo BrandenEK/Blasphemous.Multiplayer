@@ -16,10 +16,6 @@
 # Mono auto generated files
 mono_crash.*
 
-# Blas Modding
-[Ll]ib/
-[Ee]xport/
-
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -36,6 +32,7 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+[Ee]xport/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
