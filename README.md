@@ -1,18 +1,10 @@
 # Blasphemous Multiplayer
-![Release version](https://img.shields.io/github/v/release/BrandenEK/Blasphemous-Multiplayer)
-![Last commit](https://img.shields.io/github/last-commit/BrandenEK/Blasphemous-Multiplayer?color=important)
-![Downloads](https://img.shields.io/github/downloads/BrandenEK/Blasphemous-Multiplayer/total?color=success)
 
-## Table of Contents
-
-- [Features](https://github.com/BrandenEK/Blasphemous-Multiplayer#features)
-- [Sync details](https://github.com/BrandenEK/Blasphemous-Multiplayer#sync-details)
-- [Installation](https://github.com/BrandenEK/Blasphemous-Multiplayer#installation)
-- [PvP](https://github.com/BrandenEK/Blasphemous-Multiplayer#pvp)
-- [Connecting](https://github.com/BrandenEK/Blasphemous-Multiplayer#connecting)
-- [Available commands](https://github.com/BrandenEK/Blasphemous-Multiplayer#available-commands)
-- [Configuration settings](https://github.com/BrandenEK/Blasphemous-Multiplayer#configuration-settings)
-- [Translations](https://github.com/BrandenEK/Blasphemous-Multiplayer#translations)
+<div>
+  <img src="https://img.shields.io/github/v/release/BrandenEK/Blasphemous.Multiplayer?style=for-the-badge">
+  <img src="https://img.shields.io/github/last-commit/BrandenEK/Blasphemous.Multiplayer?color=important&style=for-the-badge">
+  <img src="https://img.shields.io/github/downloads/BrandenEK/Blasphemous.Multiplayer/total?color=success&style=for-the-badge">
+</div>
 
 ---
 
@@ -22,8 +14,6 @@
 - Sync items, stats, skills, and other game progress across all players
 - Compatible with randomizer (Make sure to use the same seed and settings)
 - Enable PvP to fight other players
-
----
 
 ## Sync details
 
@@ -40,47 +30,17 @@
 
 - Enemies & bosses (This is a huge task and not really feasible)
 
----
-
-## Installation
-
-#### Server:
-1. Download and install Microsoft .NET Core 3.1 from https://dotnet.microsoft.com/en-us/download/dotnet/3.1
-    - On Windows you most likely need the Hosting Bundle for ASP.NET Core Runtime 3.1.32 ([Direct link](https://download.visualstudio.microsoft.com/download/pr/6744eb9d-dcd4-4386-9d87-b03b70fc58ce/818fadf3f3d919c17ba845b2195bfd9b/dotnet-hosting-3.1.32-win.exe
-))
-2. Download the latest release of the Multiplayer server from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
-3. Unzip the BlasServer.zip file anywhere on the host machine
-
-#### Client:
-
-Automatic installation
-- This mod can be automatically installed using the [Blasphemous Mod Installer](https://github.com/BrandenEK/Blasphemous-Mod-Installer)<br>
-- **Note:** Make sure to also enable the Modding API<br>
-<br>
-
-Manual installation
-1. Download the latest release of the Modding API from https://github.com/BrandenEK/Blasphemous-Modding-API/releases
-2. Follow the instructions there on how to install the api
-3. Download the latest release of the Multiplayer client from the [Releases](https://github.com/BrandenEK/Blasphemous-Multiplayer/releases) page
-4. Extract the contents of the BlasClient.zip file into the "Modding" folder
-
----
-
 ## PvP
 
 PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, change to a different team than them by either editing your config file or using the ```multiplayer team NUMBER``` command
-
----
 
 ## Connecting
 
 First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
 <br><br>
-However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding, Hamachi (https://vpn.net/), or ZeroTier (https://www.zerotier.com/)
+However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding, Hamachi (https://vpn.net/), ZeroTier (https://www.zerotier.com/), or RAdmin
 <br><br>
 If using Hamachi, you may have to follow this [setup guide](https://github.com/BrandenEK/Windwaker-coop#how-to-set-up-hamachi-to-simulate-a-local-network) for it to work.  Then when connecting, use the IP address that Hamachi assigned to the machine running the server.
-
----
 
 ## Available commands
 - Press the 'backslash' key to open the debug console
@@ -94,8 +54,6 @@ If using Hamachi, you may have to follow this [setup guide](https://github.com/B
 | `multiplayer disconnect` | none | Disconnect from current server |
 | `multiplayer team` | NUMBER | Change to a different team (1-10) |
 | `multiplayer players` | none | List all connected players in the server |
-
----
 
 ## Configuration settings
 - These settings can be modified in the 'multiplayer.cfg' file located in the "Modding/config" folder
@@ -122,8 +80,6 @@ If using Hamachi, you may have to follow this [setup guide](https://github.com/B
 | enableFriendlyFire | Allow players on the same team to damage each other | false |
 | team | The id of the team to play on (1-10) | 1 |
 | syncSettings | Which types of progression will be sent & received to & from the server | All enabled |
-
----
 
 ## Translations
 
