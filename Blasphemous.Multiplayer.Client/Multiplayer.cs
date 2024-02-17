@@ -15,9 +15,12 @@ using UnityEngine;
 
 namespace Blasphemous.Multiplayer.Client;
 
+/// <summary>
+/// Handles connecting to server, syncing progress, and tracking players
+/// </summary>
 public class Multiplayer : BlasMod, IPersistentMod
 {
-    public Multiplayer() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
+    internal Multiplayer() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
 
     // Managers
     public AttackManager AttackManager { get; private set; }

@@ -8,24 +8,24 @@
     <Product>Multiplayer</Product>
     <Authors>Damocles</Authors>
     <Company>Damocles</Company>
-    <Description>A mod for Blasphemous 1</Description>
-    <Version>0.1.0</Version>
+    <Description>A multiplayer mod that allows you to play Blasphemous cooperatively or against other people</Description>
+    <Version>2.0.1</Version>
 
     <TargetName>BlasClient</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <RepositoryUrl>https://github.com/Example</RepositoryUrl>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>bin\Release\$(TargetName).xml</DocumentationFile>
+    <RepositoryUrl>https://github.com/BrandenEK/Blasphemous.Multiplayer</RepositoryUrl>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blasphemous.CheatConsole" Version="1.0.0" />
     <PackageReference Include="Blasphemous.ModdingAPI" Version="2.1.0" />
     <PackageReference Include="Blasphemous.ModdingReferences" Version="4.0.67" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="CheatConsole">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blasphemous\Modding\plugins\CheatConsole.dll</HintPath>
-    </Reference>
     <Reference Include="SimpleTCP">
       <HintPath>..\resources\data\SimpleTCP.dll</HintPath>
     </Reference>
