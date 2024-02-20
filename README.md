@@ -1,15 +1,10 @@
 # Blasphemous Multiplayer
 
-<div>
-  <img src="https://img.shields.io/github/v/release/BrandenEK/Blasphemous.Multiplayer?style=for-the-badge">
-  <img src="https://img.shields.io/github/last-commit/BrandenEK/Blasphemous.Multiplayer?color=important&style=for-the-badge">
-  <img src="https://img.shields.io/github/downloads/BrandenEK/Blasphemous.Multiplayer/total?color=success&style=for-the-badge">
-</div>
+<img src="https://img.shields.io/github/downloads/BrandenEK/Blasphemous.Multiplayer/total?color=6495ED&style=for-the-badge">
 
 ---
 
 ## Features
-
 - See other players as you both move around the world of Cvstodia
 - Sync items, stats, skills, and other game progress across all players
 - Compatible with randomizer (Make sure to use the same seed and settings)
@@ -18,7 +13,6 @@
 ## Sync details
 
 ### Things that sync
-
 - All inventory items (Beads / Relics / Prayers / Hearts / Collectibles / Quest items)
 - All player stats (Max health / Max fervour / Strength / Mea Culpa level / Max flasks / Flask level / Bead slots)
 - All unlocked sword skills
@@ -27,15 +21,12 @@
 - Church donation amount
 
 ### Things that will probably never sync
-
 - Enemies & bosses (This is a huge task and not really feasible)
 
 ## PvP
-
 PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, change to a different team than them by either editing your config file or using the ```multiplayer team NUMBER``` command
 
 ## Connecting
-
 First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
 <br><br>
 However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding, Hamachi (https://vpn.net/), ZeroTier (https://www.zerotier.com/), or RAdmin
@@ -82,7 +73,6 @@ If using Hamachi, you may have to follow this [setup guide](https://github.com/B
 | syncSettings | Which types of progression will be sent & received to & from the server | All enabled |
 
 ## Translations
-
 This mod is available in these other languages in addition to English:
 - Spanish (Thanks to Rodol J. "ConanCimmerio" Pérez (Ro))
 - Chinese (Thanks to NewbieElton)
