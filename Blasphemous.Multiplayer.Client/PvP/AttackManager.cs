@@ -21,23 +21,30 @@ namespace Blasphemous.Multiplayer.Client.PvP
         {
             if (Core.Logic.Penitent == null || !allAttacks.ContainsKey(attack)) return;
 
-            if (receiverName == Main.Multiplayer.PlayerName)
+            if (receiverName == Main.Multiplayer.PlayerName) // This is the player that got hit
             {
-                // This is the player that got hit
+                // Find the attacker in the scene
                 OtherPlayerScript attacker = Main.Multiplayer.OtherPlayerManager.FindActivePlayer(attackerName);
-                if (attacker == null) return;
+                if (attacker == null)
+                    return;
 
+                // Ensure your input is not blocked
+                if (Core.Input.HasBlocker("ANY"))
+                    return;
+
+                // Ensure pvp between you is allowed
                 Config config = Main.Multiplayer.config;
                 byte attackerTeam = Main.Multiplayer.OtherPlayerManager.FindConnectedPlayer(attackerName).Team;
                 if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == attackerTeam))
                     return;
 
+                // Perform the damage
                 Main.Multiplayer.LogWarning($"Receiving hit {attack} from {attackerName}");
                 DamagePlayer(attack, damageAmount, attacker.gameObject);
             }
-            else
+            else // It was a different player that got hit
             {
-                // It was a different player that got hit
+                // Simply display an effect
                 ShowDamageEffects(receiverName);
             }
         }
@@ -99,7 +106,6 @@ namespace Blasphemous.Multiplayer.Client.PvP
         {
             if (!Main.Multiplayer.FileHandler.LoadDataAsJson("attackValues.json", out PlayerAttack[] attacks))
             {
-                Main.Multiplayer.LogDisplay("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 Main.Multiplayer.LogError("Failed to load attack data!");
                 return;
             }

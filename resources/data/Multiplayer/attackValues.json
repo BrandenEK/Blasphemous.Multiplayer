@@ -66,7 +66,39 @@
 		"AttackName": "Ranged",
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
+		"BaseDamage": 15,
+		"DamageScaling": 0,
+		"Force": 1
+	},
+	{
+		"AttackName": "ChargedProjectile",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
 		"BaseDamage": 20,
+		"DamageScaling": 0,
+		"Force": 1
+	},
+	{
+		"AttackName": "RangedExplosion",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 25,
+		"DamageScaling": 0,
+		"Force": 1
+	},
+	{
+		"AttackName": "Gem",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 20,
+		"DamageScaling": 0,
+		"Force": 1
+	},
+	{
+		"AttackName": "PrayerHit",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 10,
 		"DamageScaling": 0,
 		"Force": 1
 	},
@@ -80,6 +112,14 @@
 		"SoundId": "PenitentMagicDamage"
 	},
 	{
+		"AttackName": "Taranto",
+		"DamageType": "Normal",
+		"DamageElement": "Lightning",
+		"BaseDamage": 60,
+		"DamageScaling": 0,
+		"Force": 1
+	},
+	{
 		"AttackName": "Verdiales",
 		"DamageType": "Normal",
 		"DamageElement": "Magic",
@@ -88,7 +128,7 @@
 		"Force": 1
 	},
 	{
-		"AttackName": "Taranto",
+		"AttackName": "Lorquiana",
 		"DamageType": "Normal",
 		"DamageElement": "Lightning",
 		"BaseDamage": 60,
@@ -124,6 +164,14 @@
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
 		"BaseDamage": 60,
+		"DamageScaling": 0,
+		"Force": 2
+	},
+	{
+		"AttackName": "MiriamSpike",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 30,
 		"DamageScaling": 0,
 		"Force": 1
 	},
