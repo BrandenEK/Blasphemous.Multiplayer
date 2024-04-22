@@ -17,6 +17,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
         RangedExplosion = 25,
 
         Gem = 30,
+        PrayerHit = 31,
 
         Debla = 40,
         Taranto = 50,
@@ -26,9 +27,12 @@ namespace Blasphemous.Multiplayer.Client.PvP
         PoisonMist = 90,
         Shield = 100,
         Miriam = 110,
+        MiriamSpike = 111,
         Aubade = 120,
         Cherubs = 130,
         CanteJondo = 140,
+
+        NoDamage = 255
     }
 
 public enum EffectType

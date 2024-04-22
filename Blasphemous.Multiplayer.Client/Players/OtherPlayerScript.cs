@@ -253,90 +253,10 @@ namespace Blasphemous.Multiplayer.Client.Players
             if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == playerStatus.Team))
                 return;
 
-            Main.Multiplayer.LogError($"{playerStatus.Name} received damage [{hit.AttackingEntity.name},{hit.DamageType},{hit.DamageElement},{hit.Force}]");
-            //Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
-            AttackType attack = AttackType.Slash;
+            AttackType attack = CalculateAttack(hit);
+            Main.Multiplayer.LogError($"Calculated attack type: {attack}");
 
-            AnimatorStateInfo penitentState = Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0);
-            string attackerObject = hit.AttackingEntity.name;
-
-            if (penitentState.IsName("Combo_4"))
-            {
-                attack = AttackType.ComboNormal;
-            }
-            else if (penitentState.IsName("ComboFinisherUp"))
-            {
-                attack = AttackType.ComboUp;
-            }
-            else if (penitentState.IsName("ComboFinisherDown"))
-            {
-                attack = AttackType.ComboDown;
-            }
-            else if (penitentState.IsName("Charged Attack"))
-            {
-                attack = hit.Force == 0
-                    ? AttackType.ChargedProjectile
-                    : AttackType.Charged;
-            }
-            else if (Core.Logic.Penitent.LungeAttack.IsUsingAbility)
-            {
-                attack = AttackType.Lunge;
-            }
-            else if (Core.Logic.Penitent.VerticalAttack.IsUsingAbility)
-            {
-                attack = AttackType.Vertical;
-            }
-            else if (Core.Logic.Penitent.PrayerCast.IsUsingAbility && attackerObject == "Penitent(Clone)")
-            {
-                Main.Multiplayer.LogWarning("Not applying damage for prayer use!");
-                return;
-            }
-            else if (attackerObject == "PenitentCloisteredGemBullet(Clone)")
-            {
-                attack = AttackType.Gem;
-            }
-            else if (attackerObject == "RangeAttackProjectile(Clone)")
-            {
-                attack = AttackType.Ranged;
-            }
-            else if (attackerObject == "PenitentVerticalBeam(Clone)")
-            {
-                attack = AttackType.Debla;
-            }
-            else if (attackerObject == "CrawlerBullet_Base(Clone)")
-            {
-                attack = AttackType.Verdiales;
-            }
-            else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
-            {
-                attack = AttackType.Taranto;
-            }
-            else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
-            {
-                attack = AttackType.Tirana;
-            }
-            else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
-            {
-                attack = AttackType.PoisonMist;
-            }
-            else if (attackerObject.StartsWith("PenitentShield"))
-            {
-                attack = AttackType.Shield;
-            }
-            else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
-            {
-                attack = AttackType.Miriam;
-            }
-            else if (attackerObject == "GuardianPrayer(Clone)")
-            {
-                attack = AttackType.Aubade;
-            }
-            // Range attack explosion
-            // Lorquiana
-            // Cherubs
-            // Cante Jondo
-
-            if (_blockedAttacks.Contains(attack))
+            if (attack == AttackType.NoDamage || _blockedAttacks.Contains(attack))
                 return;
 
             // Calculate damage amount based on attack type, sword level, and equipment
@@ -352,7 +272,100 @@ namespace Blasphemous.Multiplayer.Client.Players
 
         private AttackType CalculateAttack(Hit hit)
         {
-            return AttackType.Slash;
+            string attacker = hit.AttackingEntity.name;
+            string animation = AnimationStates.animations
+                .Select(x => x.name)
+                .FirstOrDefault(x => Core.Logic.Penitent.Animator.GetCurrentAnimatorStateInfo(0).IsName(x)) ?? "Unknown";
+            DamageArea.DamageType type = hit.DamageType;
+            DamageArea.DamageElement element = hit.DamageElement;
+            float force = hit.Force;
+
+            Main.Multiplayer.LogError($"{playerStatus.Name} received damage [{attacker},{animation},{type},{element},{force}]");
+            //Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
+
+            if (attacker == "Penitent(Clone)")
+            {
+                if (animation == "Combo_4")
+                {
+                    return AttackType.ComboNormal;
+                }
+                if (animation == "ComboFinisherUp")
+                {
+                    return AttackType.ComboUp;
+                }
+                if (animation == "ComboFinisherDown")
+                {
+                    return AttackType.ComboDown;
+                }
+                if (animation == "Charged Attack")
+                {
+                    return hit.Force == 0 ? AttackType.ChargedProjectile : AttackType.Charged;
+                }
+                if (animation == "AuraTransform")
+                {
+                    return force == 0 ? AttackType.PrayerHit : AttackType.Lorquiana;
+                }
+                if (Core.Logic.Penitent.LungeAttack.IsUsingAbility)
+                {
+                    return AttackType.Lunge;
+                }
+                if (Core.Logic.Penitent.VerticalAttack.IsUsingAbility)
+                {
+                    return AttackType.Vertical;
+                }
+
+                return force == 0 ? AttackType.RangedExplosion : AttackType.Slash;
+            }
+            
+            if (attacker == "RangeAttackProjectile(Clone)")
+            {
+                return AttackType.Ranged;
+            }
+            if (attacker == "PenitentCloisteredGemBullet(Clone)")
+            {
+                return AttackType.Gem;
+            }
+            if (attacker == "PR203ElmFireTrapLightning(Clone)" || attacker.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
+            {
+                return AttackType.Tirana;
+            }
+            if (attacker == "PenitentVerticalBeam(Clone)")
+            {
+                return AttackType.Debla;
+            }
+            if (attacker == "PenitentTarantoDivineLight(Clone)")
+            {
+                return AttackType.Taranto;
+            }
+            if (attacker == "CrawlerBullet_Base(Clone)")
+            {
+                return AttackType.Verdiales;
+            }
+            if (attacker == "PrayerPoisonAreaEffect(Clone)")
+            {
+                return AttackType.PoisonMist;
+            }
+            if (attacker.StartsWith("PenitentShield"))
+            {
+                return AttackType.Shield;
+            }
+            if (attacker == "MiriamPortalPrayer(Clone)")
+            {
+                return AttackType.Miriam;
+            }
+            if (attacker.StartsWith("MiriamSpike"))
+            {
+                return AttackType.MiriamSpike;
+            }
+            if (attacker == "GuardianPrayer(Clone)")
+            {
+                return AttackType.Aubade;
+            }
+
+            // Cherubs
+            // Cante Jondo
+
+            return AttackType.NoDamage;
         }
 
         private readonly AttackType[] _blockedAttacks =
@@ -361,6 +374,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             AttackType.ChargedProjectile,
             AttackType.RangedExplosion,
             AttackType.Gem,
+            AttackType.PrayerHit,
             AttackType.Taranto,
             AttackType.Verdiales,
             AttackType.Lorquiana,

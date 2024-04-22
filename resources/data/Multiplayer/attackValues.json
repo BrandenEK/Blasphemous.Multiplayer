@@ -95,6 +95,14 @@
 		"Force": 1
 	},
 	{
+		"AttackName": "PrayerHit",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 10,
+		"DamageScaling": 0,
+		"Force": 1
+	},
+	{
 		"AttackName": "Debla",
 		"DamageType": "Normal",
 		"DamageElement": "Magic",
@@ -156,6 +164,14 @@
 		"DamageType": "Normal",
 		"DamageElement": "Normal",
 		"BaseDamage": 60,
+		"DamageScaling": 0,
+		"Force": 2
+	},
+	{
+		"AttackName": "MiriamSpike",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 30,
 		"DamageScaling": 0,
 		"Force": 1
 	},
