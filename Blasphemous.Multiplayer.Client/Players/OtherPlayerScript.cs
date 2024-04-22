@@ -254,8 +254,6 @@ namespace Blasphemous.Multiplayer.Client.Players
                 return;
 
             AttackType attack = CalculateAttack(hit);
-            Main.Multiplayer.LogError($"Calculated attack type: {attack}");
-
             if (attack == AttackType.NoDamage || _blockedAttacks.Contains(attack))
                 return;
 

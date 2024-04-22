@@ -106,7 +106,6 @@ namespace Blasphemous.Multiplayer.Client.PvP
         {
             if (!Main.Multiplayer.FileHandler.LoadDataAsJson("attackValues.json", out PlayerAttack[] attacks))
             {
-                Main.Multiplayer.LogDisplay("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 Main.Multiplayer.LogError("Failed to load attack data!");
                 return;
             }
