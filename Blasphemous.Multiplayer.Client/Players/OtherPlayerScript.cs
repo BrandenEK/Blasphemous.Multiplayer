@@ -252,7 +252,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == playerStatus.Team))
                 return;
 
-            //Main.Multiplayer.LogError("Hit comes from " + hit.AttackingEntity.name);
+            Main.Multiplayer.LogError($"{playerStatus.Name} received damage from {hit.AttackingEntity.name} [{hit.DamageType},{hit.DamageElement},{hit.Force}]");
             //Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
             AttackType attack = AttackType.Slash;
 
@@ -273,7 +273,9 @@ namespace Blasphemous.Multiplayer.Client.Players
             }
             else if (penitentState.IsName("Charged Attack"))
             {
-                attack = AttackType.Charged;
+                attack = hit.Force == 0
+                    ? AttackType.ChargedProjectile
+                    : AttackType.Charged;
             }
             else if (Core.Logic.Penitent.LungeAttack.IsUsingAbility)
             {
@@ -288,45 +290,53 @@ namespace Blasphemous.Multiplayer.Client.Players
                 Main.Multiplayer.LogWarning("Not applying damage for prayer use!");
                 return;
             }
-            //else if (attackerObject == "RangeAttackProjectile(Clone)")
-            //{
-            //    attack = AttackType.Ranged;
-            //}
+            else if (attackerObject == "PenitentCloisteredGemBullet(Clone)")
+            {
+                attack = AttackType.Gem;
+            }
+            else if (attackerObject == "RangeAttackProjectile(Clone)")
+            {
+                attack = AttackType.Unused; // AttackType.Ranged;
+            }
+            // Range attack explosion
             else if (attackerObject == "PenitentVerticalBeam(Clone)")
             {
                 attack = AttackType.Debla;
             }
-            //else if (attackerObject == "CrawlerBullet_Base(Clone)")
-            //{
-            //    attack = AttackType.Verdiales;
-            //}
-            //else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
-            //{
-            //    attack = AttackType.Taranto;
-            //}
-            // Lorquiana
-            //else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
-            //{
-            //    attack = AttackType.Tirana;
-            //}
-            //else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
-            //{
-            //    attack = AttackType.PoisonMist;
-            //}
-            //else if (attackerObject.StartsWith("PenitentShield"))
-            //{
-            //    attack = AttackType.Shield;
-            //}
-            //else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
-            //{
-            //    attack = AttackType.Miriam;
-            //}
-            //else if (attackerObject == "GuardianPrayer(Clone)")
-            //{
-            //    attack = AttackType.Aubade;
-            //}
+            else if (attackerObject == "CrawlerBullet_Base(Clone)")
+            {
+                attack = AttackType.Unused; // AttackType.Verdiales;
+            }
+            else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
+            {
+                attack = AttackType.Unused; // AttackType.Taranto;
+            }
+            //Lorquiana
+            else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
+            {
+                attack = AttackType.Unused; // AttackType.Tirana;
+            }
+            else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
+            {
+                attack = AttackType.Unused; // AttackType.PoisonMist;
+            }
+            else if (attackerObject.StartsWith("PenitentShield"))
+            {
+                attack = AttackType.Unused; // AttackType.Shield;
+            }
+            else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
+            {
+                attack = AttackType.Unused; // AttackType.Miriam;
+            }
+            else if (attackerObject == "GuardianPrayer(Clone)")
+            {
+                attack = AttackType.Unused; // AttackType.Aubade;
+            }
             // Cherubs
             // Cante Jondo
+
+            if (attack == AttackType.Unused)
+                return;
 
             // Calculate damage amount based on attack type, sword level, and equipment
             PlayerAttack attackData = Main.Multiplayer.AttackManager.GetAttackData(attack);
