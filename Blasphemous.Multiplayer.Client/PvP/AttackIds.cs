@@ -29,8 +29,6 @@ namespace Blasphemous.Multiplayer.Client.PvP
         Aubade = 120,
         Cherubs = 130,
         CanteJondo = 140,
-
-        Unused = 255
     }
 
 public enum EffectType

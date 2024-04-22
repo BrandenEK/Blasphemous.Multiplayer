@@ -2,6 +2,7 @@
 using Blasphemous.Multiplayer.Client.PvP;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
+using System.Linq;
 using Tools.Level.Interactables;
 using UnityEngine;
 
@@ -252,7 +253,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             if (!config.enablePvP || (!config.enableFriendlyFire && Main.Multiplayer.PlayerTeam == playerStatus.Team))
                 return;
 
-            Main.Multiplayer.LogError($"{playerStatus.Name} received damage from {hit.AttackingEntity.name} [{hit.DamageType},{hit.DamageElement},{hit.Force}]");
+            Main.Multiplayer.LogError($"{playerStatus.Name} received damage [{hit.AttackingEntity.name},{hit.DamageType},{hit.DamageElement},{hit.Force}]");
             //Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
             AttackType attack = AttackType.Slash;
 
@@ -296,46 +297,46 @@ namespace Blasphemous.Multiplayer.Client.Players
             }
             else if (attackerObject == "RangeAttackProjectile(Clone)")
             {
-                attack = AttackType.Unused; // AttackType.Ranged;
+                attack = AttackType.Ranged;
             }
-            // Range attack explosion
             else if (attackerObject == "PenitentVerticalBeam(Clone)")
             {
                 attack = AttackType.Debla;
             }
             else if (attackerObject == "CrawlerBullet_Base(Clone)")
             {
-                attack = AttackType.Unused; // AttackType.Verdiales;
+                attack = AttackType.Verdiales;
             }
             else if (attackerObject == "PenitentTarantoDivineLight(Clone)")
             {
-                attack = AttackType.Unused; // AttackType.Taranto;
+                attack = AttackType.Taranto;
             }
-            //Lorquiana
             else if (attackerObject == "PR203ElmFireTrapLightning(Clone)" || attackerObject.StartsWith("ElmFireTrap")) // This might be triggered by real traps in MaH
             {
-                attack = AttackType.Unused; // AttackType.Tirana;
+                attack = AttackType.Tirana;
             }
             else if (attackerObject == "PrayerPoisonAreaEffect(Clone)")
             {
-                attack = AttackType.Unused; // AttackType.PoisonMist;
+                attack = AttackType.PoisonMist;
             }
             else if (attackerObject.StartsWith("PenitentShield"))
             {
-                attack = AttackType.Unused; // AttackType.Shield;
+                attack = AttackType.Shield;
             }
             else if (attackerObject == "MiriamPortalPrayer(Clone)" || attackerObject.StartsWith("MiriamSpike")) // Might want to seperate these
             {
-                attack = AttackType.Unused; // AttackType.Miriam;
+                attack = AttackType.Miriam;
             }
             else if (attackerObject == "GuardianPrayer(Clone)")
             {
-                attack = AttackType.Unused; // AttackType.Aubade;
+                attack = AttackType.Aubade;
             }
+            // Range attack explosion
+            // Lorquiana
             // Cherubs
             // Cante Jondo
 
-            if (attack == AttackType.Unused)
+            if (_blockedAttacks.Contains(attack))
                 return;
 
             // Calculate damage amount based on attack type, sword level, and equipment
@@ -348,5 +349,28 @@ namespace Blasphemous.Multiplayer.Client.Players
             Main.Multiplayer.AttackManager.ShowDamageEffects(playerStatus.Name);
             Main.Multiplayer.NetworkManager.SendAttack(playerStatus.Name, attack, (byte)damageAmount);
         }
+
+        private AttackType CalculateAttack(Hit hit)
+        {
+            return AttackType.Slash;
+        }
+
+        private readonly AttackType[] _blockedAttacks =
+        {
+            AttackType.Ranged,
+            AttackType.ChargedProjectile,
+            AttackType.RangedExplosion,
+            AttackType.Gem,
+            AttackType.Taranto,
+            AttackType.Verdiales,
+            AttackType.Lorquiana,
+            AttackType.Tirana,
+            AttackType.PoisonMist,
+            AttackType.Shield,
+            AttackType.Miriam,
+            AttackType.Aubade,
+            AttackType.Cherubs,
+            AttackType.CanteJondo,
+        };
     }
 }
