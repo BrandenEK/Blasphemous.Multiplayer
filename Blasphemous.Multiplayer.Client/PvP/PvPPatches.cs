@@ -3,6 +3,8 @@ using Framework.Inventory;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Abilities;
 using Gameplay.GameControllers.Penitent.Damage;
+using Framework.Managers;
+using System.Collections.Generic;
 
 namespace Blasphemous.Multiplayer.Client.PvP
 {
@@ -21,6 +23,19 @@ namespace Blasphemous.Multiplayer.Client.PvP
                 //    Main.Multiplayer.SendNewEffect(EffectType.Verdiales);
                 //    break;
             }
+        }
+    }
+
+    // When using 'any', check for any input blocker except for 'PLAYER_LOGIC'
+    [HarmonyPatch(typeof(InputManager), nameof(InputManager.HasBlocker))]
+    class Input_Block_Patch
+    {
+        public static void Postfix(string name, List<string> ___inputBlockers, ref bool __result)
+        {
+            if (name != "ANY")
+                return;
+
+            __result = ___inputBlockers.Count > 1 || ___inputBlockers.Count == 1 && ___inputBlockers[0] != "PLAYER_LOGIC";
         }
     }
 
