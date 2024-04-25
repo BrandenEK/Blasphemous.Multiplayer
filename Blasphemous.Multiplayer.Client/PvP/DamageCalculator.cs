@@ -24,7 +24,7 @@ public class DamageCalculator
     /// </summary>
     public byte CalculateOffense(AttackType attack)
     {
-        return 0;
+        return (byte)Main.Multiplayer.AttackManager.GetAttackData(attack).BaseDamage;
     }
 
     /// <summary>
@@ -32,10 +32,6 @@ public class DamageCalculator
     /// </summary>
     public float CalculateDefense(AttackType attack, byte damage)
     {
-        foreach (var item in _defenses)
-        {
-            Main.Multiplayer.LogWarning(item.Id + ": " + item.Condition);
-        }
-        return 0;
+        return damage;
     }
 }

@@ -132,7 +132,7 @@ public class Multiplayer : BlasMod, IPersistentMod
             //connectedPlayers.Add("Test", test);
             //attackManager.TakeHit("", 0);
 
-            DamageCalculator.CalculateDefense(AttackType.Slash, 10);
+            DamageCalculator.CalculateOffense(AttackType.Slash);
         }
         else if (Input.GetKeyDown(KeyCode.Keypad6))
         {
@@ -149,6 +149,8 @@ public class Multiplayer : BlasMod, IPersistentMod
             //        Main.Multiplayer.LogError(Main.displayHierarchy(pray.transform, "", 0, 5, true));
             //    }
             //}
+
+            DamageCalculator.CalculateDefense(AttackType.Slash, 10);
         }
 
         NetworkManager.ProcessQueue();
