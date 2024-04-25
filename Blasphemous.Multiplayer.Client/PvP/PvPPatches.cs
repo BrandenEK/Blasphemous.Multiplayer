@@ -44,7 +44,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
     {
         public static void Postfix(Hit hit, ref float __result)
         {
-            if (hit.HitSoundId.StartsWith("PVP"))
+            if (hit.HitSoundId != null && hit.HitSoundId.StartsWith("PVP"))
                 __result = hit.DamageAmount;
         }
     }
@@ -55,8 +55,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
     {
         public static void Prefix(ref string impactAudioId)
         {
-            Main.Multiplayer.LogError("AUDIO: " + impactAudioId);
-            impactAudioId = impactAudioId.Replace("PVP", string.Empty);
+            impactAudioId = impactAudioId?.Replace("PVP", string.Empty);
         }
     }
 

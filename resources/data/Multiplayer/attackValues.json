@@ -6,7 +6,7 @@
 		"BaseDamage": 10,
 		"DamageScaling": 4,
 		"Force": 1,
-		"SoundId": "PenitentSimpleEnemyHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentSimpleEnemyHit"
 	},
 	{
 		"AttackName": "ComboNormal",
@@ -15,7 +15,7 @@
 		"BaseDamage": 20,
 		"DamageScaling": 5,
 		"Force": 0,
-		"SoundId": "PenitentHeavyEnemyHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "ComboUp",
@@ -24,7 +24,7 @@
 		"BaseDamage": 30,
 		"DamageScaling": 5,
 		"Force": 1,
-		"SoundId": "PenitentHeavyEnemyHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "ComboDown",
@@ -33,7 +33,7 @@
 		"BaseDamage": 40,
 		"DamageScaling": 5,
 		"Force": 0,
-		"SoundId": "PenitentHeavyEnemyHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "Charged",
@@ -42,7 +42,7 @@
 		"BaseDamage": 40,
 		"DamageScaling": 6,
 		"Force": 2,
-		"SoundId": "PenitentHeavyEnemyHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "Lunge",
@@ -51,7 +51,7 @@
 		"BaseDamage": 20,
 		"DamageScaling": 4,
 		"Force": 1,
-		"SoundId": "PenitentLungeAttackHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentLungeAttackHit"
 	},
 	{
 		"AttackName": "Vertical",
@@ -60,7 +60,7 @@
 		"BaseDamage": 20,
 		"DamageScaling": 4,
 		"Force": 1,
-		"SoundId": "PenitentHeavyEnemyHit"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "Ranged",
@@ -68,7 +68,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 15,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Attack/PenitentRangeAttackHit"
 	},
 	{
 		"AttackName": "ChargedProjectile",
@@ -76,7 +77,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 20,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Attack/PenitentChargedAttackProjectileHit"
 	},
 	{
 		"AttackName": "RangedExplosion",
@@ -84,7 +86,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 25,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentAcolyteDamage"
 	},
 	{
 		"AttackName": "Gem",
@@ -92,7 +95,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 20,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
 	},
 	{
 		"AttackName": "PrayerHit",
@@ -100,7 +104,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 10,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
 	},
 	{
 		"AttackName": "Debla",
@@ -109,7 +114,7 @@
 		"BaseDamage": 60,
 		"DamageScaling": 0,
 		"Force": 1,
-		"SoundId": "PenitentMagicDamage"
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
 	},
 	{
 		"AttackName": "Taranto",
@@ -117,7 +122,8 @@
 		"DamageElement": "Lightning",
 		"BaseDamage": 60,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
 	},
 	{
 		"AttackName": "Verdiales",
@@ -125,7 +131,8 @@
 		"DamageElement": "Magic",
 		"BaseDamage": 60,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentWaxcrawlerDamage"
 	},
 	{
 		"AttackName": "Lorquiana",
@@ -141,7 +148,8 @@
 		"DamageElement": "Lightning",
 		"BaseDamage": 80,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
 	},
 	{
 		"AttackName": "PoisonMist",
@@ -157,7 +165,8 @@
 		"DamageElement": "Normal",
 		"BaseDamage": 40,
 		"DamageScaling": 0,
-		"Force": 1
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Attack/PenitentRangeAttackHit"
 	},
 	{
 		"AttackName": "Miriam",

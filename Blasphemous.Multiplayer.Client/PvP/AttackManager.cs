@@ -72,13 +72,11 @@ namespace Blasphemous.Multiplayer.Client.PvP
                 Unparriable = true,
                 Unblockable = true,
                 Unnavoidable = true,
-                HitSoundId = "PVP"
+                HitSoundId = $"PVP{currentAttack.SoundId}"
             };
 
             // Actually damage player
             Core.Logic.Penitent.Damage(hit);
-            if (currentAttack.SoundId != null) // Can remove later
-                Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + currentAttack.SoundId);
         }
 
         /// <summary>
