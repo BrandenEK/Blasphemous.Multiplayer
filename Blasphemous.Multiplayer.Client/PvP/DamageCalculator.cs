@@ -1,14 +1,36 @@
-﻿
+﻿using Blasphemous.Multiplayer.Client.PvP.Models;
+
 namespace Blasphemous.Multiplayer.Client.PvP;
 
+/// <summary>
+/// Handles scaling pvp attack damage based on stats
+/// </summary>
 public class DamageCalculator
 {
+    private readonly OffenseItem[] _offenses;
+    private readonly DefenseItem[] _defenses;
+
+    /// <summary>
+    /// Loads all offense and defense items
+    /// </summary>
+    public DamageCalculator()
+    {
+        Main.Multiplayer.FileHandler.LoadDataAsJson("offenses", out _offenses);
+        Main.Multiplayer.FileHandler.LoadDataAsJson("defenses", out _defenses);
+    }
+
+    /// <summary>
+    /// Scales the base damage of the attack based on offense stats
+    /// </summary>
     public byte CalculateOffense(AttackType attack)
     {
         return 0;
     }
 
-    public byte CalculateDefense(AttackType attack, byte damage)
+    /// <summary>
+    /// Scales the full damage of the attack based on defense stats
+    /// </summary>
+    public float CalculateDefense(AttackType attack, byte damage)
     {
         return 0;
     }

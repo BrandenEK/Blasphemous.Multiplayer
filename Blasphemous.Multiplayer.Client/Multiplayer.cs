@@ -30,6 +30,7 @@ public class Multiplayer : BlasMod, IPersistentMod
     public NotificationManager NotificationManager { get; private set; }
     public OtherPlayerManager OtherPlayerManager { get; private set; }
     public ProgressManager ProgressManager { get; private set; }
+    public DamageCalculator DamageCalculator { get; private set; }
 
     // Game status
     public bool RandomizerMode => IsModLoadedName("Randomizer", out _);
@@ -59,6 +60,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         NotificationManager = new NotificationManager();
         OtherPlayerManager = new OtherPlayerManager();
         ProgressManager = new ProgressManager();
+        DamageCalculator = new DamageCalculator();
 
         // Initialize data
         config = ConfigHandler.Load<Config>();
