@@ -80,6 +80,14 @@ namespace Blasphemous.Multiplayer.Client.PvP
                 Core.Audio.PlayOneShot("event:/SFX/Penitent/Damage/" + currentAttack.SoundId);
         }
 
+        /// <summary>
+        /// Damages the player with an attack without validation
+        /// </summary>
+        public void DamagePlayer_Internal(AttackType type, byte amount)
+        {
+            DamagePlayer(type, amount, Core.Logic.Penitent.gameObject);
+        }
+
         public void ShowDamageEffects(string receiverName)
         {
             OtherPlayerScript receiver = Main.Multiplayer.OtherPlayerManager.FindActivePlayer(receiverName);

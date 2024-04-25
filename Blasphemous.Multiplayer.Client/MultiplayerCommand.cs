@@ -1,4 +1,5 @@
 ﻿using Blasphemous.CheatConsole;
+using Blasphemous.Multiplayer.Client.PvP;
 using System;
 using System.Collections.Generic;
 
@@ -19,7 +20,10 @@ namespace Blasphemous.Multiplayer.Client
                 { "connect", Connect },
                 { "disconnect", Disconnect },
                 { "team", Team },
-                { "players", Players }
+                { "players", Players },
+#if DEBUG
+                { "damage", Damage },
+#endif
             };
         }
 
@@ -33,6 +37,9 @@ namespace Blasphemous.Multiplayer.Client
             Write("multiplayer disconnect: Disconnect from current server");
             Write("multiplayer team NUMBER: Change to a different team (1-10)");
             Write("multiplayer players: List all connected players in the server");
+#if DEBUG
+            Write("multiplayer damage TYPE AMOUNT: Simulates receiving a pvp attack");
+#endif
         }
 
         private void Status(string[] parameters)
@@ -165,6 +172,17 @@ namespace Blasphemous.Multiplayer.Client
             {
                 Write(player.Name + ": Team " + player.Team);
             }
+        }
+
+        private void Damage(string[] parameters)
+        {
+            if (!ValidateParameterList(parameters, 2)) return;
+
+            AttackType type = (AttackType)Enum.Parse(typeof(AttackType), parameters[0]);
+            ValidateIntParameter(parameters[1], 0, 255, out int amount);
+
+            Main.Multiplayer.LogWarning($"Testing attack {type} with damage {amount}");
+            Main.Multiplayer.AttackManager.DamagePlayer_Internal(type, (byte)amount);
         }
     }
 }
