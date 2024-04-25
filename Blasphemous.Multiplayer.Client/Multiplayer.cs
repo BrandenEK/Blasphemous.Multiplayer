@@ -131,6 +131,8 @@ public class Multiplayer : BlasMod, IPersistentMod
             //test.currentScene = "D05Z02S06";
             //connectedPlayers.Add("Test", test);
             //attackManager.TakeHit("", 0);
+
+            DamageCalculator.CalculateDefense(AttackType.Slash, 10);
         }
         else if (Input.GetKeyDown(KeyCode.Keypad6))
         {

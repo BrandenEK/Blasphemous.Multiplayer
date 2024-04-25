@@ -1,0 +1,15 @@
+[
+{
+	"id": "RB01",
+	"physicalReduction": 0.1
+},
+{
+	"id": "RB10",
+	"condition": "LowHealth",
+	"physicalReduction": 0.5,
+	"fireReduction": 0.5,
+	"toxicReduction": 0.5,
+	"magicReduction": 0.5,
+	"lightningReduction": 0.5
+}
+]

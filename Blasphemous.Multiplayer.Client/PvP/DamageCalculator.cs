@@ -15,8 +15,8 @@ public class DamageCalculator
     /// </summary>
     public DamageCalculator()
     {
-        Main.Multiplayer.FileHandler.LoadDataAsJson("offenses", out _offenses);
-        Main.Multiplayer.FileHandler.LoadDataAsJson("defenses", out _defenses);
+        Main.Multiplayer.FileHandler.LoadDataAsJson("offenses.json", out _offenses);
+        Main.Multiplayer.FileHandler.LoadDataAsJson("defenses.json", out _defenses);
     }
 
     /// <summary>
@@ -32,6 +32,10 @@ public class DamageCalculator
     /// </summary>
     public float CalculateDefense(AttackType attack, byte damage)
     {
+        foreach (var item in _defenses)
+        {
+            Main.Multiplayer.LogWarning(item.Id + ": " + item.Condition);
+        }
         return 0;
     }
 }

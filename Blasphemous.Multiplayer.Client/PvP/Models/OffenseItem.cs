@@ -1,12 +1,12 @@
 ﻿
 namespace Blasphemous.Multiplayer.Client.PvP.Models;
 
-public class OffenseItem
+public class OffenseItem(string id, ConditionType condition, float swordIncrease, float prayerIncrease, float bloodIncrease)
 {
-    public string Id { get; }
-    public ConditionType Condition { get; }
+    public string Id { get; } = id;
+    public ConditionType Condition { get; } = condition;
 
-    public float SwordIncrease { get; }
-    public float PrayerIncrease { get; }
-    public float BloodIncrease { get; }
+    public float SwordIncrease { get; } = swordIncrease;
+    public float PrayerIncrease { get; } = prayerIncrease;
+    public float BloodIncrease { get; } = bloodIncrease;
 }
