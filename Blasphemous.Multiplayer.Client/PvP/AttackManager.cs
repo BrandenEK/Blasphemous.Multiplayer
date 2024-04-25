@@ -59,12 +59,15 @@ namespace Blasphemous.Multiplayer.Client.PvP
 
         private void DamagePlayer(AttackType attack, byte damageAmount, GameObject attacker)
         {
+            // Calculate final damage amount based on resistances
+            float finalDamage = Main.Multiplayer.DamageCalculator.CalculateDefense(attack, damageAmount);
+
             // Calculate hit data based on attack & parameters
             PlayerAttack currentAttack = GetAttackData(attack);
             Hit hit = new()
             {
                 AttackingEntity = attacker,
-                DamageAmount = damageAmount,
+                DamageAmount = finalDamage,
                 DamageElement = currentAttack.DamageElement,
                 DamageType = currentAttack.DamageType,
                 Force = currentAttack.Force,
