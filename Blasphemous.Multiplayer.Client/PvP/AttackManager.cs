@@ -72,6 +72,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
                 Unparriable = true,
                 Unblockable = true,
                 Unnavoidable = true,
+                HitSoundId = "PVP"
             };
 
             // Actually damage player
