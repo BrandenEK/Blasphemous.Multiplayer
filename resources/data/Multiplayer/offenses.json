@@ -1,3 +1,14 @@
 [
-
+{
+	"id": "RB06",
+	"swordIncrease": 0.1
+},
+{
+	"id": "RB104",
+	"swordIncrease": 0.5
+},
+{
+	"id": "HE05",
+	"bloodIncrease": -0.5
+}
 ]

@@ -26,9 +26,14 @@ public class DamageCalculator
     /// <summary>
     /// Scales the base damage of the attack based on offense stats
     /// </summary>
-    public byte CalculateOffense(AttackType attack)
+    public float CalculateOffense(AttackType attack)
     {
-        return (byte)Main.Multiplayer.AttackManager.GetAttackData(attack).BaseDamage;
+        PlayerAttack data = Main.Multiplayer.AttackManager.GetAttackData(attack);
+
+        return data.BaseDamage * _offenses
+            .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
+            .Select(item => GetIncreaseForType(item, data))
+            .Aggregate(1f, (x, y) => x + y);
     }
 
     /// <summary>
@@ -40,7 +45,7 @@ public class DamageCalculator
 
         return damage * _defenses
             .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
-            .Select(item => 1 - GetReductionForElement(item, data.DamageElement))
+            .Select(item => 1 - GetReductionForElement(item, data))
             .Aggregate(1f, (x, y) => x * y);
     }
 
@@ -61,16 +66,27 @@ public class DamageCalculator
         };
     }
 
-    private float GetReductionForElement(DefenseItem item, DamageArea.DamageElement element)
+    private float GetIncreaseForType(OffenseItem item, PlayerAttack attack)
     {
-        return element switch
+        return attack.ScalingType switch
+        {
+            ScalingType.Sword => item.SwordIncrease,
+            ScalingType.Prayer => item.PrayerIncrease,
+            ScalingType.Blood => item.BloodIncrease,
+            _ => throw new System.Exception($"Invalid scaling type: {attack.ScalingType}")
+        };
+    }
+
+    private float GetReductionForElement(DefenseItem item, PlayerAttack attack)
+    {
+        return attack.DamageElement switch
         {
             DamageArea.DamageElement.Normal => item.PhysicalReduction,
             DamageArea.DamageElement.Fire => item.FireReduction,
             DamageArea.DamageElement.Toxic => item.ToxicReduction,
             DamageArea.DamageElement.Magic => item.MagicReduction,
             DamageArea.DamageElement.Lightning => item.LightningReduction,
-            _ => throw new System.Exception($"Invalid element type: {element}")
+            _ => throw new System.Exception($"Invalid element type: {attack.DamageElement}")
         };
     }
 }

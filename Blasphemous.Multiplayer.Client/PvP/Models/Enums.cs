@@ -7,3 +7,10 @@ public enum ConditionType
     LowHealth = 1,
     NoFlasks = 2,
 }
+
+public enum ScalingType
+{
+    Sword = 0,
+    Prayer = 1,
+    Blood = 2,
+}
