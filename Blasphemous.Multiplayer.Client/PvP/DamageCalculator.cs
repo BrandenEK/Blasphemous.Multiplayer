@@ -28,7 +28,7 @@ public class DamageCalculator
     /// </summary>
     public float CalculateOffense(AttackType attack)
     {
-        PlayerAttack data = Main.Multiplayer.AttackManager.GetAttackData(attack);
+        AttackData data = Main.Multiplayer.AttackManager.GetAttackData(attack);
 
         return data.BaseDamage * _offenses
             .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
@@ -41,7 +41,7 @@ public class DamageCalculator
     /// </summary>
     public float CalculateDefense(AttackType attack, byte damage)
     {
-        PlayerAttack data = Main.Multiplayer.AttackManager.GetAttackData(attack);
+        AttackData data = Main.Multiplayer.AttackManager.GetAttackData(attack);
 
         return damage * _defenses
             .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
@@ -66,7 +66,7 @@ public class DamageCalculator
         };
     }
 
-    private float GetIncreaseForType(OffenseItem item, PlayerAttack attack)
+    private float GetIncreaseForType(OffenseItem item, AttackData attack)
     {
         return attack.ScalingType switch
         {
@@ -77,7 +77,7 @@ public class DamageCalculator
         };
     }
 
-    private float GetReductionForElement(DefenseItem item, PlayerAttack attack)
+    private float GetReductionForElement(DefenseItem item, AttackData attack)
     {
         return attack.DamageElement switch
         {

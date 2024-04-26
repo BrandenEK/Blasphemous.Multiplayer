@@ -8,6 +8,7 @@ using Blasphemous.Multiplayer.Client.Notifications;
 using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;

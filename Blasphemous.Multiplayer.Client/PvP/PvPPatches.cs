@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Blasphemous.Multiplayer.Client.PvP.Models;
+using HarmonyLib;
 using Framework.Inventory;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Abilities;

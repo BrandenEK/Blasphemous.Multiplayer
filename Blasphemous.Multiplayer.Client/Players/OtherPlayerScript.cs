@@ -1,5 +1,5 @@
 ﻿using Blasphemous.Multiplayer.Client.Data;
-using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using System.Linq;

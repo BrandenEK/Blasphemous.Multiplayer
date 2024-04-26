@@ -1,4 +1,5 @@
 ﻿using Blasphemous.Multiplayer.Client.Players;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.GameControllers.Effects.Player.Sparks;
 using Gameplay.GameControllers.Entities;
@@ -9,11 +10,11 @@ namespace Blasphemous.Multiplayer.Client.PvP
 {
     public class AttackManager
     {
-        private readonly Dictionary<AttackType, PlayerAttack> allAttacks;
+        private readonly Dictionary<AttackType, AttackData> allAttacks;
 
         public AttackManager()
         {
-            allAttacks = new Dictionary<AttackType, PlayerAttack>();
+            allAttacks = new Dictionary<AttackType, AttackData>();
             LoadAttacks();
         }
 
@@ -63,7 +64,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
             float finalDamage = Main.Multiplayer.DamageCalculator.CalculateDefense(attack, damageAmount);
 
             // Calculate hit data based on attack & parameters
-            PlayerAttack currentAttack = GetAttackData(attack);
+            AttackData currentAttack = GetAttackData(attack);
             Hit hit = new()
             {
                 AttackingEntity = attacker,
@@ -102,9 +103,9 @@ namespace Blasphemous.Multiplayer.Client.PvP
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
         }
 
-        public PlayerAttack GetAttackData(AttackType type)
+        public AttackData GetAttackData(AttackType type)
         {
-            if (allAttacks.TryGetValue(type, out PlayerAttack attack))
+            if (allAttacks.TryGetValue(type, out AttackData attack))
             {
                 return attack;
             }
@@ -114,15 +115,15 @@ namespace Blasphemous.Multiplayer.Client.PvP
 
         private void LoadAttacks()
         {
-            if (!Main.Multiplayer.FileHandler.LoadDataAsJson("attackValues.json", out PlayerAttack[] attacks))
+            if (!Main.Multiplayer.FileHandler.LoadDataAsJson("attackValues.json", out AttackData[] attacks))
             {
                 Main.Multiplayer.LogError("Failed to load attack data!");
                 return;
             }
             
-            foreach (PlayerAttack attack in attacks)
+            foreach (AttackData attack in attacks)
             {
-                allAttacks.Add(attack.AttackName, attack);
+                allAttacks.Add(attack.Name, attack);
             }
             Main.Multiplayer.Log("Successfully loaded all attack data!");
         }

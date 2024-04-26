@@ -1,5 +1,5 @@
 ﻿using Blasphemous.CheatConsole;
-using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using System;
 using System.Collections.Generic;
 
