@@ -1,4 +1,8 @@
-﻿using Blasphemous.Multiplayer.Client.PvP.Models;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.PvP.Models;
+using Framework.Managers;
+using Gameplay.GameControllers.Entities;
+using System.Linq;
 
 namespace Blasphemous.Multiplayer.Client.PvP;
 
@@ -32,6 +36,41 @@ public class DamageCalculator
     /// </summary>
     public float CalculateDefense(AttackType attack, byte damage)
     {
-        return damage;
+        PlayerAttack data = Main.Multiplayer.AttackManager.GetAttackData(attack);
+
+        return damage * _defenses
+            .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
+            .Select(item => 1 - GetReductionForElement(item, data.DamageElement))
+            .Aggregate(1f, (x, y) => x * y);
+    }
+
+    private bool IsItemEquipped(string item)
+    {
+        var obj = Core.InventoryManager.GetBaseObject(item, ItemModder.GetItemTypeFromId(item));
+        return Core.InventoryManager.IsBaseObjectEquipped(obj);
+    }
+
+    private bool IsConditionMet(ConditionType condition)
+    {
+        return condition switch
+        {
+            ConditionType.None => true,
+            ConditionType.LowHealth => Core.Logic.Penitent.Stats.Life.MissingRatio <= 0.2f,
+            ConditionType.NoFlasks => Core.Logic.Penitent.Stats.Flask.Current == 0,
+            _ => throw new System.Exception($"Invalid condition type: {condition}")
+        };
+    }
+
+    private float GetReductionForElement(DefenseItem item, DamageArea.DamageElement element)
+    {
+        return element switch
+        {
+            DamageArea.DamageElement.Normal => item.PhysicalReduction,
+            DamageArea.DamageElement.Fire => item.FireReduction,
+            DamageArea.DamageElement.Toxic => item.ToxicReduction,
+            DamageArea.DamageElement.Magic => item.MagicReduction,
+            DamageArea.DamageElement.Lightning => item.LightningReduction,
+            _ => throw new System.Exception($"Invalid element type: {element}")
+        };
     }
 }
