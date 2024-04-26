@@ -11,6 +11,7 @@ namespace Blasphemous.Multiplayer.Client.PvP.Models
         public int BaseDamage { get; } = baseDamage;
         public ScalingType ScalingType { get; } = scalingType;
         public int ScalingAmount { get; } = scalingAmount;
+
         public int Force { get; } = force;
         public string SoundId { get; } = soundId;
     }
