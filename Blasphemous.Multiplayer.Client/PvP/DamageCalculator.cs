@@ -30,10 +30,10 @@ public class DamageCalculator
     {
         AttackData data = Main.Multiplayer.AttackManager.GetAttackData(attack);
 
-        return data.BaseDamage * _offenses
+        return data.BaseDamage + Core.Logic.Penitent.Stats.Strength.GetUpgrades() + _offenses
             .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
             .Select(item => GetIncreaseForType(item, data))
-            .Aggregate(1f, (x, y) => x + y);
+            .Sum();
     }
 
     /// <summary>
