@@ -30,10 +30,14 @@ public class DamageCalculator
     {
         AttackData data = Main.Multiplayer.AttackManager.GetAttackData(attack);
 
-        return data.BaseDamage + Core.Logic.Penitent.Stats.Strength.GetUpgrades() + _offenses
+        float offenseSum = _offenses
             .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
             .Select(item => GetIncreaseForType(item, data))
             .Sum();
+
+        float swordLevel = data.ScalingType == ScalingType.Prayer ? 0 : Core.Logic.Penitent.Stats.Strength.GetUpgrades();
+
+        return data.BaseDamage + (offenseSum + swordLevel) * data.ScalingAmount;
     }
 
     /// <summary>
@@ -43,10 +47,12 @@ public class DamageCalculator
     {
         AttackData data = Main.Multiplayer.AttackManager.GetAttackData(attack);
 
-        return damage * _defenses
+        float defenseMultiplier = _defenses
             .Where(item => IsItemEquipped(item.Id) && IsConditionMet(item.Condition))
             .Select(item => 1 - GetReductionForElement(item, data))
             .Aggregate(1f, (x, y) => x * y);
+
+        return damage * defenseMultiplier;
     }
 
     private bool IsItemEquipped(string item)
