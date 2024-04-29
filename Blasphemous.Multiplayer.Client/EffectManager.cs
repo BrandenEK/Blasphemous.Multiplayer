@@ -8,9 +8,16 @@ public class EffectManager
 {
     private readonly Dictionary<int, GameObject> _activeEffects = new();
 
-    public void OnReceiveEffect()
+    public void SendEffect()
     {
+        // Whenever spawning a vfx object, add an effect component to it that sends update packet every frame or so
+    }
 
+    public void ReceiveEffect()
+    {
+        // If enable flag, create new gameobject with type animation
+        // If disable flag find object with id and remove it
+        // Find object with id and update its properties
     }
 
     private void Test()
