@@ -1,0 +1,42 @@
+[
+    {
+        "id": "RB06",
+        "swordIncrease": 2.5
+    },
+    {
+        "id": "RB104",
+        "condition": "NoFlasks",
+        "swordIncrease": 5
+    },
+    {
+        "id": "RB30",
+        "prayerIncrease": 0.8
+    },
+    {
+        "id": "HE01",
+        "prayerIncrease": 1.2,
+        "bloodIncrease": 8
+    },
+    {
+        "id": "HE03",
+        "condition": "LowHealth",
+        "swordIncrease": 15
+    },
+    {
+        "id": "HE04",
+        "swordIncrease": 10
+    },
+    {
+        "id": "HE05",
+        "bloodIncrease": -6.5
+    },
+    {
+        "id": "HE201",
+        "swordIncrease": 3
+    },
+    {
+        "id": "PR10",
+        "swordIncrease": 10
+    }
+
+]
