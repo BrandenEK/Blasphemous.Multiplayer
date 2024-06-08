@@ -33,37 +33,27 @@
 
   <Target Name="Development" AfterTargets="PostBuildEvent">
 
-    <!-- Get resource files -->
-    <PropertyGroup>
-      <ResourcesFolder>$(SolutionDir)resources\</ResourcesFolder>
-    </PropertyGroup>
+    <!-- Get plugin & resources -->
     <ItemGroup>
-      <DataDlls Include="$(ResourcesFolder)data\*" />
-      <DataFiles Include="$(ResourcesFolder)data\$(Product)\*" />
-      <Levels Include="$(ResourcesFolder)levels\$(Product)\*" />
-      <Localization Include="$(ResourcesFolder)localization\*" />
+      <PluginDll Include="$(TargetPath)" />
+      <Resources Include="$(SolutionDir)\resources\**\*.*" />
     </ItemGroup>
-
-    <!-- Copy plugin & resources to development folder -->
+    
+    <!-- Get export directories -->
     <PropertyGroup>
       <DevFolder>C:\Program Files (x86)\Steam\steamapps\common\Blasphemous\Modding\</DevFolder>
+      <PublishFolder>$(SolutionDir)\publish\$(TargetName)</PublishFolder>
     </PropertyGroup>
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DevFolder)plugins" />
-    <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(DevFolder)data" />
-    <Copy SourceFiles="@(DataFiles)" DestinationFolder="$(DevFolder)data\$(Product)" />
-    <Copy SourceFiles="@(Levels)" DestinationFolder="$(DevFolder)levels\$(Product)" />
-    <Copy SourceFiles="@(Localization)" DestinationFolder="$(DevFolder)localization" />
 
-    <!-- Export & zip all mod files -->
-    <PropertyGroup>
-      <ExportFolder>$(SolutionDir)publish\$(TargetName)\</ExportFolder>
-    </PropertyGroup>
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ExportFolder)plugins" />
-    <Copy SourceFiles="@(DataDlls)" DestinationFolder="$(ExportFolder)data" />
-    <Copy SourceFiles="@(DataFiles)" DestinationFolder="$(ExportFolder)data\$(Product)" />
-    <Copy SourceFiles="@(Levels)" DestinationFolder="$(ExportFolder)levels\$(Product)" />
-    <Copy SourceFiles="@(Localization)" DestinationFolder="$(ExportFolder)localization" />
-    <ZipDirectory SourceDirectory="$(ExportFolder)" DestinationFile="$(ExportFolder)..\$(TargetName).zip" Overwrite="true" />
+    <!-- Export to dev folder -->
+    <Copy SourceFiles="@(Resources)" DestinationFolder="$(DevFolder)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PluginDll)" DestinationFolder="$(DevFolder)\plugins" SkipUnchangedFiles="true" />
+    
+    <!-- Export to publish folder -->
+    <RemoveDir Directories="$(PublishFolder)" />
+    <Copy SourceFiles="@(Resources)" DestinationFolder="$(PublishFolder)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(PluginDll)" DestinationFolder="$(PublishFolder)\plugins" SkipUnchangedFiles="true" />
+    <ZipDirectory SourceDirectory="$(PublishFolder)" DestinationFile="$(PublishFolder)\..\$(TargetName).zip" Overwrite="true" />
 
   </Target>
 
