@@ -9,7 +9,7 @@
     <Authors>Damocles</Authors>
     <Company>Damocles</Company>
     <Description>A multiplayer mod that allows you to play Blasphemous cooperatively or against other people</Description>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
 
     <TargetName>BlasClient</TargetName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
