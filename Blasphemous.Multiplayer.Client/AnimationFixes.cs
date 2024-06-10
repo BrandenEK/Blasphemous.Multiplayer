@@ -1,4 +1,4 @@
-﻿using Blasphemous.Multiplayer.Client.PvP;
+﻿using Blasphemous.Multiplayer.Client.PvP.Models;
 using HarmonyLib;
 using Gameplay.GameControllers.AnimationBehaviours.Player.Attack;
 using Gameplay.GameControllers.AnimationBehaviours.Player.ClimbClifLede;

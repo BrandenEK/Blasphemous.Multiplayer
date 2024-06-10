@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
+﻿using Blasphemous.Multiplayer.Client.PvP.Models;
+using HarmonyLib;
 using Framework.Inventory;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Abilities;
-using Gameplay.GameControllers.Penitent.Damage;
 using Framework.Managers;
 using System.Collections.Generic;
 
@@ -36,6 +36,27 @@ namespace Blasphemous.Multiplayer.Client.PvP
                 return;
 
             __result = ___inputBlockers.Count > 1 || ___inputBlockers.Count == 1 && ___inputBlockers[0] != "PLAYER_LOGIC";
+        }
+    }
+
+    // When receiving a pvp attack, don't use stat resistances
+    [HarmonyPatch(typeof(Entity), nameof(Entity.GetReducedDamage))]
+    class Entity_DamageReduction_Patch
+    {
+        public static void Postfix(Hit hit, ref float __result)
+        {
+            if (hit.HitSoundId != null && hit.HitSoundId.StartsWith("PVP"))
+                __result = hit.DamageAmount;
+        }
+    }
+
+    // When processing a pvp attack, remove 'PVP' from the sound id
+    [HarmonyPatch(typeof(Entity), nameof(Entity.Damage))]
+    class Entity_Damage_Patch
+    {
+        public static void Prefix(ref string impactAudioId)
+        {
+            impactAudioId = impactAudioId?.Replace("PVP", string.Empty);
         }
     }
 

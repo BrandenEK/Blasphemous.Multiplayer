@@ -1,5 +1,5 @@
 ﻿using Blasphemous.Multiplayer.Client.Data;
-using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using System.Linq;
@@ -258,9 +258,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                 return;
 
             // Calculate damage amount based on attack type, sword level, and equipment
-            PlayerAttack attackData = Main.Multiplayer.AttackManager.GetAttackData(attack);
-            float damageAmount = attackData.BaseDamage;
-            damageAmount += Core.Logic.Penitent.Stats.Strength.GetUpgrades() * attackData.DamageScaling;
+            float damageAmount = Main.Multiplayer.DamageCalculator.CalculateOffense(attack);
 
             Main.Multiplayer.LogWarning($"Sending hit {attack} to {playerStatus.Name} ({damageAmount} damage)");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();

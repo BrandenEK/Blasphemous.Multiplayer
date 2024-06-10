@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Framework.Managers;
-using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Enemies.Projectiles;
 

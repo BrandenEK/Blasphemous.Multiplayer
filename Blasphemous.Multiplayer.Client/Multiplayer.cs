@@ -8,6 +8,7 @@ using Blasphemous.Multiplayer.Client.Notifications;
 using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;
@@ -30,6 +31,7 @@ public class Multiplayer : BlasMod, IPersistentMod
     public NotificationManager NotificationManager { get; private set; }
     public OtherPlayerManager OtherPlayerManager { get; private set; }
     public ProgressManager ProgressManager { get; private set; }
+    public DamageCalculator DamageCalculator { get; private set; }
 
     // Game status
     public bool RandomizerMode => IsModLoadedName("Randomizer", out _);
@@ -59,6 +61,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         NotificationManager = new NotificationManager();
         OtherPlayerManager = new OtherPlayerManager();
         ProgressManager = new ProgressManager();
+        DamageCalculator = new DamageCalculator();
 
         // Initialize data
         config = ConfigHandler.Load<Config>();
@@ -129,6 +132,9 @@ public class Multiplayer : BlasMod, IPersistentMod
             //test.currentScene = "D05Z02S06";
             //connectedPlayers.Add("Test", test);
             //attackManager.TakeHit("", 0);
+
+            var damage = DamageCalculator.CalculateOffense(AttackType.Slash);
+            LogError($"Offense: {damage}");
         }
         else if (Input.GetKeyDown(KeyCode.Keypad6))
         {
@@ -145,6 +151,9 @@ public class Multiplayer : BlasMod, IPersistentMod
             //        Main.Multiplayer.LogError(Main.displayHierarchy(pray.transform, "", 0, 5, true));
             //    }
             //}
+
+            var damage = DamageCalculator.CalculateDefense(AttackType.Slash, 100);
+            LogError($"Defense: {damage}");
         }
 
         NetworkManager.ProcessQueue();

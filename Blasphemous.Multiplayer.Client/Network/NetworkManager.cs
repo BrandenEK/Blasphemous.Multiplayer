@@ -1,6 +1,6 @@
 ﻿using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
-using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using SimpleTCP;
 using System;

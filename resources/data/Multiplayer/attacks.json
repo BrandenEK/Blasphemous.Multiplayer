@@ -1,0 +1,217 @@
+[
+	{
+		"Name": "Slash",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 5,
+		"ScalingType": "Sword",
+		"ScalingAmount": 1,
+		"Force": 0.5,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentSimpleEnemyHit"
+	},
+	{
+		"Name": "ComboNormal",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 15,
+		"ScalingType": "Sword",
+		"ScalingAmount": 3,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
+	},
+	{
+		"Name": "ComboUp",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 25,
+		"ScalingType": "Sword",
+		"ScalingAmount": 5,
+		"Force": 0.1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
+	},
+	{
+		"Name": "ComboDown",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 20,
+		"ScalingType": "Sword",
+		"ScalingAmount": 4,
+		"Force": 0,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
+	},
+	{
+		"Name": "Charged",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 12.5,
+		"ScalingType": "Sword",
+		"ScalingAmount": 2.5,
+		"Force": 2,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
+	},
+	{
+		"Name": "Lunge",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 10,
+		"ScalingType": "Sword",
+		"ScalingAmount": 2,
+		"Force": 3,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentLungeAttackHit"
+	},
+	{
+		"Name": "Vertical",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 15,
+		"ScalingType": "Sword",
+		"ScalingAmount": 3,
+		"Force": 0,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
+	},
+	{
+		"Name": "Ranged",
+		"DamageType": "Normal",
+		"DamageElement": "Fire",
+		"BaseDamage": 9.5,
+		"ScalingType": "Blood",
+		"ScalingAmount": 1.5,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Attack/PenitentRangeAttackHit"
+	},
+	{
+		"Name": "ChargedProjectile",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 12.5,
+		"ScalingType": "Sword",
+		"ScalingAmount": 2.5,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Attack/PenitentChargedAttackProjectileHit"
+	},
+	{
+		"Name": "RangedExplosion",
+		"DamageType": "Heavy",
+		"DamageElement": "Fire",
+		"BaseDamage": 15.2,
+		"ScalingType": "Blood",
+		"ScalingAmount": 2.4,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentAcolyteDamage"
+	},
+	{
+		"Name": "Gem",
+		"DamageType": "Normal",
+		"DamageElement": "Lightning",
+		"BaseDamage": 3.75,
+		"ScalingType": "Sword",
+		"ScalingAmount": 0.75,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
+	},
+	{
+		"Name": "PrayerHit",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 15,
+		"ScalingType": "Sword",
+		"ScalingAmount": 3,
+		"Force": 0,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentHeavyEnemyHit"
+	},
+	{
+		"Name": "Debla",
+		"DamageType": "Normal",
+		"DamageElement": "Magic",
+		"BaseDamage": 30,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 15,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
+	},
+	{
+		"Name": "Taranto",
+		"DamageType": "Heavy",
+		"DamageElement": "Lightning",
+		"BaseDamage": 12,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 12,
+		"Force": 0,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
+	},
+	{
+		"Name": "Verdiales",
+		"DamageType": "Normal",
+		"DamageElement": "Fire",
+		"BaseDamage": 20,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 20,
+		"Force": 2,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentWaxcrawlerDamage"
+	},
+	{
+		"Name": "Lorquiana",
+		"DamageType": "Normal",
+		"DamageElement": "Lightning",
+		"BaseDamage": 25,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 8.75,
+		"Force": 0
+	},
+	{
+		"Name": "Tirana",
+		"DamageType": "Normal",
+		"DamageElement": "Lightning",
+		"BaseDamage": 30,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 30,
+		"Force": 1,
+		"SoundId": "event:/SFX/Penitent/Damage/PenitentMagicDamage"
+	},
+	{
+		"Name": "PoisonMist",
+		"DamageType": "Normal",
+		"DamageElement": "Toxic",
+		"BaseDamage": 25,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 18.75,
+		"Force": 0
+	},
+	{
+		"Name": "Shield",
+		"DamageType": "Normal",
+		"DamageElement": "Magic",
+		"BaseDamage": 15,
+		"ScalingType": "Prayer",
+		"ScalingAmount": 15,
+		"Force": 1.5,
+		"SoundId": "event:/SFX/Penitent/Attack/PenitentRangeAttackHit"
+	},
+	{
+		"Name": "Miriam",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 40,
+		"ScalingType": "Sword",
+		"ScalingAmount": 1,
+		"Force": 2
+	},
+	{
+		"Name": "MiriamSpike",
+		"DamageType": "Normal",
+		"DamageElement": "Normal",
+		"BaseDamage": 16,
+		"ScalingType": "Sword",
+		"ScalingAmount": 0.4,
+		"Force": 0
+	},
+	{
+		"Name": "Aubade",
+		"DamageType": "Heavy",
+		"DamageElement": "Normal",
+		"BaseDamage": 60,
+		"ScalingType": "Sword",
+		"ScalingAmount": 2,
+		"Force": 4.444
+	}
+]
