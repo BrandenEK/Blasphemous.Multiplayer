@@ -1,3 +1,86 @@
 [
-
+    {
+        "id": "RB01",
+        "physicalReduction": 0.05
+    },
+    {
+        "id": "RB02",
+        "physicalReduction": 0.1
+    },
+    {
+        "id": "RB03",
+        "physicalReduction": 0.15
+    },
+    {
+        "id": "RB08",
+        "fireReduction": 0.25
+    },
+    {
+        "id": "RB11",
+        "fireReduction": 0.35
+    },
+    {
+        "id": "RB09",
+        "toxicReduction": 0.25
+    },
+    {
+        "id": "RB12",
+        "toxicReduction": 0.35
+    },
+    {
+        "id": "RB13",
+        "lightningReduction": 0.25
+    },
+    {
+        "id": "RB31",
+        "lightningReduction": 0.35
+    },
+    {
+        "id": "RB32",
+        "magicReduction": 0.25
+    },
+    {
+        "id": "RB33",
+        "magicReduction": 0.35
+    },
+    {
+        "id": "RB10",
+        "condition": "LowHealth",
+        "physicalReduction": 0.5,
+        "magicReduction": 0.5,
+        "lightningReduction": 0.5,
+        "fireReduction": 0.5,
+        "toxicReduction": 0.5
+    },
+    {
+        "id": "RB201",
+        "condition": "NoFlasks",
+        "physicalReduction": 0.2,
+        "magicReduction": 0.2,
+        "lightningReduction": 0.2,
+        "fireReduction": 0.2,
+        "toxicReduction": 0.2
+    },
+    {
+        "id": "RB36",
+        "magicReduction": 0.1,
+        "lightningReduction": 0.1,
+        "fireReduction": 0.1,
+        "toxicReduction": 0.1
+    },
+    {
+        "id": "HE10",
+        "magicReduction": -0.5,
+        "lightningReduction": -0.5,
+        "fireReduction": -0.5,
+        "toxicReduction": -0.5
+    },
+    {
+        "id": "HE04",
+        "physicalReduction": -0.5
+    },
+    {
+        "id": "HE101",
+        "physicalReduction": -0.5
+    }
 ]
