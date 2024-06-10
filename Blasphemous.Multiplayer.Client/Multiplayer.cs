@@ -126,36 +126,6 @@ public class Multiplayer : BlasMod, IPersistentMod
 
     protected override void OnLateUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Keypad5))
-        {
-            //PlayerStatus test = new PlayerStatus();
-            //test.currentScene = "D05Z02S06";
-            //connectedPlayers.Add("Test", test);
-            //attackManager.TakeHit("", 0);
-
-            var damage = DamageCalculator.CalculateOffense(AttackType.Slash);
-            LogError($"Offense: {damage}");
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad6))
-        {
-            //GameObject prayer = Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectilePrefab;
-            //if (prayer != null)
-            //    Main.Multiplayer.LogError("Verdiales speed: " + Core.Logic.Penitent.PrayerCast.crawlerBallsPrayer.projectileSpeed);
-            //Main.Multiplayer.LogError(Main.displayHierarchy(prayer.transform, "", 0, 5, true));
-            //List<GameObject> prayers = Core.Logic.Penitent.PrayerCast.lightBeamPrayer.areaPrefabs;
-            //if (prayers != null)
-            //{
-            //    Main.Multiplayer.LogWarning("Using list");
-            //    foreach (GameObject pray in prayers)
-            //    {
-            //        Main.Multiplayer.LogError(Main.displayHierarchy(pray.transform, "", 0, 5, true));
-            //    }
-            //}
-
-            var damage = DamageCalculator.CalculateDefense(AttackType.Slash, 100);
-            LogError($"Defense: {damage}");
-        }
-
         NetworkManager.ProcessQueue();
 
         MapManager.Update();
