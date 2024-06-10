@@ -62,8 +62,16 @@ public class DamageCalculator
 
     private bool IsItemEquipped(string item)
     {
-        var obj = Core.InventoryManager.GetBaseObject(item, ItemModder.GetItemTypeFromId(item));
-        return Core.InventoryManager.IsBaseObjectEquipped(obj);
+        return ItemModder.GetItemTypeFromId(item) switch
+        {
+            InventoryManager.ItemType.Bead => Core.InventoryManager.IsRosaryBeadEquipped(item),
+            InventoryManager.ItemType.Prayer => Core.InventoryManager.IsPrayerEquipped(item),
+            InventoryManager.ItemType.Relic => Core.InventoryManager.IsRelicEquipped(item),
+            InventoryManager.ItemType.Sword => Core.InventoryManager.IsSwordEquipped(item),
+            InventoryManager.ItemType.Quest => Core.InventoryManager.IsQuestItemOwned(item),
+            InventoryManager.ItemType.Collectible => Core.InventoryManager.IsCollectibleItemOwned(item),
+            _ => false
+        };
     }
 
     private bool IsConditionMet(ConditionType condition)
