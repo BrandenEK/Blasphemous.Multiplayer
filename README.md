@@ -29,9 +29,16 @@ PvP is now available in Blasphemous Multiplayer, but only for sword attacks righ
 ## Connecting
 First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
 <br><br>
-However, the client must have a network connection to the machine running the server.  If not on the same local network, find out how to use port forwarding, Hamachi (https://vpn.net/), ZeroTier (https://www.zerotier.com/), or RAdmin
-<br><br>
-If using Hamachi, you may have to follow this [setup guide](https://github.com/BrandenEK/Windwaker-coop#how-to-set-up-hamachi-to-simulate-a-local-network) for it to work.  Then when connecting, use the IP address that Hamachi assigned to the machine running the server.
+
+#### Connecting to a server running on your computer
+- Use 'localhost' as the server parameter
+#### Connecting to a server on your local network
+- On the server machine, run 'ipconfig' in command prompt to find the local ipv4 address of the computer
+- Use that as the server parameter
+#### Connecting to a server on a different network
+- Set up [Port forwarding](https://nordvpn.com/blog/open-ports-on-router/) on the server machine or have everyone use a vpn ([Hamachi](https://vpn.net/), [ZeroTier](https://www.zerotier.com/), or [RAdmin](https://www.radmin-vpn.com/))
+- On the server machine, search 'What is my ip' on the internet to find the global ipv4 address of the computer
+- Use that as the server parameter
 
 ## Available commands
 - Press the 'backslash' key to open the debug console
