@@ -1,14 +1,15 @@
-﻿using HarmonyLib;
-using UnityEngine;
-using Framework.Map;
+﻿using Blasphemous.ModdingAPI;
 using Framework.Managers;
+using Framework.Map;
 using Gameplay.UI.Others.MenuLogic;
+using HarmonyLib;
+using UnityEngine;
 
 namespace Blasphemous.Multiplayer.Client.Map
 {
     // Show other players on map screen
     [HarmonyPatch(typeof(NewMapMenuWidget), "OnShow")]
-    public class MapMenuWidget_Patch
+    class MapMenuWidget_Patch
     {
         public static void Postfix()
         {
@@ -18,7 +19,7 @@ namespace Blasphemous.Multiplayer.Client.Map
 
     // Get center position of room
     [HarmonyPatch(typeof(NewMapManager), "GetCellKeyFromPosition", typeof(string), typeof(Vector2))]
-    public class MapManagerRoom_Patch
+    class MapManagerRoom_Patch
     {
         public static bool Prefix(string scene, Vector2 position, MapData ___CurrentMap)
         {
@@ -28,7 +29,7 @@ namespace Blasphemous.Multiplayer.Client.Map
             if (scene == null || scene.Length != 9)
             {
                 Main.Multiplayer.MapManager.ActivePlayerPosition = new Vector2(-1, -1);
-                Main.Multiplayer.Log("Player zone '" + scene + "' does not exist!");
+                ModLog.Info("Player zone '" + scene + "' does not exist!");
                 return false;
             }
 
@@ -37,7 +38,7 @@ namespace Blasphemous.Multiplayer.Client.Map
             if (!___CurrentMap.CellsByZone.ContainsKey(zone))
             {
                 Main.Multiplayer.MapManager.ActivePlayerPosition = new Vector2(-1, -1);
-                Main.Multiplayer.Log("Player zone '" + scene + "' does not exist!");
+                ModLog.Info("Player zone '" + scene + "' does not exist!");
                 return false;
             }
 
@@ -58,7 +59,7 @@ namespace Blasphemous.Multiplayer.Client.Map
 
     // Remove confessor icons from map once beaten
     [HarmonyPatch(typeof(NewMapManager), "GetAllMarks")]
-    public class MapManagerConfessor_Patch
+    class MapManagerConfessor_Patch
     {
         public static void Prefix(NewMapManager __instance, MapData ___CurrentMap)
         {
