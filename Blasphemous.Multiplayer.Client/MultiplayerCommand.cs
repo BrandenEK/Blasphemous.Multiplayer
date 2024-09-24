@@ -1,4 +1,5 @@
 ﻿using Blasphemous.CheatConsole;
+using Blasphemous.ModdingAPI;
 using Blasphemous.Multiplayer.Client.PvP.Models;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,8 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Help(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 0)) return;
+            if (!ValidateParameterList(parameters, 0))
+                return;
 
             Write("Available MULTIPLAYER commands:");
             Write("multiplayer status: Display connection status");
@@ -44,7 +46,8 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Status(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 0)) return;
+            if (!ValidateParameterList(parameters, 0))
+                return;
 
             if (Main.Multiplayer.NetworkManager.IsConnected)
             {
@@ -122,7 +125,8 @@ namespace Blasphemous.Multiplayer.Client
                 password = parameters[passIdx];
             }
 
-            if (!ValidateStringParameter(name, 1, 16)) return;
+            if (!ValidateStringParameter(name, 1, 16))
+                return;
 
             bool result = Main.Multiplayer.NetworkManager.Connect(parameters[0], name, password);
             Write(result ? $"Successfully connected to {parameters[0]} as {name}" : $"Failed to connect to {parameters[0]}");
@@ -130,7 +134,8 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Disconnect(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 0)) return;
+            if (!ValidateParameterList(parameters, 0))
+                return;
 
             if (Main.Multiplayer.NetworkManager.IsConnected)
             {
@@ -143,7 +148,8 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Team(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 1) || !ValidateIntParameter(parameters[0], 1, 10, out int newTeam)) return;
+            if (!ValidateParameterList(parameters, 1) || !ValidateIntParameter(parameters[0], 1, 10, out int newTeam))
+                return;
 
             if (newTeam == Main.Multiplayer.PlayerTeam)
             {
@@ -158,7 +164,8 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Players(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 0)) return;
+            if (!ValidateParameterList(parameters, 0))
+                return;
 
             if (!Main.Multiplayer.NetworkManager.IsConnected)
             {
@@ -176,12 +183,13 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Damage(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 2)) return;
+            if (!ValidateParameterList(parameters, 2))
+                return;
 
             AttackType type = (AttackType)Enum.Parse(typeof(AttackType), parameters[0]);
             ValidateIntParameter(parameters[1], 0, 255, out int amount);
 
-            Main.Multiplayer.LogWarning($"Testing attack {type} with damage {amount}");
+            ModLog.Warn($"Testing attack {type} with damage {amount}");
             Main.Multiplayer.AttackManager.DamagePlayer_Internal(type, (byte)amount);
         }
     }

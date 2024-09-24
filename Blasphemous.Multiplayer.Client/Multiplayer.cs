@@ -1,5 +1,6 @@
 ﻿using Blasphemous.CheatConsole;
 using Blasphemous.ModdingAPI;
+using Blasphemous.ModdingAPI.Helpers;
 using Blasphemous.ModdingAPI.Persistence;
 using Blasphemous.Multiplayer.Client.Data;
 using Blasphemous.Multiplayer.Client.Map;
@@ -34,7 +35,7 @@ public class Multiplayer : BlasMod, IPersistentMod
     public DamageCalculator DamageCalculator { get; private set; }
 
     // Game status
-    public bool RandomizerMode => IsModLoadedName("Randomizer", out _);
+    public bool RandomizerMode => ModHelper.IsModLoadedByName("Randomizer");
     public Config config { get; private set; }
     public bool CurrentlyInLevel { get; private set; }
 
@@ -100,7 +101,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         if (CurrentlyInLevel && NetworkManager.IsConnected)
         {
             // Entered a new scene
-            Log("Entering new scene: " + newLevel);
+            ModLog.Info("Entering new scene: " + newLevel);
 
             // Send location, scene, and progress
             MainPlayerManager.SendAllLocationData();
@@ -117,7 +118,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         if (CurrentlyInLevel && NetworkManager.IsConnected)
         {
             // Left a scene
-            Log("Leaving old scene");
+            ModLog.Info("Leaving old scene");
             NetworkManager.SendLeaveScene();
         }
 
@@ -205,7 +206,8 @@ public class Multiplayer : BlasMod, IPersistentMod
     public void ProcessRecievedStat(string playerName, ProgressUpdate progress)
     {
         PlayerStatus player = OtherPlayerManager.FindConnectedPlayer(playerName);
-        if (player == null) return;
+        if (player == null)
+            return;
 
         if (!CurrentlyInLevel || RandomizerMode || progress.Type != ProgressType.PlayerStat || Core.LevelManager.currentLevel.LevelName != player.CurrentScene)
             return;
@@ -213,7 +215,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         if (progress.Id == "LIFE" || progress.Id == "FERVOUR" || progress.Id == "STRENGTH" || progress.Id == "MEACULPA")
         {
             CanObtainStatUpgrades = false;
-            LogWarning("Received stat upgrade from player in the same room!");
+            ModLog.Warn("Received stat upgrade from player in the same room!");
         }
     }
 
@@ -233,7 +235,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         }
         if (UpLever == null || downLever == null)
         {
-            LogWarning("Could not find elevator levers!");
+            ModLog.Warn("Could not find elevator levers!");
             return;
         }
 
