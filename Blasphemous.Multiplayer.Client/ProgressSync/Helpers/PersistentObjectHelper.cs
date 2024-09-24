@@ -3,6 +3,7 @@ using Framework.Managers;
 using Framework.FrameworkCore;
 using System.Collections.Generic;
 using UnityEngine;
+using Blasphemous.ModdingAPI;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
 {
@@ -33,7 +34,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
                 }
                 catch (System.NullReferenceException)
                 {
-                    Main.Multiplayer.Log("Error: Failed to get persistent id of object");
+                    ModLog.Error("Error: Failed to get persistent id of object");
                 }
             }
         }

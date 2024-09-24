@@ -24,7 +24,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(SpawnManager), "SetTeleportActive")]
-    public class SpawnManager_Patch
+    class SpawnManager_Patch
     {
         public static void Postfix(string teleportId, bool active)
         {
@@ -40,7 +40,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(SpawnManager), "GetCurrentPersistentState")]
-    public class SpawnManagerIntro_Patch
+    class SpawnManagerIntro_Patch
     {
         public static bool Prefix(string dataPath, Dictionary<string, TeleportDestination> ___TeleportDict)
         {

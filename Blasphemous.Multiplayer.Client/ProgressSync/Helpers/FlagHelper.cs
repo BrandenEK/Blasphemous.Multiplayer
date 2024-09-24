@@ -25,7 +25,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(EventManager), "SetFlag")]
-    public class EventManager_Patch
+    class EventManager_Patch
     {
         public static void Postfix(EventManager __instance, string id, bool b)
         {
@@ -43,7 +43,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
 
     // This also handles the miriam status section
     [HarmonyPatch(typeof(EventManager), "GetCurrentPersistentState")]
-    public class EventManagerIntro_Patch
+    class EventManagerIntro_Patch
     {
         public static bool Prefix(string dataPath, Dictionary<string, FlagObject> ___flags, List<string> ___MiriamClosedPortals)
         {

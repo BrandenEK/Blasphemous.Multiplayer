@@ -1,22 +1,23 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "OnCherubKilled")]
-    public class CherubUse_Patch
+    class CherubUse_Patch
     {
         public static void Postfix(CherubCaptorPersistentObject __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log("Cherub killed: " + persistentId);
+            ModLog.Info("Cherub killed: " + persistentId);
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "GetCurrentPersistentState")]
-    public class CherubReceive_Patch
+    class CherubReceive_Patch
     {
         public static bool Prefix(string dataPath, CherubCaptorPersistentObject __instance)
         {
@@ -30,7 +31,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
         }
     }
     [HarmonyPatch(typeof(CherubCaptorPersistentObject), "SetCurrentPersistentState")]
-    public class CherubLoad_Patch
+    class CherubLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, CherubCaptorPersistentObject __instance)
         {

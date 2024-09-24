@@ -1,4 +1,5 @@
-﻿using Framework.FrameworkCore.Attributes;
+﻿using Blasphemous.ModdingAPI;
+using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
 using Framework.Managers;
 using HarmonyLib;
@@ -25,7 +26,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
                         return;
                     }
                 default:
-                    Main.Multiplayer.Log("Error: Unknown stat received - " + progress.Id);
+                    ModLog.Error("Error: Unknown stat received - " + progress.Id);
                     return;
             }
 
@@ -48,7 +49,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
                 case "FLASK":       stat = "stfknm"; break;
                 case "FLASKHEALTH": stat = "stfkhl"; break;
                 default:
-                    Main.Multiplayer.Log("Error: Unknown stat received - " + progress.Id);
+                    ModLog.Error("Error: Unknown stat received - " + progress.Id);
                     return null;
             }
             

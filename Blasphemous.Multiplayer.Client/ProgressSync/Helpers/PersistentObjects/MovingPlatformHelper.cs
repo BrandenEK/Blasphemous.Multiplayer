@@ -2,18 +2,19 @@
 using Framework.Managers;
 using HarmonyLib;
 using Gameplay.GameControllers.Environment.MovingPlatforms;
+using Blasphemous.ModdingAPI;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(StraightMovingPlatform), "Use")]
-    public class MovingPlatformUse_Patch
+    class MovingPlatformUse_Patch
     {
         public static void Postfix(StraightMovingPlatform __instance, ref bool ____running)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log("Activated platform: " + persistentId);
+            ModLog.Info("Activated platform: " + persistentId);
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
 
             // Make sure this platform is set to running when activated twice
@@ -25,7 +26,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(StraightMovingPlatform), "GetCurrentPersistentState")]
-    public class MovingPlatformReceive_Patch
+    class MovingPlatformReceive_Patch
     {
         public static bool Prefix(string dataPath, StraightMovingPlatform __instance)
         {
@@ -38,7 +39,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(StraightMovingPlatform), "SetCurrentPersistentState")]
-    public class MovingPlatformLoad_Patch
+    class MovingPlatformLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, StraightMovingPlatform __instance)
         {

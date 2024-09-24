@@ -24,7 +24,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(AlmsManager), "ConsumeTears")]
-    public class AlmsManager_Patch
+    class AlmsManager_Patch
     {
         public static void Postfix(AlmsManager __instance)
         {

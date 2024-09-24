@@ -1,24 +1,25 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Actionables;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(ActionableLadder), "Use")]
-    public class LadderUse_Patch
+    class LadderUse_Patch
     {
         public static void Postfix(ActionableLadder __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log("Ladder activated: " + persistentId);
+            ModLog.Info("Ladder activated: " + persistentId);
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(ActionableLadder), "GetCurrentPersistentState")]
-    public class LadderReceive_Patch
+    class LadderReceive_Patch
     {
         public static bool Prefix(string dataPath, ActionableLadder __instance, ref bool ___open)
         {
@@ -31,7 +32,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(ActionableLadder), "SetCurrentPersistentState")]
-    public class LadderLoad_Patch
+    class LadderLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, ActionableLadder __instance, ref bool ___open)
         {

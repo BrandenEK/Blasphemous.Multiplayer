@@ -40,7 +40,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
 
     // Send miriam closed portal
     [HarmonyPatch(typeof(EventManager), "EndMiriamPortalAndReturn")]
-    public class EventManagerMiriamPortal_Patch
+    class EventManagerMiriamPortal_Patch
     {
         public static void Prefix(EventManager __instance)
         {
@@ -57,7 +57,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
 
     // Send miriam quest start
     [HarmonyPatch(typeof(EventManager), "StartMiriamQuest")]
-    public class EventManagerMiriamStart_Patch
+    class EventManagerMiriamStart_Patch
     {
         public static void Postfix(bool __result)
         {
@@ -74,7 +74,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
 
     // Send miriam quest finish
     [HarmonyPatch(typeof(EventManager), "FinishMiriamQuest")]
-    public class EventManagerMiriamFinish_Patch
+    class EventManagerMiriamFinish_Patch
     {
         public static void Postfix(bool __result)
         {
@@ -91,7 +91,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
 
     // Receive closed portal
     [HarmonyPatch(typeof(EventManager), "SetCurrentPersistentState")]
-    public class EventManagerMiriamReceive_Patch
+    class EventManagerMiriamReceive_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, string dataPath, List<string> ___MiriamClosedPortals)
         {

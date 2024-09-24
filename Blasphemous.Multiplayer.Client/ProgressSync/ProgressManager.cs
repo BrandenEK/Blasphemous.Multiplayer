@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Client.Data;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.Data;
 using Blasphemous.Multiplayer.Client.ProgressSync.Helpers;
 using Framework.FrameworkCore;
 using Framework.Managers;
@@ -46,7 +47,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync
 
         public void ReceiveProgress(ProgressUpdate progress)
         {
-            Main.Multiplayer.Log("Received new game progress: " + progress.Id);
+            ModLog.Info("Received new game progress: " + progress.Id);
             if (progress.ShouldSyncProgress(Main.Multiplayer.config))
             {
                 progressQueue.Add(progress);
@@ -70,7 +71,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync
         {
             if (!progressHelpers.TryGetValue(progress.Type, out IProgressHelper helper))
             {
-                Main.Multiplayer.Log("Error: Progress type doesn't exist: " + progress.Type);
+                ModLog.Error("Error: Progress type doesn't exist: " + progress.Type);
                 return;
             }
 
@@ -81,7 +82,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync
         {
             if (!progressHelpers.TryGetValue(progress.Type, out IProgressHelper helper))
             {
-                Main.Multiplayer.Log("Error: Progress type doesn't exist: " + progress.Type);
+                ModLog.Error("Error: Progress type doesn't exist: " + progress.Type);
                 return null;
             }
 
@@ -96,7 +97,8 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync
             string objectSceneId = scene + "~" + objectSceneIdx;
 
             // Make sure this pers. object should sync & isn't already activated
-            if (objectSceneIdx < 0 || IsObjectInteracted(objectSceneId)) return;
+            if (objectSceneIdx < 0 || IsObjectInteracted(objectSceneId))
+                return;
 
             // Update save game data & send this object
             AddInteractedObject(objectSceneId);
@@ -107,7 +109,8 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync
         // Called when sending all data upon connecting to server and loading game
         public void SendAllProgress()
         {
-            if (_sentAllProgress) return;
+            if (_sentAllProgress)
+                return;
             _sentAllProgress = true;
 
             foreach (IProgressHelper helper in progressHelpers.Values)

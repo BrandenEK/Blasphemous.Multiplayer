@@ -25,7 +25,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(SkillManager), "UnlockSkill")]
-    public class SkilManager_Patch
+    class SkilManager_Patch
     {
         public static bool Prefix(string skill, bool ignoreChecks, Dictionary<string, UnlockableSkill> ___allSkills)
         {
@@ -47,7 +47,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(SkillManager), "GetCurrentPersistentState")]
-    public class SkillManagerIntro_Patch
+    class SkillManagerIntro_Patch
     {
         public static bool Prefix(string dataPath, Dictionary<string, UnlockableSkill> ___allSkills)
         {
