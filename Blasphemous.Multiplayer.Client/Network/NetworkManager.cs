@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Client.Players;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
@@ -57,7 +58,7 @@ namespace Blasphemous.Multiplayer.Client.Network
             _serverIp = ipAddress;
             SendIntro(playerName, password);
 
-            Main.Multiplayer.Log("Connected to server: " + ipAddress);
+            ModLog.Info("Connected to server: " + ipAddress);
             Main.Multiplayer.OnConnect(ipAddress, playerName, password);
         }
 
@@ -69,7 +70,7 @@ namespace Blasphemous.Multiplayer.Client.Network
             sendingQueue.Clear();
             receivingQueue.Clear();
 
-            Main.Multiplayer.Log("Disconnected from server");
+            ModLog.Info("Disconnected from server");
             Main.Multiplayer.OnDisconnect();
         }
 
@@ -148,7 +149,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                     startIdx += 3 + length;
                 }
                 if (startIdx != receivingQueue.Count)
-                    Main.Multiplayer.Log("Received data was formatted incorrectly");
+                    ModLog.Error("Received data was formatted incorrectly");
 
                 receivingQueue.Clear();
             }

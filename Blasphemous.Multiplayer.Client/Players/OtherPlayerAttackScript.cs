@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
-using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
 using Blasphemous.Multiplayer.Client.PvP.Models;
-using Gameplay.GameControllers.Entities;
+using Framework.Managers;
 using Gameplay.GameControllers.Enemies.Projectiles;
+using Gameplay.GameControllers.Entities;
+using System.Collections;
+using UnityEngine;
 
 namespace Blasphemous.Multiplayer.Client.Players
 {
@@ -74,7 +75,7 @@ namespace Blasphemous.Multiplayer.Client.Players
 
         private IEnumerator DisplayDebla()
         {
-            Main.Multiplayer.Log("Spawning debla object for " + transform.parent.name);
+            ModLog.Info("Spawning debla object for " + transform.parent.name);
             if (Core.Logic.Penitent == null)
                 yield break;
 
@@ -90,7 +91,7 @@ namespace Blasphemous.Multiplayer.Client.Players
 
         private IEnumerator DisplayVerdiales()
         {
-            Main.Multiplayer.Log("Spawning verdiales object for " + transform.parent.name);
+            ModLog.Info("Spawning verdiales object for " + transform.parent.name);
             if (Core.Logic.Penitent == null)
                 yield break;
 

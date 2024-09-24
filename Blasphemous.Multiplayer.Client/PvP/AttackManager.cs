@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Client.Players;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.GameControllers.Effects.Player.Sparks;
@@ -40,7 +41,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
                     return;
 
                 // Perform the damage
-                Main.Multiplayer.LogWarning($"Receiving hit {attack} from {attackerName}");
+                ModLog.Warn($"Receiving hit {attack} from {attackerName}");
                 DamagePlayer(attack, damageAmount, attacker.gameObject);
             }
             else // It was a different player that got hit
@@ -53,7 +54,8 @@ namespace Blasphemous.Multiplayer.Client.PvP
         public void ReceiveEffect(string playerName, EffectType effect)
         {
             OtherPlayerScript other = Main.Multiplayer.OtherPlayerManager.FindActivePlayer(playerName);
-            if (other == null) return;
+            if (other == null)
+                return;
 
             other.OtherPlayerAttack.PlayEffectAnimation(effect, other.IsFacingRight);
         }
@@ -106,9 +108,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
         public AttackData GetAttackData(AttackType type)
         {
             if (allAttacks.TryGetValue(type, out AttackData attack))
-            {
                 return attack;
-            }
 
             throw new System.Exception($"Attack type \"{type}\" doesn't exist!");
         }
@@ -117,7 +117,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
         {
             if (!Main.Multiplayer.FileHandler.LoadDataAsJson("attacks.json", out AttackData[] attacks))
             {
-                Main.Multiplayer.LogError("Failed to load attack data!");
+                ModLog.Error("Failed to load attack data!");
                 return;
             }
             
@@ -125,7 +125,7 @@ namespace Blasphemous.Multiplayer.Client.PvP
             {
                 allAttacks.Add(attack.Name, attack);
             }
-            Main.Multiplayer.Log("Successfully loaded all attack data!");
+            ModLog.Info("Successfully loaded all attack data!");
         }
     }
 }

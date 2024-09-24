@@ -1,4 +1,5 @@
 ﻿using Blasphemous.ModdingAPI;
+using Blasphemous.ModdingAPI.Helpers;
 using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
@@ -37,8 +38,8 @@ public class DamageCalculator
 
         float swordLevel = data.ScalingType == ScalingType.Prayer ? 0 : Core.Logic.Penitent.Stats.Strength.GetUpgrades();
         float result = data.BaseDamage + (offenseSum + swordLevel) * data.ScalingAmount;
-        
-        Main.Multiplayer.LogWarning($"CalculateOffense: {data.BaseDamage} + ({offenseSum} + {swordLevel}) * {data.ScalingAmount} = {result}");
+
+        ModLog.Info($"CalculateOffense: {data.BaseDamage} + ({offenseSum} + {swordLevel}) * {data.ScalingAmount} = {result}");
         return result;
     }
 
@@ -56,13 +57,13 @@ public class DamageCalculator
 
         float result = damage * defenseMultiplier;
 
-        Main.Multiplayer.LogWarning($"CalculateDefense: {damage} * {defenseMultiplier} = {result}");
+        ModLog.Info($"CalculateDefense: {damage} * {defenseMultiplier} = {result}");
         return result;
     }
 
     private bool IsItemEquipped(string item)
     {
-        return ItemModder.GetItemTypeFromId(item) switch
+        return ItemHelper.GetItemTypeFromId(item) switch
         {
             InventoryManager.ItemType.Bead => Core.InventoryManager.IsRosaryBeadEquipped(item),
             InventoryManager.ItemType.Prayer => Core.InventoryManager.IsPrayerEquipped(item),

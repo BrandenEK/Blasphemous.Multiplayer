@@ -1,4 +1,5 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Interactables;
 using UnityEngine;
@@ -6,20 +7,20 @@ using UnityEngine;
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(Door), "EnterDoor")]
-    public class DoorUse_Patch
+    class DoorUse_Patch
     {
         public static void Postfix(Door __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log("Door opened: " + persistentId);
+            ModLog.Info("Door opened: " + persistentId);
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(Door), "GetCurrentPersistentState")]
-    public class DoorReceive_Patch
+    class DoorReceive_Patch
     {
         public static bool Prefix(string dataPath, Door __instance, ref bool ___objectUsed)
         {
@@ -32,7 +33,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(Door), "SetCurrentPersistentState")]
-    public class DoorLoad_Patch
+    class DoorLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, Door __instance, Animator ___interactableAnimator, ref bool ___objectUsed)
         {

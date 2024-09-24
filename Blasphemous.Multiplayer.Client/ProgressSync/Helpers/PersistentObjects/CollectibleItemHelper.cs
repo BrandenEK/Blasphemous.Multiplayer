@@ -1,24 +1,25 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using UnityEngine;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(CollectibleItem), "OnUse")]
-    public class CollectibleItemUse_Patch
+    class CollectibleItemUse_Patch
     {
         public static void Postfix(CollectibleItem __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log($"Used CollectibleItem: {persistentId}");
+            ModLog.Info($"Used CollectibleItem: {persistentId}");
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(CollectibleItem), "GetCurrentPersistentState")]
-    public class CollectibleItemReceive_Patch
+    class CollectibleItemReceive_Patch
     {
         public static bool Prefix(string dataPath, CollectibleItem __instance, Animator ___interactableAnimator)
         {
@@ -31,7 +32,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(CollectibleItem), "SetCurrentPersistentState")]
-    public class CollectibleItemLoad_Patch
+    class CollectibleItemLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, CollectibleItem __instance, Animator ___interactableAnimator)
         {

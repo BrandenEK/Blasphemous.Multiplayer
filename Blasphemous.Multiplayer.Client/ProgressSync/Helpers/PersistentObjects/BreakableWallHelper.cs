@@ -1,24 +1,25 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Actionables;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(BreakableWall), "Damage")]
-    public class BreakableWallUse_Patch
+    class BreakableWallUse_Patch
     {
         public static void Postfix(BreakableWall __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log("Broke wall: " + persistentId);
+            ModLog.Info("Broke wall: " + persistentId);
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(BreakableWall), "GetCurrentPersistentState")]
-    public class BreakableWallReceive_Patch
+    class BreakableWallReceive_Patch
     {
         public static bool Prefix(string dataPath, BreakableWall __instance)
         {
@@ -30,7 +31,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(BreakableWall), "SetCurrentPersistentState")]
-    public class BreakableWallLoad_Patch
+    class BreakableWallLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, BreakableWall __instance)
         {

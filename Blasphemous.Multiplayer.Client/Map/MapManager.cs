@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Client.Players;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.Players;
 using Framework.Managers;
 using Framework.Map;
 using Gameplay.UI.Others.MenuLogic;
@@ -39,7 +40,7 @@ namespace Blasphemous.Multiplayer.Client.Map
             // Only add marks for other players if config enabled
             if (!Main.Multiplayer.config.showPlayersOnMap)
                 return;
-            Main.Multiplayer.Log("Updating map with new player marks!");
+            ModLog.Info("Updating map with new player marks!");
 
             // Destroy old holder to put players on top of other marks
             if (forceRecalculate && playerMarks != null)
@@ -93,7 +94,7 @@ namespace Blasphemous.Multiplayer.Client.Map
                 rect.localPosition = new Vector2(16 * cellPosition.x, 16 * cellPosition.y);
                 rect.sizeDelta = new Vector2(playerSprites[0].rect.width, playerSprites[0].rect.height);
                 rect.gameObject.AddComponent<Image>().sprite = icon;
-                Main.Multiplayer.Log($"Creating mark at " + rect.localPosition);
+                ModLog.Info($"Creating mark at " + rect.localPosition);
             }
         }
 
@@ -101,9 +102,11 @@ namespace Blasphemous.Multiplayer.Client.Map
         {
             // Find Map widget
             NewMapMenuWidget widget = Object.FindObjectOfType<NewMapMenuWidget>();
-            if (widget == null) return;
+            if (widget == null)
+                return;
             Transform rootRenderer = widget.transform.Find("Background/Map/MapMask/MapRoot/RootRenderer_0");
-            if (rootRenderer == null) return;
+            if (rootRenderer == null)
+                return;
 
             // Create child of renderer
             playerMarks = new GameObject("PlayerMarks", typeof(RectTransform)).transform;

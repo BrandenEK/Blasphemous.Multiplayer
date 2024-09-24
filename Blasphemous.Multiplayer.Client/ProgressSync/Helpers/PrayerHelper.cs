@@ -28,7 +28,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(InventoryManager), "AddPrayer", typeof(Prayer))]
-    public class InventoryPrayer_Patch
+    class InventoryPrayer_Patch
     {
         public static void Postfix(Prayer prayer)
         {

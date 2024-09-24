@@ -28,7 +28,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(InventoryManager), "AddRelic", typeof(Relic))]
-    public class InventoryRelic_Patch
+    class InventoryRelic_Patch
     {
         public static void Postfix(Relic relic)
         {

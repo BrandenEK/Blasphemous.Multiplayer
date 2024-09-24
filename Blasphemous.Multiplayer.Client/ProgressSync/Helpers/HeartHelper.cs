@@ -28,7 +28,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(InventoryManager), "AddSword", typeof(Sword))]
-    public class InventorySword_Patch
+    class InventorySword_Patch
     {
         public static void Postfix(Sword sword)
         {

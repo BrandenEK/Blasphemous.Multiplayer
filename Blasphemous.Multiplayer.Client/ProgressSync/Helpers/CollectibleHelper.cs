@@ -27,7 +27,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(InventoryManager), "AddCollectibleItem", typeof(Framework.Inventory.CollectibleItem))]
-    public class InventoryCollectible_Patch
+    class InventoryCollectible_Patch
     {
         public static void Postfix(Framework.Inventory.CollectibleItem collectibleItem)
         {

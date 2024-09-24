@@ -24,7 +24,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(NewMapManager), "RevealCellInPosition")]
-    public class NewMapManager_Patch
+    class NewMapManager_Patch
     {
         public static bool Prefix(NewMapManager __instance, Vector2 position, MapData ___CurrentMap)
         {
@@ -56,7 +56,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(NewMapManager), "GetCurrentPersistentState")]
-    public class MapManagerIntro_Patch
+    class MapManagerIntro_Patch
     {
         public static bool Prefix(string dataPath, MapData ___CurrentMap)
         {

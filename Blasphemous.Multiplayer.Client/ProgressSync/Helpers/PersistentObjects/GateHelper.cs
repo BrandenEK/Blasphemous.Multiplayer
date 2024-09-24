@@ -1,4 +1,5 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Actionables;
 using UnityEngine;
@@ -6,19 +7,19 @@ using UnityEngine;
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(Gate), "Use")]
-    public class GateUse_Patch
+    class GateUse_Patch
     {
         public static void Postfix(Gate __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log("Gate opened: " + persistentId);
+            ModLog.Info("Gate opened: " + persistentId);
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
     [HarmonyPatch(typeof(Gate), "GetCurrentPersistentState")]
-    public class GateReceive_Patch
+    class GateReceive_Patch
     {
         public static bool Prefix(string dataPath, ref bool ___open, Animator ___animator, Collider2D ___collision)
         {
@@ -32,7 +33,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
         }
     }
     [HarmonyPatch(typeof(Gate), "SetCurrentPersistentState")]
-    public class GateLoad_Patch
+    class GateLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, Gate __instance, ref bool ___open, Animator ___animator, Collider2D ___collision)
         {

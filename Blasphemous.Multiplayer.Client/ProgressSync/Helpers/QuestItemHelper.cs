@@ -31,7 +31,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(InventoryManager), "AddQuestItem", typeof(QuestItem))]
-    public class InventoryQuestItem_Patch
+    class InventoryQuestItem_Patch
     {
         public static void Postfix(QuestItem questItem)
         {
@@ -47,7 +47,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
         }
     }
     [HarmonyPatch(typeof(InventoryManager), "RemoveQuestItem", typeof(QuestItem))]
-    public class InventoryQuestItemRemove_Patch
+    class InventoryQuestItemRemove_Patch
     {
         public static void Postfix(QuestItem questItem)
         {

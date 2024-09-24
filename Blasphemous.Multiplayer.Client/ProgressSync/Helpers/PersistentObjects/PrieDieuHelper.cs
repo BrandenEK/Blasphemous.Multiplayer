@@ -1,24 +1,25 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Interactables;
 
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(PrieDieu), "OnUse")]
-    public class PrieDieuUse_Patch
+    class PrieDieuUse_Patch
     {
         public static void Postfix(PrieDieu __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log($"Used PrieDieu: {persistentId}");
+            ModLog.Info($"Used PrieDieu: {persistentId}");
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(PrieDieu), "GetCurrentPersistentState")]
-    public class PrieDieuReceive_Patch
+    class PrieDieuReceive_Patch
     {
         public static bool Prefix(string dataPath, PrieDieu __instance)
         {
@@ -31,7 +32,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(PrieDieu), "SetCurrentPersistentState")]
-    public class PrieDieuLoad_Patch
+    class PrieDieuLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, PrieDieu __instance)
         {

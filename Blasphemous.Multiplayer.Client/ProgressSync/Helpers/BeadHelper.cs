@@ -31,7 +31,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
     }
 
     [HarmonyPatch(typeof(InventoryManager), "AddRosaryBead", typeof(RosaryBead))]
-    public class InventoryBead_Patch
+    class InventoryBead_Patch
     {
         public static void Postfix(RosaryBead rosaryBead)
         {
@@ -43,7 +43,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers
         }
     }
     [HarmonyPatch(typeof(InventoryManager), "RemoveRosaryBead", typeof(RosaryBead))]
-    public class InventoryBeadRemove_Patch
+    class InventoryBeadRemove_Patch
     {
         public static void Postfix(RosaryBead bead)
         {

@@ -1,4 +1,5 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Interactables;
 using UnityEngine;
@@ -6,20 +7,20 @@ using UnityEngine;
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(Chest), "OnUse")]
-    public class ChestUse_Patch
+    class ChestUse_Patch
     {
         public static void Postfix(Chest __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log($"Used Chest: {persistentId}");
+            ModLog.Info($"Used Chest: {persistentId}");
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(Chest), "GetCurrentPersistentState")]
-    public class ChestReceive_Patch
+    class ChestReceive_Patch
     {
         public static bool Prefix(string dataPath, Chest __instance, Animator ___interactableAnimator)
         {
@@ -32,7 +33,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(Chest), "SetCurrentPersistentState")]
-    public class ChestLoad_Patch
+    class ChestLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, Chest __instance, Animator ___interactableAnimator)
         {

@@ -1,16 +1,16 @@
 ﻿using Blasphemous.Multiplayer.Client.PvP.Models;
-using HarmonyLib;
 using Framework.Inventory;
+using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Abilities;
-using Framework.Managers;
+using HarmonyLib;
 using System.Collections.Generic;
 
 namespace Blasphemous.Multiplayer.Client.PvP
 {
     // Send attack effects when starting to use a prayer
-    [HarmonyPatch(typeof(PrayerUse), "StartUsingPrayer")]
-    public class PrayerUse_Patch
+    [HarmonyPatch(typeof(PrayerUse), nameof(PrayerUse.StartUsingPrayer))]
+    class PrayerUse_Patch
     {
         public static void Postfix(Prayer prayer)
         {

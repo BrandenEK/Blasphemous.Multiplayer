@@ -1,4 +1,5 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using HarmonyLib;
 using Tools.Level.Interactables;
 using UnityEngine;
@@ -6,20 +7,20 @@ using UnityEngine;
 namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
 {
     [HarmonyPatch(typeof(Lever), "OnUse")]
-    public class LeverUse_Patch
+    class LeverUse_Patch
     {
         public static void Postfix(Lever __instance)
         {
             if (Main.Multiplayer.ProgressManager.CurrentlyUpdatingProgress) return;
 
             string persistentId = __instance.GetPersistenID();
-            Main.Multiplayer.Log($"Used Lever: {persistentId}");
+            ModLog.Info($"Used Lever: {persistentId}");
             Main.Multiplayer.ProgressManager.UsePersistentObject(persistentId);
         }
     }
 
     [HarmonyPatch(typeof(Lever), "GetCurrentPersistentState")]
-    public class LeverReceive_Patch
+    class LeverReceive_Patch
     {
         public static bool Prefix(string dataPath, Lever __instance, Animator ___interactableAnimator)
         {
@@ -32,7 +33,7 @@ namespace Blasphemous.Multiplayer.Client.ProgressSync.Helpers.PersistentObjects
     }
 
     [HarmonyPatch(typeof(Lever), "SetCurrentPersistentState")]
-    public class LeverLoad_Patch
+    class LeverLoad_Patch
     {
         public static bool Prefix(PersistentManager.PersistentData data, Lever __instance)
         {
