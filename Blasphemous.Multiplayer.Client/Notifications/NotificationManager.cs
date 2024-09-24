@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
-using Gameplay.UI.Others.UIGameLogic;
+﻿using Blasphemous.ModdingAPI;
 using Blasphemous.Multiplayer.Client.ProgressSync;
+using Gameplay.UI.Others.UIGameLogic;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Blasphemous.Multiplayer.Client.Notifications
 {
@@ -21,7 +22,7 @@ namespace Blasphemous.Multiplayer.Client.Notifications
         // Add a new notification to the list
         public void DisplayNotification(string notification)
         {
-            Main.Multiplayer.Log("Notification: " + notification);
+            ModLog.Info("Notification: " + notification);
 
             // Add new line to list
             NotificationLine line = new NotificationLine(notification, Main.Multiplayer.config.notificationDisplaySeconds);
@@ -44,7 +45,8 @@ namespace Blasphemous.Multiplayer.Client.Notifications
         // Update the order, text, and fade of all notification lines and box size
         public void Update()
         {
-            if (messageBox == null) return;
+            if (messageBox == null)
+                return;
 
             // Loop over each line of text
             float maxWidth = 0;
@@ -99,7 +101,7 @@ namespace Blasphemous.Multiplayer.Client.Notifications
         // Create text background & lines
         private void CreateUI()
         {
-            Main.Multiplayer.Log("Creating new message box!");
+            ModLog.Info("Creating new message box!");
 
             // Find canvas parent
             Transform parent = null;
@@ -111,7 +113,8 @@ namespace Blasphemous.Multiplayer.Client.Notifications
                     break;
                 }
             }
-            if (parent == null) return;
+            if (parent == null)
+                return;
 
             // Find text object
             GameObject textObject = null;
@@ -123,7 +126,8 @@ namespace Blasphemous.Multiplayer.Client.Notifications
                     break;
                 }
             }
-            if (textObject == null) return;
+            if (textObject == null)
+                return;
 
             // Create message background
             GameObject obj = new GameObject("Message box", typeof(RectTransform), typeof(Image));

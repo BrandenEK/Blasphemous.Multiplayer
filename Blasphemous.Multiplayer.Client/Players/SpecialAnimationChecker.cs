@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Blasphemous.ModdingAPI;
+using UnityEngine;
 
 namespace Blasphemous.Multiplayer.Client.Players
 {
@@ -31,7 +32,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             }
 
             // This animator is playing an unknown animation state
-            Main.Multiplayer.Log("Unknown animation: " + transform.parent.name);
+            ModLog.Info("Unknown animation: " + transform.parent.name);
         }
 
         private void playSpecialAnimation(string anim)

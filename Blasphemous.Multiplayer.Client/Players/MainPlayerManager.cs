@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Client.Data;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.Data;
 using Framework.Managers;
 using UnityEngine;
 
@@ -89,7 +90,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                 }
 
                 // This animation could not be found
-                Main.Multiplayer.LogError("Current animation doesn't exist!");
+                ModLog.Error("Current animation doesn't exist!");
                 return 255;
             }
         }

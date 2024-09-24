@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Client.Data;
+﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Client.Data;
 using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
@@ -88,10 +89,10 @@ namespace Blasphemous.Multiplayer.Client.Players
                     if (PlaySpecialAnimation(value))
                     {
                         playerStatus.SpecialAnimation = value;
-                        Main.Multiplayer.Log("Playing special animation for " + name);
+                        ModLog.Info("Playing special animation for " + name);
                     }
                     else
-                        Main.Multiplayer.LogWarning("Failed to play special animation for " + name);
+                        ModLog.Warn("Failed to play special animation for " + name);
                 }
             }
         }
@@ -260,7 +261,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             // Calculate damage amount based on attack type, sword level, and equipment
             float damageAmount = Main.Multiplayer.DamageCalculator.CalculateOffense(attack);
 
-            Main.Multiplayer.LogWarning($"Sending hit {attack} to {playerStatus.Name} ({damageAmount} damage)");
+            ModLog.Warn($"Sending hit {attack} to {playerStatus.Name} ({damageAmount} damage)");
             Core.Logic.Penitent.Audio.PlaySimpleHitToEnemy();
             Main.Multiplayer.AttackManager.ShowDamageEffects(playerStatus.Name);
             Main.Multiplayer.NetworkManager.SendAttack(playerStatus.Name, attack, (byte)damageAmount);
@@ -276,7 +277,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             DamageArea.DamageElement element = hit.DamageElement;
             float force = hit.Force;
 
-            Main.Multiplayer.LogError($"{playerStatus.Name} received damage [{attacker},{animation},{type},{element},{force}]");
+            ModLog.Info($"{playerStatus.Name} received damage [{attacker},{animation},{type},{element},{force}]");
             //Main.Multiplayer.LogError("Hit sound id: " + hit.HitSoundId);
 
             if (attacker == "Penitent(Clone)")

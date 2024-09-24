@@ -1,4 +1,5 @@
-﻿using Framework.Managers;
+﻿using Blasphemous.ModdingAPI;
+using Framework.Managers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Tools.Level;
@@ -62,7 +63,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                     count++;
                 }
             }
-            Main.Multiplayer.Log("Adding special animation checkers to " + count + " objects!");
+            ModLog.Info("Adding special animation checkers to " + count + " objects!");
 
             // Create main player's nametag
             if (Main.Multiplayer.NetworkManager.IsConnected)
@@ -123,7 +124,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             OtherPlayerScript activePlayer = FindActivePlayer(playerName);
             if (activePlayer == null) return;
 
-            Main.Multiplayer.Log("Setting skin texture for " + playerName);
+            ModLog.Info("Setting skin texture for " + playerName);
             activePlayer.ApplySkinTexture();
         }
 
@@ -138,7 +139,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                     return connectedPlayers[i];
             }
 
-            Main.Multiplayer.LogWarning("Couldn't find connected player: " + name);
+            ModLog.Warn("Couldn't find connected player: " + name);
             return null;
         }
 
@@ -174,7 +175,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                     return activePlayers[i];
             }
 
-            Main.Multiplayer.LogWarning("Couldn't find active player: " + name);
+            ModLog.Warn("Couldn't find active player: " + name);
             return null;
         }
 
@@ -197,7 +198,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             // Set up name tag
             AddNametag(name, Main.Multiplayer.PlayerTeam == player.Team);
 
-            Main.Multiplayer.Log("Created new player object for " + name);
+            ModLog.Info("Created new player object for " + name);
         }
 
         // When a player leaves a scene, destroy the player object
@@ -208,7 +209,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             {
                 activePlayers.Remove(player);
                 Object.Destroy(player.gameObject);
-                Main.Multiplayer.Log("Removed player object for " + name);
+                ModLog.Info("Removed player object for " + name);
             }
 
             RemoveNametag(name);
@@ -239,7 +240,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                     return nametags[i];
             }
 
-            Main.Multiplayer.LogWarning("Couldn't find nametag: " + name);
+            ModLog.Warn("Couldn't find nametag: " + name);
             return null;
         }
 
@@ -251,7 +252,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             Transform parent = Main.Multiplayer.CanvasObject; GameObject text = Main.Multiplayer.TextObject;
             if (parent == null || text == null)
             {
-                Main.Multiplayer.LogWarning("Error: Failed to create nametag for " + name);
+                ModLog.Error("Error: Failed to create nametag for " + name);
                 return;
             }
 
@@ -272,7 +273,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             {
                 nametags.Remove(nametag);
                 Object.Destroy(nametag.gameObject);
-                Main.Multiplayer.Log("Removed nametag for " + name);
+                ModLog.Info("Removed nametag for " + name);
             }
         }
 
