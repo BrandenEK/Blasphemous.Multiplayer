@@ -1,8 +1,16 @@
 # Blasphemous Multiplayer
 
-<img src="https://img.shields.io/github/downloads/BrandenEK/Blasphemous.Multiplayer/total?color=6495ED&style=for-the-badge">
+<img src="https://img.shields.io/github/downloads/BrandenEK/Blasphemous.Multiplayer/total?color=39B7C6&style=for-the-badge">
 
 ---
+
+## Contributors
+
+***- Programming and design -*** <br>
+[@BrandenEK](https://github.com/BrandenEK), [@EltonZhang777](https://github.com/EltonZhang777)
+
+***- Translations -*** <br>
+[@ConanCimmerio](https://github.com/ConanCimmerio), [@EltonZhang777](https://github.com/EltonZhang777), [@RocherBrockas](https://github.com/RocherBrockas)
 
 ## Features
 - See other players as you both move around the world of Cvstodia
@@ -78,9 +86,3 @@ First, the server should be started by running the BlasServer.exe program on the
 | enableFriendlyFire | Allow players on the same team to damage each other | false |
 | team | The id of the team to play on (1-10) | 1 |
 | syncSettings | Which types of progression will be sent & received to & from the server | All enabled |
-
-## Translations
-This mod is available in these other languages in addition to English:
-- Spanish (Thanks to Rodol J. "ConanCimmerio" Pérez (Ro))
-- Chinese (Thanks to NewbieElton)
-- French  (Thanks to Rocher)
