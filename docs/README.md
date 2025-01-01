@@ -62,27 +62,8 @@ First, the server should be started by running the BlasServer.exe program on the
 | `multiplayer players` | none | List all connected players in the server |
 
 ## Configuration settings
-- These settings can be modified in the 'multiplayer.cfg' file located in the "Modding/config" folder
+A full breakdown of all configuration settings can be found [here](SETTINGS.md)
 
-### Server:
-
-| Setting | Description | Default |
-| ------- | ----------- | :-----: |
-| serverPort | The port to start the server on | 8989 |
-| maxPlayers| The maximum number of players to allow on the server| 8 |
-| password | The password for players to join the server | "" |
-
-### Client:
-
-| Setting | Description | Default |
-| ------- | ----------- | :-----: |
-| serverPort | The port that the server is running on | 8989 |
-| notificationDisplaySeconds | The time that a notification will remain on screen | 4.0 |
-| displayNametags | Whether or not to show a nametag for other players | true |
-| displayOwnNametag | Whether or not to show a nametag for this player | true |
-| showPlayersOnMap | Display map icon for other players | true |
-| showOtherTeamOnMap | Display a map icon for players on a different team | false |
-| enablePvP | Allow players to attack and damage each other | true |
-| enableFriendlyFire | Allow players on the same team to damage each other | false |
-| team | The id of the team to play on (1-10) | 1 |
-| syncSettings | Which types of progression will be sent & received to & from the server | All enabled |
+## Installation
+This mod is available for download through the [Blasphemous Mod Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer)
+- Required dependencies: Modding API, Cheat Console
