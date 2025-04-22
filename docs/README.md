@@ -65,5 +65,7 @@ First, the server should be started by running the BlasServer.exe program on the
 A full breakdown of all configuration settings can be found [here](SETTINGS.md)
 
 ## Installation
-This mod is available for download through the [Blasphemous Mod Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer)
-- Required dependencies: Modding API, Cheat Console
+This mod is available for download through the [Blasphemous Mod Installer](https://github.com/BrandenEK/Blasphemous.Modding.Installer) <br>
+Required dependencies:
+- [Modding API](https://github.com/BrandenEK/Blasphemous.ModdingAPI)
+- [Cheat Console](https://github.com/BrandenEK/Blasphemous.CheatConsole)
