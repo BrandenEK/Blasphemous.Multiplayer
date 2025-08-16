@@ -1,4 +1,5 @@
 ﻿using Blasphemous.Multiplayer.Server.Enums;
+using Blasphemous.Multiplayer.Server.Models;
 using SimpleTCP;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ public class Server
 {
     private SimpleTcpServer server;
 
-    private Dictionary<string, PlayerStatus> connectedPlayers;
+    private Dictionary<string, PlayerInfo> connectedPlayers;
 
-    public Dictionary<string, PlayerStatus> getPlayers()
+    public Dictionary<string, PlayerInfo> getPlayers()
     {
         return connectedPlayers;
     }
@@ -43,7 +44,7 @@ public class Server
             return false;
         }
 
-        connectedPlayers = new Dictionary<string, PlayerStatus>();
+        connectedPlayers = new Dictionary<string, PlayerInfo>();
         return true;
     }
 
@@ -126,13 +127,13 @@ public class Server
         Core.removeUnusedGameData(connectedPlayers);
     }
 
-    private PlayerStatus getCurrentPlayer(string ip)
+    private PlayerInfo getCurrentPlayer(string ip)
     {
         if (connectedPlayers.ContainsKey(ip))
             return connectedPlayers[ip];
 
         Logger.Warn("Data for " + ip + " has not been created yet!");
-        return new PlayerStatus("");
+        return new PlayerInfo("");
     }
 
     private List<byte> addPlayerNameToData(string name)
@@ -149,7 +150,7 @@ public class Server
 
     private void SendPosition(string playerIp)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -162,14 +163,14 @@ public class Server
 
     private void ReceivePosition(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.xPos = BitConverter.ToSingle(data, 0);
         current.yPos = BitConverter.ToSingle(data, 4);
 
         SendPosition(playerIp);
     }
 
-    private byte[] GetPositionPacket(PlayerStatus player)
+    private byte[] GetPositionPacket(PlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.AddRange(BitConverter.GetBytes(player.xPos));
@@ -181,7 +182,7 @@ public class Server
 
     private void SendAnimation(string playerIp)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -194,13 +195,13 @@ public class Server
 
     private void ReceiveAnimation(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.animation = data[0];
 
         SendAnimation(playerIp);
     }
 
-    private byte[] GetAnimationPacket(PlayerStatus player)
+    private byte[] GetAnimationPacket(PlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.Add(player.animation);
@@ -211,7 +212,7 @@ public class Server
 
     private void SendDirection(string playerIp)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -224,13 +225,13 @@ public class Server
 
     private void ReceiveDirection(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.facingDirection = BitConverter.ToBoolean(data);
 
         SendDirection(playerIp);
     }
 
-    private byte[] GetDirectionPacket(PlayerStatus player)
+    private byte[] GetDirectionPacket(PlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
@@ -241,7 +242,7 @@ public class Server
 
     private void sendPlayerEnterScene(string playerIp) // Optimize these send functions to combine them together
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -266,13 +267,13 @@ public class Server
 
     private void receivePlayerEnterScene(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.sceneName = Encoding.UTF8.GetString(data);
 
         sendPlayerEnterScene(playerIp);
     }
 
-    private byte[] getScenePacket(PlayerStatus player)
+    private byte[] getScenePacket(PlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.AddRange(Encoding.UTF8.GetBytes(player.sceneName));
@@ -283,7 +284,7 @@ public class Server
 
     private void sendPlayerLeaveScene(string playerIp)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.xPos = 0;
         current.yPos = 0;
         current.animation = 0;
@@ -301,7 +302,7 @@ public class Server
 
     private void receivePlayerLeaveScene(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
 
         sendPlayerLeaveScene(playerIp);
         current.sceneName = "";
@@ -311,7 +312,7 @@ public class Server
 
     private void sendPlayerSkin(string playerIp)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -324,13 +325,13 @@ public class Server
 
     private void receivePlayerSkin(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.skin = data;
 
         sendPlayerSkin(playerIp);
     }
 
-    private byte[] getSkinPacket(PlayerStatus player)
+    private byte[] getSkinPacket(PlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.AddRange(player.skin);
@@ -341,7 +342,7 @@ public class Server
 
     private void sendPlayerTeam(string playerIp)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -352,7 +353,7 @@ public class Server
 
         // Send all of the server data to this player for them to merge
         Logger.Info("Sending all server data to " + playerIp);
-        for (byte i = 0; i < GameData.NUMBER_OF_PROGRESS_TYPES; i++)
+        for (byte i = 0; i < TeamInfo.NUMBER_OF_PROGRESS_TYPES; i++)
         {
             Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
             foreach (string id in progressSet.Keys)
@@ -371,14 +372,14 @@ public class Server
 
     private void receivePlayerTeam(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         current.team = data[0];
 
         sendPlayerTeam(playerIp);
         Core.removeUnusedGameData(connectedPlayers);
     }
 
-    private byte[] getTeamPacket(PlayerStatus player)
+    private byte[] getTeamPacket(PlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.Add(player.team);
@@ -390,7 +391,7 @@ public class Server
     private void sendPlayerConnection(string playerIp, bool connected)
     {
         // Send message to all other connected ips
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -400,7 +401,7 @@ public class Server
         }
     }
 
-    private byte[] getConnectionPacket(PlayerStatus player, bool connected)
+    private byte[] getConnectionPacket(PlayerInfo player, bool connected)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.AddRange(BitConverter.GetBytes(connected));
@@ -417,7 +418,7 @@ public class Server
         if (response > 0)
             return;
 
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -480,7 +481,7 @@ public class Server
         }
 
         // Ensure there are no duplicate names
-        foreach (PlayerStatus player in connectedPlayers.Values)
+        foreach (PlayerInfo player in connectedPlayers.Values)
         {
             if (player.name == playerName)
             {
@@ -492,7 +493,7 @@ public class Server
 
         // Add new connected player
         Logger.Info("Player connection accepted");
-        PlayerStatus newPlayer = new PlayerStatus(playerName);
+        PlayerInfo newPlayer = new PlayerInfo(playerName);
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
         sendPlayerIntro(playerIp, 0);
@@ -507,7 +508,7 @@ public class Server
 
     private void sendPlayerProgress(string playerIp, byte type, byte value, string id)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.team == getCurrentPlayer(ip).team)
@@ -519,7 +520,7 @@ public class Server
 
     private void receivePlayerProgress(string playerIp, byte[] data)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         byte progressType = data[0];
         byte progressValue = data[1];
         string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
@@ -612,7 +613,7 @@ public class Server
 
     private void sendPlayerAttack(string playerIp, byte[] attackData)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -628,7 +629,7 @@ public class Server
         sendPlayerAttack(playerIp, data);
     }
 
-    private byte[] getAttackPacket(PlayerStatus player, byte[] attackData)
+    private byte[] getAttackPacket(PlayerInfo player, byte[] attackData)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.AddRange(attackData);
@@ -639,7 +640,7 @@ public class Server
 
     private void sendPlayerEffect(string playerIp, byte effect)
     {
-        PlayerStatus current = getCurrentPlayer(playerIp);
+        PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -655,7 +656,7 @@ public class Server
         sendPlayerEffect(playerIp, data[0]);
     }
 
-    private byte[] getEffectPacket(PlayerStatus player, byte effect)
+    private byte[] getEffectPacket(PlayerInfo player, byte effect)
     {
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.Add(effect);

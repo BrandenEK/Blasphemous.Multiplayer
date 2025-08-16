@@ -1,7 +1,7 @@
 ﻿
-namespace Blasphemous.Multiplayer.Server;
+namespace Blasphemous.Multiplayer.Server.Models;
 
-public class PlayerStatus
+public class PlayerInfo
 {
     public string name;
     public byte team;
@@ -14,7 +14,7 @@ public class PlayerStatus
 
     public string sceneName;
 
-    public PlayerStatus(string name)
+    public PlayerInfo(string name)
     {
         this.name = name;
         team = 1;
@@ -22,7 +22,7 @@ public class PlayerStatus
         skin = new byte[0];
     }
 
-    public bool isInSameScene(PlayerStatus player)
+    public bool isInSameScene(PlayerInfo player)
     {
         return sceneName != "" && sceneName == player.sceneName;
     }

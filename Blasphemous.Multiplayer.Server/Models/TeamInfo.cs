@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace Blasphemous.Multiplayer.Server;
+namespace Blasphemous.Multiplayer.Server.Models;
 
-public class GameData
+public class TeamInfo
 {
     public const int NUMBER_OF_PROGRESS_TYPES = 14;
 
     private readonly Dictionary<string, byte>[] progressSets;
 
-    public GameData()
+    public TeamInfo()
     {
         // Create empty game data
         progressSets = new Dictionary<string, byte>[NUMBER_OF_PROGRESS_TYPES];

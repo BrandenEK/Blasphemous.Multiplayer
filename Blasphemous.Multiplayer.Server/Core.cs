@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Blasphemous.Multiplayer.Server.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,7 @@ internal static class Core
 {
     public static Config config;
     private static Server server;
-    private static Dictionary<byte, GameData> teamGameDatas;
+    private static Dictionary<byte, TeamInfo> teamGameDatas;
 
     static void Main(string[] args)
     {
@@ -39,7 +40,7 @@ internal static class Core
 
 
         Logger.Info("Server has been started at this machine's local ip address");
-        teamGameDatas = new Dictionary<byte, GameData>();
+        teamGameDatas = new Dictionary<byte, TeamInfo>();
 
         // Start read loop
         while (true)
@@ -48,18 +49,18 @@ internal static class Core
         }
     }
 
-    public static GameData getTeamData(byte team)
+    public static TeamInfo getTeamData(byte team)
     {
         if (teamGameDatas.ContainsKey(team))
             return teamGameDatas[team];
 
         Logger.Info("Creating new game data for team " + team);
-        GameData newData = new GameData();
+        TeamInfo newData = new TeamInfo();
         teamGameDatas.Add(team, newData);
         return newData;
     }
 
-    public static void removeUnusedGameData(Dictionary<string, PlayerStatus> allPlayers)
+    public static void removeUnusedGameData(Dictionary<string, PlayerInfo> allPlayers)
     {
         for (byte i = 1; i <= 10; i++)
         {
@@ -67,7 +68,7 @@ internal static class Core
 
             // If no player is currently on this team, remove the game data
             bool teamExists = false;
-            foreach (PlayerStatus player in allPlayers.Values)
+            foreach (PlayerInfo player in allPlayers.Values)
             {
                 if (player.team == i)
                 {
