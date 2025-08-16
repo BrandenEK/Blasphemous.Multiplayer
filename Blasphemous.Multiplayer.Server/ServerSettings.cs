@@ -3,16 +3,9 @@ namespace Blasphemous.Multiplayer.Server;
 
 public class ServerSettings
 {
-    public int Port { get; }
+    public int Port { get; set; } = 8989;
 
-    public int MaxPlayers { get; }
+    public int MaxPlayers { get; set; } = 8;
 
-    public string Password { get; }
-
-    public ServerSettings(int port, int maxPlayers, string password)
-    {
-        Port = port;
-        MaxPlayers = maxPlayers;
-        Password = password;
-    }
+    public string Password { get; set; } = string.Empty;
 }

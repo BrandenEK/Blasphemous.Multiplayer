@@ -23,7 +23,6 @@ internal static class Core
         // Load settings from file
         ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
         TEMP_settings = settings;
-        Logger.Warn(settings.Port);
 
         // Create server
         server = new Server();
@@ -88,15 +87,14 @@ internal static class Core
         }
         catch
         {
-            Logger.Warn($"Failed to read config from {path}");
-            settings = new ServerSettings(8989, 8, string.Empty);
-
-            File.WriteAllText(path, JsonConvert.SerializeObject(settings, new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.Indented
-            }));
+            settings = new ServerSettings();
         }
+
+        File.WriteAllText(path, JsonConvert.SerializeObject(settings, new JsonSerializerSettings()
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Formatting = Formatting.Indented
+        }));
 
         return settings;
     }
