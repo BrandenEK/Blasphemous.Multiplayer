@@ -66,19 +66,4 @@ public class TeamInfo
             return 0;
         }
     }
-
-    public void PrintTeamProgress()
-    {
-        for (int i = 0; i < progressSets.Length; i++)
-        {
-            if (progressSets[i].Count == 0) continue;
-
-            Logger.Info("---Progress type " + i + "---");
-            foreach (string id in progressSets[i].Keys)
-            {
-                Logger.Info(id + ": " + progressSets[i][id]);
-            }
-        }
-        Logger.Info("");
-    }
 }
