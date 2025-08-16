@@ -19,19 +19,20 @@ internal static class Core
         Console.Title = "Blasphemous Multiplayer Server";
         Console.WriteLine(string.Empty);
 
-        // Load config from file
-        string configPath = Path.Combine(Environment.CurrentDirectory, "multiplayer.cfg");
-        if (File.Exists(configPath))
-        {
-            string json = File.ReadAllText(configPath);
-            config = JsonConvert.DeserializeObject<Config>(json);
-        }
-        else
-        {
-            config = new Config();
-            File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-            Logger.Info("Creating new config at " + configPath);
-        }
+        // Load settings from file
+        ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
+
+        //if (File.Exists(configPath))
+        //{
+        //    string json = File.ReadAllText(configPath);
+        //    config = JsonConvert.DeserializeObject<Config>(json);
+        //}
+        //else
+        //{
+        //    config = new Config();
+        //    File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
+        //    Logger.Info("Creating new config at " + configPath);
+        //}
 
         // Create server
         server = new Server();
@@ -82,5 +83,10 @@ internal static class Core
                 teamGameDatas.Remove(i);
             }
         }
+    }
+
+    private static ServerSettings LoadSettings(string path)
+    {
+
     }
 }
