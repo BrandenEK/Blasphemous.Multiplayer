@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Blasphemous.Multiplayer.Server
 {
@@ -33,62 +34,18 @@ namespace Blasphemous.Multiplayer.Server
 
             // Create server
             server = new Server();
-            if (server.Start())
-            {
-                teamGameDatas = new Dictionary<byte, GameData>();
-                Logger.Info("Server has been started at this machine's local ip address");
-                CommandLoop();
-            }
-            else
-            {
+            if (!server.Start())
                 Logger.Error("Server failed to start at this machine's local ip address");
-            }
 
-            // Exit
-            Logger.Info("\nPress any key to exit...");
-            Console.ReadKey(false);
-        }
 
-        static void CommandLoop()
-        {
+            Logger.Info("Server has been started at this machine's local ip address");
+            teamGameDatas = new Dictionary<byte, GameData>();
+
+            // Start read loop
             while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                string command = Console.ReadLine().Trim().ToLower();
-
-                switch (command)
-                {
-                    case "exit":
-                        return;
-                    case "data":
-                        printData();
-                        break;
-                    case "players":
-                        printPlayers();
-                        break;
-                }
+                Thread.Sleep(1000);
             }
-        }
-
-        static void printData()
-        {
-            Logger.Special("Server game data:");
-            foreach (byte team in teamGameDatas.Keys)
-            {
-                Logger.Special("Team " + team + " data:");
-                teamGameDatas[team].PrintTeamProgress();
-            }
-        }
-
-        static void printPlayers()
-        {
-            Logger.Special("Connected players:");
-            Dictionary<string, PlayerStatus> players = server.getPlayers();
-            foreach (string playerName in players.Keys)
-            {
-                Logger.Info(playerName + ": Team " + players[playerName].team);
-            }
-            Logger.Info("");
         }
 
         public static GameData getTeamData(byte team)
