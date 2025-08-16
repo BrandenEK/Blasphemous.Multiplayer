@@ -14,11 +14,11 @@ namespace Blasphemous.Multiplayer.Server
         static void Main(string[] args)
         {
             // Title
-            Console.Title = "Blasphemous Multiplayer";
-            displayCustom("Blasphemous Multiplayer Server\n", ConsoleColor.Cyan);
+            Console.Title = "Blasphemous Multiplayer Server";
+            Console.WriteLine(string.Empty);
 
             // Load config from file
-            string configPath = Environment.CurrentDirectory + "\\multiplayer.cfg";
+            string configPath = Path.Combine(Environment.CurrentDirectory, "multiplayer.cfg");
             if (File.Exists(configPath))
             {
                 string json = File.ReadAllText(configPath);
@@ -28,7 +28,7 @@ namespace Blasphemous.Multiplayer.Server
             {
                 config = new Config();
                 File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-                displayMessage("Creating new config at " + configPath);
+                Logger.Info("Creating new config at " + configPath);
             }
 
             // Create server
@@ -36,35 +36,17 @@ namespace Blasphemous.Multiplayer.Server
             if (server.Start())
             {
                 teamGameDatas = new Dictionary<byte, GameData>();
-                displayMessage("Server has been started at this machine's local ip address");
+                Logger.Info("Server has been started at this machine's local ip address");
                 CommandLoop();
             }
             else
             {
-                displayError("Server failed to start at this machine's local ip address");
+                Logger.Error("Server failed to start at this machine's local ip address");
             }
 
             // Exit
-            displayCustom("\nPress any key to exit...", ConsoleColor.Gray);
+            Logger.Info("\nPress any key to exit...");
             Console.ReadKey(false);
-        }
-
-        public static void displayMessage(string message)
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(message);
-        }
-
-        public static void displayError(string error)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Error: " + error);
-        }
-
-        public static void displayCustom(string text, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(text);
         }
 
         static void CommandLoop()
@@ -90,23 +72,23 @@ namespace Blasphemous.Multiplayer.Server
 
         static void printData()
         {
-            displayCustom("Server game data:", ConsoleColor.Cyan);
+            Logger.Special("Server game data:");
             foreach (byte team in teamGameDatas.Keys)
             {
-                displayCustom("Team " + team + " data:", ConsoleColor.Cyan);
+                Logger.Special("Team " + team + " data:");
                 teamGameDatas[team].PrintTeamProgress();
             }
         }
 
         static void printPlayers()
         {
-            displayCustom("Connected players:", ConsoleColor.Cyan);
+            Logger.Special("Connected players:");
             Dictionary<string, PlayerStatus> players = server.getPlayers();
             foreach (string playerName in players.Keys)
             {
-                displayMessage(playerName + ": Team " + players[playerName].team);
+                Logger.Info(playerName + ": Team " + players[playerName].team);
             }
-            displayMessage("");
+            Logger.Info("");
         }
 
         public static GameData getTeamData(byte team)
@@ -114,7 +96,7 @@ namespace Blasphemous.Multiplayer.Server
             if (teamGameDatas.ContainsKey(team))
                 return teamGameDatas[team];
 
-            displayMessage("Creating new game data for team " + team);
+            Logger.Info("Creating new game data for team " + team);
             GameData newData = new GameData();
             teamGameDatas.Add(team, newData);
             return newData;
@@ -138,7 +120,7 @@ namespace Blasphemous.Multiplayer.Server
                 }
                 if (!teamExists)
                 {
-                    displayMessage("Removing game data for team " + i);
+                    Logger.Info("Removing game data for team " + i);
                     teamGameDatas.Remove(i);
                 }
             }

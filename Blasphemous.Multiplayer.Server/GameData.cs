@@ -73,13 +73,13 @@ namespace Blasphemous.Multiplayer.Server
             {
                 if (progressSets[i].Count == 0) continue;
 
-                Core.displayMessage("---Progress type " + i + "---");
+                Logger.Info("---Progress type " + i + "---");
                 foreach (string id in progressSets[i].Keys)
                 {
-                    Core.displayMessage(id + ": " + progressSets[i][id]);
+                    Logger.Info(id + ": " + progressSets[i][id]);
                 }
             }
-            Core.displayMessage("");
+            Logger.Info("");
         }
     }
 }

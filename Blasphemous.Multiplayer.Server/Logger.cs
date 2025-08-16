@@ -22,9 +22,21 @@ public static class Logger
         Print(message);
     }
 
-    public static void Success(object message)
+    public static void Special(object message)
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Print(message);
+    }
+
+    public static void ProgressGood(object message)
     {
         Console.ForegroundColor = ConsoleColor.Green;
+        Print(message);
+    }
+
+    public static void ProgressBad(object message)
+    {
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
         Print(message);
     }
 
