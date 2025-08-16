@@ -1,5 +1,4 @@
-﻿
-namespace Blasphemous.Multiplayer.Server;
+﻿namespace Blasphemous.Multiplayer.Server.Enums;
 
 public enum NetworkType
 {
