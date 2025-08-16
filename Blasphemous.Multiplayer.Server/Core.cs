@@ -1,5 +1,6 @@
 ﻿using Blasphemous.Multiplayer.Server.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,17 +23,10 @@ internal static class Core
         // Load settings from file
         ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
 
-        //if (File.Exists(configPath))
-        //{
-        //    string json = File.ReadAllText(configPath);
-        //    config = JsonConvert.DeserializeObject<Config>(json);
-        //}
-        //else
-        //{
-        //    config = new Config();
-        //    File.WriteAllText(configPath, JsonConvert.SerializeObject(config, Formatting.Indented));
-        //    Logger.Info("Creating new config at " + configPath);
-        //}
+        config = new Config();
+        config.serverPort = settings.Port;
+        config.maxPlayers = settings.MaxPlayers;
+        config.password = settings.Password;
 
         // Create server
         server = new Server();
@@ -87,6 +81,24 @@ internal static class Core
 
     private static ServerSettings LoadSettings(string path)
     {
+        ServerSettings settings;
 
+        try
+        {
+            settings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(path));
+        }
+        catch
+        {
+            Logger.Warn($"Failed to read config from {path}");
+            settings = new ServerSettings(8989, 8, string.Empty);
+
+            File.WriteAllText(path, JsonConvert.SerializeObject(settings, new JsonSerializerSettings()
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            }));
+        }
+
+        return settings;
     }
 }
