@@ -9,9 +9,15 @@ namespace Blasphemous.Multiplayer.Server;
 
 public class Server
 {
-    private SimpleTcpServer server;
+    private readonly ServerSettings _settings;
 
+    private SimpleTcpServer server;
     private Dictionary<string, PlayerInfo> connectedPlayers;
+
+    public Server(ServerSettings settings)
+    {
+        _settings = settings;
+    }
 
     public Dictionary<string, PlayerInfo> getPlayers()
     {
@@ -36,7 +42,7 @@ public class Server
             server.ClientConnected += clientConnected;
             server.ClientDisconnected += clientDisconnected;
             server.DataReceived += Receive;
-            server.Start(Core.TEMP_settings.Port);
+            server.Start(_settings.Port);
             server.DelayDisabled = true;
         }
         catch (System.Net.Sockets.SocketException)
@@ -454,7 +460,7 @@ public class Server
         string playerName = Encoding.UTF8.GetString(data, nameStartIdx, data.Length - passwordLength - 1);
 
         // Ensure the password is correct
-        string serverPassword = Core.TEMP_settings.Password;
+        string serverPassword = _settings.Password;
         if (serverPassword != null && serverPassword != "" && (playerPassword == null || playerPassword != serverPassword))
         {
             Logger.Warn("Player connection rejected: Incorrect password");
@@ -465,7 +471,7 @@ public class Server
         // Ensure this ip address is not banned
 
         // Ensure the server doesn't have max number of players
-        if (connectedPlayers.Count >= Core.TEMP_settings.MaxPlayers)
+        if (connectedPlayers.Count >= _settings.MaxPlayers)
         {
             Logger.Warn("Player connection rejected: Player limit reached");
             sendPlayerIntro(playerIp, 3);

@@ -10,7 +10,6 @@ namespace Blasphemous.Multiplayer.Server;
 
 internal static class Core
 {
-    public static ServerSettings TEMP_settings;
     private static Server server;
     private static Dictionary<byte, TeamInfo> teamGameDatas;
 
@@ -22,10 +21,9 @@ internal static class Core
 
         // Load settings from file
         ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
-        TEMP_settings = settings;
 
         // Create server
-        server = new Server();
+        server = new Server(settings);
         if (!server.Start())
         {
             Logger.Error("Server failed to start at this machine's local ip address");
