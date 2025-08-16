@@ -61,7 +61,7 @@ namespace Blasphemous.Multiplayer.Server
                 }
                 catch (Exception)
                 {
-                    Core.displayError("Couldn't send data to " + ip + "!");
+                    Logger.Error("Couldn't send data to " + ip + "!");
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace Blasphemous.Multiplayer.Server
                 startIdx += 3 + length;
             }
             if (startIdx != e.data.Length)
-                Core.displayError("Received data was formatted incorrectly");
+                Logger.Error("Received data was formatted incorrectly");
 
             // Determines which received function to call based on the type
             void processDataReceived(NetworkType type, byte[] data)
@@ -101,19 +101,19 @@ namespace Blasphemous.Multiplayer.Server
                     case NetworkType.Attack:        receivePlayerAttack(e.ip, data); break;
                     case NetworkType.Effect:        receivePlayerEffect(e.ip, data); break;
                     default:
-                        Core.displayError($"Data type '{type}' is not valid"); break;
+                        Logger.Error($"Data type '{type}' is not valid"); break;
                 }
             }
         }
 
         private void clientConnected(object sender, ClientConnectionEventArgs e)
         {
-            Core.displayMessage("Client connected at " + e.ip);
+            Logger.Info("Client connected at " + e.ip);
         }
 
         private void clientDisconnected(object sender, ClientConnectionEventArgs e)
         {
-            Core.displayMessage("Client disconnected at " + e.ip);
+            Logger.Info("Client disconnected at " + e.ip);
 
             // Make sure this client was actually connected, not just rejected from server
             if (!connectedPlayers.ContainsKey(e.ip))
@@ -130,7 +130,7 @@ namespace Blasphemous.Multiplayer.Server
             if (connectedPlayers.ContainsKey(ip))
                 return connectedPlayers[ip];
 
-            Core.displayError("Data for " + ip + " has not been created yet!");
+            Logger.Warn("Data for " + ip + " has not been created yet!");
             return new PlayerStatus("");
         }
 
@@ -350,7 +350,7 @@ namespace Blasphemous.Multiplayer.Server
             }
 
             // Send all of the server data to this player for them to merge
-            Core.displayMessage("Sending all server data to " + playerIp);
+            Logger.Info("Sending all server data to " + playerIp);
             for (byte i = 0; i < GameData.NUMBER_OF_PROGRESS_TYPES; i++)
             {
                 Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
@@ -359,9 +359,9 @@ namespace Blasphemous.Multiplayer.Server
                     byte value = progressSet[id];
                     if (i == 6 && id == "FLASK")
                     {
-                        Core.displayMessage("Send all server flask: " + value);
+                        Logger.Info("Send all server flask: " + value);
                         value -= Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
-                        Core.displayMessage("Send all send flask: " + value);
+                        Logger.Info("Send all send flask: " + value);
                     }
                     Send(playerIp, getProgressPacket("*", i, value, id), NetworkType.Progress);
                 }
@@ -455,7 +455,7 @@ namespace Blasphemous.Multiplayer.Server
             string serverPassword = Core.config.password;
             if (serverPassword != null && serverPassword != "" && (playerPassword == null || playerPassword != serverPassword))
             {
-                Core.displayMessage("Player connection rejected: Incorrect password");
+                Logger.Warn("Player connection rejected: Incorrect password");
                 sendPlayerIntro(playerIp, 1);
                 return;
             }
@@ -465,7 +465,7 @@ namespace Blasphemous.Multiplayer.Server
             // Ensure the server doesn't have max number of players
             if (connectedPlayers.Count >= Core.config.maxPlayers)
             {
-                Core.displayMessage("Player connection rejected: Player limit reached");
+                Logger.Warn("Player connection rejected: Player limit reached");
                 sendPlayerIntro(playerIp, 3);
                 return;
             }
@@ -473,7 +473,7 @@ namespace Blasphemous.Multiplayer.Server
             // Ensure there are no duplicate ips
             if (connectedPlayers.ContainsKey(playerIp))
             {
-                Core.displayMessage("Player connection rejected: Duplicate ip address");
+                Logger.Warn("Player connection rejected: Duplicate ip address");
                 sendPlayerIntro(playerIp, 4);
                 return;
             }
@@ -483,14 +483,14 @@ namespace Blasphemous.Multiplayer.Server
             {
                 if (player.name == playerName)
                 {
-                    Core.displayMessage("Player connection rejected: Duplicate name");
+                    Logger.Warn("Player connection rejected: Duplicate name");
                     sendPlayerIntro(playerIp, 5);
                     return;
                 }
             }
 
             // Add new connected player
-            Core.displayMessage("Player connection accepted");
+            Logger.Info("Player connection accepted");
             PlayerStatus newPlayer = new PlayerStatus(playerName);
             connectedPlayers.Add(playerIp, newPlayer);
             sendPlayerConnection(playerIp, true);
@@ -526,54 +526,54 @@ namespace Blasphemous.Multiplayer.Server
             // Add the progress to the server data, and if it's new send it to the rest of the players
             if (!Core.getTeamData(current.team).AddTeamProgress(progressId, progressType, progressValue))
             {
-                Core.displayCustom($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}", ConsoleColor.DarkGreen);
+                Logger.ProgressBad($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}");
                 return;
             }
 
             if (progressType >= 0 && progressType <= 5)
             {
                 // Item
-                Core.displayCustom($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.name}: {progressId}");
             }
             else if (progressType == 6)
             {
                 // Stat
-                Core.displayCustom($"Received new stat upgrade from {current.name}: {progressId} level {progressValue + 1}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new stat upgrade from {current.name}: {progressId} level {progressValue + 1}");
             }
             else if (progressType == 7)
             {
                 // Skill
-                Core.displayCustom($"Received new skill from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new skill from {current.name}: {progressId}");
             }
             else if (progressType == 8)
             {
                 // Map cell
-                Core.displayCustom($"Received new map cell from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new map cell from {current.name}: {progressId}");
             }
             else if (progressType == 9)
             {
                 // Flag
-                Core.displayCustom($"Received new flag from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new flag from {current.name}: {progressId}");
             }
             else if (progressType == 10)
             {
                 // Pers. object
-                Core.displayCustom($"Received new pers. object from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new pers. object from {current.name}: {progressId}");
             }
             else if (progressType == 11)
             {
                 // Teleport
-                Core.displayCustom($"Received new teleport location from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new teleport location from {current.name}: {progressId}");
             }
             else if (progressType == 12)
             {
                 // Church donation
-                Core.displayCustom($"Received new tear donation from {current.name}: {progressValue}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new tear donation from {current.name}: {progressValue}");
             }
             else if (progressType == 13)
             {
                 // Miriam status
-                Core.displayCustom($"Received new miriam status from {current.name}: {progressId}", ConsoleColor.Green);
+                Logger.ProgressGood($"Received new miriam status from {current.name}: {progressId}");
             }
 
             // If this is a stat upgrade, might have to do something extra with flask/flaskhealth
@@ -581,16 +581,16 @@ namespace Blasphemous.Multiplayer.Server
             {
                 if (progressId == "FLASK")
                 {
-                    Core.displayMessage("Received flask level: " + progressValue);
+                    Logger.Info("Received flask level: " + progressValue);
                     byte flaskHealthUpgrades = Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
                     progressValue -= flaskHealthUpgrades;
-                    Core.displayMessage("Flask level sent out: " + progressValue);
+                    Logger.Info("Flask level sent out: " + progressValue);
                 }
                 else if (progressId == "FLASKHEALTH")
                 {
                     byte flaskUpgrades = Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASK");
-                    Core.displayMessage("Flask level stored: " + flaskUpgrades);
-                    Core.displayMessage("Flask level sent: " + (byte)(flaskUpgrades - progressValue));
+                    Logger.Info("Flask level stored: " + flaskUpgrades);
+                    Logger.Info("Flask level sent: " + (byte)(flaskUpgrades - progressValue));
                     sendPlayerProgress(playerIp, 6, (byte)(flaskUpgrades - progressValue), "FLASK");
                 }
             }
