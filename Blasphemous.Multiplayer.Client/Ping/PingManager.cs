@@ -9,6 +9,8 @@ public class PingManager
 {
     private readonly List<float> _delays = new(10);
 
+    private float _currentInterval = 0;
+
     private ushort AveragePing
     {
         get
@@ -34,11 +36,18 @@ public class PingManager
 
     public void OnUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.H))
+        if (!Main.Multiplayer.NetworkManager.IsConnected)
+            return;
+
+        _currentInterval += Time.deltaTime;
+
+        if (_currentInterval >= SEND_INTERVAL)
         {
-            Main.Multiplayer.NetworkManager.SendPing(Time.time, 0);
+            _currentInterval = 0;
+            Main.Multiplayer.NetworkManager.SendPing(Time.time, AveragePing);
         }
     }
 
     private const int MAX_DELAYS = 10;
+    private const float SEND_INTERVAL = 1;
 }
