@@ -12,7 +12,6 @@ namespace Blasphemous.Multiplayer.Client;
 public class MultiplayerGUI : MonoBehaviour
 {
     private bool _showingConnection = false;
-    private bool _connected = false;
 
     private string _server = "192.168.0.1:25565"; // Handle these somewhere else (In a class with proper defaults)
     private string _room = "mp test";
@@ -45,7 +44,7 @@ public class MultiplayerGUI : MonoBehaviour
         if (!_showingConnection)
             return;
 
-        if (!_connected)
+        if (!Main.Multiplayer.NetworkManager.IsConnected)
             GUI.Window(0, new Rect(10, 670, 330, 400), ConnectionInfoWindow, "Enter connection info");
         else
             GUI.Window(1, new Rect(10, 920, 330, 150), ConnectionStatusWindow, "Connection status");
@@ -59,16 +58,10 @@ public class MultiplayerGUI : MonoBehaviour
         _password = ReadTextField("Password:", _password, 3);
         _team = ReadChoiceBox("Team number:", _team - 1, Enumerable.Range(1, 8).Select(x => x.ToString()).ToArray(), 4) + 1;
 
+        // Validate all parameters
+
         if (ReadButton("Connect", 5))
-        {
-            // Actually connect
-
-            ModLog.Warn("Attempting to connect...");
-            _connected = true;
-
-            // Dont close immediately
-            ToggleShowingConnection();
-        }
+            TryConnect();
     }
 
     private void ConnectionStatusWindow(int windowID)
@@ -78,12 +71,29 @@ public class MultiplayerGUI : MonoBehaviour
         ShowLabel(text, 0);
 
         if (ReadButton("Disconnect", 2))
-        {
-            // Actually disconnect
+            TryDisconnect();
+    }
 
-            ModLog.Warn("Disconnecting from server");
-            _connected = false;
-        }
+    private void TryConnect()
+    {
+        ModLog.Info($"Attempting to connect to {_server}");
+
+        string[] ipParts = _server.Split(':');  // Do this better
+
+        bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _player, _password);
+
+        if (result)
+            ModLog.Info($"Successfully connected to {_server}");
+        else
+            ModLog.Error($"Failed to connect to {_server}");
+
+        // Handle intro failure
+    }
+
+    private void TryDisconnect()
+    {
+        ModLog.Info($"Disconnecting from {_server}");
+        Main.Multiplayer.NetworkManager.Disconnect();
     }
 
     private void ShowLabel(string label, int line)
