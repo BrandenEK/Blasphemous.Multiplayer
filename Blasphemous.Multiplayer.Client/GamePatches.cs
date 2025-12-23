@@ -2,6 +2,7 @@
 using Framework.Managers;
 using Gameplay.GameControllers.Entities;
 using Gameplay.GameControllers.Penitent.Damage;
+using Gameplay.UI.Widgets;
 using HarmonyLib;
 
 namespace Blasphemous.Multiplayer.Client
@@ -29,5 +30,12 @@ namespace Blasphemous.Multiplayer.Client
             }
             return true;
         }
+    }
+
+    // Always allow cursor visibility
+    [HarmonyPatch(typeof(DebugInformation), "Update")]
+    class DebugInformation_Update_Patch
+    {
+        public static bool Prefix() => false;
     }
 }

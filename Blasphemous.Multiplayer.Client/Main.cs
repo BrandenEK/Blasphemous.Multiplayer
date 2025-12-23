@@ -14,5 +14,7 @@ internal class Main : BaseUnityPlugin
     {
         Instance = this;
         Multiplayer = new Multiplayer();
+
+        gameObject.AddComponent<MultiplayerGUI>();
     }
 }
