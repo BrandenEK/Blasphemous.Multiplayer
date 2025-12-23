@@ -11,7 +11,7 @@ public class PingManager
 
     private float _currentInterval = 0;
 
-    private ushort AveragePing
+    public ushort AveragePing
     {
         get
         {
