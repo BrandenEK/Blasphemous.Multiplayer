@@ -165,7 +165,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                         case NetworkType.Progress: ReceiveProgress(messageData); break;
                         case NetworkType.Attack: ReceiveAttack(messageData); break;
                         case NetworkType.Effect: ReceiveEffect(messageData); break;
-
+                        case NetworkType.Ping: ReceivePing(messageData); break;
                     }
                     startIdx += 3 + length;
                 }
@@ -451,6 +451,24 @@ namespace Blasphemous.Multiplayer.Client.Network
             EffectType effectType = (EffectType)data[startIdx];
 
             Main.Multiplayer.AttackManager.ReceiveEffect(playerName, effectType);
+        }
+
+        // Ping
+
+        public void SendPing(float time, ushort ping)
+        {
+            var bytes = new List<byte>();
+            bytes.AddRange(BitConverter.GetBytes(time));
+            bytes.AddRange(BitConverter.GetBytes(ping));
+
+            QueueMesssage(bytes.ToArray(), NetworkType.Ping);
+        }
+
+        private void ReceivePing(byte[] data)
+        {
+            float time = BitConverter.ToSingle(data, 0);
+
+            Main.Multiplayer.PingManager.ReceivePing(time);
         }
     }
 }

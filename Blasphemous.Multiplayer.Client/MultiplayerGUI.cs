@@ -13,8 +13,8 @@ public class MultiplayerGUI : MonoBehaviour
 {
     private bool _showingConnection = false;
 
-    private string _server = "192.168.0.1:25565"; // Handle these somewhere else (In a class with proper defaults)
-    private string _room = "mp test";
+    private string _server = "localhost:33000"; // Handle these somewhere else (In a class with proper defaults)
+    private string _room = "debug";
     private string _player = "Damocles";
     private string _password = string.Empty;
     private int _team = 1;

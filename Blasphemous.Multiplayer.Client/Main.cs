@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using Blasphemous.Multiplayer.Client.Ping;
 
 namespace Blasphemous.Multiplayer.Client;
 
@@ -16,5 +17,6 @@ internal class Main : BaseUnityPlugin
         Multiplayer = new Multiplayer();
 
         gameObject.AddComponent<MultiplayerGUI>();
+        gameObject.AddComponent<PingDisplay>();
     }
 }

@@ -108,6 +108,7 @@ public class Server
                 case NetworkType.Progress:      receivePlayerProgress(e.ip, data); break;
                 case NetworkType.Attack:        receivePlayerAttack(e.ip, data); break;
                 case NetworkType.Effect:        receivePlayerEffect(e.ip, data); break;
+                case NetworkType.Ping:          ReceivePing(e.ip, data); break;
                 default:
                     Logger.Error($"Data type '{type}' is not valid"); break;
             }
@@ -667,5 +668,21 @@ public class Server
         List<byte> bytes = addPlayerNameToData(player.name);
         bytes.Add(effect);
         return bytes.ToArray();
+    }
+
+    // Ping
+
+    private void SendPing(string playerIp, float time)
+    {
+        byte[] bytes = BitConverter.GetBytes(time);
+        Send(playerIp, bytes, NetworkType.Ping);
+    }
+
+    private void ReceivePing(string playerIp, byte[] data)
+    {
+        float time = BitConverter.ToSingle(data, 0);
+        ushort ping = BitConverter.ToUInt16(data, 4);
+
+        SendPing(playerIp, time);
     }
 }

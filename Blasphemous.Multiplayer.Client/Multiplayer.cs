@@ -6,6 +6,7 @@ using Blasphemous.Multiplayer.Client.Data;
 using Blasphemous.Multiplayer.Client.Map;
 using Blasphemous.Multiplayer.Client.Network;
 using Blasphemous.Multiplayer.Client.Notifications;
+using Blasphemous.Multiplayer.Client.Ping;
 using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
@@ -33,6 +34,7 @@ public class Multiplayer : BlasMod, IPersistentMod
     public OtherPlayerManager OtherPlayerManager { get; private set; }
     public ProgressManager ProgressManager { get; private set; }
     public DamageCalculator DamageCalculator { get; private set; }
+    public PingManager PingManager { get; private set; }
 
     // Game status
     public bool RandomizerMode => ModHelper.IsModLoadedByName("Randomizer");
@@ -63,6 +65,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         OtherPlayerManager = new OtherPlayerManager();
         ProgressManager = new ProgressManager();
         DamageCalculator = new DamageCalculator();
+        PingManager = new PingManager();
 
         // Initialize data
         config = ConfigHandler.Load<Config>();
@@ -131,6 +134,7 @@ public class Multiplayer : BlasMod, IPersistentMod
 
         MapManager.Update();
         NotificationManager.Update();
+        PingManager.OnUpdate();
         if (CurrentlyInLevel)
         {
             MainPlayerManager.Update();
