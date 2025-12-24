@@ -1,5 +1,4 @@
 ﻿using Blasphemous.ModdingAPI.Helpers;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -31,22 +30,27 @@ public class PlayerDisplay : MonoBehaviour
 
         int y = 20;
 
-        foreach (var group in _tempPlayers.GroupBy(x => x.Value))
-        {
-            byte team = group.Key;
+        var infos = Main.Multiplayer.OtherPlayerManager.AllConnectedPlayers
+            .Select(x => new PlayerDisplayInfo(x.Name, x.Team, x.Ping))
+            .Concat([new PlayerDisplayInfo(Main.Multiplayer.PlayerName, Main.Multiplayer.PlayerTeam, Main.Multiplayer.PingManager.AveragePing)])
+            .OrderBy(x => x.Name);
 
-            GUI.Label(new Rect(0, y, WINDOW_WIDTH, LINE_HEIGHT), $"Team {team}", headerStyle);
+        foreach (var group in infos.GroupBy(x => x.Team))
+        {
+            GUI.Label(new Rect(0, y, WINDOW_WIDTH, LINE_HEIGHT), $"Team {group.Key}", headerStyle);
             y += LINE_HEIGHT + LINE_GAP;
 
             GUI.Box(new Rect(0, y, WINDOW_WIDTH, group.Count() * (LINE_HEIGHT + LINE_GAP) + LINE_GAP), string.Empty);
             y += LINE_GAP;
 
-            foreach (string player in group.Select(x => x.Key))
+            foreach (var info in group)
             {
-                string ping = $"<color=#109748>30ms</color>";
+                string color = _regions.OrderBy(x => x.MaxPing).First(x => info.Ping <= x.MaxPing).Color;
+                string nameText = info.Name;
+                string pingText = $"<color=#{color}>{info.Ping}ms</color>";
 
-                GUI.Label(new Rect(10, y, WINDOW_WIDTH - 20, LINE_HEIGHT), ping, pingStyle);
-                GUI.Label(new Rect(10, y, WINDOW_WIDTH - 20, LINE_HEIGHT), player);
+                GUI.Label(new Rect(10, y, WINDOW_WIDTH - 20, LINE_HEIGHT), pingText, pingStyle);
+                GUI.Label(new Rect(10, y, WINDOW_WIDTH - 20, LINE_HEIGHT), nameText);
                 y += LINE_HEIGHT + LINE_GAP;
             }
         }
@@ -54,14 +58,12 @@ public class PlayerDisplay : MonoBehaviour
         _playerWindow.height = y;
     }
 
-    private readonly Dictionary<string, byte> _tempPlayers = new()
+    private static readonly PingRegion[] _regions =
     {
-        { "Damocles", 1 },
-        { "Salamanthe", 2 },
-        { "Obssesive Bad", 3 },
-        { "NewbieElton", 1 },
-        { "Xanathar", 2 },
-        { "WWWWWWWWWWWWWWWW", 2 },
+        new PingRegion(50, "109748"),
+        new PingRegion(100, "FFE733"),
+        new PingRegion(500, "FF8C01"),
+        new PingRegion(int.MaxValue, "ED2938"),
     };
 
     private const int WINDOW_WIDTH = 250;
