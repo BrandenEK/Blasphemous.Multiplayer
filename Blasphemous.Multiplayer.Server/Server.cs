@@ -140,7 +140,7 @@ public class Server
             return connectedPlayers[ip];
 
         Logger.Warn("Data for " + ip + " has not been created yet!");
-        return new PlayerInfo("");
+        return new PlayerInfo(string.Empty, 1);
     }
 
     private List<byte> addPlayerNameToData(string name)
@@ -478,6 +478,10 @@ public class Server
             return;
         }
 
+        byte roomLength = data[idx];
+        string room = Encoding.UTF8.GetString(data, idx + 1, roomLength);
+        idx += roomLength + 1;
+
         byte nameLength = data[idx];
         string name = Encoding.UTF8.GetString(data, idx + 1, nameLength);
         idx += nameLength + 1;
@@ -506,9 +510,11 @@ public class Server
             return;
         }
 
+        byte team = data[idx];
+
         // Add new connected player
         Logger.Info("Player connection accepted");
-        PlayerInfo newPlayer = new PlayerInfo(name);
+        PlayerInfo newPlayer = new PlayerInfo(name, team);
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
         sendPlayerIntro(playerIp, 0);
@@ -712,5 +718,5 @@ public class Server
         SendPing(playerIp, time);
     }
 
-    private const byte PROTOCOL_VERSION = 2;
+    private const byte PROTOCOL_VERSION = 3;
 }

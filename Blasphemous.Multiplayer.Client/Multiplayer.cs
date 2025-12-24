@@ -74,7 +74,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         config = ConfigHandler.Load<Config>();
         PersistentStates.loadPersistentObjects();
         PlayerName = string.Empty;
-        PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
+        PlayerTeam = 1;
     }
 
     protected override void OnRegisterServices(ModServiceProvider provider)
@@ -148,27 +148,11 @@ public class Multiplayer : BlasMod, IPersistentMod
         NetworkManager.SendQueue();
     }
 
-    // TEMP: only called by Network manager to store name right now
-    public void SetPlayerName(string name)
+    // TEMP: only called by Network manager to store name/team right now
+    public void SetPlayerData(string player, byte team)
     {
-        PlayerName = name;
-    }
-
-    // Changed team number from command
-    public void changeTeam(byte teamNumber)
-    {
-        PlayerTeam = teamNumber;
-        ProgressManager.ResetProgressSentStatus();
-
-        if (NetworkManager.IsConnected)
-        {
-            NetworkManager.SendTeam(teamNumber);
-            if (CurrentlyInLevel)
-            {
-                RefreshPlayerColors();
-                ProgressManager.SendAllProgress();
-            }
-        }
+        PlayerName = player;
+        PlayerTeam = team;
     }
 
     // Refresh players' nametags & map icons when someone changed teams

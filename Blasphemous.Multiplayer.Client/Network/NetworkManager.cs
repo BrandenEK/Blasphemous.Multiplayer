@@ -26,28 +26,7 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         // Connection
 
-        public bool Connect(string ipAddress, string playerName, string password)
-        {
-            if (_connectionStatus != ConnectionStatus.Disconnected) return false;
-
-            try
-            {
-                _client = new SimpleTcpClient();
-                _client.Connect(ipAddress, Main.Multiplayer.config.serverPort);
-                _client.DataReceived += ReceiveMessage;
-                _client.TcpClient.NoDelay = true;
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                OnConnect?.Invoke(false, 255);
-                return false;
-            }
-
-            OnConnectOld(ipAddress, playerName, password);
-            return true;
-        }
-
-        public bool Connect(string server, int port, string playerName, string password)
+        public bool Connect(string server, int port, string room, string player, string password, byte team)
         {
             if (_connectionStatus != ConnectionStatus.Disconnected)
                 return false;
@@ -65,7 +44,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 return false;
             }
 
-            OnConnectOld(server, playerName, password);
+            OnConnectOld(server, room, player, password, team);
             return true;
         }
 
@@ -75,14 +54,14 @@ namespace Blasphemous.Multiplayer.Client.Network
             OnDisconnect();
         }
 
-        private void OnConnectOld(string ipAddress, string playerName, string password)
+        private void OnConnectOld(string ipAddress, string room, string player, string password, byte team)
         {
             _connectionStatus = ConnectionStatus.Attempting;
             _serverIp = ipAddress;
-            SendIntro(playerName, password);
+            SendIntro(room, player, password, team);
 
             ModLog.Info("Connected to server: " + ipAddress);
-            Main.Multiplayer.SetPlayerName(playerName);
+            Main.Multiplayer.SetPlayerData(player, team);
         }
 
         private void OnDisconnect()
@@ -352,17 +331,22 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         // Intro
 
-        public void SendIntro(string playerName, string password)
+        public void SendIntro(string room, string player, string password, byte team)
         {
             var bytes = new List<byte>();
             bytes.Add(PROTOCOL_VERSION);
 
-            bytes.Add((byte)playerName.Length);
-            bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
+            bytes.Add((byte)room.Length);
+            bytes.AddRange(Encoding.UTF8.GetBytes(room));
+
+            bytes.Add((byte)player.Length);
+            bytes.AddRange(Encoding.UTF8.GetBytes(player));
 
             bytes.Add((byte)password.Length);
             if (password.Length > 0)
                 bytes.AddRange(Encoding.UTF8.GetBytes(password));
+
+            bytes.Add(team);
 
             QueueMesssage(bytes.ToArray(), NetworkType.Intro);
         }
@@ -485,6 +469,6 @@ namespace Blasphemous.Multiplayer.Client.Network
         public delegate void ConnectDelegate(bool success, byte errorCode);
         public event ConnectDelegate OnConnect;
 
-        private const byte PROTOCOL_VERSION = 2;
+        private const byte PROTOCOL_VERSION = 3;
     }
 }
