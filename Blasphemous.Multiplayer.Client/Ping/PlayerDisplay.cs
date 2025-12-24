@@ -27,7 +27,7 @@ public class PlayerDisplay : MonoBehaviour
             richText = true,
         };
 
-        int x = 10, y = 20;
+        int y = 20;
 
         foreach (var group in _tempPlayers.GroupBy(x => x.Value))
         {
@@ -36,14 +36,15 @@ public class PlayerDisplay : MonoBehaviour
             GUI.Label(new Rect(0, y, WINDOW_WIDTH, LINE_HEIGHT), $"Team {team}", headerStyle);
             y += LINE_HEIGHT + LINE_GAP;
 
-            GUI.Box(new Rect(0, y, WINDOW_WIDTH, group.Count() * (LINE_HEIGHT + LINE_GAP)), string.Empty);
+            GUI.Box(new Rect(0, y, WINDOW_WIDTH, group.Count() * (LINE_HEIGHT + LINE_GAP) + LINE_GAP), string.Empty);
+            y += LINE_GAP;
 
             foreach (string player in group.Select(x => x.Key))
             {
                 string ping = $"<color=#109748>30ms</color>";
 
-                GUI.Label(new Rect(x, y, LINE_WIDTH, LINE_HEIGHT), player);
-                GUI.Label(new Rect(10 + LINE_WIDTH, y, 50, LINE_HEIGHT), ping, pingStyle);
+                GUI.Label(new Rect(10, y, WINDOW_WIDTH - 20, LINE_HEIGHT), ping, pingStyle);
+                GUI.Label(new Rect(10, y, WINDOW_WIDTH - 20, LINE_HEIGHT), player);
                 y += LINE_HEIGHT + LINE_GAP;
             }
         }
@@ -61,7 +62,6 @@ public class PlayerDisplay : MonoBehaviour
 
     private const int WINDOW_WIDTH = 250;
     private const int WINDOW_HEIGHT = 400;
-    private const int LINE_WIDTH = 180;
     private const int LINE_HEIGHT = 20;
     private const int LINE_GAP = 5;
 }
