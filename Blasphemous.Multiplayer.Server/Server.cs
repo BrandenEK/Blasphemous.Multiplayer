@@ -108,6 +108,7 @@ public class Server
                 case NetworkType.Progress:      receivePlayerProgress(e.ip, data); break;
                 case NetworkType.Attack:        receivePlayerAttack(e.ip, data); break;
                 case NetworkType.Effect:        receivePlayerEffect(e.ip, data); break;
+                case NetworkType.Ping:          ReceivePing(e.ip, data); break;
                 default:
                     Logger.Error($"Data type '{type}' is not valid"); break;
             }
@@ -449,26 +450,7 @@ public class Server
 
     private void receivePlayerIntro(string playerIp, byte[] data)
     {
-        // Load player name and password from data
-        byte passwordLength = data[0], nameStartIdx = 1;
-        string playerPassword = null;
-        if (passwordLength > 0)
-        {
-            playerPassword = Encoding.UTF8.GetString(data, 1, passwordLength);
-            nameStartIdx = (byte)(passwordLength + 1);
-        }
-        string playerName = Encoding.UTF8.GetString(data, nameStartIdx, data.Length - passwordLength - 1);
-
-        // Ensure the password is correct
-        string serverPassword = _settings.Password;
-        if (serverPassword != null && serverPassword != "" && (playerPassword == null || playerPassword != serverPassword))
-        {
-            Logger.Warn("Player connection rejected: Incorrect password");
-            sendPlayerIntro(playerIp, 1);
-            return;
-        }
-
-        // Ensure this ip address is not banned
+        int idx = 0;
 
         // Ensure the server doesn't have max number of players
         if (connectedPlayers.Count >= _settings.MaxPlayers)
@@ -486,10 +468,24 @@ public class Server
             return;
         }
 
+        byte protocol = data[idx++];
+
+        // Ensure the protocol version matches
+        if (protocol != PROTOCOL_VERSION)
+        {
+            Logger.Warn("Player connection rejected: Protocol version doesn't match");
+            sendPlayerIntro(playerIp, 6);
+            return;
+        }
+
+        byte nameLength = data[idx];
+        string name = Encoding.UTF8.GetString(data, idx + 1, nameLength);
+        idx += nameLength + 1;
+
         // Ensure there are no duplicate names
         foreach (PlayerInfo player in connectedPlayers.Values)
         {
-            if (player.name == playerName)
+            if (player.name == name)
             {
                 Logger.Warn("Player connection rejected: Duplicate name");
                 sendPlayerIntro(playerIp, 5);
@@ -497,9 +493,22 @@ public class Server
             }
         }
 
+        byte passwordLength = data[idx];
+        string password = passwordLength == 0 ? null : Encoding.UTF8.GetString(data, idx + 1, passwordLength);
+        idx += passwordLength + 1;
+
+        // Ensure the password is correct
+        string serverPassword = _settings.Password;
+        if (!string.IsNullOrEmpty(serverPassword) && (password == null || password != serverPassword))
+        {
+            Logger.Warn("Player connection rejected: Incorrect password");
+            sendPlayerIntro(playerIp, 1);
+            return;
+        }
+
         // Add new connected player
         Logger.Info("Player connection accepted");
-        PlayerInfo newPlayer = new PlayerInfo(playerName);
+        PlayerInfo newPlayer = new PlayerInfo(name);
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
         sendPlayerIntro(playerIp, 0);
@@ -668,4 +677,40 @@ public class Server
         bytes.Add(effect);
         return bytes.ToArray();
     }
+
+    // Ping
+
+    private void SendPing(string playerIp, float time)
+    {
+        var bytes = new List<byte>();
+        bytes.AddRange(BitConverter.GetBytes(time));
+
+        foreach (var player in getPlayers())
+        {
+            if (player.Key == playerIp)
+                continue;
+
+            string name = player.Value.name;
+            ushort ping = player.Value.ping;
+
+            bytes.Add((byte)name.Length);
+            bytes.AddRange(Encoding.UTF8.GetBytes(name));
+            bytes.AddRange(BitConverter.GetBytes(ping));
+        }
+
+        Send(playerIp, bytes.ToArray(), NetworkType.Ping);
+    }
+
+    private void ReceivePing(string playerIp, byte[] data)
+    {
+        float time = BitConverter.ToSingle(data, 0);
+        ushort ping = BitConverter.ToUInt16(data, 4);
+
+        PlayerInfo current = getCurrentPlayer(playerIp);
+        current.ping = ping;
+
+        SendPing(playerIp, time);
+    }
+
+    private const byte PROTOCOL_VERSION = 2;
 }

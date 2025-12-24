@@ -11,6 +11,7 @@ public class PlayerInfo
     public bool facingDirection;
     public byte animation;
     public byte[] skin;
+    public ushort ping;
 
     public string sceneName;
 
@@ -20,6 +21,7 @@ public class PlayerInfo
         team = 1;
         sceneName = "";
         skin = new byte[0];
+        ping = 0;
     }
 
     public bool isInSameScene(PlayerInfo player)

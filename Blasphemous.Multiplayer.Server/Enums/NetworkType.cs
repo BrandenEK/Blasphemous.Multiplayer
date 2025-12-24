@@ -14,4 +14,5 @@ public enum NetworkType
     Progress = 9,
     Attack = 10,
     Effect = 11,
+    Ping = 12,
 }

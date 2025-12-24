@@ -39,10 +39,33 @@ namespace Blasphemous.Multiplayer.Client.Network
             }
             catch (System.Net.Sockets.SocketException)
             {
+                OnConnect?.Invoke(false, 255);
                 return false;
             }
 
-            OnConnect(ipAddress, playerName, password);
+            OnConnectOld(ipAddress, playerName, password);
+            return true;
+        }
+
+        public bool Connect(string server, int port, string playerName, string password)
+        {
+            if (_connectionStatus != ConnectionStatus.Disconnected)
+                return false;
+
+            try
+            {
+                _client = new SimpleTcpClient();
+                _client.Connect(server, port);
+                _client.DataReceived += ReceiveMessage;
+                _client.TcpClient.NoDelay = true;
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+                OnConnect?.Invoke(false, 255);
+                return false;
+            }
+
+            OnConnectOld(server, playerName, password);
             return true;
         }
 
@@ -52,14 +75,14 @@ namespace Blasphemous.Multiplayer.Client.Network
             OnDisconnect();
         }
 
-        private void OnConnect(string ipAddress, string playerName, string password)
+        private void OnConnectOld(string ipAddress, string playerName, string password)
         {
             _connectionStatus = ConnectionStatus.Attempting;
             _serverIp = ipAddress;
             SendIntro(playerName, password);
 
             ModLog.Info("Connected to server: " + ipAddress);
-            Main.Multiplayer.OnConnect(ipAddress, playerName, password);
+            Main.Multiplayer.SetPlayerName(playerName);
         }
 
         private void OnDisconnect()
@@ -144,7 +167,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                         case NetworkType.Progress: ReceiveProgress(messageData); break;
                         case NetworkType.Attack: ReceiveAttack(messageData); break;
                         case NetworkType.Effect: ReceiveEffect(messageData); break;
-
+                        case NetworkType.Ping: ReceivePing(messageData); break;
                     }
                     startIdx += 3 + length;
                 }
@@ -331,17 +354,15 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         public void SendIntro(string playerName, string password)
         {
-            List<byte> bytes = new ();
-            if (password == null)
-            {
-                bytes.Add(0);
-            }
-            else
-            {
-                bytes.Add((byte)password.Length);
-                bytes.AddRange(Encoding.UTF8.GetBytes(password));
-            }
+            var bytes = new List<byte>();
+            bytes.Add(PROTOCOL_VERSION);
+
+            bytes.Add((byte)playerName.Length);
             bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
+
+            bytes.Add((byte)password.Length);
+            if (password.Length > 0)
+                bytes.AddRange(Encoding.UTF8.GetBytes(password));
 
             QueueMesssage(bytes.ToArray(), NetworkType.Intro);
         }
@@ -361,8 +382,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 Disconnect();
             }
 
-            // Call intro receive
-            Main.Multiplayer.ProcessIntroResponse(response);
+            OnConnect?.Invoke(response == 0, response);
         }
 
         // Progress
@@ -431,5 +451,40 @@ namespace Blasphemous.Multiplayer.Client.Network
 
             Main.Multiplayer.AttackManager.ReceiveEffect(playerName, effectType);
         }
+
+        // Ping
+
+        public void SendPing(float time, ushort ping)
+        {
+            var bytes = new List<byte>();
+            bytes.AddRange(BitConverter.GetBytes(time));
+            bytes.AddRange(BitConverter.GetBytes(ping));
+
+            QueueMesssage(bytes.ToArray(), NetworkType.Ping);
+        }
+
+        private void ReceivePing(byte[] data)
+        {
+            float time = BitConverter.ToSingle(data, 0);
+
+            int idx = 4;
+            while (idx < data.Length)
+            {
+                byte length = data[idx];
+                string name = Encoding.UTF8.GetString(data, idx + 1, length);
+                ushort ping = BitConverter.ToUInt16(data, idx + 1 + length);
+                idx += 1 + length + 4;
+
+                Main.Multiplayer.OtherPlayerManager.ReceivePing(name, ping);
+            }
+
+            Main.Multiplayer.PingManager.ReceivePing(time);
+        }
+
+        // Maybe replace name with entire ConnectInfo
+        public delegate void ConnectDelegate(bool success, byte errorCode);
+        public event ConnectDelegate OnConnect;
+
+        private const byte PROTOCOL_VERSION = 2;
     }
 }

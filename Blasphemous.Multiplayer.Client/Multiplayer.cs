@@ -6,6 +6,7 @@ using Blasphemous.Multiplayer.Client.Data;
 using Blasphemous.Multiplayer.Client.Map;
 using Blasphemous.Multiplayer.Client.Network;
 using Blasphemous.Multiplayer.Client.Notifications;
+using Blasphemous.Multiplayer.Client.Ping;
 using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
@@ -14,6 +15,7 @@ using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;
 using UnityEngine;
+using UnityEngine.Networking.Match;
 
 namespace Blasphemous.Multiplayer.Client;
 
@@ -33,6 +35,7 @@ public class Multiplayer : BlasMod, IPersistentMod
     public OtherPlayerManager OtherPlayerManager { get; private set; }
     public ProgressManager ProgressManager { get; private set; }
     public DamageCalculator DamageCalculator { get; private set; }
+    public PingManager PingManager { get; private set; }
 
     // Game status
     public bool RandomizerMode => ModHelper.IsModLoadedByName("Randomizer");
@@ -63,6 +66,9 @@ public class Multiplayer : BlasMod, IPersistentMod
         OtherPlayerManager = new OtherPlayerManager();
         ProgressManager = new ProgressManager();
         DamageCalculator = new DamageCalculator();
+        PingManager = new PingManager();
+
+        NetworkManager.OnConnect += OnConnect;
 
         // Initialize data
         config = ConfigHandler.Load<Config>();
@@ -131,6 +137,7 @@ public class Multiplayer : BlasMod, IPersistentMod
 
         MapManager.Update();
         NotificationManager.Update();
+        PingManager.OnUpdate();
         if (CurrentlyInLevel)
         {
             MainPlayerManager.Update();
@@ -139,6 +146,12 @@ public class Multiplayer : BlasMod, IPersistentMod
         }
 
         NetworkManager.SendQueue();
+    }
+
+    // TEMP: only called by Network manager to store name right now
+    public void SetPlayerName(string name)
+    {
+        PlayerName = name;
     }
 
     // Changed team number from command
@@ -165,40 +178,41 @@ public class Multiplayer : BlasMod, IPersistentMod
         MapManager.QueueMapUpdate();
     }
 
-    // Received introResponse data from server
-    public void ProcessIntroResponse(byte response)
+    // Send more player info after successful connection or display notification
+    private void OnConnect(bool success, byte errorCode)
     {
-        // Connected succesfully
-        if (response == 0)
+        if (!success)
         {
-            // Send all initial data
-            NetworkManager.SendSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
-            NetworkManager.SendTeam(PlayerTeam);
-
-            // If already in game, send enter scene data & game progress
-            if (CurrentlyInLevel)
+            string reason = errorCode switch
             {
-                MainPlayerManager.SendAllLocationData();
-                NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
-                OtherPlayerManager.AddNametag(PlayerName, true);
-                ProgressManager.SendAllProgress();
-            }
+                1 => "refpas", // Wrong password
+                2 => "refban", // Banned player
+                3 => "refmax", // Max player limit
+                4 => "refipa", // Duplicate ip
+                5 => "refnam", // Duplicate name
+                6 => "refpro", // Invalid protocol
+                255 => "refcon", // No connection
+                _ => "refunk", // Unknown reason
+            };
 
-            NotificationManager.DisplayNotification(LocalizationHandler.Localize("con"));
+            NotificationManager.DisplayNotification($"{LocalizationHandler.Localize("refuse")}: {LocalizationHandler.Localize(reason)}");
             return;
         }
 
-        string reason = response switch
+        // Send all initial data
+        NetworkManager.SendSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+        NetworkManager.SendTeam(PlayerTeam);
+
+        // If already in game, send enter scene data & game progress
+        if (CurrentlyInLevel)
         {
-            1 => "refpas", // Wrong password
-            2 => "refban", // Banned player
-            3 => "refmax", // Max player limit
-            4 => "refipa", // Duplicate ip
-            5 => "refnam", // Duplicate name
-            _ => "refunk", // Unknown reason
-        };
-        NotificationManager.DisplayNotification(
-            $"{LocalizationHandler.Localize("refuse")}: {LocalizationHandler.Localize(reason)}");
+            MainPlayerManager.SendAllLocationData();
+            NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
+            OtherPlayerManager.AddNametag(PlayerName, true);
+            ProgressManager.SendAllProgress();
+        }
+
+        NotificationManager.DisplayNotification(LocalizationHandler.Localize("con"));
     }
 
     // Whenever you receive a stat upgrade, it needs to check if you are in the same room as the player who sent it.
