@@ -478,6 +478,10 @@ public class Server
             return;
         }
 
+        byte roomLength = data[idx];
+        string room = Encoding.UTF8.GetString(data, idx + 1, roomLength);
+        idx += roomLength + 1;
+
         byte nameLength = data[idx];
         string name = Encoding.UTF8.GetString(data, idx + 1, nameLength);
         idx += nameLength + 1;
@@ -505,6 +509,8 @@ public class Server
             sendPlayerIntro(playerIp, 1);
             return;
         }
+
+        byte team = data[idx];
 
         // Add new connected player
         Logger.Info("Player connection accepted");
@@ -712,5 +718,5 @@ public class Server
         SendPing(playerIp, time);
     }
 
-    private const byte PROTOCOL_VERSION = 2;
+    private const byte PROTOCOL_VERSION = 3;
 }

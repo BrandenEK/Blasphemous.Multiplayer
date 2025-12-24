@@ -336,12 +336,17 @@ namespace Blasphemous.Multiplayer.Client.Network
             var bytes = new List<byte>();
             bytes.Add(PROTOCOL_VERSION);
 
+            bytes.Add((byte)room.Length);
+            bytes.AddRange(Encoding.UTF8.GetBytes(room));
+
             bytes.Add((byte)player.Length);
             bytes.AddRange(Encoding.UTF8.GetBytes(player));
 
             bytes.Add((byte)password.Length);
             if (password.Length > 0)
                 bytes.AddRange(Encoding.UTF8.GetBytes(password));
+
+            bytes.Add(team);
 
             QueueMesssage(bytes.ToArray(), NetworkType.Intro);
         }
@@ -464,6 +469,6 @@ namespace Blasphemous.Multiplayer.Client.Network
         public delegate void ConnectDelegate(bool success, byte errorCode);
         public event ConnectDelegate OnConnect;
 
-        private const byte PROTOCOL_VERSION = 2;
+        private const byte PROTOCOL_VERSION = 3;
     }
 }
