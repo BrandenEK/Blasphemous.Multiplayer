@@ -155,23 +155,6 @@ public class Multiplayer : BlasMod, IPersistentMod
         PlayerTeam = team;
     }
 
-    // Changed team number from command
-    public void changeTeam(byte teamNumber)
-    {
-        PlayerTeam = teamNumber;
-        ProgressManager.ResetProgressSentStatus();
-
-        if (NetworkManager.IsConnected)
-        {
-            NetworkManager.SendTeam(teamNumber);
-            if (CurrentlyInLevel)
-            {
-                RefreshPlayerColors();
-                ProgressManager.SendAllProgress();
-            }
-        }
-    }
-
     // Refresh players' nametags & map icons when someone changed teams
     public void RefreshPlayerColors()
     {

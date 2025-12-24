@@ -20,7 +20,6 @@ namespace Blasphemous.Multiplayer.Client
                 { "status", Status },
                 { "connect", Connect },
                 { "disconnect", Disconnect },
-                { "team", Team },
                 { "players", Players },
 #if DEBUG
                 { "damage", Damage },
@@ -37,7 +36,6 @@ namespace Blasphemous.Multiplayer.Client
             Write("multiplayer status: Display connection status");
             Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
             Write("multiplayer disconnect: Disconnect from current server");
-            Write("multiplayer team NUMBER: Change to a different team (1-10)");
             Write("multiplayer players: List all connected players in the server");
 #if DEBUG
             Write("multiplayer damage TYPE AMOUNT: Simulates receiving a pvp attack");
@@ -144,22 +142,6 @@ namespace Blasphemous.Multiplayer.Client
             }
             else
                 Write("Not connected to a server!");
-        }
-
-        private void Team(string[] parameters)
-        {
-            if (!ValidateParameterList(parameters, 1) || !ValidateIntParameter(parameters[0], 1, 10, out int newTeam))
-                return;
-
-            if (newTeam == Main.Multiplayer.PlayerTeam)
-            {
-                Write("You are already on team " + newTeam);
-            }
-            else
-            {
-                Write("Changing team number to " + newTeam);
-                Main.Multiplayer.changeTeam((byte)newTeam);
-            }
         }
 
         private void Players(string[] parameters)
