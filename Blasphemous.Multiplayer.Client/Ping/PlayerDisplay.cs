@@ -6,7 +6,7 @@ namespace Blasphemous.Multiplayer.Client.Ping;
 
 public class PlayerDisplay : MonoBehaviour
 {
-    private Rect _playerWindow = new Rect(1920 - WINDOW_WIDTH - 10, 200, WINDOW_WIDTH, 10);
+    private Rect _playerWindow = new Rect(Screen.width - WINDOW_WIDTH - 10, 200, WINDOW_WIDTH, 10);
 
     private void OnGUI()
     {

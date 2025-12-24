@@ -468,6 +468,17 @@ namespace Blasphemous.Multiplayer.Client.Network
         {
             float time = BitConverter.ToSingle(data, 0);
 
+            int idx = 4;
+            while (idx < data.Length)
+            {
+                byte length = data[idx];
+                string name = Encoding.UTF8.GetString(data, idx + 1, length);
+                ushort ping = BitConverter.ToUInt16(data, idx + 1 + length);
+                idx += 1 + length + 4;
+
+                Main.Multiplayer.OtherPlayerManager.ReceivePing(name, ping);
+            }
+
             Main.Multiplayer.PingManager.ReceivePing(time);
         }
     }
