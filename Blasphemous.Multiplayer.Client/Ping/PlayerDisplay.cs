@@ -67,7 +67,6 @@ public class PlayerDisplay : MonoBehaviour
     };
 
     private const int WINDOW_WIDTH = 250;
-    private const int WINDOW_HEIGHT = 400;
     private const int LINE_HEIGHT = 20;
     private const int LINE_GAP = 5;
 }

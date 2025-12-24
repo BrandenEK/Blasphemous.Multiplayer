@@ -17,7 +17,6 @@ internal class Main : BaseUnityPlugin
         Multiplayer = new Multiplayer();
 
         gameObject.AddComponent<MultiplayerGUI>();
-        gameObject.AddComponent<PingDisplay>();
         gameObject.AddComponent<PlayerDisplay>();
     }
 }
