@@ -4,12 +4,12 @@ using Framework.Managers;
 using System.Linq;
 using UnityEngine;
 
-namespace Blasphemous.Multiplayer.Client;
+namespace Blasphemous.Multiplayer.Client.Network;
 
 /// <summary>
 /// Controls all GUI windows on screen
 /// </summary>
-public class MultiplayerGUI : MonoBehaviour
+public class ConnectionDisplay : MonoBehaviour
 {
     private bool _showingConnection = false;
 
