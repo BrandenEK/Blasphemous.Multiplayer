@@ -7,12 +7,14 @@ namespace Blasphemous.Multiplayer.Client.Ping;
 
 public class PlayerDisplay : MonoBehaviour
 {
+    private Rect _playerWindow = new Rect(1920 - WINDOW_WIDTH - 10, 200, WINDOW_WIDTH, 10);
+
     private void OnGUI()
     {
         if (!SceneHelper.GameSceneLoaded || !Main.Multiplayer.NetworkManager.IsConnected)
             return;
 
-        GUI.Window(3, new Rect(1920 - WINDOW_WIDTH - 10, 200, WINDOW_WIDTH, WINDOW_HEIGHT), PlayerWindow, "Connected Players");
+        _playerWindow = GUI.Window(3, _playerWindow, PlayerWindow, "Connected Players");
     }
 
     private void PlayerWindow(int windowID)
@@ -48,6 +50,8 @@ public class PlayerDisplay : MonoBehaviour
                 y += LINE_HEIGHT + LINE_GAP;
             }
         }
+
+        _playerWindow.height = y;
     }
 
     private readonly Dictionary<string, byte> _tempPlayers = new()
