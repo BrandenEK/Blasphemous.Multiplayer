@@ -42,7 +42,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 return false;
             }
 
-            OnConnect(ipAddress, playerName, password);
+            OnConnectOld(ipAddress, playerName, password);
             return true;
         }
 
@@ -63,7 +63,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 return false;
             }
 
-            OnConnect(server, playerName, password);
+            OnConnectOld(server, playerName, password);
             return true;
         }
 
@@ -73,14 +73,14 @@ namespace Blasphemous.Multiplayer.Client.Network
             OnDisconnect();
         }
 
-        private void OnConnect(string ipAddress, string playerName, string password)
+        private void OnConnectOld(string ipAddress, string playerName, string password)
         {
             _connectionStatus = ConnectionStatus.Attempting;
             _serverIp = ipAddress;
             SendIntro(playerName, password);
 
             ModLog.Info("Connected to server: " + ipAddress);
-            Main.Multiplayer.OnConnect(ipAddress, playerName, password);
+            Main.Multiplayer.SetPlayerName(playerName);
         }
 
         private void OnDisconnect()
@@ -380,6 +380,8 @@ namespace Blasphemous.Multiplayer.Client.Network
                 Disconnect();
             }
 
+            OnConnect?.Invoke(response == 0, response);
+
             // Call intro receive
             Main.Multiplayer.ProcessIntroResponse(response);
         }
@@ -479,6 +481,10 @@ namespace Blasphemous.Multiplayer.Client.Network
 
             Main.Multiplayer.PingManager.ReceivePing(time);
         }
+
+        // Maybe replace name with entire ConnectInfo
+        public delegate void ConnectDelegate(bool success, byte errorCode);
+        public event ConnectDelegate OnConnect;
 
         private const byte PROTOCOL_VERSION = 2;
     }

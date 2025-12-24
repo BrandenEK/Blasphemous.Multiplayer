@@ -67,6 +67,8 @@ public class Multiplayer : BlasMod, IPersistentMod
         DamageCalculator = new DamageCalculator();
         PingManager = new PingManager();
 
+        NetworkManager.OnConnect += OnConnect;
+
         // Initialize data
         config = ConfigHandler.Load<Config>();
         PersistentStates.loadPersistentObjects();
@@ -145,6 +147,12 @@ public class Multiplayer : BlasMod, IPersistentMod
         NetworkManager.SendQueue();
     }
 
+    // TEMP: only called by Network manager to store name right now
+    public void SetPlayerName(string name)
+    {
+        PlayerName = name;
+    }
+
     // Changed team number from command
     public void changeTeam(byte teamNumber)
     {
@@ -169,6 +177,28 @@ public class Multiplayer : BlasMod, IPersistentMod
         MapManager.QueueMapUpdate();
     }
 
+    // Send more player info after successful connection
+    private void OnConnect(bool success, byte errorCode)
+    {
+        if (!success)
+            return;
+
+        // Send all initial data
+        NetworkManager.SendSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+        NetworkManager.SendTeam(PlayerTeam);
+
+        // If already in game, send enter scene data & game progress
+        if (CurrentlyInLevel)
+        {
+            MainPlayerManager.SendAllLocationData();
+            NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
+            OtherPlayerManager.AddNametag(PlayerName, true);
+            ProgressManager.SendAllProgress();
+        }
+
+        NotificationManager.DisplayNotification(LocalizationHandler.Localize("con"));
+    }
+
     // Received introResponse data from server
     public void ProcessIntroResponse(byte response)
     {
@@ -176,19 +206,19 @@ public class Multiplayer : BlasMod, IPersistentMod
         if (response == 0)
         {
             // Send all initial data
-            NetworkManager.SendSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
-            NetworkManager.SendTeam(PlayerTeam);
+            //NetworkManager.SendSkin(Core.ColorPaletteManager.GetCurrentColorPaletteId());
+            //NetworkManager.SendTeam(PlayerTeam);
 
-            // If already in game, send enter scene data & game progress
-            if (CurrentlyInLevel)
-            {
-                MainPlayerManager.SendAllLocationData();
-                NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
-                OtherPlayerManager.AddNametag(PlayerName, true);
-                ProgressManager.SendAllProgress();
-            }
+            //// If already in game, send enter scene data & game progress
+            //if (CurrentlyInLevel)
+            //{
+            //    MainPlayerManager.SendAllLocationData();
+            //    NetworkManager.SendEnterScene(Core.LevelManager.currentLevel.LevelName);
+            //    OtherPlayerManager.AddNametag(PlayerName, true);
+            //    ProgressManager.SendAllProgress();
+            //}
 
-            NotificationManager.DisplayNotification(LocalizationHandler.Localize("con"));
+            //NotificationManager.DisplayNotification(LocalizationHandler.Localize("con"));
             return;
         }
 
