@@ -26,27 +26,6 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         // Connection
 
-        public bool Connect(string ipAddress, string playerName, string password)
-        {
-            if (_connectionStatus != ConnectionStatus.Disconnected) return false;
-
-            try
-            {
-                _client = new SimpleTcpClient();
-                _client.Connect(ipAddress, Main.Multiplayer.config.serverPort);
-                _client.DataReceived += ReceiveMessage;
-                _client.TcpClient.NoDelay = true;
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                OnConnect?.Invoke(false, 255);
-                return false;
-            }
-
-            OnConnectOld(ipAddress, playerName, password);
-            return true;
-        }
-
         public bool Connect(string server, int port, string playerName, string password)
         {
             if (_connectionStatus != ConnectionStatus.Disconnected)

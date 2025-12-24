@@ -74,7 +74,7 @@ public class Multiplayer : BlasMod, IPersistentMod
         config = ConfigHandler.Load<Config>();
         PersistentStates.loadPersistentObjects();
         PlayerName = string.Empty;
-        PlayerTeam = (byte)(config.team > 0 && config.team <= 10 ? config.team : 10);
+        PlayerTeam = 1;
     }
 
     protected override void OnRegisterServices(ModServiceProvider provider)
