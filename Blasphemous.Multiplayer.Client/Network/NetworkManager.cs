@@ -355,16 +355,12 @@ namespace Blasphemous.Multiplayer.Client.Network
             var bytes = new List<byte>();
             bytes.Add(PROTOCOL_VERSION);
 
-            if (password == null)
-            {
-                bytes.Add(0);
-            }
-            else
-            {
-                bytes.Add((byte)password.Length);
-                bytes.AddRange(Encoding.UTF8.GetBytes(password));
-            }
+            bytes.Add((byte)playerName.Length);
             bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
+
+            bytes.Add((byte)password.Length);
+            if (password.Length > 0)
+                bytes.AddRange(Encoding.UTF8.GetBytes(password));
 
             QueueMesssage(bytes.ToArray(), NetworkType.Intro);
         }
