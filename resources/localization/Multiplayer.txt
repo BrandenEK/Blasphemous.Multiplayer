@@ -9,6 +9,7 @@ refmax: Server is full
 refipa: IP address is already connected
 refnam: Player name is already taken
 refpro: Protocol version doesn't match
+refcon: Failed to establish connection
 refunk: Unknown reason
 join: has joined the server!
 leave: has left the server!

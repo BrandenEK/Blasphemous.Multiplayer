@@ -39,6 +39,7 @@ namespace Blasphemous.Multiplayer.Client.Network
             }
             catch (System.Net.Sockets.SocketException)
             {
+                OnConnect?.Invoke(false, 255);
                 return false;
             }
 
@@ -60,6 +61,7 @@ namespace Blasphemous.Multiplayer.Client.Network
             }
             catch (System.Net.Sockets.SocketException)
             {
+                OnConnect?.Invoke(false, 255);
                 return false;
             }
 

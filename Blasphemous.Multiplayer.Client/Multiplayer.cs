@@ -191,6 +191,7 @@ public class Multiplayer : BlasMod, IPersistentMod
                 4 => "refipa", // Duplicate ip
                 5 => "refnam", // Duplicate name
                 6 => "refpro", // Invalid protocol
+                255 => "refcon", // No connection
                 _ => "refunk", // Unknown reason
             };
 

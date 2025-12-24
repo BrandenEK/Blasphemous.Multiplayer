@@ -1,6 +1,7 @@
 ﻿using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Helpers;
 using Framework.Managers;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Blasphemous.Multiplayer.Client.Network;
 public class ConnectionDisplay : MonoBehaviour
 {
     private bool _showingConnection = false;
+    private bool _attemptingConnection = false;
 
     private string _server = "localhost:33000"; // Handle these somewhere else (In a class with proper defaults)
     private string _room = "debug";
@@ -44,10 +46,18 @@ public class ConnectionDisplay : MonoBehaviour
         if (!_showingConnection)
             return;
 
-        if (!Main.Multiplayer.NetworkManager.IsConnected)
-            GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
-        else
+        if (Main.Multiplayer.NetworkManager.IsConnected)
+        {
             GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
+        }
+        else if (_attemptingConnection)
+        {
+            GUI.Window(4, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionWaitWindow, "Enter connection info");
+        }
+        else
+        {
+            GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
+        }
     }
 
     private void ConnectionInfoWindow(int windowID)
@@ -61,7 +71,7 @@ public class ConnectionDisplay : MonoBehaviour
         // Validate all parameters
 
         if (ReadButton("Connect", 5))
-            TryConnect();
+            StartCoroutine(TryConnect());
     }
 
     private void ConnectionStatusWindow(int windowID)
@@ -74,11 +84,28 @@ public class ConnectionDisplay : MonoBehaviour
             TryDisconnect();
     }
 
-    private void TryConnect()
+    private void ConnectionWaitWindow(int windowID)
+    {
+        var bigStyle = new GUIStyle(GUI.skin.label)
+        {
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle = FontStyle.Bold,
+            fontSize = 20,
+        };
+
+        GUI.Label(new Rect(0, 20, 330, 380), "Connnecting...", bigStyle);
+    }
+
+    private IEnumerator TryConnect()
     {
         ModLog.Info($"Attempting to connect to {_server}");
 
         string[] ipParts = _server.Split(':');  // Do this better
+
+        _attemptingConnection = true;
+        Main.Multiplayer.NetworkManager.OnConnect += OnConnect;
+
+        yield return null;
 
         bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _player, _password);
 
@@ -88,6 +115,12 @@ public class ConnectionDisplay : MonoBehaviour
             ModLog.Error($"Failed to connect to {_server}");
 
         // Handle intro failure
+    }
+
+    private void OnConnect(bool success, byte errorCode)
+    {
+        _attemptingConnection = false;
+        Main.Multiplayer.NetworkManager.OnConnect -= OnConnect;
     }
 
     private void TryDisconnect()
