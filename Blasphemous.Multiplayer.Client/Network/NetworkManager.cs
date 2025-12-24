@@ -352,7 +352,9 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         public void SendIntro(string playerName, string password)
         {
-            List<byte> bytes = new ();
+            var bytes = new List<byte>();
+            bytes.Add(PROTOCOL_VERSION);
+
             if (password == null)
             {
                 bytes.Add(0);
@@ -481,5 +483,7 @@ namespace Blasphemous.Multiplayer.Client.Network
 
             Main.Multiplayer.PingManager.ReceivePing(time);
         }
+
+        private const byte PROTOCOL_VERSION = 2;
     }
 }

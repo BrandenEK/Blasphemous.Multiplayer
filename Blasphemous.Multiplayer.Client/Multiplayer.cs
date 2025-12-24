@@ -199,6 +199,7 @@ public class Multiplayer : BlasMod, IPersistentMod
             3 => "refmax", // Max player limit
             4 => "refipa", // Duplicate ip
             5 => "refnam", // Duplicate name
+            6 => "refpro", // Invalid protocol
             _ => "refunk", // Unknown reason
         };
         NotificationManager.DisplayNotification(
