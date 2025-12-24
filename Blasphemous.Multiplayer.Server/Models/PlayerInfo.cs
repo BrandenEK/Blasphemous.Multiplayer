@@ -15,10 +15,10 @@ public class PlayerInfo
 
     public string sceneName;
 
-    public PlayerInfo(string name)
+    public PlayerInfo(string name, byte team)
     {
         this.name = name;
-        team = 1;
+        this.team = team;
         sceneName = "";
         skin = new byte[0];
         ping = 0;

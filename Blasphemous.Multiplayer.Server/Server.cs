@@ -140,7 +140,7 @@ public class Server
             return connectedPlayers[ip];
 
         Logger.Warn("Data for " + ip + " has not been created yet!");
-        return new PlayerInfo("");
+        return new PlayerInfo(string.Empty, 1);
     }
 
     private List<byte> addPlayerNameToData(string name)
@@ -514,7 +514,7 @@ public class Server
 
         // Add new connected player
         Logger.Info("Player connection accepted");
-        PlayerInfo newPlayer = new PlayerInfo(name);
+        PlayerInfo newPlayer = new PlayerInfo(name, team);
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
         sendPlayerIntro(playerIp, 0);
