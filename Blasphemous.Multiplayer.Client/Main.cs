@@ -18,5 +18,6 @@ internal class Main : BaseUnityPlugin
 
         gameObject.AddComponent<MultiplayerGUI>();
         gameObject.AddComponent<PingDisplay>();
+        gameObject.AddComponent<PlayerDisplay>();
     }
 }
