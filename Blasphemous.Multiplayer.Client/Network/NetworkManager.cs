@@ -381,9 +381,6 @@ namespace Blasphemous.Multiplayer.Client.Network
             }
 
             OnConnect?.Invoke(response == 0, response);
-
-            // Call intro receive
-            Main.Multiplayer.ProcessIntroResponse(response);
         }
 
         // Progress
