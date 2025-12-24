@@ -26,7 +26,7 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         // Connection
 
-        public bool Connect(string server, int port, string playerName, string password)
+        public bool Connect(string server, int port, string room, string player, string password, byte team)
         {
             if (_connectionStatus != ConnectionStatus.Disconnected)
                 return false;
@@ -44,7 +44,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 return false;
             }
 
-            OnConnectOld(server, playerName, password);
+            OnConnectOld(server, room, player, password, team);
             return true;
         }
 
@@ -54,14 +54,14 @@ namespace Blasphemous.Multiplayer.Client.Network
             OnDisconnect();
         }
 
-        private void OnConnectOld(string ipAddress, string playerName, string password)
+        private void OnConnectOld(string ipAddress, string room, string player, string password, byte team)
         {
             _connectionStatus = ConnectionStatus.Attempting;
             _serverIp = ipAddress;
-            SendIntro(playerName, password);
+            SendIntro(room, player, password, team);
 
             ModLog.Info("Connected to server: " + ipAddress);
-            Main.Multiplayer.SetPlayerName(playerName);
+            Main.Multiplayer.SetPlayerData(player, team);
         }
 
         private void OnDisconnect()
@@ -331,13 +331,13 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         // Intro
 
-        public void SendIntro(string playerName, string password)
+        public void SendIntro(string room, string player, string password, byte team)
         {
             var bytes = new List<byte>();
             bytes.Add(PROTOCOL_VERSION);
 
-            bytes.Add((byte)playerName.Length);
-            bytes.AddRange(Encoding.UTF8.GetBytes(playerName));
+            bytes.Add((byte)player.Length);
+            bytes.AddRange(Encoding.UTF8.GetBytes(player));
 
             bytes.Add((byte)password.Length);
             if (password.Length > 0)

@@ -128,7 +128,7 @@ namespace Blasphemous.Multiplayer.Client
             if (!ValidateStringParameter(name, 1, 16))
                 return;
 
-            bool result = Main.Multiplayer.NetworkManager.Connect(parameters[0], 33000, name, password);
+            bool result = Main.Multiplayer.NetworkManager.Connect(parameters[0], 33000, "debug", name, password, 8);
             Write(result ? $"Successfully connected to {parameters[0]} as {name}" : $"Failed to connect to {parameters[0]}");
         }
 

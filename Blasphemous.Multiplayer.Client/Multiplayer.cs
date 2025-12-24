@@ -148,10 +148,11 @@ public class Multiplayer : BlasMod, IPersistentMod
         NetworkManager.SendQueue();
     }
 
-    // TEMP: only called by Network manager to store name right now
-    public void SetPlayerName(string name)
+    // TEMP: only called by Network manager to store name/team right now
+    public void SetPlayerData(string player, byte team)
     {
-        PlayerName = name;
+        PlayerName = player;
+        PlayerTeam = team;
     }
 
     // Changed team number from command
