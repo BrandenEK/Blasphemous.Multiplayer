@@ -45,9 +45,9 @@ public class MultiplayerGUI : MonoBehaviour
             return;
 
         if (!Main.Multiplayer.NetworkManager.IsConnected)
-            GUI.Window(0, new Rect(10, 670, 330, 400), ConnectionInfoWindow, "Enter connection info");
+            GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
         else
-            GUI.Window(1, new Rect(10, 920, 330, 150), ConnectionStatusWindow, "Connection status");
+            GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
     }
 
     private void ConnectionInfoWindow(int windowID)

@@ -30,8 +30,6 @@ public class PingManager
         _delays.Add(delay);
         if (_delays.Count > MAX_DELAYS)
             _delays.RemoveAt(0);
-
-        ModLog.Warn($"Average ping is {AveragePing} ms");
     }
 
     public void OnUpdate()

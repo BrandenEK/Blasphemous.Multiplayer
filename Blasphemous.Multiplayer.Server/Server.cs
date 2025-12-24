@@ -674,14 +674,32 @@ public class Server
 
     private void SendPing(string playerIp, float time)
     {
-        byte[] bytes = BitConverter.GetBytes(time);
-        Send(playerIp, bytes, NetworkType.Ping);
+        var bytes = new List<byte>();
+        bytes.AddRange(BitConverter.GetBytes(time));
+
+        foreach (var player in getPlayers())
+        {
+            if (player.Key == playerIp)
+                continue;
+
+            string name = player.Value.name;
+            ushort ping = player.Value.ping;
+
+            bytes.Add((byte)name.Length);
+            bytes.AddRange(Encoding.UTF8.GetBytes(name));
+            bytes.AddRange(BitConverter.GetBytes(ping));
+        }
+
+        Send(playerIp, bytes.ToArray(), NetworkType.Ping);
     }
 
     private void ReceivePing(string playerIp, byte[] data)
     {
         float time = BitConverter.ToSingle(data, 0);
         ushort ping = BitConverter.ToUInt16(data, 4);
+
+        PlayerInfo current = getCurrentPlayer(playerIp);
+        current.ping = ping;
 
         SendPing(playerIp, time);
     }

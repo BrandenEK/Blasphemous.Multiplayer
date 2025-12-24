@@ -383,6 +383,14 @@ namespace Blasphemous.Multiplayer.Client.Players
                 Main.Multiplayer.RefreshPlayerColors();
         }
 
+        public void ReceivePing(string playerName, ushort ping)
+        {
+            PlayerStatus player = FindConnectedPlayer(playerName);
+            if (player == null) return;
+
+            player.Ping = ping;
+        }
+
         #endregion Receive updates
     }
 }

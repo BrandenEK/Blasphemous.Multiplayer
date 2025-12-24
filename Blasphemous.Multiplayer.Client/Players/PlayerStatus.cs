@@ -32,6 +32,9 @@ namespace Blasphemous.Multiplayer.Client.Players
         // Animation id when this player is using a special animation
         public byte SpecialAnimation { get; set; }
 
+        // Average ping in ms
+        public ushort Ping { get; set; } = 0;
+
         // Skin sprite, is updated whenever receiving a skin update packet
         private Texture2D _skinTexture;
         public Texture2D SkinTexture => _skinTexture;
