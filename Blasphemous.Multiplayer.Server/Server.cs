@@ -357,34 +357,16 @@ public class Server
                 Send(ip, getTeamPacket(current), NetworkType.Team);
             }
         }
-
-        // Send all of the server data to this player for them to merge
-        Logger.Info("Sending all server data to " + playerIp);
-        for (byte i = 0; i < TeamInfo.NUMBER_OF_PROGRESS_TYPES; i++)
-        {
-            Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
-            foreach (string id in progressSet.Keys)
-            {
-                byte value = progressSet[id];
-                if (i == 6 && id == "FLASK")
-                {
-                    Logger.Info("Send all server flask: " + value);
-                    value -= Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
-                    Logger.Info("Send all send flask: " + value);
-                }
-                Send(playerIp, getProgressPacket("*", i, value, id), NetworkType.Progress);
-            }
-        }
     }
 
-    private void receivePlayerTeam(string playerIp, byte[] data)
-    {
-        PlayerInfo current = getCurrentPlayer(playerIp);
-        current.team = data[0];
+    //private void receivePlayerTeam(string playerIp, byte[] data)
+    //{
+    //    PlayerInfo current = getCurrentPlayer(playerIp);
+    //    current.team = data[0];
 
-        sendPlayerTeam(playerIp);
-        Core.removeUnusedGameData(connectedPlayers);
-    }
+    //    sendPlayerTeam(playerIp);
+    //    Core.removeUnusedGameData(connectedPlayers);
+    //}
 
     private byte[] getTeamPacket(PlayerInfo player)
     {
@@ -518,11 +500,36 @@ public class Server
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
         sendPlayerIntro(playerIp, 0);
+        sendPlayerTeam(playerIp); // This should probably be combined with the newConnectionPacket
+        SendProgressOnConnection(playerIp);
     }
 
     private byte[] getIntroPacket(byte response)
     {
         return new byte[] { response };
+    }
+
+    private void SendProgressOnConnection(string playerIp)
+    {
+        // Send all of the server data to this player for them to merge
+        PlayerInfo current = getCurrentPlayer(playerIp);
+
+        Logger.Info("Sending all server data to " + playerIp);
+        for (byte i = 0; i < TeamInfo.NUMBER_OF_PROGRESS_TYPES; i++)
+        {
+            Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
+            foreach (string id in progressSet.Keys)
+            {
+                byte value = progressSet[id];
+                if (i == 6 && id == "FLASK")
+                {
+                    Logger.Info("Send all server flask: " + value);
+                    value -= Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
+                    Logger.Info("Send all send flask: " + value);
+                }
+                Send(playerIp, getProgressPacket("*", i, value, id), NetworkType.Progress);
+            }
+        }
     }
 
     // Progress
