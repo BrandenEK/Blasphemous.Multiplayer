@@ -60,9 +60,9 @@ public class PlayerDisplay : MonoBehaviour
 
     private static readonly PingRegion[] _regions =
     {
-        new PingRegion(50, "109748"),
-        new PingRegion(100, "FFE733"),
-        new PingRegion(500, "FF8C01"),
+        new PingRegion(100, "109748"),
+        new PingRegion(500, "FFE733"),
+        new PingRegion(1000, "FF8C01"),
         new PingRegion(int.MaxValue, "ED2938"),
     };
 
