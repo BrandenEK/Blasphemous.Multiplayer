@@ -108,13 +108,6 @@ public class ConnectionDisplay : MonoBehaviour
         yield return null;
 
         bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _room, _player, _password, (byte)_team);
-
-        if (result)
-            ModLog.Info($"Successfully connected to {_server}");
-        else
-            ModLog.Error($"Failed to connect to {_server}");
-
-        // Handle intro failure
     }
 
     private void OnConnect(bool success, byte errorCode)

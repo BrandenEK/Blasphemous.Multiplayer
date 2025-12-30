@@ -40,6 +40,7 @@ namespace Blasphemous.Multiplayer.Client.Network
             }
             catch (System.Net.Sockets.SocketException)
             {
+                ModLog.Info("Failed to establish connection");
                 OnConnect?.Invoke(false, 255);
                 return false;
             }
@@ -56,11 +57,12 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         private void OnConnectOld(string ipAddress, string room, string player, string password, byte team)
         {
+            ModLog.Info("Established basic connection");
+
             _connectionStatus = ConnectionStatus.Attempting;
             _serverIp = ipAddress;
             SendIntro(room, player, password, team);
 
-            ModLog.Info("Connected to server: " + ipAddress);
             Main.Multiplayer.SetPlayerData(player, team);
         }
 
@@ -246,6 +248,12 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         public void SendSkin(string skinName)
         {
+            if (string.IsNullOrEmpty(skinName))
+            {
+                ModLog.Error("Skin name is invalid");
+                skinName = "PENITENT_DEFAULT";
+            }
+
             bool originalSkin = PlayerStatus.IsOriginalSkin(skinName);
             List<byte> bytes = new ();
 
@@ -354,6 +362,7 @@ namespace Blasphemous.Multiplayer.Client.Network
         private void ReceiveIntro(byte[] data)
         {
             byte response = data[0];
+            ModLog.Info($"Established full connection (Success: {response == 0})");
 
             if (response == 0)
             {
