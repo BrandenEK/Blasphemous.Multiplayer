@@ -16,152 +16,36 @@ namespace Blasphemous.Multiplayer.Client
         {
             return new Dictionary<string, Action<string[]>>()
             {
-                { "help", Help },
-                { "status", Status },
-                { "connect", Connect },
-                { "disconnect", Disconnect },
-                { "players", Players },
+                { "help", Obsolete },
+                { "status", Obsolete },
+                { "connect", Obsolete },
+                { "disconnect", Obsolete },
+                { "players", Obsolete },
 #if DEBUG
                 { "damage", Damage },
 #endif
             };
         }
 
-        private void Help(string[] parameters)
+        private void Obsolete(string[] parameters)
         {
-            if (!ValidateParameterList(parameters, 0))
-                return;
-
-            Write("Available MULTIPLAYER commands:");
-            Write("multiplayer status: Display connection status");
-            Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
-            Write("multiplayer disconnect: Disconnect from current server");
-            Write("multiplayer players: List all connected players in the server");
-#if DEBUG
-            Write("multiplayer damage TYPE AMOUNT: Simulates receiving a pvp attack");
-#endif
+            Write("The multiplayer command has been removed.  Use the keybinding to open the new connection menu.");
         }
 
-        private void Status(string[] parameters)
-        {
-            if (!ValidateParameterList(parameters, 0))
-                return;
+//        private void Help(string[] parameters)
+//        {
+//            if (!ValidateParameterList(parameters, 0))
+//                return;
 
-            if (Main.Multiplayer.NetworkManager.IsConnected)
-            {
-                Write("Connected to " + Main.Multiplayer.NetworkManager.ServerIP);
-            }
-            else
-            {
-                Write("Not connected to a server!");
-            }
-        }
-
-        private void Connect(string[] parameters)
-        {
-            // Already connected
-            if (Main.Multiplayer.NetworkManager.IsConnected)
-            {
-                Write("You are already connected to " + Main.Multiplayer.NetworkManager.ServerIP);
-                return;
-            }
-
-            // Too few parameters
-            if (parameters.Length < 2)
-            {
-                Write("This command requires either 2 or 3 parameters.  You passed " + parameters.Length);
-                return;
-            }
-
-            string name = "";
-            string password = null;
-            int passIdx = -1;
-
-            // Name has a space and spans multiple parameters
-            if (parameters[1].StartsWith("\""))
-            {
-                // Find the ending index of the name
-                for (int i = parameters.Length - 1; i >= 1; i--)
-                {
-                    if (parameters[i].EndsWith("\""))
-                    {
-                        passIdx = i + 1;
-                        break;
-                    }
-                }
-
-                // Verify the ending quote exists
-                if (passIdx == -1)
-                {
-                    Write("Invalid syntax!");
-                    return;
-                }
-
-                // Build up the name
-                for (int i = 1; i < passIdx; i++)
-                {
-                    name += parameters[i] + " ";
-                }
-                name = name.Substring(1, name.Length - 3);
-            }
-            else
-            {
-                // Name is only one word
-                name = parameters[1];
-                passIdx = 2;
-            }
-
-            // Too many parameters
-            if (parameters.Length > passIdx + 1)
-            {
-                Write("This command requires either 2 or 3 parameters.  You passed " + parameters.Length);
-                return;
-            }
-
-            if (parameters.Length > passIdx)
-            {
-                password = parameters[passIdx];
-            }
-
-            if (!ValidateStringParameter(name, 1, 16))
-                return;
-
-            bool result = Main.Multiplayer.NetworkManager.Connect(parameters[0], 33000, "debug", name, password, 8);
-            Write(result ? $"Successfully connected to {parameters[0]} as {name}" : $"Failed to connect to {parameters[0]}");
-        }
-
-        private void Disconnect(string[] parameters)
-        {
-            if (!ValidateParameterList(parameters, 0))
-                return;
-
-            if (Main.Multiplayer.NetworkManager.IsConnected)
-            {
-                Write("Disconnecting from server");
-                Main.Multiplayer.NetworkManager.Disconnect();
-            }
-            else
-                Write("Not connected to a server!");
-        }
-
-        private void Players(string[] parameters)
-        {
-            if (!ValidateParameterList(parameters, 0))
-                return;
-
-            if (!Main.Multiplayer.NetworkManager.IsConnected)
-            {
-                Write("Not connected to a server!");
-                return;
-            }
-
-            Write("Connected players:");
-            Write(Main.Multiplayer.PlayerName + ": Team " + Main.Multiplayer.PlayerTeam);
-            foreach (Players.PlayerStatus player in Main.Multiplayer.OtherPlayerManager.AllConnectedPlayers)
-            {
-                Write(player.Name + ": Team " + player.Team);
-            }
-        }
+//            Write("Available MULTIPLAYER commands:");
+//            Write("multiplayer status: Display connection status");
+//            Write("multiplayer connect SERVER NAME [PASSWORD]: Connect to SERVER with player name as NAME with optional PASSWORD");
+//            Write("multiplayer disconnect: Disconnect from current server");
+//            Write("multiplayer players: List all connected players in the server");
+//#if DEBUG
+//            Write("multiplayer damage TYPE AMOUNT: Simulates receiving a pvp attack");
+//#endif
+//        }
 
         private void Damage(string[] parameters)
         {
