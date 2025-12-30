@@ -52,7 +52,7 @@ public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>, IGl
     /// <summary>
     /// The most recent connectioninfo that should be used as the default
     /// </summary>
-    public ConnectionInfo LastConnectionInfo { get; set; }
+    public ConnectionInfo LastConnectionInfo { get; set; } = new();
 
     protected override void OnInitialize()
     {

@@ -14,12 +14,14 @@ public class ConnectionDisplay : MonoBehaviour
 {
     private bool _showingConnection = false;
     private bool _attemptingConnection = false;
+    private bool _firstShowing = true;
 
-    private string _server = "localhost:33000"; // Handle these somewhere else (In a class with proper defaults)
-    private string _room = "debug";
-    private string _player = "Damocles";
-    private string _password = string.Empty;
-    private int _team = 1;
+    // CHange to just a connection info
+    private string _server;
+    private string _room;
+    private string _player;
+    private string _password;
+    private int _team;
 
     private void Update()
     {
@@ -62,6 +64,18 @@ public class ConnectionDisplay : MonoBehaviour
 
     private void ConnectionInfoWindow(int windowID)
     {
+        if (_firstShowing)
+        {
+            ConnectionInfo info = Main.Multiplayer.LastConnectionInfo;
+            _server = info.ServerIp;
+            _room = info.RoomName;
+            _player = info.PlayerName;
+            _password = info.Password;
+            _team = info.TeamNumber;
+
+            _firstShowing = false;
+        }
+
         _server = ReadTextField("Server IP:", _server, 0); // Add max lengths
         _room = ReadTextField("Room name:", _room, 1);
         _player = ReadTextField("Player name:", _player, 2);
@@ -113,6 +127,8 @@ public class ConnectionDisplay : MonoBehaviour
     private void OnConnect(bool success, byte errorCode)
     {
         _attemptingConnection = false;
+
+        Main.Multiplayer.LastConnectionInfo = new ConnectionInfo(_server, _room, _player, _password, (byte)_team);
         Main.Multiplayer.NetworkManager.OnConnect -= OnConnect;
     }
 
