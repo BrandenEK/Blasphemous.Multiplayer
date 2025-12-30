@@ -20,7 +20,7 @@ namespace Blasphemous.Multiplayer.Client;
 /// <summary>
 /// Handles connecting to server, syncing progress, and tracking players
 /// </summary>
-public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>
+public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>, IGlobalPersistentMod<MultiplayerGlobalData>
 {
     internal Multiplayer() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
 
@@ -48,6 +48,11 @@ public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>
     // Set to true upon loading a new scene
     // Must be true to naturally obtain stat upgrades and send them
     public bool CanObtainStatUpgrades { get; set; }
+
+    /// <summary>
+    /// The most recent connectioninfo that should be used as the default
+    /// </summary>
+    public ConnectionInfo LastConnectionInfo { get; set; }
 
     protected override void OnInitialize()
     {
@@ -279,6 +284,25 @@ public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>
     public void ResetSlot()
     {
         ProgressManager.ClearInteractedObjects();
+    }
+
+    /// <summary>
+    /// Save last connection info
+    /// </summary>
+    public MultiplayerGlobalData SaveGlobal()
+    {
+        return new MultiplayerGlobalData()
+        {
+            LastConnection = LastConnectionInfo
+        };
+    }
+
+    /// <summary>
+    /// Load last connection info
+    /// </summary>
+    public void LoadGlobal(MultiplayerGlobalData data)
+    {
+        LastConnectionInfo = data.LastConnection;
     }
 
     private Transform m_canvas;
