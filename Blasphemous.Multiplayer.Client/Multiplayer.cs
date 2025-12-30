@@ -10,19 +10,17 @@ using Blasphemous.Multiplayer.Client.Ping;
 using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
-using Blasphemous.Multiplayer.Client.PvP.Models;
 using Framework.Managers;
 using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;
 using UnityEngine;
-using UnityEngine.Networking.Match;
 
 namespace Blasphemous.Multiplayer.Client;
 
 /// <summary>
 /// Handles connecting to server, syncing progress, and tracking players
 /// </summary>
-public class Multiplayer : BlasMod, IPersistentMod
+public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>
 {
     internal Multiplayer() : base(ModInfo.MOD_ID, ModInfo.MOD_NAME, ModInfo.MOD_AUTHOR, ModInfo.MOD_VERSION) { }
 
@@ -50,8 +48,6 @@ public class Multiplayer : BlasMod, IPersistentMod
     // Set to true upon loading a new scene
     // Must be true to naturally obtain stat upgrades and send them
     public bool CanObtainStatUpgrades { get; set; }
-
-    public string PersistentID => "ID_MULTIPLAYER";
 
     protected override void OnInitialize()
     {
@@ -258,24 +254,29 @@ public class Multiplayer : BlasMod, IPersistentMod
         }
     }
 
-    // Save list of interacted persistent objects
-    public SaveData SaveGame()
+    /// <summary>
+    /// Save list of interacted persistent objects
+    /// </summary>
+    public MultiplayerSlotData SaveSlot()
     {
-        return new MultiplayerPersistenceData()
+        return new MultiplayerSlotData()
         {
-            interactedPersistenceObjects = ProgressManager.SaveInteractedObjects()
+            InteractedPersistenceObjects = ProgressManager.SaveInteractedObjects()
         };
     }
 
-    // Load list of interacted persistent objects
-    public void LoadGame(SaveData data)
+    /// <summary>
+    /// Load list of interacted persistent objects
+    /// </summary>
+    public void LoadSlot(MultiplayerSlotData data)
     {
-        MultiplayerPersistenceData multiplayerData = (MultiplayerPersistenceData)data;
-        ProgressManager.LoadInteractedObjects(multiplayerData.interactedPersistenceObjects);
+        ProgressManager.LoadInteractedObjects(data.InteractedPersistenceObjects);
     }
 
-    // Reset list of interacted persistent objects
-    public void ResetGame()
+    /// <summary>
+    /// Reset list of interacted persistent objects
+    /// </summary>
+    public void ResetSlot()
     {
         ProgressManager.ClearInteractedObjects();
     }
