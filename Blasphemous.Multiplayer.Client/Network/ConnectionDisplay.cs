@@ -107,7 +107,7 @@ public class ConnectionDisplay : MonoBehaviour
         _firstShowing = false;
 
         if (ReadButton("Connect", 5))
-            StartCoroutine(TryConnect());
+            ValidateAndConnect();
     }
 
     private string CleanTextField(string text, int maxLength, string validChars)
@@ -141,6 +141,28 @@ public class ConnectionDisplay : MonoBehaviour
         };
 
         GUI.Label(new Rect(0, 20, 330, 380), "Connnecting...", bigStyle);
+    }
+
+    private void ValidateAndConnect()
+    {
+        // Validate server ip
+
+
+        // Validate room name
+
+
+        // Validate player name
+
+
+        // Validate password
+
+
+        // Validate team number
+
+
+        // If anything is invalid, display the notification for it and return early
+
+        StartCoroutine(TryConnect());
     }
 
     private IEnumerator TryConnect()
