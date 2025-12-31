@@ -249,13 +249,16 @@ namespace Blasphemous.Multiplayer.Client.Players
             if (!Main.Multiplayer.config.displayNametags || !Main.Multiplayer.config.displayOwnNametag && name == Main.Multiplayer.PlayerName)
                 return;
 
-            Transform parent = Main.Multiplayer.CanvasObject; GameObject text = Main.Multiplayer.TextObject;
+            Transform parent = UnityReferences.CanvasObject;
+            GameObject text = UnityReferences.TextObject;
+
             if (parent == null || text == null)
             {
                 ModLog.Error("Error: Failed to create nametag for " + name);
                 return;
             }
 
+            // Could probably use the UI framework for this...
             Text nametag = Object.Instantiate(text, parent).GetComponent<Text>();
             nametag.rectTransform.sizeDelta = new Vector2(100, 50);
             nametag.rectTransform.SetAsFirstSibling();

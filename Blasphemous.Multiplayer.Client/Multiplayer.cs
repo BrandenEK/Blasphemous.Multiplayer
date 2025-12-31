@@ -11,7 +11,6 @@ using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
 using Framework.Managers;
-using Gameplay.UI.Others.UIGameLogic;
 using Tools.Level.Interactables;
 using UnityEngine;
 
@@ -303,84 +302,5 @@ public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>, IGl
     public void LoadGlobal(MultiplayerGlobalData data)
     {
         LastConnectionInfo = data.LastConnection;
-    }
-
-    private Transform m_canvas;
-    public Transform CanvasObject
-    {
-        get
-        {
-            if (m_canvas == null)
-            {
-                foreach (Canvas c in Object.FindObjectsOfType<Canvas>())
-                {
-                    if (c.name == "Game UI")
-                    {
-                        m_canvas = c.transform;
-                        break;
-                    }
-                }
-            }
-            return m_canvas;
-        }
-    }
-
-    private GameObject m_textPrefab;
-    public GameObject TextObject
-    {
-        get
-        {
-            if (m_textPrefab == null)
-            {
-                foreach (PlayerPurgePoints obj in Object.FindObjectsOfType<PlayerPurgePoints>())
-                {
-                    if (obj.name == "PurgePoints")
-                    {
-                        m_textPrefab = obj.transform.GetChild(1).gameObject;
-                        break;
-                    }
-                }
-            }
-            return m_textPrefab;
-        }
-    }
-
-    private RuntimeAnimatorController m_penitentAnimator;
-    public RuntimeAnimatorController PlayerAnimator
-    {
-        get
-        {
-            if (m_penitentAnimator == null)
-            {
-                m_penitentAnimator = Core.Logic.Penitent?.Animator.runtimeAnimatorController;
-            }
-            return m_penitentAnimator;
-        }
-    }
-
-    private RuntimeAnimatorController m_SwordAnimator;
-    public RuntimeAnimatorController PlayerSwordAnimator
-    {
-        get
-        {
-            if (m_SwordAnimator == null)
-            {
-                m_SwordAnimator = Core.Logic.Penitent?.GetComponentInChildren<Gameplay.GameControllers.Penitent.Attack.SwordAnimatorInyector>().GetComponent<Animator>().runtimeAnimatorController;
-            }
-            return m_SwordAnimator;
-        }
-    }
-
-    private Material m_penitentMaterial;
-    public Material PlayerMaterial
-    {
-        get
-        {
-            if (m_penitentMaterial == null)
-            {
-                m_penitentMaterial = Core.Logic.Penitent?.SpriteRenderer.material;
-            }
-            return m_penitentMaterial;
-        }
     }
 }
