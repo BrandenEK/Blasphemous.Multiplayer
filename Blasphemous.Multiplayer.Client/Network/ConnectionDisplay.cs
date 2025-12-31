@@ -148,42 +148,45 @@ public class ConnectionDisplay : MonoBehaviour
 
     private void ValidateAndConnect()
     {
+        bool valid = true;
+
         // Validate server ip
         if (!_validator.IsServerValid(_connection.ServerIp))
         {
             Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Server IP is invalid");
-            return;
+            valid = false;
         }
 
         // Validate room name
         if (!_validator.IsRoomValid(_connection.RoomName))
         {
             Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Room name is invalid");
-            return;
+            valid = false;
         }
 
         // Validate player name
         if (!_validator.IsPlayerValid(_connection.PlayerName))
         {
             Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Player name is invalid");
-            return;
+            valid = false;
         }
 
         // Validate password
         if (!_validator.IsPasswordValid(_connection.Password))
         {
             Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Password is invalid");
-            return;
+            valid = false;
         }
 
         // Validate team number
         if (!_validator.IsTeamValid(_connection.TeamNumber))
         {
             Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Team number is invalid");
-            return;
+            valid = false;
         }
 
-        StartCoroutine(TryConnect());
+        if (valid)
+            StartCoroutine(TryConnect());
     }
 
     private IEnumerator TryConnect()
