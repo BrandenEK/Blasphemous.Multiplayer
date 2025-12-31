@@ -1,5 +1,6 @@
 ﻿using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Helpers;
+using Blasphemous.Multiplayer.Client.InputValidation;
 using Framework.Managers;
 using System.Collections;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Blasphemous.Multiplayer.Client.Network;
 /// </summary>
 public class ConnectionDisplay : MonoBehaviour
 {
+    private readonly IValidator _validator = new StandardValidator();
+
     private bool _showingConnection = false;
     private bool _attemptingConnection = false;
     private bool _firstShowing = true;
@@ -146,21 +149,39 @@ public class ConnectionDisplay : MonoBehaviour
     private void ValidateAndConnect()
     {
         // Validate server ip
-
+        if (!_validator.IsServerValid(_connection.ServerIp))
+        {
+            Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Server IP is invalid");
+            return;
+        }
 
         // Validate room name
-
+        if (!_validator.IsRoomValid(_connection.RoomName))
+        {
+            Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Room name is invalid");
+            return;
+        }
 
         // Validate player name
-
+        if (!_validator.IsPlayerValid(_connection.PlayerName))
+        {
+            Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Player name is invalid");
+            return;
+        }
 
         // Validate password
-
+        if (!_validator.IsPasswordValid(_connection.Password))
+        {
+            Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Password is invalid");
+            return;
+        }
 
         // Validate team number
-
-
-        // If anything is invalid, display the notification for it and return early
+        if (!_validator.IsTeamValid(_connection.TeamNumber))
+        {
+            Main.Multiplayer.NotificationManager.DisplayNotification("Input error: Team number is invalid");
+            return;
+        }
 
         StartCoroutine(TryConnect());
     }

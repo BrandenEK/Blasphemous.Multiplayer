@@ -5,26 +5,26 @@ internal class StandardValidator : IValidator
 {
     public bool IsServerValid(string text)
     {
-        throw new System.NotImplementedException();
+        return true;
     }
 
     public bool IsRoomValid(string text)
     {
-        throw new System.NotImplementedException();
+        return text == "debug";
     }
 
     public bool IsPlayerValid(string text)
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public bool IsPasswordValid(string text)
     {
-        throw new System.NotImplementedException();
+        return true;
     }
 
     public bool IsTeamValid(int value)
     {
-        throw new System.NotImplementedException();
+        return true;
     }
 }
