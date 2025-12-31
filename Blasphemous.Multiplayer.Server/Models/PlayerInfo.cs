@@ -1,4 +1,5 @@
-﻿
+﻿using System.Text;
+
 namespace Blasphemous.Multiplayer.Server.Models;
 
 public class PlayerInfo
@@ -19,8 +20,8 @@ public class PlayerInfo
     {
         this.name = name;
         this.team = team;
-        sceneName = "";
-        skin = new byte[0];
+        sceneName = string.Empty;
+        skin = Encoding.UTF8.GetBytes("PENITENT_DEFAULT");
         ping = 0;
     }
 

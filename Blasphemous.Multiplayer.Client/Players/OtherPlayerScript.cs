@@ -29,13 +29,13 @@ namespace Blasphemous.Multiplayer.Client.Players
 
             // Rendering
             CharacterRenderer = gameObject.AddComponent<SpriteRenderer>();
-            CharacterRenderer.material = Main.Multiplayer.PlayerMaterial;
+            CharacterRenderer.material = UnityReferences.PlayerMaterial;
             CharacterRenderer.sortingLayerName = "Player";
             CharacterRenderer.enabled = false;
 
             // Animation
             CharacterAnim = gameObject.AddComponent<Animator>();
-            CharacterAnim.runtimeAnimatorController = Main.Multiplayer.PlayerAnimator;
+            CharacterAnim.runtimeAnimatorController = UnityReferences.PlayerAnimator;
 
             // Sword handler
             GameObject sword = new GameObject("Sword");
@@ -68,7 +68,7 @@ namespace Blasphemous.Multiplayer.Client.Players
                     if (playerStatus.SpecialAnimation > 0)
                     {
                         // Change back to regular animations
-                        CharacterAnim.runtimeAnimatorController = Main.Multiplayer.PlayerAnimator;
+                        CharacterAnim.runtimeAnimatorController = UnityReferences.PlayerAnimator;
                         playerStatus.SpecialAnimation = 0;
                     }
                     CharacterAnim.SetBool("IS_CROUCH", false);

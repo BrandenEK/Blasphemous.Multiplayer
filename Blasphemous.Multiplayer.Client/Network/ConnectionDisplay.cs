@@ -14,12 +14,9 @@ public class ConnectionDisplay : MonoBehaviour
 {
     private bool _showingConnection = false;
     private bool _attemptingConnection = false;
+    private bool _firstShowing = true;
 
-    private string _server = "localhost:33000"; // Handle these somewhere else (In a class with proper defaults)
-    private string _room = "debug";
-    private string _player = "Damocles";
-    private string _password = string.Empty;
-    private int _team = 1;
+    private ConnectionInfo _connection;
 
     private void Update()
     {
@@ -62,13 +59,21 @@ public class ConnectionDisplay : MonoBehaviour
 
     private void ConnectionInfoWindow(int windowID)
     {
-        _server = ReadTextField("Server IP:", _server, 0); // Add max lengths
-        _room = ReadTextField("Room name:", _room, 1);
-        _player = ReadTextField("Player name:", _player, 2);
-        _password = ReadTextField("Password:", _password, 3);
-        _team = ReadChoiceBox("Team number:", _team - 1, Enumerable.Range(1, 8).Select(x => x.ToString()).ToArray(), 4) + 1;
+        if (_firstShowing)
+        {
+            _connection = Main.Multiplayer.LastConnectionInfo;
+            _firstShowing = false;
+        }
+
+        string server = ReadTextField("Server IP:", _connection.ServerIp, 0); // Add max lengths
+        string room = ReadTextField("Room name:", _connection.RoomName, 1);
+        string player = ReadTextField("Player name:", _connection.PlayerName, 2);
+        string password = ReadTextField("Password:", _connection.Password, 3);
+        int team = ReadChoiceBox("Team number:", _connection.TeamNumber - 1, Enumerable.Range(1, 8).Select(x => x.ToString()).ToArray(), 4) + 1;
 
         // Validate all parameters
+
+        _connection = new ConnectionInfo(server, room, player, password, (byte)team);
 
         if (ReadButton("Connect", 5))
             StartCoroutine(TryConnect());
@@ -77,7 +82,7 @@ public class ConnectionDisplay : MonoBehaviour
     private void ConnectionStatusWindow(int windowID)
     {
         // Show actual connection details
-        string text = $"You are connected to {_server} ({_room}) as {_player} on team {_team}";
+        string text = $"You are connected to {_connection.ServerIp} ({_connection.RoomName}) as {_connection.PlayerName} on team {_connection.TeamNumber}";
         ShowLabel(text, 0);
 
         if (ReadButton("Disconnect", 2))
@@ -98,27 +103,29 @@ public class ConnectionDisplay : MonoBehaviour
 
     private IEnumerator TryConnect()
     {
-        ModLog.Info($"Attempting to connect to {_server}");
+        ModLog.Info($"Attempting to connect to {_connection.ServerIp}");
 
-        string[] ipParts = _server.Split(':');  // Do this better
+        string[] ipParts = _connection.ServerIp.Split(':');  // Do this better
 
         _attemptingConnection = true;
         Main.Multiplayer.NetworkManager.OnConnect += OnConnect;
 
         yield return null;
 
-        bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _room, _player, _password, (byte)_team);
+        bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _connection.RoomName, _connection.PlayerName, _connection.Password, (byte)_connection.TeamNumber);
     }
 
     private void OnConnect(bool success, byte errorCode)
     {
         _attemptingConnection = false;
+
+        Main.Multiplayer.LastConnectionInfo = _connection;
         Main.Multiplayer.NetworkManager.OnConnect -= OnConnect;
     }
 
     private void TryDisconnect()
     {
-        ModLog.Info($"Disconnecting from {_server}");
+        ModLog.Info($"Disconnecting from {_connection.ServerIp}");
         Main.Multiplayer.NetworkManager.Disconnect();
     }
 

@@ -23,7 +23,7 @@ namespace Blasphemous.Multiplayer.Client.Players
             transform.localPosition = Vector3.zero;
             SwordRenderer = gameObject.AddComponent<SpriteRenderer>();
             SwordAnim = gameObject.AddComponent<Animator>();
-            SwordAnim.runtimeAnimatorController = Main.Multiplayer.PlayerSwordAnimator;
+            SwordAnim.runtimeAnimatorController = UnityReferences.PlayerSwordAnimator;
 
             // Create damage area collider
             gameObject.layer = LayerMask.NameToLayer("Enemy");
