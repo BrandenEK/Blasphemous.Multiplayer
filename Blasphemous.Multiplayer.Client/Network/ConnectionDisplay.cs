@@ -14,13 +14,21 @@ namespace Blasphemous.Multiplayer.Client.Network;
 /// </summary>
 public class ConnectionDisplay : MonoBehaviour
 {
-    private readonly IValidator _validator = new StandardValidator();
+    private readonly IValidator _validator;
+    private readonly ISanitizer _sanitizer;
 
     private bool _showingConnection = false;
     private bool _attemptingConnection = false;
     private bool _firstShowing = true;
 
     private ConnectionInfo _connection = new();
+
+    public ConnectionDisplay()
+    {
+        var sv = new StandardValidator();
+        _validator = sv;
+        _sanitizer = sv;
+    }
 
     private void Update()
     {
@@ -70,40 +78,35 @@ public class ConnectionDisplay : MonoBehaviour
         string server = ReadTextField("Server IP:", _connection.ServerIp, 0);
         if (_firstShowing || server != _connection.ServerIp)
         {
-            //ModLog.Info("Validating server ip");
-            server = CleanTextField(server, 64, VALID_IP);
+            server = _sanitizer.CleanServer(server);
         }
 
         // Clean room name
         string room = ReadTextField("Room name:", _connection.RoomName, 1);
         if (_firstShowing || room != _connection.RoomName)
         {
-            //ModLog.Info("Validating room name");
-            room = CleanTextField(room, 16, VALID_ROOM);
+            room = _sanitizer.CleanRoom(room);
         }
 
         // Clean player name
         string player = ReadTextField("Player name:", _connection.PlayerName, 2);
         if (_firstShowing || player != _connection.PlayerName)
         {
-            //ModLog.Info("Validating player name");
-            player = CleanTextField(player, 16, VALID_PLAYER);
+            player = _sanitizer.CleanPlayer(player);
         }
 
         // Clean password
         string password = ReadTextField("Password:", _connection.Password, 3);
         if (_firstShowing || password != _connection.Password)
         {
-            //ModLog.Info("Validating password");
-            password = CleanTextField(password, 32, VALID_PASSWORD);
+            password = _sanitizer.CleanPassword(password);
         }
 
         // Clean team number
         int team = ReadChoiceBox("Team number:", _connection.TeamNumber - 1, Enumerable.Range(1, 8).Select(x => x.ToString()).ToArray(), 4) + 1;
         if (_firstShowing || team != _connection.TeamNumber)
         {
-            //ModLog.Info("Validating team number");
-            team = team >= 1 && team <= 8 ? team : 1;
+            team = _sanitizer.CleanTeam(team);
         }
 
         _connection = new ConnectionInfo(server, room, player, password, (byte)team);
@@ -246,9 +249,4 @@ public class ConnectionDisplay : MonoBehaviour
     private const int LABEL_WIDTH = 100;
     private const int TEXT_WIDTH = 200;
     private const int BUTTON_WIDTH = 90;
-
-    private const string VALID_IP = "-:.";
-    private const string VALID_ROOM = "_-";
-    private const string VALID_PLAYER = "_-.' ";
-    private const string VALID_PASSWORD = "_-.";
 }

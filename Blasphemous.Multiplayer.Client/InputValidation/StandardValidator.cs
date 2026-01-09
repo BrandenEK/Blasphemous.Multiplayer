@@ -6,18 +6,6 @@ internal class StandardValidator : IValidator
 {
     public bool IsServerValid(string text)
     {
-        //if (string.IsNullOrEmpty(text))
-        //    return false;
-
-        //int colon = text.IndexOf(':');
-
-        //bool valid = !string.IsNullOrEmpty(text)
-        //    && text.Length <= SERVER_LENGTH
-        //    && text.All(c => char.IsLetterOrDigit(c) || SERVER_CHARS.Contains(c))
-        //    && text.Count(c => c == ':') == 1
-        //    && colon == text.LastIndexOf(':')
-        //    && ushort.TryParse(text.Substring(colon + 1), out _);
-
         return !string.IsNullOrEmpty(text)
             && text.Length <= SERVER_LENGTH
             && text.All(c => char.IsLetterOrDigit(c) || SERVER_CHARS.Contains(c))
