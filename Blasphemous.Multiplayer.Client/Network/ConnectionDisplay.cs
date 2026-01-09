@@ -4,7 +4,6 @@ using Blasphemous.Multiplayer.Client.InputValidation;
 using Framework.Managers;
 using System.Collections;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace Blasphemous.Multiplayer.Client.Network;
@@ -114,17 +113,6 @@ public class ConnectionDisplay : MonoBehaviour
 
         if (ReadButton("Connect", 5))
             ValidateAndConnect();
-    }
-
-    private string CleanTextField(string text, int maxLength, string validChars)
-    {
-        var sb = new StringBuilder(text.Length);
-        foreach (char c in text)
-        {
-            if (sb.Length < maxLength && (char.IsLetterOrDigit(c) || validChars.Contains(c)))
-                sb.Append(c);
-        }
-        return sb.ToString();
     }
 
     private void ConnectionStatusWindow(int windowID)
