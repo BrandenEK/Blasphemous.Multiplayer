@@ -12,6 +12,12 @@
 ***- Translations -*** <br>
 [@ConanCimmerio](https://github.com/ConanCimmerio), [@EltonZhang777](https://github.com/EltonZhang777), [@RocherBrockas](https://github.com/RocherBrockas)
 
+## Uptime
+
+Server IP: `IP_ADDRESS`
+
+<img src="https://img.shields.io/uptimerobot/status/m802159840-50a68843018bb79d1b495c56?up_message=Online&up_color=blue&down_message=Offline&down_color=red&style=plastic&logo=sonarqubeserver&label=Server%20status">
+
 ## Features
 - See other players as you both move around the world of Cvstodia
 - Sync items, stats, skills, and other game progress across all players
