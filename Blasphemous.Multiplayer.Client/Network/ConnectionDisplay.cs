@@ -16,11 +16,14 @@ public class ConnectionDisplay : MonoBehaviour
     private readonly IValidator _validator;
     private readonly ISanitizer _sanitizer;
 
-    private bool _showingConnection = false;
     private bool _attemptingConnection = false;
     private bool _firstShowing = true;
 
     private ConnectionInfo _connection = new();
+
+    // New variables (Window framework)
+    private Rect _window;
+    private bool _open = false;
 
     public ConnectionDisplay()
     {
@@ -29,49 +32,52 @@ public class ConnectionDisplay : MonoBehaviour
         _sanitizer = sv;
     }
 
-    private void Update()
+    private void SetOpenStatus(bool open)
     {
-        if (!SceneHelper.GameSceneLoaded)
+        if (_open == open)
             return;
 
-        if (!Input.GetKeyDown(KeyCode.F9)) // Change to keybinding
-            return;
-
-        ToggleShowingConnection();
-    }
-
-    private void ToggleShowingConnection()
-    {
-        ModLog.Info("Toggling connection window");
-        _showingConnection = !_showingConnection;
-
-        Core.Input.SetBlocker("MULTIPLAYER", _showingConnection);
-        Cursor.visible = _showingConnection;
+        _open = open;
+        Core.Input.SetBlocker("MULTIPLAYER", _open);
     }
 
     private void OnGUI()
     {
-        if (!_showingConnection)
+        if (!SceneHelper.GameSceneLoaded)
+        {
+            Cursor.visible = false;
+            SetOpenStatus(false);
             return;
+        }
 
         // Temp since debug mod hides the cursor
         Cursor.visible = true;
 
+        Event e = Event.current;
+        if (e.type == EventType.MouseDown && e.button == 0)
+            SetOpenStatus(_window.Contains(e.mousePosition));
+
+        int ypos = Screen.height - (_open ? HEIGHT : 17);
+        _window = GUI.Window(99, new Rect(240, ypos, WIDTH, HEIGHT + 20), MultiplayerWindow, "Multiplayer connection info");
+    }
+
+    private void MultiplayerWindow(int windowID)
+    {
         if (Main.Multiplayer.NetworkManager.IsConnected)
         {
-            GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
+            DisplayEnd();
         }
         else if (_attemptingConnection)
         {
-            GUI.Window(4, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionWaitWindow, "Enter connection info");
+            DisplayMiddle();
         }
         else
         {
-            GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
+            DisplayStart();
         }
     }
 
-    private void ConnectionInfoWindow(int windowID)
+    private void DisplayStart()
     {
         if (_firstShowing)
             _connection = Main.Multiplayer.LastConnectionInfo;
@@ -121,17 +127,7 @@ public class ConnectionDisplay : MonoBehaviour
             ValidateAndConnect();
     }
 
-    private void ConnectionStatusWindow(int windowID)
-    {
-        // Show actual connection details
-        string text = $"You are connected to {_connection.ServerIp} ({_connection.RoomName}) as {_connection.PlayerName} on team {_connection.TeamNumber}";
-        ShowLabel(text, 0);
-
-        if (ReadButton("Disconnect", 2))
-            TryDisconnect();
-    }
-
-    private void ConnectionWaitWindow(int windowID)
+    private void DisplayMiddle()
     {
         var bigStyle = new GUIStyle(GUI.skin.label)
         {
@@ -141,6 +137,16 @@ public class ConnectionDisplay : MonoBehaviour
         };
 
         GUI.Label(new Rect(0, 20, 330, 380), "Connnecting...", bigStyle);
+    }
+
+    private void DisplayEnd()
+    {
+        // Show actual connection details
+        string text = $"You are connected to {_connection.ServerIp} ({_connection.RoomName}) as {_connection.PlayerName} on team {_connection.TeamNumber}";
+        ShowLabel(text, 0);
+
+        if (ReadButton("Disconnect", 2))
+            TryDisconnect();
     }
 
     private void ValidateAndConnect()
@@ -243,4 +249,7 @@ public class ConnectionDisplay : MonoBehaviour
     private const int LABEL_WIDTH = 100;
     private const int TEXT_WIDTH = 200;
     private const int BUTTON_WIDTH = 90;
+
+    private const int WIDTH = 330;
+    private const int HEIGHT = 400;
 }
