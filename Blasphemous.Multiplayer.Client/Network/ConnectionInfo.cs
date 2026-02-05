@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Blasphemous.Multiplayer.Common;
+using Newtonsoft.Json;
 
 namespace Blasphemous.Multiplayer.Client.Network;
 
@@ -25,7 +26,7 @@ public readonly struct ConnectionInfo
     /// </summary>
     public ConnectionInfo()
     {
-        ServerIp = "blasmulti.playit.plus:27051";
+        ServerIp = $"{Protocol.DEFAULT_IP}:{Protocol.DEFAULT_PORT}";
         RoomName = string.Empty;
         PlayerName = string.Empty;
         Password = string.Empty;
