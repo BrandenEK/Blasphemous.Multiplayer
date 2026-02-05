@@ -466,7 +466,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 byte length = data[idx];
                 string name = Encoding.UTF8.GetString(data, idx + 1, length);
                 ushort ping = BitConverter.ToUInt16(data, idx + 1 + length);
-                idx += 1 + length + 4;
+                idx += 1 + length + 2;
 
                 Main.Multiplayer.OtherPlayerManager.ReceivePing(name, ping);
             }
