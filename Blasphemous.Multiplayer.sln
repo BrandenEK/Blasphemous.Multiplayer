@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blasphemous.Multiplayer.Cli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blasphemous.Multiplayer.Server", "Blasphemous.Multiplayer.Server\Blasphemous.Multiplayer.Server.csproj", "{D8AE07D2-A732-481C-B087-3B0E6CCF1EF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blasphemous.Multiplayer.Common", "Blasphemous.Multiplayer.Common\Blasphemous.Multiplayer.Common.csproj", "{DE78F476-9922-4C2D-A89A-9F9A15840D9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D8AE07D2-A732-481C-B087-3B0E6CCF1EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8AE07D2-A732-481C-B087-3B0E6CCF1EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8AE07D2-A732-481C-B087-3B0E6CCF1EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE78F476-9922-4C2D-A89A-9F9A15840D9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE78F476-9922-4C2D-A89A-9F9A15840D9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE78F476-9922-4C2D-A89A-9F9A15840D9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE78F476-9922-4C2D-A89A-9F9A15840D9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

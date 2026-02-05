@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blasphemous.Multiplayer.Common\Blasphemous.Multiplayer.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="SimpleTCP">
       <HintPath>..\resources\data\SimpleTCP.dll</HintPath>
     </Reference>

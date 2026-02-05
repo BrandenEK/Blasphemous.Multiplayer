@@ -1,6 +1,7 @@
 ﻿using Blasphemous.ModdingAPI;
 using Blasphemous.Multiplayer.Client.Data;
 using Blasphemous.Multiplayer.Client.ProgressSync.Helpers;
+using Blasphemous.Multiplayer.Common.Enums;
 using Framework.FrameworkCore;
 using Framework.Managers;
 using System.Collections.Generic;
