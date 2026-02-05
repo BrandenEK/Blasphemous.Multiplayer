@@ -26,6 +26,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blasphemous.Multiplayer.Common\Blasphemous.Multiplayer.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="SimpleTCP">
       <HintPath>..\resources\data\SimpleTCP.dll</HintPath>
     </Reference>
@@ -33,12 +37,15 @@
 
   <Target Name="Development" AfterTargets="PostBuildEvent">
 
+    <!-- Update dependencies -->
+    <Copy SourceFiles="$(OutDir)Blasphemous.Multiplayer.Common.dll" DestinationFolder="$(SolutionDir)\resources\data" SkipUnchangedFiles="true" />
+
     <!-- Get plugin & resources -->
     <ItemGroup>
       <PluginDll Include="$(TargetPath)" />
       <Resources Include="$(SolutionDir)\resources\**\*.*" />
     </ItemGroup>
-    
+
     <!-- Get export directories -->
     <PropertyGroup>
       <DevFolder>C:\Program Files (x86)\Steam\steamapps\common\Blasphemous\Modding\</DevFolder>
@@ -48,7 +55,7 @@
     <!-- Export to dev folder -->
     <Copy SourceFiles="@(Resources)" DestinationFolder="$(DevFolder)\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(PluginDll)" DestinationFolder="$(DevFolder)\plugins" SkipUnchangedFiles="true" />
-    
+
     <!-- Export to publish folder -->
     <RemoveDir Directories="$(PublishFolder)" />
     <Copy SourceFiles="@(Resources)" DestinationFolder="$(PublishFolder)\%(RecursiveDir)" SkipUnchangedFiles="true" />
