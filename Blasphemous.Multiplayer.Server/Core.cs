@@ -19,18 +19,22 @@ internal static class Core
         Console.Title = "Blasphemous Multiplayer Server";
         Console.WriteLine(string.Empty);
 
+        // Read settings from args
+        var cmd = new ServerCommand();
+        cmd.Process(args);
+
         // Load settings from file
-        ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
+        //ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
 
         // Create server
-        server = new Server(settings);
-        if (!server.Start())
+        server = new Server(cmd.MaxPlayers, cmd.Password);
+        if (!server.Start(cmd.Port))
         {
-            Logger.Error("Server failed to start at this machine's local ip address");
+            Logger.Error($"Server failed to start on port {cmd.Port}");
             return;
         }
 
-        Logger.Info("Server has been started at this machine's local ip address");
+        Logger.Info($"Server has been started on port {cmd.Port}");
         teamGameDatas = new Dictionary<byte, TeamInfo>();
 
         // Start read loop
