@@ -3,11 +3,15 @@ namespace Blasphemous.Multiplayer.Common.Enums;
 
 public enum RefusalType
 {
-    Connection = 0,
-    Protocol = 1,
-    DuplicateIp = 2,
-    DuplicateName = 3,
-    Password = 4,
-    PlayerLimit = 5,
-    Banned = 6,
+    Accepted = 0,
+    // Network
+    Connection = 10,
+    Protocol = 11,
+    DuplicateIp = 12,
+    // Parameters
+    DuplicateName = 20,
+    Password = 21,
+    // Server
+    PlayerLimit = 30,
+    Banned = 31,
 }
