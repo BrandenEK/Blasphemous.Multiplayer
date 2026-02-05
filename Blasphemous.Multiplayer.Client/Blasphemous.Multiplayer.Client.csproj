@@ -20,9 +20,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blasphemous.CheatConsole" Version="1.0.1" />
+    <PackageReference Include="Blasphemous.CheatConsole" Version="1.1.0" />
     <PackageReference Include="Blasphemous.GameLibs" Version="4.0.67" />
-    <PackageReference Include="Blasphemous.ModdingAPI" Version="2.5.0" />
+    <PackageReference Include="Blasphemous.ModdingAPI" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
