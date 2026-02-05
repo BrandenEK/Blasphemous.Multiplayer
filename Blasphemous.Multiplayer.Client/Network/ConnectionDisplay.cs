@@ -22,6 +22,10 @@ public class ConnectionDisplay : MonoBehaviour
 
     private ConnectionInfo _connection = new();
 
+    // New variables (Window framework)
+    private Rect _window;
+    private bool _open = false;
+
     public ConnectionDisplay()
     {
         var sv = new StandardValidator();
@@ -51,24 +55,40 @@ public class ConnectionDisplay : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!_showingConnection)
+        if (!SceneHelper.GameSceneLoaded)
+        {
+            Cursor.visible = false;
+            _open = false;
             return;
+        }
 
         // Temp since debug mod hides the cursor
         Cursor.visible = true;
 
-        if (Main.Multiplayer.NetworkManager.IsConnected)
-        {
-            GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
-        }
-        else if (_attemptingConnection)
-        {
-            GUI.Window(4, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionWaitWindow, "Enter connection info");
-        }
-        else
-        {
-            GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
-        }
+        Event e = Event.current;
+        if (e.type == EventType.MouseDown && e.button == 0)
+            _open = _window.Contains(e.mousePosition);
+
+        int ypos = Screen.height - (_open ? HEIGHT : 17);
+        _window = GUI.Window(99, new Rect(240, ypos, WIDTH, HEIGHT + 20), MultiplayerWindow, "Multiplayer connection info");
+
+        //if (Main.Multiplayer.NetworkManager.IsConnected)
+        //{
+        //    GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
+        //}
+        //else if (_attemptingConnection)
+        //{
+        //    GUI.Window(4, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionWaitWindow, "Enter connection info");
+        //}
+        //else
+        //{
+        //    GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
+        //}
+    }
+
+    private void MultiplayerWindow(int windowID)
+    {
+
     }
 
     private void ConnectionInfoWindow(int windowID)
@@ -243,4 +263,7 @@ public class ConnectionDisplay : MonoBehaviour
     private const int LABEL_WIDTH = 100;
     private const int TEXT_WIDTH = 200;
     private const int BUTTON_WIDTH = 90;
+
+    private const int WIDTH = 330;
+    private const int HEIGHT = 400;
 }
