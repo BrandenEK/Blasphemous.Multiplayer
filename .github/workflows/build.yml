@@ -1,5 +1,5 @@
 
-# Blasphemous mod publisher v1.0.0
+# Blasphemous multiplayer publisher v1.0.0
 name: Build
 
 on:
@@ -29,12 +29,8 @@ jobs:
 
     - name: Export Settings
       run: |
-        MOD_TITLE=$(grep -oP '<Title>\K[^<]+' ${{ github.event.repository.name }}/${{ github.event.repository.name }}.csproj)
-        echo "MOD_TITLE=$MOD_TITLE" >> $GITHUB_ENV
-        MOD_NAME=$(grep -oP '<TargetName>\K[^<]+' ${{ github.event.repository.name }}/${{ github.event.repository.name }}.csproj)
-        echo "MOD_NAME=$MOD_NAME" >> $GITHUB_ENV
-        MOD_VERSION=$(grep -oP '<Version>\K[^<]+' ${{ github.event.repository.name }}/${{ github.event.repository.name }}.csproj)
-        echo "MOD_VERSION=$MOD_VERSION" >> $GITHUB_ENV
+        MP_VERSION=$(grep -oP '<Version>\K[^<]+' Blasphemous.Multiplayer.Client/Blasphemous.Multiplayer.Client.csproj)
+        echo "MP_VERSION=$MP_VERSION" >> $GITHUB_ENV
 
     - name: Create Release
       id: create_release
@@ -43,10 +39,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: Multiplayer v${{ env.MOD_VERSION }}
+        release_name: Multiplayer v${{ env.MP_VERSION }}
         draft: true
 
-    - name: Upload Release
+    - name: Upload Client
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,6 +50,16 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: publish/BlasClient.zip
         asset_name: BlasClient.zip
+        asset_content_type: application/zip
+
+    - name: Upload Server
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: publish/BlasServer.zip
+        asset_name: BlasServer.zip
         asset_content_type: application/zip
 
     - name: Upload Nuget
