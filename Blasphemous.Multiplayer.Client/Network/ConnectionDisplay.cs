@@ -54,6 +54,9 @@ public class ConnectionDisplay : MonoBehaviour
         if (!_showingConnection)
             return;
 
+        // Temp since debug mod hides the cursor
+        Cursor.visible = true;
+
         if (Main.Multiplayer.NetworkManager.IsConnected)
         {
             GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
@@ -81,11 +84,14 @@ public class ConnectionDisplay : MonoBehaviour
         }
 
         // Clean room name
-        string room = ReadTextField("Room name:", _connection.RoomName, 1);
-        if (_firstShowing || room != _connection.RoomName)
-        {
-            room = _sanitizer.CleanRoom(room);
-        }
+        //string room = ReadTextField("Room name:", _connection.RoomName, 1);
+        //if (_firstShowing || room != _connection.RoomName)
+        //{
+        //    room = _sanitizer.CleanRoom(room);
+        //}
+
+        // Not until room system is implemented
+        string room = "a";
 
         // Clean player name
         string player = ReadTextField("Player name:", _connection.PlayerName, 2);
