@@ -1,6 +1,7 @@
 ﻿using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Helpers;
 using Blasphemous.Multiplayer.Client.InputValidation;
+using Blasphemous.Multiplayer.Common.Enums;
 using Framework.Managers;
 using System.Collections;
 using System.Linq;
@@ -206,7 +207,7 @@ public class ConnectionDisplay : MonoBehaviour
         bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _connection.RoomName, _connection.PlayerName, _connection.Password, (byte)_connection.TeamNumber);
     }
 
-    private void OnConnect(bool success, byte errorCode)
+    private void OnConnect(bool success, RefusalType refusal)
     {
         _attemptingConnection = false;
 
