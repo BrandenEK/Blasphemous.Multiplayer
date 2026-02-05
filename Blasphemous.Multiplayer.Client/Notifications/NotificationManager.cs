@@ -63,21 +63,21 @@ namespace Blasphemous.Multiplayer.Client.Notifications
 
                 // Update text
                 NotificationLine currentLine = currentMessages[i];
-                textLines[i].text = currentLine.text;
+                textLines[i].text = currentLine.Text;
                 if (textLines[i].preferredWidth > maxWidth)
                     maxWidth = textLines[i].preferredWidth;
 
                 // Decrease the amount of time left on this notification line
-                currentLine.timeLeft -= Time.unscaledDeltaTime;
-                if (currentLine.timeLeft <= 0)
+                currentLine.SubtractTime(Time.unscaledDeltaTime);
+                if (currentLine.TimeLeft <= 0)
                 {
                     // Time is over, remove this message
                     currentMessages.RemoveAt(i);
                 }
-                else if (currentLine.timeLeft <= timeBeforeFade)
+                else if (currentLine.TimeLeft <= timeBeforeFade)
                 {
                     // Enough time has passed, fade this text away
-                    textLines[i].color = new Color(1, 1, 1, currentLine.timeLeft / timeBeforeFade);
+                    textLines[i].color = new Color(1, 1, 1, currentLine.TimeLeft / timeBeforeFade);
                 }
                 else
                 {
@@ -133,7 +133,7 @@ namespace Blasphemous.Multiplayer.Client.Notifications
             GameObject obj = new GameObject("Message box", typeof(RectTransform), typeof(Image));
             RectTransform rect = obj.GetComponent<RectTransform>();
             rect.SetParent(parent, false);
-            SetOrientation(rect);
+            SetOrientation(rect, new Vector2(1, 0));
             rect.sizeDelta = new Vector2(0, 0);
 
             // Set image color
@@ -145,7 +145,7 @@ namespace Blasphemous.Multiplayer.Client.Notifications
             for (int i = 0; i < MAX_LINES; i++)
             {
                 Text line = Object.Instantiate(textObject, rect).GetComponent<Text>();
-                SetOrientation(line.rectTransform);
+                SetOrientation(line.rectTransform, Vector2.zero);
                 line.rectTransform.sizeDelta = new Vector2(100, 20);
                 line.rectTransform.anchoredPosition = new Vector2(5, 2.5f + i * 20);
                 line.raycastTarget = false;
@@ -158,25 +158,13 @@ namespace Blasphemous.Multiplayer.Client.Notifications
 
             messageBox = rect;
 
-            // Set a recttransform to bottom left corner
-            void SetOrientation(RectTransform rect)
+            // Set a recttransform to a corner
+            void SetOrientation(RectTransform rect, Vector2 orient)
             {
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.zero;
-                rect.pivot = Vector2.zero;
+                rect.anchorMin = orient;
+                rect.anchorMax = orient;
+                rect.pivot = orient;
                 rect.anchoredPosition = Vector2.zero;
-            }
-        }
-
-        class NotificationLine
-        {
-            public string text;
-            public float timeLeft;
-
-            public NotificationLine(string text, float timeLeft)
-            {
-                this.text = text;
-                this.timeLeft = timeLeft;
             }
         }
     }
