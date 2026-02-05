@@ -36,6 +36,6 @@ public static class Logger
 
     public static void Print(object message)
     {
-        Console.WriteLine($"[{DateTime.UtcNow:HH:mm:ss}] {message}");
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {message}");
     }
 }
