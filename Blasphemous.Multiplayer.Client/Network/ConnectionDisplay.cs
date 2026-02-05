@@ -16,7 +16,6 @@ public class ConnectionDisplay : MonoBehaviour
     private readonly IValidator _validator;
     private readonly ISanitizer _sanitizer;
 
-    private bool _showingConnection = false;
     private bool _attemptingConnection = false;
     private bool _firstShowing = true;
 
@@ -31,26 +30,6 @@ public class ConnectionDisplay : MonoBehaviour
         var sv = new StandardValidator();
         _validator = sv;
         _sanitizer = sv;
-    }
-
-    private void Update()
-    {
-        if (!SceneHelper.GameSceneLoaded)
-            return;
-
-        if (!Input.GetKeyDown(KeyCode.F9)) // Change to keybinding
-            return;
-
-        ToggleShowingConnection();
-    }
-
-    private void ToggleShowingConnection()
-    {
-        ModLog.Info("Toggling connection window");
-        _showingConnection = !_showingConnection;
-
-        Core.Input.SetBlocker("MULTIPLAYER", _showingConnection);
-        Cursor.visible = _showingConnection;
     }
 
     private void SetOpenStatus(bool open)
