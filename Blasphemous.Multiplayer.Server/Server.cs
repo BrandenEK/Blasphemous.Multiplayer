@@ -9,14 +9,17 @@ namespace Blasphemous.Multiplayer.Server;
 
 public class Server
 {
-    private readonly ServerSettings _settings;
+    private readonly int _maxPlayers;
+    private readonly string _password;
 
     private SimpleTcpServer server;
     private Dictionary<string, PlayerInfo> connectedPlayers;
 
-    public Server(ServerSettings settings)
+    public Server(int maxPlayers, string password)
     {
-        _settings = settings;
+        // Change how this works later
+        _maxPlayers = maxPlayers;
+        _password = password;
     }
 
     public Dictionary<string, PlayerInfo> getPlayers()
@@ -34,7 +37,7 @@ public class Server
         }
     }
 
-    public bool Start()
+    public bool Start(int port)
     {
         try
         {
@@ -42,7 +45,7 @@ public class Server
             server.ClientConnected += clientConnected;
             server.ClientDisconnected += clientDisconnected;
             server.DataReceived += Receive;
-            server.Start(_settings.Port);
+            server.Start(port);
             server.DelayDisabled = true;
         }
         catch (System.Net.Sockets.SocketException)
@@ -453,7 +456,7 @@ public class Server
         int idx = 0;
 
         // Ensure the server doesn't have max number of players
-        if (connectedPlayers.Count >= _settings.MaxPlayers)
+        if (connectedPlayers.Count >= _maxPlayers)
         {
             Logger.Warn("Player connection rejected: Player limit reached");
             sendPlayerIntro(playerIp, RefusalType.PlayerLimit);
@@ -502,8 +505,7 @@ public class Server
         idx += passwordLength + 1;
 
         // Ensure the password is correct
-        string serverPassword = _settings.Password;
-        if (!string.IsNullOrEmpty(serverPassword) && (password == null || password != serverPassword))
+        if (!string.IsNullOrEmpty(_password) && (password == null || password != _password))
         {
             Logger.Warn("Player connection rejected: Incorrect password");
             sendPlayerIntro(playerIp, RefusalType.Password);

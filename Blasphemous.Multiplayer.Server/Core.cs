@@ -1,9 +1,6 @@
 ﻿using Blasphemous.Multiplayer.Server.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 
 namespace Blasphemous.Multiplayer.Server;
@@ -19,18 +16,19 @@ internal static class Core
         Console.Title = "Blasphemous Multiplayer Server";
         Console.WriteLine(string.Empty);
 
-        // Load settings from file
-        ServerSettings settings = LoadSettings(Path.Combine(Environment.CurrentDirectory, "Multiplayer.cfg"));
+        // Read settings from args
+        var cmd = new ServerCommand();
+        cmd.Process(args);
 
         // Create server
-        server = new Server(settings);
-        if (!server.Start())
+        server = new Server(cmd.MaxPlayers, cmd.Password);
+        if (!server.Start(cmd.Port))
         {
-            Logger.Error("Server failed to start at this machine's local ip address");
+            Logger.Error($"Server failed to start on port {cmd.Port}");
             return;
         }
 
-        Logger.Info("Server has been started at this machine's local ip address");
+        Logger.Info($"Server has been started on port {cmd.Port}");
         teamGameDatas = new Dictionary<byte, TeamInfo>();
 
         // Start read loop
@@ -55,7 +53,8 @@ internal static class Core
     {
         for (byte i = 1; i <= 10; i++)
         {
-            if (!teamGameDatas.ContainsKey(i)) continue;
+            if (!teamGameDatas.ContainsKey(i))
+                continue;
 
             // If no player is currently on this team, remove the game data
             bool teamExists = false;
@@ -73,27 +72,5 @@ internal static class Core
                 teamGameDatas.Remove(i);
             }
         }
-    }
-
-    private static ServerSettings LoadSettings(string path)
-    {
-        ServerSettings settings;
-
-        try
-        {
-            settings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(path));
-        }
-        catch
-        {
-            settings = new ServerSettings();
-        }
-
-        File.WriteAllText(path, JsonConvert.SerializeObject(settings, new JsonSerializerSettings()
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Formatting = Formatting.Indented
-        }));
-
-        return settings;
     }
 }
