@@ -53,12 +53,21 @@ public class ConnectionDisplay : MonoBehaviour
         Cursor.visible = _showingConnection;
     }
 
+    private void SetOpenStatus(bool open)
+    {
+        if (_open == open)
+            return;
+
+        _open = open;
+        Core.Input.SetBlocker("MULTIPLAYER", _open);
+    }
+
     private void OnGUI()
     {
         if (!SceneHelper.GameSceneLoaded)
         {
             Cursor.visible = false;
-            _open = false;
+            SetOpenStatus(false);
             return;
         }
 
@@ -67,7 +76,7 @@ public class ConnectionDisplay : MonoBehaviour
 
         Event e = Event.current;
         if (e.type == EventType.MouseDown && e.button == 0)
-            _open = _window.Contains(e.mousePosition);
+            SetOpenStatus(_window.Contains(e.mousePosition));
 
         int ypos = Screen.height - (_open ? HEIGHT : 17);
         _window = GUI.Window(99, new Rect(240, ypos, WIDTH, HEIGHT + 20), MultiplayerWindow, "Multiplayer connection info");
