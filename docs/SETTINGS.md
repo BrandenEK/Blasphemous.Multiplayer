@@ -1,20 +1,19 @@
 # Multiplayer Configuration Settings
 
 ### Server:
-- These settings can be modified in the 'multiplayer.cfg' file
+- These settings can be passed as command line arguments
 
 | Setting | Description | Default |
 | ------- | ----------- | :-----: |
-| serverPort | The port to start the server on | 8989 |
-| maxPlayers| The maximum number of players to allow on the server| 8 |
-| password | The password for players to join the server | "" |
+| -port | The port to start the server on | 27051 |
+| -max-players | The maximum number of players to allow on the server| 10 |
+| -password | The password for players to join the server | "" |
 
 ### Client:
 - These settings can be modified in the 'Modding/config/Multiplayer.cfg' file
 
 | Setting | Description | Default |
 | ------- | ----------- | :-----: |
-| serverPort | The port that the server is running on | 8989 |
 | notificationDisplaySeconds | The time that a notification will remain on screen | 4.0 |
 | displayNametags | Whether or not to show a nametag for other players | true |
 | displayOwnNametag | Whether or not to show a nametag for this player | true |
