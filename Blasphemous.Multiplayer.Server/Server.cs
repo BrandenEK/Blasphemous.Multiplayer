@@ -1,4 +1,4 @@
-﻿using Blasphemous.Multiplayer.Server.Enums;
+﻿using Blasphemous.Multiplayer.Common.Enums;
 using Blasphemous.Multiplayer.Server.Models;
 using SimpleTCP;
 using System;
