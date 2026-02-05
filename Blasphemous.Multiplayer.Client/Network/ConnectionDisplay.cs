@@ -59,27 +59,25 @@ public class ConnectionDisplay : MonoBehaviour
 
         int ypos = Screen.height - (_open ? HEIGHT : 17);
         _window = GUI.Window(99, new Rect(240, ypos, WIDTH, HEIGHT + 20), MultiplayerWindow, "Multiplayer connection info");
-
-        //if (Main.Multiplayer.NetworkManager.IsConnected)
-        //{
-        //    GUI.Window(1, new Rect(10, Screen.height - 150 - 10, 330, 150), ConnectionStatusWindow, "Connection status");
-        //}
-        //else if (_attemptingConnection)
-        //{
-        //    GUI.Window(4, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionWaitWindow, "Enter connection info");
-        //}
-        //else
-        //{
-        //    GUI.Window(0, new Rect(10, Screen.height - 400 - 10, 330, 400), ConnectionInfoWindow, "Enter connection info");
-        //}
     }
 
     private void MultiplayerWindow(int windowID)
     {
-
+        if (Main.Multiplayer.NetworkManager.IsConnected)
+        {
+            DisplayEnd();
+        }
+        else if (_attemptingConnection)
+        {
+            DisplayMiddle();
+        }
+        else
+        {
+            DisplayStart();
+        }
     }
 
-    private void ConnectionInfoWindow(int windowID)
+    private void DisplayStart()
     {
         if (_firstShowing)
             _connection = Main.Multiplayer.LastConnectionInfo;
@@ -129,17 +127,7 @@ public class ConnectionDisplay : MonoBehaviour
             ValidateAndConnect();
     }
 
-    private void ConnectionStatusWindow(int windowID)
-    {
-        // Show actual connection details
-        string text = $"You are connected to {_connection.ServerIp} ({_connection.RoomName}) as {_connection.PlayerName} on team {_connection.TeamNumber}";
-        ShowLabel(text, 0);
-
-        if (ReadButton("Disconnect", 2))
-            TryDisconnect();
-    }
-
-    private void ConnectionWaitWindow(int windowID)
+    private void DisplayMiddle()
     {
         var bigStyle = new GUIStyle(GUI.skin.label)
         {
@@ -149,6 +137,16 @@ public class ConnectionDisplay : MonoBehaviour
         };
 
         GUI.Label(new Rect(0, 20, 330, 380), "Connnecting...", bigStyle);
+    }
+
+    private void DisplayEnd()
+    {
+        // Show actual connection details
+        string text = $"You are connected to {_connection.ServerIp} ({_connection.RoomName}) as {_connection.PlayerName} on team {_connection.TeamNumber}";
+        ShowLabel(text, 0);
+
+        if (ReadButton("Disconnect", 2))
+            TryDisconnect();
     }
 
     private void ValidateAndConnect()
