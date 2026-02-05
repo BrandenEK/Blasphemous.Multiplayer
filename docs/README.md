@@ -48,19 +48,6 @@ First, the server should be started by running the BlasServer.exe program on the
 - On the server machine, search 'What is my ip' on the internet to find the global ipv4 address of the computer
 - Use that as the server parameter
 
-## Available commands
-- Press the 'backslash' key to open the debug console
-- Type the desired command followed by the parameters all separated by a single space
-
-| Command | Parameters | Description |
-| ------- | ----------- | ------- |
-| `multiplayer help` | none | List all available commands |
-| `multiplayer status` | none | Display connection status |
-| `multiplayer connect` | SERVER, NAME, PASSWORD (Optional) | Connect to the specified server IP address |
-| `multiplayer disconnect` | none | Disconnect from current server |
-| `multiplayer team` | NUMBER | Change to a different team (1-10) |
-| `multiplayer players` | none | List all connected players in the server |
-
 ## Configuration settings
 A full breakdown of all configuration settings can be found [here](SETTINGS.md)
 
