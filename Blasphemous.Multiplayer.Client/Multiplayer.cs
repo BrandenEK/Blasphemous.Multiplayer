@@ -12,7 +12,6 @@ using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
 using Blasphemous.Multiplayer.Common.Enums;
 using Framework.Managers;
-using NodeCanvas.Framework;
 using Tools.Level.Interactables;
 using UnityEngine;
 
