@@ -32,10 +32,10 @@
 - Enemies & bosses (This is a huge task and not really feasible)
 
 ## PvP
-PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, change to a different team than them by either editing your config file or using the ```multiplayer team NUMBER``` command
+PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, make sure you are on a different team than them or enable friendly fire
 
 ## Connecting
-First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
+First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by using the connection panel once in-game
 <br><br>
 
 #### Connecting to a server running on your computer
