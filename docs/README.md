@@ -32,10 +32,10 @@
 - Enemies & bosses (This is a huge task and not really feasible)
 
 ## PvP
-PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, change to a different team than them by either editing your config file or using the ```multiplayer team NUMBER``` command
+PvP is now available in Blasphemous Multiplayer, but only for sword attacks right now (Prayers other than Debla do nothing).  To fight other players, make sure you are on a different team than them or enable friendly fire
 
 ## Connecting
-First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by running the ```multiplayer connect [SERVER] [NAME] [PASSWORD]``` command
+First, the server should be started by running the BlasServer.exe program on the host machine.  Then all of the clients should be able to connect by using the connection panel once in-game
 <br><br>
 
 #### Connecting to a server running on your computer
@@ -47,19 +47,6 @@ First, the server should be started by running the BlasServer.exe program on the
 - Set up [Port forwarding](https://nordvpn.com/blog/open-ports-on-router/) on the server machine or have everyone use a vpn ([Hamachi](https://vpn.net/), [ZeroTier](https://www.zerotier.com/), or [RAdmin](https://www.radmin-vpn.com/))
 - On the server machine, search 'What is my ip' on the internet to find the global ipv4 address of the computer
 - Use that as the server parameter
-
-## Available commands
-- Press the 'backslash' key to open the debug console
-- Type the desired command followed by the parameters all separated by a single space
-
-| Command | Parameters | Description |
-| ------- | ----------- | ------- |
-| `multiplayer help` | none | List all available commands |
-| `multiplayer status` | none | Display connection status |
-| `multiplayer connect` | SERVER, NAME, PASSWORD (Optional) | Connect to the specified server IP address |
-| `multiplayer disconnect` | none | Disconnect from current server |
-| `multiplayer team` | NUMBER | Change to a different team (1-10) |
-| `multiplayer players` | none | List all connected players in the server |
 
 ## Configuration settings
 A full breakdown of all configuration settings can be found [here](SETTINGS.md)

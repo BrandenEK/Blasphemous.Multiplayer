@@ -29,7 +29,7 @@ namespace Blasphemous.Multiplayer.Client
 
         private void Obsolete(string[] parameters)
         {
-            Write("The multiplayer command has been removed.  Use the keybinding to open the new connection menu.");
+            Write("The multiplayer command has been removed.  Open the connection menu on the bottom of the screen.");
         }
 
 //        private void Help(string[] parameters)
