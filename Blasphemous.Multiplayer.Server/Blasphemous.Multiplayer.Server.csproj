@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ApplicationIcon>Resources/icon.ico</ApplicationIcon>
+    <AssemblyName>blas1mpserver</AssemblyName>
+    <SimpleName>BlasServer</SimpleName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,5 +21,24 @@
       <HintPath>..\resources\data\SimpleTCP.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <Target Name="Development" AfterTargets="PostBuildEvent">
+
+    <!-- Find build folder -->
+    <ItemGroup>
+      <BuildFolder Include="$(OutDir)\*.*" />
+    </ItemGroup>
+
+    <!-- Find publish folder -->
+    <PropertyGroup>
+      <PublishFolder>$(SolutionDir)\publish\$(SimpleName)</PublishFolder>
+    </PropertyGroup>
+
+    <!-- Export to publish folder -->
+    <RemoveDir Directories="$(PublishFolder)" />
+    <Copy SourceFiles="@(BuildFolder)" DestinationFolder="$(PublishFolder)" SkipUnchangedFiles="true" />
+    <ZipDirectory SourceDirectory="$(PublishFolder)" DestinationFile="$(PublishFolder)\..\$(SimpleName).zip" Overwrite="true" />
+
+  </Target>
   
 </Project>
