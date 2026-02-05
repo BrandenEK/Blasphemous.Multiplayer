@@ -1,4 +1,5 @@
-﻿using Framework.Inventory;
+﻿using Blasphemous.Multiplayer.Common.Enums;
+using Framework.Inventory;
 using Framework.Managers;
 using HarmonyLib;
 

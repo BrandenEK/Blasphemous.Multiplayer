@@ -1,4 +1,5 @@
 ﻿using Blasphemous.ModdingAPI;
+using Blasphemous.Multiplayer.Common.Enums;
 using Framework.FrameworkCore.Attributes;
 using Framework.FrameworkCore.Attributes.Logic;
 using Framework.Managers;

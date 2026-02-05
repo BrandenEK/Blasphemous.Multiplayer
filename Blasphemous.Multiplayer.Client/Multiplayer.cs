@@ -10,6 +10,7 @@ using Blasphemous.Multiplayer.Client.Ping;
 using Blasphemous.Multiplayer.Client.Players;
 using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
+using Blasphemous.Multiplayer.Common.Enums;
 using Framework.Managers;
 using Tools.Level.Interactables;
 using UnityEngine;

@@ -1,4 +1,5 @@
-﻿
+﻿using Blasphemous.Multiplayer.Common.Enums;
+
 namespace Blasphemous.Multiplayer.Client.ProgressSync
 {
     public class ProgressUpdate

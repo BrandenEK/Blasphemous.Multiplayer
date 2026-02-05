@@ -1,4 +1,5 @@
 ﻿using Blasphemous.Multiplayer.Client.Data;
+using Blasphemous.Multiplayer.Common.Enums;
 using Framework.Managers;
 using HarmonyLib;
 using System.Collections.Generic;
