@@ -417,9 +417,9 @@ public class Server
 
     // Intro
 
-    private void sendPlayerIntro(string playerIp, byte response)
+    private void sendPlayerIntro(string playerIp, RefusalType response)
     {
-        Send(playerIp, getIntroPacket(response), NetworkType.Intro);
+        Send(playerIp, getIntroPacket((byte)response), NetworkType.Intro);
 
         // Only send rest of data if successful connection
         if (response > 0)
@@ -456,7 +456,7 @@ public class Server
         if (connectedPlayers.Count >= _settings.MaxPlayers)
         {
             Logger.Warn("Player connection rejected: Player limit reached");
-            sendPlayerIntro(playerIp, 3);
+            sendPlayerIntro(playerIp, RefusalType.PlayerLimit);
             return;
         }
 
@@ -464,7 +464,7 @@ public class Server
         if (connectedPlayers.ContainsKey(playerIp))
         {
             Logger.Warn("Player connection rejected: Duplicate ip address");
-            sendPlayerIntro(playerIp, 4);
+            sendPlayerIntro(playerIp, RefusalType.DuplicateIp);
             return;
         }
 
@@ -474,7 +474,7 @@ public class Server
         if (protocol != PROTOCOL_VERSION)
         {
             Logger.Warn("Player connection rejected: Protocol version doesn't match");
-            sendPlayerIntro(playerIp, 6);
+            sendPlayerIntro(playerIp, RefusalType.Protocol);
             return;
         }
 
@@ -492,7 +492,7 @@ public class Server
             if (player.name == name)
             {
                 Logger.Warn("Player connection rejected: Duplicate name");
-                sendPlayerIntro(playerIp, 5);
+                sendPlayerIntro(playerIp, RefusalType.DuplicateName);
                 return;
             }
         }
@@ -506,7 +506,7 @@ public class Server
         if (!string.IsNullOrEmpty(serverPassword) && (password == null || password != serverPassword))
         {
             Logger.Warn("Player connection rejected: Incorrect password");
-            sendPlayerIntro(playerIp, 1);
+            sendPlayerIntro(playerIp, RefusalType.Password);
             return;
         }
 
@@ -517,7 +517,7 @@ public class Server
         PlayerInfo newPlayer = new PlayerInfo(name, team);
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
-        sendPlayerIntro(playerIp, 0);
+        sendPlayerIntro(playerIp, RefusalType.Accepted);
     }
 
     private byte[] getIntroPacket(byte response)
