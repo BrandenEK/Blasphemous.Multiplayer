@@ -12,6 +12,7 @@ using Blasphemous.Multiplayer.Client.ProgressSync;
 using Blasphemous.Multiplayer.Client.PvP;
 using Blasphemous.Multiplayer.Common.Enums;
 using Framework.Managers;
+using NodeCanvas.Framework;
 using Tools.Level.Interactables;
 using UnityEngine;
 
@@ -164,20 +165,20 @@ public class Multiplayer : BlasMod, ISlotPersistentMod<MultiplayerSlotData>, IGl
     }
 
     // Send more player info after successful connection or display notification
-    private void OnConnect(bool success, byte errorCode)
+    private void OnConnect(bool success, RefusalType refusal)
     {
         if (!success)
         {
-            string reason = errorCode switch
+            string reason = refusal switch
             {
-                1 => "refpas", // Wrong password
-                2 => "refban", // Banned player
-                3 => "refmax", // Max player limit
-                4 => "refipa", // Duplicate ip
-                5 => "refnam", // Duplicate name
-                6 => "refpro", // Invalid protocol
-                255 => "refcon", // No connection
-                _ => "refunk", // Unknown reason
+                RefusalType.Connection => "refcon",
+                RefusalType.Protocol => "refpro",
+                RefusalType.DuplicateIp => "refipa",
+                RefusalType.DuplicateName => "refnam",
+                RefusalType.Password => "refpas",
+                RefusalType.PlayerLimit => "refmax",
+                RefusalType.Banned => "refban",
+                _ => "refunk",
             };
 
             NotificationManager.DisplayNotification($"{LocalizationHandler.Localize("refuse")}: {LocalizationHandler.Localize(reason)}");

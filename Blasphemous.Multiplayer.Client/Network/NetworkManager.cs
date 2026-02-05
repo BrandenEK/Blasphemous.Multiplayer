@@ -42,7 +42,7 @@ namespace Blasphemous.Multiplayer.Client.Network
             catch (System.Net.Sockets.SocketException)
             {
                 ModLog.Info("Failed to establish connection");
-                OnConnect?.Invoke(false, 255);
+                OnConnect?.Invoke(false, RefusalType.Connection);
                 return false;
             }
 
@@ -362,10 +362,12 @@ namespace Blasphemous.Multiplayer.Client.Network
 
         private void ReceiveIntro(byte[] data)
         {
-            byte response = data[0];
-            ModLog.Info($"Established full connection (Success: {response == 0})");
+            RefusalType response = (RefusalType)data[0];
+            bool success = response == RefusalType.Accepted;
 
-            if (response == 0)
+            ModLog.Info($"Established full connection (Success: {success})");
+
+            if (success)
             {
                 // Successfully connected and can sync data now
                 _connectionStatus = ConnectionStatus.Connected;
@@ -376,7 +378,7 @@ namespace Blasphemous.Multiplayer.Client.Network
                 Disconnect();
             }
 
-            OnConnect?.Invoke(response == 0, response);
+            OnConnect?.Invoke(success, response);
         }
 
         // Progress
@@ -476,7 +478,7 @@ namespace Blasphemous.Multiplayer.Client.Network
         }
 
         // Maybe replace name with entire ConnectInfo
-        public delegate void ConnectDelegate(bool success, byte errorCode);
+        public delegate void ConnectDelegate(bool success, RefusalType refusal);
         public event ConnectDelegate OnConnect;
 
         private const byte PROTOCOL_VERSION = 3;
