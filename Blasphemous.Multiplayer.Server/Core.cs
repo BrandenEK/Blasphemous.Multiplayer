@@ -33,8 +33,16 @@ internal static class Core
         // Start read loop
         while (true)
         {
-            Logger.Warn("Read loop");
-            Console.ReadKey(true);
+
+            ConsoleKeyInfo key = Console.ReadKey(true);
+
+            Logger.Warn($"Presed {key.Key}");
+
+            if (key.Key == ConsoleKey.Escape)
+            {
+                Logger.Info("Shutting down server");
+                Environment.Exit(0);
+            }
         }
     }
 
