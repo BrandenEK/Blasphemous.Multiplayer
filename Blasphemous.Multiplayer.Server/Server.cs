@@ -67,7 +67,6 @@ public class Server
 
             try
             {
-                //Core.displayMessage($"Sending {list.Count} bytes");
                 server.Send(ip, list.ToArray());
             }
             catch (Exception)
@@ -80,8 +79,6 @@ public class Server
     // Data should be formatted as length length type data
     private void Receive(object sender, DataReceivedEventArgs e)
     {
-        //Core.displayMessage("Bytes received: " + e.data.Length);
-
         int startIdx = 0;
         while (startIdx < e.data.Length - 3)
         {
@@ -89,6 +86,7 @@ public class Server
             NetworkType type = (NetworkType)e.data[startIdx + 2];
             byte[] messageData = e.data[(startIdx + 3)..(startIdx + 3 + length)];
 
+            //Logger.Info($"Received {type} packet: {length} bytes");
             processDataReceived(type, messageData);
             startIdx += 3 + length;
         }

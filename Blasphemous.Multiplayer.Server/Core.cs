@@ -1,7 +1,6 @@
 ﻿using Blasphemous.Multiplayer.Server.Models;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Blasphemous.Multiplayer.Server;
 
@@ -34,7 +33,8 @@ internal static class Core
         // Start read loop
         while (true)
         {
-            Thread.Sleep(1000);
+            Logger.Warn("Read loop");
+            Console.ReadKey(true);
         }
     }
 
