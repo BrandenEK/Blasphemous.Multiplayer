@@ -1,5 +1,5 @@
 
-# Blasphemous multiplayer publisher v1.0.0
+# Blasphemous multiplayer publisher v1.0.1
 name: Build
 
 on:
@@ -29,7 +29,7 @@ jobs:
 
     - name: Export Settings
       run: |
-        MP_VERSION=$(grep -oP '<Version>\K[^<]+' Blasphemous.Multiplayer.Client/Blasphemous.Multiplayer.Client.csproj)
+        MP_VERSION=$(grep -oP '<Version>\K[^<]+' Directory.Build.props)
         echo "MP_VERSION=$MP_VERSION" >> $GITHUB_ENV
 
     - name: Create Release
