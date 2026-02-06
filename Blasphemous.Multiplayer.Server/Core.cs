@@ -1,14 +1,13 @@
 ﻿using Blasphemous.Multiplayer.Server.Models;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Blasphemous.Multiplayer.Server;
 
 internal static class Core
 {
     private static Server server;
-    private static Dictionary<byte, TeamInfo> teamGameDatas;
+    private static readonly Dictionary<byte, TeamInfo> teamGameDatas = [];
 
     static void Main(string[] args)
     {
@@ -28,13 +27,20 @@ internal static class Core
             return;
         }
 
+        // Initial messages
         Logger.Info($"Server has been started on port {cmd.Port}");
-        teamGameDatas = new Dictionary<byte, TeamInfo>();
+        Logger.Info("Press 'esc' to exit");
 
         // Start read loop
         while (true)
         {
-            Thread.Sleep(1000);
+            ConsoleKeyInfo key = Console.ReadKey(true);
+
+            if (key.Key == ConsoleKey.Escape)
+            {
+                Logger.Info("Shutting down server");
+                Environment.Exit(0);
+            }
         }
     }
 
