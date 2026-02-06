@@ -1,5 +1,5 @@
 
-# Blasphemous multiplayer publisher v1.1.0
+# Blasphemous multiplayer publisher v1.2.0
 name: Build
 
 on:
@@ -22,18 +22,22 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Export Settings
+      run: |
+        CLIENT_NAME=$(grep -oP '<TargetName>\K[^<]+' Blasphemous.Multiplayer.Client/Blasphemous.Multiplayer.Client.csproj)
+        echo "CLIENT_NAME=$CLIENT_NAME" >> $GITHUB_ENV
+        SERVER_NAME=$(grep -oP '<ExportName>\K[^<]+' Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj)
+        echo "SERVER_NAME=$SERVER_NAME" >> $GITHUB_ENV
+        MP_VERSION=$(grep -oP '<Version>\K[^<]+' Directory.Build.props)
+        echo "MP_VERSION=$MP_VERSION" >> $GITHUB_ENV
+
     - name: Build Project
       run: |
         dotnet restore
         dotnet build --configuration Release --no-restore
-        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r win-x64 -o publish/BlasServer/win-x64
-        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r linux-x64 -o publish/BlasServer/linux-x64
-        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r osx-x64 -o publish/BlasServer/osx-x64
-
-    - name: Export Settings
-      run: |
-        MP_VERSION=$(grep -oP '<Version>\K[^<]+' Directory.Build.props)
-        echo "MP_VERSION=$MP_VERSION" >> $GITHUB_ENV
+        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r win-x64 -o publish/${{ env.SERVER_NAME }}-win-x64
+        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r linux-x64 -o publish/${{ env.SERVER_NAME }}-linux-x64
+        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r osx-x64 -o publish/${{ env.SERVER_NAME }}-osx-x64
 
     - name: Create Release
       id: create_release
@@ -51,8 +55,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: publish/BlasClient.zip
-        asset_name: BlasClient.zip
+        asset_path: publish/${{ env.CLIENT_NAME }}.zip
+        asset_name: ${{ env.CLIENT_NAME }}.zip
         asset_content_type: application/zip
 
     - name: Upload Server (win64)
@@ -61,8 +65,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: publish/blas1mpserver-win-x64.zip
-        asset_name: blas1mpserver-win-x64.zip
+        asset_path: publish/${{ env.SERVER_NAME }}-win-x64.zip
+        asset_name: ${{ env.SERVER_NAME }}-win-x64.zip
         asset_content_type: application/zip
 
     - name: Upload Server (linux64)
@@ -71,8 +75,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: publish/blas1mpserver-linux-x64.zip
-        asset_name: blas1mpserver-linux-x64.zip
+        asset_path: publish/${{ env.SERVER_NAME }}-linux-x64.zip
+        asset_name: ${{ env.SERVER_NAME }}-linux-x64.zip
         asset_content_type: application/zip
 
     - name: Upload Server (osx64)
@@ -81,8 +85,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: publish/blas1mpserver-osx-x64.zip
-        asset_name: blas1mpserver-osx-x64.zip
+        asset_path: publish/${{ env.SERVER_NAME }}-osx-x64.zip
+        asset_name: ${{ env.SERVER_NAME }}-osx-x64.zip
         asset_content_type: application/zip
 
     - name: Upload Nuget
