@@ -27,16 +27,15 @@ internal static class Core
             return;
         }
 
+        // Initial messages
         Logger.Info($"Server has been started on port {cmd.Port}");
+        Logger.Info("Press 'esc' to exit");
         teamGameDatas = new Dictionary<byte, TeamInfo>();
 
         // Start read loop
         while (true)
         {
-
             ConsoleKeyInfo key = Console.ReadKey(true);
-
-            Logger.Warn($"Presed {key.Key}");
 
             if (key.Key == ConsoleKey.Escape)
             {
