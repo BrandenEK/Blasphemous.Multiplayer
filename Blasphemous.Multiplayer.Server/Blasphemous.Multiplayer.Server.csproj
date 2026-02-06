@@ -3,9 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <ApplicationIcon>Resources/icon.ico</ApplicationIcon>
     <AssemblyName>blas1mpserver</AssemblyName>
-    <SimpleName>BlasServer</SimpleName>
+
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,22 +26,16 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="Development" AfterTargets="PostBuildEvent">
-
-    <!-- Find build folder -->
-    <ItemGroup>
-      <BuildFolder Include="$(OutDir)\*.*" />
-    </ItemGroup>
+  <Target Name="ZipRelease" AfterTargets="Publish">
 
     <!-- Find publish folder -->
     <PropertyGroup>
-      <PublishFolder>$(SolutionDir)\publish\$(SimpleName)</PublishFolder>
+      <PublishFolder>$(ProjectDir)..\publish\BlasServer\$(RuntimeIdentifier)</PublishFolder>
+      <ZipFile>$(ProjectDir)..\publish\$(AssemblyName)-$(RuntimeIdentifier).zip</ZipFile>
     </PropertyGroup>
 
-    <!-- Export to publish folder -->
-    <RemoveDir Directories="$(PublishFolder)" />
-    <Copy SourceFiles="@(BuildFolder)" DestinationFolder="$(PublishFolder)" SkipUnchangedFiles="true" />
-    <ZipDirectory SourceDirectory="$(PublishFolder)" DestinationFile="$(PublishFolder)\..\$(SimpleName).zip" Overwrite="true" />
+    <!-- Zip the published file  -->
+    <ZipDirectory SourceDirectory="$(PublishFolder)" DestinationFile="$(ZipFile)" Overwrite="true" />
 
   </Target>
   
