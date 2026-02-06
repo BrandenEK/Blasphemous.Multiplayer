@@ -5,8 +5,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <ApplicationIcon>Resources/icon.ico</ApplicationIcon>
+    
     <AssemblyName>blas1mpserver</AssemblyName>
-
+    <PublishName>BlasServer</PublishName>
+      
     <PublishSingleFile>true</PublishSingleFile>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>true</PublishReadyToRun>
@@ -30,8 +32,8 @@
 
     <!-- Find publish folder -->
     <PropertyGroup>
-      <PublishFolder>$(ProjectDir)..\publish\BlasServer\$(RuntimeIdentifier)</PublishFolder>
-      <ZipFile>$(ProjectDir)..\publish\$(AssemblyName)-$(RuntimeIdentifier).zip</ZipFile>
+      <PublishFolder>$(ProjectDir)..\publish\$(PublishName)-$(RuntimeIdentifier)</PublishFolder>
+      <ZipFile>$(ProjectDir)..\publish\$(PublishName)-$(RuntimeIdentifier).zip</ZipFile>
     </PropertyGroup>
 
     <!-- Zip the published file  -->
