@@ -7,7 +7,7 @@
     <ApplicationIcon>Resources/icon.ico</ApplicationIcon>
     
     <AssemblyName>blas1mpserver</AssemblyName>
-    <PublishName>BlasServer</PublishName>
+    <ExportName>BlasServer</ExportName>
       
     <PublishSingleFile>true</PublishSingleFile>
     <PublishTrimmed>true</PublishTrimmed>
@@ -28,12 +28,31 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="ZipRelease" AfterTargets="Publish">
+  <Target Name="PrepareBuild" AfterTargets="PostBuildEvent" Condition="'$(SolutionDir)' != '*Undefined*'">
+    
+    <!-- Find build folder -->
+    <ItemGroup>
+      <BuildFolder Include="$(OutDir)\*.*" />
+    </ItemGroup>
 
     <!-- Find publish folder -->
     <PropertyGroup>
-      <PublishFolder>$(ProjectDir)..\publish\$(PublishName)-$(RuntimeIdentifier)</PublishFolder>
-      <ZipFile>$(ProjectDir)..\publish\$(PublishName)-$(RuntimeIdentifier).zip</ZipFile>
+      <PublishFolder>$(SolutionDir)\publish\$(ExportName)</PublishFolder>
+    </PropertyGroup>
+
+    <!-- Export to publish folder --> 
+    <RemoveDir Directories="$(PublishFolder)" />
+    <Copy SourceFiles="@(BuildFolder)" DestinationFolder="$(PublishFolder)" SkipUnchangedFiles="true" />
+    <ZipDirectory SourceDirectory="$(PublishFolder)" DestinationFile="$(PublishFolder)\..\$(ExportName).zip" Overwrite="true" />
+
+  </Target>
+  
+  <Target Name="PreparePublish" AfterTargets="Publish">
+
+    <!-- Find publish folder -->
+    <PropertyGroup>
+      <PublishFolder>$(ProjectDir)..\publish\$(ExportName)-$(RuntimeIdentifier)</PublishFolder>
+      <ZipFile>$(ProjectDir)..\publish\$(ExportName)-$(RuntimeIdentifier).zip</ZipFile>
     </PropertyGroup>
 
     <!-- Zip the published file  -->
