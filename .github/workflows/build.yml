@@ -1,5 +1,5 @@
 
-# Blasphemous multiplayer publisher v1.0.1
+# Blasphemous multiplayer publisher v1.1.0
 name: Build
 
 on:
@@ -26,6 +26,9 @@ jobs:
       run: |
         dotnet restore
         dotnet build --configuration Release --no-restore
+        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r win-x64 -o publish/BlasServer/win-x64
+        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r linux-x64 -o publish/BlasServer/linux-x64
+        dotnet publish Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj -c Release -r osx-x64 -o publish/BlasServer/osx-x64
 
     - name: Export Settings
       run: |
@@ -52,14 +55,34 @@ jobs:
         asset_name: BlasClient.zip
         asset_content_type: application/zip
 
-    - name: Upload Server
+    - name: Upload Server (win64)
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: publish/BlasServer.zip
-        asset_name: BlasServer.zip
+        asset_path: publish/blas1mpserver-win-x64.zip
+        asset_name: blas1mpserver-win-x64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Server (linux64)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: publish/blas1mpserver-linux-x64.zip
+        asset_name: blas1mpserver-linux-x64.zip
+        asset_content_type: application/zip
+
+    - name: Upload Server (osx64)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: publish/blas1mpserver-osx-x64.zip
+        asset_name: blas1mpserver-osx-x64.zip
         asset_content_type: application/zip
 
     - name: Upload Nuget
