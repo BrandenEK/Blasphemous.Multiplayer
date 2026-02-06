@@ -32,6 +32,10 @@ jobs:
 
     - name: Export Settings
       run: |
+        CLIENT_NAME=$(grep -oP '<TargetName>\K[^<]+' Blasphemous.Multiplayer.Client/Blasphemous.Multiplayer.Client.csproj)
+        echo "CLIENT_NAME=$CLIENT_NAME" >> $GITHUB_ENV
+        SERVER_NAME=$(grep -oP '<ExportName>\K[^<]+' Blasphemous.Multiplayer.Server/Blasphemous.Multiplayer.Server.csproj)
+        echo "SERVER_NAME=$SERVER_NAME" >> $GITHUB_ENV
         MP_VERSION=$(grep -oP '<Version>\K[^<]+' Directory.Build.props)
         echo "MP_VERSION=$MP_VERSION" >> $GITHUB_ENV
 
