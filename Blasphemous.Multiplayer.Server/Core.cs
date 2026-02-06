@@ -7,7 +7,7 @@ namespace Blasphemous.Multiplayer.Server;
 internal static class Core
 {
     private static Server server;
-    private static Dictionary<byte, TeamInfo> teamGameDatas;
+    private static readonly Dictionary<byte, TeamInfo> teamGameDatas = [];
 
     static void Main(string[] args)
     {
@@ -30,7 +30,6 @@ internal static class Core
         // Initial messages
         Logger.Info($"Server has been started on port {cmd.Port}");
         Logger.Info("Press 'esc' to exit");
-        teamGameDatas = new Dictionary<byte, TeamInfo>();
 
         // Start read loop
         while (true)
