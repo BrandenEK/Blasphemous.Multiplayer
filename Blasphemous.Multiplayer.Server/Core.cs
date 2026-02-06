@@ -9,10 +9,20 @@ internal static class Core
     private static Server server;
     private static readonly Dictionary<byte, TeamInfo> teamGameDatas = [];
 
+    static string ApplicationTitle
+    {
+        get
+        {
+            string text = "Blasphemous Multiplayer Server";
+            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) ?? "Unknown";
+            return $"{text} v{version}";
+        }
+    }
+
     static void Main(string[] args)
     {
         // Title
-        Console.Title = "Blasphemous Multiplayer Server";
+        Console.Title = ApplicationTitle;
         Console.WriteLine(string.Empty);
 
         // Read settings from args
