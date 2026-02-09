@@ -4,7 +4,7 @@ namespace Blasphemous.Multiplayer.Server.TempCommon;
 
 public class PositionPacket(float x, float y) : BasePacket
 {
-    public float X { get; } = x;
+    public float X { get; set; } = x;
 
-    public float Y { get; } = y;
+    public float Y { get; set; } = y;
 }

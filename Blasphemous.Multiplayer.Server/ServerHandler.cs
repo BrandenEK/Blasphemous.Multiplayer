@@ -47,7 +47,17 @@ public class ServerHandler
         Logger.Info("Reading and writing data...");
         _server.Receive();
 
-        _server.Broadcast(new PositionPacket(95, 33));
+        var ser = new ClassicSerializer()
+            .AddPacketSerializer<PositionPacket>(5, new GenericPacketSerializer());
+
+        var packet = new PositionPacket(95, 33);
+        byte[] data = ser.Serialize(packet);
+
+        foreach (var x in ser.Deserialize(data))
+        {
+            PositionPacket result = (PositionPacket)x;
+            Logger.Error(result.X + ", " + result.Y);
+        }
 
         _server.Update();
     }
