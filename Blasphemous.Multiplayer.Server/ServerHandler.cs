@@ -1,8 +1,9 @@
-﻿using Basalt.Framework.Networking.Serializers;
+﻿using Basalt.Framework.Networking;
+using Basalt.Framework.Networking.Serializers;
 using Basalt.Framework.Networking.Server;
 using Blasphemous.Multiplayer.Server.TempCommon;
-using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Blasphemous.Multiplayer.Server;
 
@@ -26,6 +27,7 @@ public class ServerHandler
         _server.OnClientConnected += OnClientConnected;
         _server.OnClientDisconnected += OnClientDisconnected;
         _server.OnPacketReceived += OnPacketReceived;
+        StartReadThread();
     }
 
     public bool Start(int port)
@@ -42,37 +44,6 @@ public class ServerHandler
         return true;
     }
 
-    // TODO: temp until background thread is used
-    public void Refresh()
-    {
-        Logger.Info("Reading and writing data...");
-        _server.Receive();
-
-        var ser = new ReflectionSerializer()
-            .AddPacketSerializer(5, () => new PositionPacket(0, 0))
-            .AddPacketSerializer(6, () => new ScenePacket(string.Empty));
-
-        var bytes = new List<byte>();
-        bytes.AddRange(ser.Serialize(new PositionPacket(95, 33)));
-        bytes.AddRange(ser.Serialize(new ScenePacket("D17Z01S01")));
-        bytes.AddRange(ser.Serialize(new PositionPacket(94948, -777)));
-
-        foreach (var x in ser.Deserialize(bytes.ToArray()))
-        {
-            switch (x)
-            {
-                case PositionPacket p:
-                    Logger.Error(p.X + ", " + p.Y);
-                    break;
-                case ScenePacket s:
-                    Logger.Error("Scene: " + s.Scene);
-                    break;
-            }
-        }
-
-        _server.Update();
-    }
-
     private void OnClientConnected(string ip)
     {
         Logger.Info($"Client connected at {ip}");
@@ -87,4 +58,39 @@ public class ServerHandler
     {
         Logger.Warn($"Received packet of type {packet.GetType().Name} from {ip}");
     }
+
+    private void StartReadThread()
+    {
+        var thread = new Thread(ReadLoop);
+        thread.IsBackground = true;
+        thread.Start();
+    }
+
+    private void ReadLoop()
+    {
+        while (true)
+        {
+            if (_server.IsActive)
+            {
+                try
+                {
+                    _server.Receive();
+                }
+                catch (NetworkException ex) // TODO: clean up these exceptions
+                {
+                    Logger.Error($"Error during deserialization: {ex.Message}");
+                }
+                catch (System.Exception ex)
+                {
+                    Logger.Error($"Error during deserialization: {ex}");
+                }
+
+                _server.Update();
+            }
+
+            Thread.Sleep(READ_INTERVAL_MS);
+        }
+    }
+
+    private const int READ_INTERVAL_MS = 16;
 }

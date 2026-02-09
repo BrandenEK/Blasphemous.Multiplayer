@@ -51,15 +51,6 @@ internal static class Core
                 Logger.Info("Shutting down server");
                 Environment.Exit(0);
             }
-
-            try
-            {
-                server.Refresh();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
         }
     }
 
