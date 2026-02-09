@@ -1,5 +1,6 @@
 ﻿using Basalt.Framework.Networking.Serializers;
 using Blasphemous.Multiplayer.Common.Packets;
+using Blasphemous.Multiplayer.Common.Serializers;
 
 namespace Blasphemous.Multiplayer.Common;
 
@@ -34,6 +35,6 @@ public class NetworkHelper
             .RegisterPacket<ProgressPacket>(84, () => new PositionPacket(0, 0))
             .RegisterPacket<ProgressResponsePacket>(85, () => new PositionPacket(0, 0))
             .RegisterPacket<PingPacket>(86, () => new PositionPacket(0, 0))
-            .RegisterPacket<PingResponsePacket>(87, () => new PositionPacket(0, 0));
+            .RegisterPacket<PingResponsePacket>(87, new PingResponseSerializer());
     }
 }

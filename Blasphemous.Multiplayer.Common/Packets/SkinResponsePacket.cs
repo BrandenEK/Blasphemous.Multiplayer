@@ -2,9 +2,9 @@
 
 namespace Blasphemous.Multiplayer.Common.Packets;
 
-public class SkinResponsePacket(string player, byte[] texture) : BasePacket
+public class SkinResponsePacket(string player, string skin) : BasePacket
 {
     public string Player { get; set; } = player;
 
-    public byte[] Texture { get; set; } = texture;
+    public string Skin { get; set; } = skin;
 }

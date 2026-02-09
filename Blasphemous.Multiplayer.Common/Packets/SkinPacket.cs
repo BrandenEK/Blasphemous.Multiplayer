@@ -2,7 +2,7 @@
 
 namespace Blasphemous.Multiplayer.Common.Packets;
 
-public class SkinPacket(string name) : BasePacket
+public class SkinPacket(string skin) : BasePacket
 {
-    public string Name { get; set; } = name;
+    public string Skin { get; set; } = skin;
 }
