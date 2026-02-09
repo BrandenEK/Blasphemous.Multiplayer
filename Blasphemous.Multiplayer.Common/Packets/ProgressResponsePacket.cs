@@ -1,0 +1,15 @@
+﻿using Basalt.Framework.Networking;
+using Blasphemous.Multiplayer.Common.Enums;
+
+namespace Blasphemous.Multiplayer.Common.Packets;
+
+public class ProgressResponsePacket(string player, ProgressType type, string id, byte value) : BasePacket
+{
+    public string Player { get; set; } = player;
+
+    public byte Type { get; set; } = (byte)type;
+
+    public string Id { get; set; } = id;
+
+    public byte Value { get; set; } = value;
+}
