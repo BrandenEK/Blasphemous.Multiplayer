@@ -20,7 +20,7 @@ public class ServerHandler
         _password = password;
 
         _server = new NetworkServer(new ClassicSerializer()
-            .AddPacketSerializer<PositionPacket>(5, new GenericPacketSerializer()));
+            .AddPacketSerializer<PositionPacket>(5, new GenericPacketSerializer(typeof(PositionPacket))));
 
         _server.OnClientConnected += OnClientConnected;
         _server.OnClientDisconnected += OnClientDisconnected;
@@ -48,7 +48,7 @@ public class ServerHandler
         _server.Receive();
 
         var ser = new ClassicSerializer()
-            .AddPacketSerializer<PositionPacket>(5, new GenericPacketSerializer());
+            .AddPacketSerializer<PositionPacket>(5, new GenericPacketSerializer(typeof(PositionPacket)));
 
         var packet = new PositionPacket(95, 33);
         byte[] data = ser.Serialize(packet);

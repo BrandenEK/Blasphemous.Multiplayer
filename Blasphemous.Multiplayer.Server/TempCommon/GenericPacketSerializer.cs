@@ -9,6 +9,13 @@ namespace Blasphemous.Multiplayer.Server.TempCommon;
 
 public class GenericPacketSerializer : IPacketSerializer
 {
+    private readonly Type _packetType;
+
+    public GenericPacketSerializer(Type packetType)
+    {
+        _packetType = packetType;
+    }
+
     public byte[] Serialize(BasePacket packet)
     {
         var properties = packet.GetType()
@@ -42,8 +49,9 @@ public class GenericPacketSerializer : IPacketSerializer
 
     public BasePacket Deserialize(byte[] data)
     {
-        var packet = new PositionPacket(0, 0);
-        
+        //var packet = new PositionPacket(0, 0);
+        var packet = (BasePacket)Activator.CreateInstance(_packetType);
+
         var stream = new InStream(data);
 
         var properties = packet.GetType()
