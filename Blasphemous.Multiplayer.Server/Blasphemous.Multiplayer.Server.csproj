@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Basalt.CommandParser" Version="1.0.1" />
+    <PackageReference Include="Basalt.Framework.Networking" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
