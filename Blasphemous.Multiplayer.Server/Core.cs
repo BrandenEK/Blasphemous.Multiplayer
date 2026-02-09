@@ -6,7 +6,7 @@ namespace Blasphemous.Multiplayer.Server;
 
 internal static class Core
 {
-    private static Server server;
+    private static ServerHandler server;
     private static readonly Dictionary<byte, TeamInfo> teamGameDatas = [];
 
     static string ApplicationTitle
@@ -30,7 +30,7 @@ internal static class Core
         cmd.Process(args);
 
         // Create server
-        server = new Server(cmd.MaxPlayers, cmd.Password);
+        server = new ServerHandler(cmd.MaxPlayers, cmd.Password);
         if (!server.Start(cmd.Port))
         {
             Logger.Error($"Server failed to start on port {cmd.Port}");
