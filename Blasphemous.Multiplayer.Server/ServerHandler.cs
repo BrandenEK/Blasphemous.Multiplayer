@@ -1,8 +1,6 @@
 ﻿using Basalt.Framework.Networking.Serializers;
 using Basalt.Framework.Networking.Server;
-using Blasphemous.Multiplayer.Server.Models;
-using SimpleTCP;
-using System.Collections.Generic;
+using System.Net.Sockets;
 
 namespace Blasphemous.Multiplayer.Server;
 
@@ -21,25 +19,37 @@ public class ServerHandler
         _password = password;
 
         _server = new NetworkServer(new ClassicSerializer());
+        _server.OnClientConnected += OnClientConnected;
+        _server.OnClientDisconnected += OnClientDisconnected;
+        _server.OnPacketReceived += OnPacketReceived;
     }
 
     public bool Start(int port)
     {
         try
         {
-            //server = new SimpleTcpServer();
-            //server.ClientConnected += clientConnected;
-            //server.ClientDisconnected += clientDisconnected;
-            //server.DataReceived += Receive;
-            //server.Start(port);
-            //server.DelayDisabled = true;
             _server.Start(port);
         }
-        catch (System.Net.Sockets.SocketException)
+        catch (SocketException)
         {
             return false;
         }
 
         return true;
+    }
+
+    private void OnClientConnected(string ip)
+    {
+        Logger.Info($"Client connected at {ip}");
+    }
+
+    private void OnClientDisconnected(string ip)
+    {
+        Logger.Info($"Client disconnected at {ip}");
+    }
+
+    private void OnPacketReceived(string ip, Basalt.Framework.Networking.BasePacket packet)
+    {
+        Logger.Warn($"Received packet of type {packet.GetType().Name} from {ip}");
     }
 }
