@@ -4,6 +4,8 @@ namespace Blasphemous.Multiplayer.Server.Models;
 
 public class PlayerInfo
 {
+    public string Ip { get; }
+
     public string name;
     public byte team;
 
@@ -16,8 +18,9 @@ public class PlayerInfo
 
     public string sceneName;
 
-    public PlayerInfo(string name, byte team)
+    public PlayerInfo(string ip, string name, byte team)
     {
+        Ip = ip;
         this.name = name;
         this.team = team;
         sceneName = string.Empty;

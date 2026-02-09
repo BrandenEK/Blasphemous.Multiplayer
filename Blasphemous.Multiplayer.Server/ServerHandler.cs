@@ -1,8 +1,10 @@
 ﻿using Basalt.Framework.Networking;
 using Basalt.Framework.Networking.Server;
 using Blasphemous.Multiplayer.Common;
+using Blasphemous.Multiplayer.Common.Packets;
 using Blasphemous.Multiplayer.Server.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -59,14 +61,9 @@ public class ServerHandler
             return;
 
         // Send that this player has disconnected & remove them
-        sendPlayerConnection(e.ip, false);
+        //sendPlayerConnection(e.ip, false);
         _connectedPlayers.Remove(ip);
         Core.removeUnusedGameData(_connectedPlayers);
-    }
-
-    private void OnPacketReceived(string ip, BasePacket packet)
-    {
-        Logger.Warn($"Received packet of type {packet.GetType().Name} from {ip}");
     }
 
     private void OnErrorReceived(string ip, NetworkException exception)
@@ -114,6 +111,36 @@ public class ServerHandler
             return _connectedPlayers[ip];
 
         Logger.Warn("Data for " + ip + " has not been created yet!");
-        return new PlayerInfo(string.Empty, 1);
+        return new PlayerInfo(string.Empty, string.Empty, 1);
+    }
+
+    private void OnPacketReceived(string ip, BasePacket packet)
+    {
+        Logger.Warn($"Received packet of type {packet.GetType().Name} from {ip}");
+
+        switch (packet)
+        {
+            case PositionPacket position:
+                ReceivePosition(ip, position);
+                break;
+
+            default:
+                Logger.Error("TEMP: Dont know what to do with this packet yet");
+                break;
+        }
+    }
+
+    private void ReceivePosition(string playerIp, PositionPacket packet)
+    {
+        // Update player's stored position
+        PlayerInfo current = getCurrentPlayer(playerIp);
+        current.xPos = packet.X;
+        current.yPos = packet.Y;
+
+        // Send updated position
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && current.isInSameScene(x)))
+        {
+            _server.Send(player.Ip, new PositionResponsePacket(current.name, current.xPos, current.yPos));
+        }
     }
 }
