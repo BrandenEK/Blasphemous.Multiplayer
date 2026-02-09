@@ -38,6 +38,14 @@ public class ServerHandler
         return true;
     }
 
+    // TODO: temp until background thread is used
+    public void Refresh()
+    {
+        Logger.Info("Reading and writing data...");
+        _server.Receive();
+        _server.Update();
+    }
+
     private void OnClientConnected(string ip)
     {
         Logger.Info($"Client connected at {ip}");
