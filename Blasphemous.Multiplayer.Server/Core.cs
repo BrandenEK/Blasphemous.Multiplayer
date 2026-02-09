@@ -52,7 +52,14 @@ internal static class Core
                 Environment.Exit(0);
             }
 
-            server.Refresh();
+            try
+            {
+                server.Refresh();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
     }
 
