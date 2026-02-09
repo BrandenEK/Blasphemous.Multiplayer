@@ -22,11 +22,13 @@ public class ServerHandler
         _password = password;
 
         _server = new NetworkServer(new ClassicSerializer()
-            .AddPacketSerializer<PositionPacket>(5, new GenericPacketSerializer(() => new PositionPacket(0, 0))));
+            .RegisterPacket<PositionPacket>(0, () => new PositionPacket(0, 0))
+            .RegisterPacket<ScenePacket>(5, () => new ScenePacket(string.Empty)));
 
         _server.OnClientConnected += OnClientConnected;
         _server.OnClientDisconnected += OnClientDisconnected;
         _server.OnPacketReceived += OnPacketReceived;
+        _server.OnErrorReceived += OnErrorReceived;
         StartReadThread();
     }
 
@@ -36,7 +38,7 @@ public class ServerHandler
         {
             _server.Start(port);
         }
-        catch (SocketException)
+        catch (SocketException) // Maybe handle the network exception as well ??
         {
             return false;
         }
@@ -54,9 +56,14 @@ public class ServerHandler
         Logger.Info($"Client disconnected at {ip}");
     }
 
-    private void OnPacketReceived(string ip, Basalt.Framework.Networking.BasePacket packet)
+    private void OnPacketReceived(string ip, BasePacket packet)
     {
         Logger.Warn($"Received packet of type {packet.GetType().Name} from {ip}");
+    }
+
+    private void OnErrorReceived(string ip, NetworkException exception)
+    {
+        Logger.Error($"Received error from {ip}: {exception}");
     }
 
     private void StartReadThread()
@@ -72,20 +79,8 @@ public class ServerHandler
         {
             if (_server.IsActive)
             {
-                try
-                {
-                    _server.Receive();
-                }
-                catch (NetworkException ex) // TODO: clean up these exceptions
-                {
-                    Logger.Error($"Error during deserialization: {ex.Message}");
-                }
-                catch (System.Exception ex)
-                {
-                    Logger.Error($"Error during deserialization: {ex}");
-                }
-
-                _server.Update();
+                _server.Receive();
+                _server.Flush();
             }
 
             Thread.Sleep(READ_INTERVAL_MS);
