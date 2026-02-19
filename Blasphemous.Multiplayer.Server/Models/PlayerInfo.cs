@@ -1,5 +1,4 @@
-﻿using System.Text;
-
+﻿
 namespace Blasphemous.Multiplayer.Server.Models;
 
 public class PlayerInfo
@@ -13,19 +12,15 @@ public class PlayerInfo
     public byte Animation { get; private set; } = 0;
     public bool Direction { get; private set; } = true;
 
-    public string Scene { get; private set; }
-    public byte[] Skin { get; private set; }
-    public ushort Ping { get; private set; }
+    public string Scene { get; private set; } = string.Empty;
+    public string Skin { get; private set; } = "PENITENT_DEFAULT";
+    public ushort Ping { get; private set; } = 0;
 
     public PlayerInfo(string ip, string name, byte team)
     {
         Ip = ip;
         Name = name;
         Team = team;
-
-        Scene = string.Empty;
-        Skin = Encoding.UTF8.GetBytes("PENITENT_DEFAULT");
-        Ping = 0;
     }
 
     public void UpdatePosition(float x, float y)
@@ -57,7 +52,7 @@ public class PlayerInfo
         Direction = false;
     }
 
-    public void UpdateSkin(byte[] skin)
+    public void UpdateSkin(string skin)
     {
         Skin = skin;
     }

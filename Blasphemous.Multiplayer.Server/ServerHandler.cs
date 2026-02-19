@@ -141,6 +141,10 @@ public class ServerHandler
             case ScenePacket scene:
                 ReceiveScene(ip, scene);
                 break;
+            case SkinPacket skin:
+                ReceiveSkin(ip, skin);
+                break;
+
 
             default:
                 Logger.Error("TEMP: Dont know what to do with this packet yet");
@@ -243,6 +247,21 @@ public class ServerHandler
         foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip))
         {
             _server.Send(player.Ip, new SceneResponsePacket(current.Name, string.Empty));
+        }
+    }
+
+    private void ReceiveSkin(string playerIp, SkinPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Update player's stored skin
+        current.UpdateSkin(packet.Skin);
+
+        // Send updated skin
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip))
+        {
+            _server.Send(player.Ip, new SkinResponsePacket(current.Name, current.Skin));
         }
     }
 }
