@@ -9,21 +9,11 @@ internal static class Core
     private static ServerHandler server;
     private static readonly Dictionary<byte, TeamInfo> teamGameDatas = [];
 
-    static string ApplicationTitle
-    {
-        get
-        {
-            string text = "Blasphemous Multiplayer Server";
-            string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) ?? "Unknown";
-            return $"{text} v{version}";
-        }
-    }
-
     static void Main(string[] args)
     {
         // Title
-        Console.Title = ApplicationTitle;
-        Console.WriteLine(string.Empty);
+        Console.Title = TITLE;
+        Logger.Info($"Running server v{VERSION} on {SYSTEM}");
 
         // Read settings from args
         var cmd = new ServerCommand();
@@ -89,4 +79,8 @@ internal static class Core
             }
         }
     }
+
+    private static readonly string VERSION = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) ?? "Unknown";
+    private static readonly string TITLE = $"Blasphemous Multiplayer Server v{VERSION}";
+    private static readonly string SYSTEM = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
 }
