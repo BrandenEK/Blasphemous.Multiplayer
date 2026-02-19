@@ -132,7 +132,7 @@ public class Server
         // Send that this player has disconnected & remove them
         sendPlayerConnection(e.ip, false);
         connectedPlayers.Remove(e.ip);
-        Core.removeUnusedGameData(connectedPlayers);
+        //Core.removeUnusedGameData(connectedPlayers);
     }
 
     private LegacyPlayerInfo getCurrentPlayer(string ip)
@@ -384,7 +384,7 @@ public class Server
         //current.Team = data[0];
 
         sendPlayerTeam(playerIp);
-        Core.removeUnusedGameData(connectedPlayers);
+        //Core.removeUnusedGameData(connectedPlayers);
     }
 
     private byte[] getTeamPacket(LegacyPlayerInfo player)

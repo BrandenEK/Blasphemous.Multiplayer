@@ -68,7 +68,8 @@ public class ServerHandler
             _server.Send(player.Ip, new QuitResponsePacket(current.Name));
         }
 
-        //Core.removeUnusedGameData(_connectedPlayers);
+        // TODO: revamp this
+        Core.removeUnusedGameData(_connectedPlayers);
     }
 
     private void OnErrorReceived(string ip, NetworkException exception)

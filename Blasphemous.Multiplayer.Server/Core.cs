@@ -55,7 +55,7 @@ internal static class Core
         return newData;
     }
 
-    public static void removeUnusedGameData(Dictionary<string, LegacyPlayerInfo> allPlayers)
+    public static void removeUnusedGameData(Dictionary<string, PlayerInfo> allPlayers)
     {
         for (byte i = 1; i <= 10; i++)
         {
@@ -64,7 +64,7 @@ internal static class Core
 
             // If no player is currently on this team, remove the game data
             bool teamExists = false;
-            foreach (LegacyPlayerInfo player in allPlayers.Values)
+            foreach (PlayerInfo player in allPlayers.Values)
             {
                 if (player.Team == i)
                 {
