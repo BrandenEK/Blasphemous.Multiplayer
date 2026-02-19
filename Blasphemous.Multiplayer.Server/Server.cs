@@ -13,7 +13,7 @@ public class Server
     private readonly string _password;
 
     private SimpleTcpServer server;
-    private Dictionary<string, PlayerInfo> connectedPlayers;
+    private Dictionary<string, LegacyPlayerInfo> connectedPlayers;
 
     public Server(int maxPlayers, string password)
     {
@@ -22,7 +22,7 @@ public class Server
         _password = password;
     }
 
-    public Dictionary<string, PlayerInfo> getPlayers()
+    public Dictionary<string, LegacyPlayerInfo> getPlayers()
     {
         return connectedPlayers;
     }
@@ -53,7 +53,7 @@ public class Server
             return false;
         }
 
-        connectedPlayers = new Dictionary<string, PlayerInfo>();
+        connectedPlayers = new Dictionary<string, LegacyPlayerInfo>();
         return true;
     }
 
@@ -135,13 +135,13 @@ public class Server
         Core.removeUnusedGameData(connectedPlayers);
     }
 
-    private PlayerInfo getCurrentPlayer(string ip)
+    private LegacyPlayerInfo getCurrentPlayer(string ip)
     {
         if (connectedPlayers.ContainsKey(ip))
             return connectedPlayers[ip];
 
         Logger.Warn("Data for " + ip + " has not been created yet!");
-        return new PlayerInfo(string.Empty, string.Empty, 1);
+        return new LegacyPlayerInfo(string.Empty, string.Empty, 1);
     }
 
     private List<byte> addPlayerNameToData(string name)
@@ -158,7 +158,7 @@ public class Server
 
     private void SendPosition(string playerIp)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -171,14 +171,14 @@ public class Server
 
     private void ReceivePosition(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.xPos = BitConverter.ToSingle(data, 0);
         current.yPos = BitConverter.ToSingle(data, 4);
 
         SendPosition(playerIp);
     }
 
-    private byte[] GetPositionPacket(PlayerInfo player)
+    private byte[] GetPositionPacket(LegacyPlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(BitConverter.GetBytes(player.xPos));
@@ -190,7 +190,7 @@ public class Server
 
     private void SendAnimation(string playerIp)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -203,13 +203,13 @@ public class Server
 
     private void ReceiveAnimation(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.animation = data[0];
 
         SendAnimation(playerIp);
     }
 
-    private byte[] GetAnimationPacket(PlayerInfo player)
+    private byte[] GetAnimationPacket(LegacyPlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.Add(player.animation);
@@ -220,7 +220,7 @@ public class Server
 
     private void SendDirection(string playerIp)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -233,13 +233,13 @@ public class Server
 
     private void ReceiveDirection(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.facingDirection = BitConverter.ToBoolean(data);
 
         SendDirection(playerIp);
     }
 
-    private byte[] GetDirectionPacket(PlayerInfo player)
+    private byte[] GetDirectionPacket(LegacyPlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
@@ -250,7 +250,7 @@ public class Server
 
     private void sendPlayerEnterScene(string playerIp) // Optimize these send functions to combine them together
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -275,13 +275,13 @@ public class Server
 
     private void receivePlayerEnterScene(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.sceneName = Encoding.UTF8.GetString(data);
 
         sendPlayerEnterScene(playerIp);
     }
 
-    private byte[] getScenePacket(PlayerInfo player)
+    private byte[] getScenePacket(LegacyPlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(Encoding.UTF8.GetBytes(player.sceneName));
@@ -292,7 +292,7 @@ public class Server
 
     private void sendPlayerLeaveScene(string playerIp)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.xPos = 0;
         current.yPos = 0;
         current.animation = 0;
@@ -310,7 +310,7 @@ public class Server
 
     private void receivePlayerLeaveScene(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
 
         sendPlayerLeaveScene(playerIp);
         current.sceneName = "";
@@ -320,7 +320,7 @@ public class Server
 
     private void sendPlayerSkin(string playerIp)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -333,13 +333,13 @@ public class Server
 
     private void receivePlayerSkin(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.skin = data;
 
         sendPlayerSkin(playerIp);
     }
 
-    private byte[] getSkinPacket(PlayerInfo player)
+    private byte[] getSkinPacket(LegacyPlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(player.skin);
@@ -350,7 +350,7 @@ public class Server
 
     private void sendPlayerTeam(string playerIp)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -380,14 +380,14 @@ public class Server
 
     private void receivePlayerTeam(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         //current.Team = data[0];
 
         sendPlayerTeam(playerIp);
         Core.removeUnusedGameData(connectedPlayers);
     }
 
-    private byte[] getTeamPacket(PlayerInfo player)
+    private byte[] getTeamPacket(LegacyPlayerInfo player)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.Add(player.Team);
@@ -399,7 +399,7 @@ public class Server
     private void sendPlayerConnection(string playerIp, bool connected)
     {
         // Send message to all other connected ips
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -409,7 +409,7 @@ public class Server
         }
     }
 
-    private byte[] getConnectionPacket(PlayerInfo player, bool connected)
+    private byte[] getConnectionPacket(LegacyPlayerInfo player, bool connected)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(BitConverter.GetBytes(connected));
@@ -426,7 +426,7 @@ public class Server
         if (response > 0)
             return;
 
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip)
@@ -488,7 +488,7 @@ public class Server
         idx += nameLength + 1;
 
         // Ensure there are no duplicate names
-        foreach (PlayerInfo player in connectedPlayers.Values)
+        foreach (LegacyPlayerInfo player in connectedPlayers.Values)
         {
             if (player.Name == name)
             {
@@ -514,7 +514,7 @@ public class Server
 
         // Add new connected player
         Logger.Info("Player connection accepted");
-        PlayerInfo newPlayer = new PlayerInfo(playerIp, name, team);
+        LegacyPlayerInfo newPlayer = new LegacyPlayerInfo(playerIp, name, team);
         connectedPlayers.Add(playerIp, newPlayer);
         sendPlayerConnection(playerIp, true);
         sendPlayerIntro(playerIp, RefusalType.Accepted);
@@ -529,7 +529,7 @@ public class Server
 
     private void sendPlayerProgress(string playerIp, byte type, byte value, string id)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.Team == getCurrentPlayer(ip).Team)
@@ -541,7 +541,7 @@ public class Server
 
     private void receivePlayerProgress(string playerIp, byte[] data)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         byte progressType = data[0];
         byte progressValue = data[1];
         string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
@@ -634,7 +634,7 @@ public class Server
 
     private void sendPlayerAttack(string playerIp, byte[] attackData)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -650,7 +650,7 @@ public class Server
         sendPlayerAttack(playerIp, data);
     }
 
-    private byte[] getAttackPacket(PlayerInfo player, byte[] attackData)
+    private byte[] getAttackPacket(LegacyPlayerInfo player, byte[] attackData)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(attackData);
@@ -661,7 +661,7 @@ public class Server
 
     private void sendPlayerEffect(string playerIp, byte effect)
     {
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
             if (playerIp != ip && current.isInSameScene(connectedPlayers[ip]))
@@ -677,7 +677,7 @@ public class Server
         sendPlayerEffect(playerIp, data[0]);
     }
 
-    private byte[] getEffectPacket(PlayerInfo player, byte effect)
+    private byte[] getEffectPacket(LegacyPlayerInfo player, byte effect)
     {
         List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.Add(effect);
@@ -712,7 +712,7 @@ public class Server
         float time = BitConverter.ToSingle(data, 0);
         ushort ping = BitConverter.ToUInt16(data, 4);
 
-        PlayerInfo current = getCurrentPlayer(playerIp);
+        LegacyPlayerInfo current = getCurrentPlayer(playerIp);
         current.ping = ping;
 
         SendPing(playerIp, time);

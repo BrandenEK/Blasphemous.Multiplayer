@@ -63,7 +63,7 @@ public class ServerHandler
         // Send that this player has disconnected & remove them
         //sendPlayerConnection(e.ip, false);
         _connectedPlayers.Remove(ip);
-        Core.removeUnusedGameData(_connectedPlayers);
+        //Core.removeUnusedGameData(_connectedPlayers);
     }
 
     private void OnErrorReceived(string ip, NetworkException exception)
@@ -105,6 +105,8 @@ public class ServerHandler
         return _connectedPlayers;
     }
 
+    // Helper methods
+
     private bool TryGetPlayer(string ip, out PlayerInfo player)
     {
         if (_connectedPlayers.TryGetValue(ip, out player))
@@ -113,6 +115,13 @@ public class ServerHandler
         Logger.Warn($"Player {ip} does not exist in the server");
         return false;
     }
+
+    private bool InSameScene(PlayerInfo p1, PlayerInfo p2)
+    {
+        return !string.IsNullOrEmpty(p1.Scene) && p1.Scene == p2.Scene;
+    }
+
+    // Receiving packets
 
     private void OnPacketReceived(string ip, BasePacket packet)
     {
@@ -139,13 +148,12 @@ public class ServerHandler
             return;
 
         // Update player's stored position
-        current.xPos = packet.X;
-        current.yPos = packet.Y;
+        current.UpdatePosition(packet.X, packet.Y);
 
         // Send updated position
-        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && current.isInSameScene(x)))
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
         {
-            _server.Send(player.Ip, new PositionResponsePacket(current.Name, current.xPos, current.yPos));
+            _server.Send(player.Ip, new PositionResponsePacket(current.Name, current.XPosition, current.YPosition));
         }
     }
 
@@ -155,12 +163,12 @@ public class ServerHandler
             return;
 
         // Update player's stored animation
-        current.animation = packet.Animation;
+        current.UpdateAnimation(packet.Animation);
 
         // Send updated animation
-        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && current.isInSameScene(x)))
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
         {
-            _server.Send(player.Ip, new AnimationResponsePacket(current.Name, current.animation));
+            _server.Send(player.Ip, new AnimationResponsePacket(current.Name, current.Animation));
         }
     }
 }

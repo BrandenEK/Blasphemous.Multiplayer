@@ -8,14 +8,14 @@ public class PlayerInfo
     public string Name { get; }
     public byte Team { get; }
 
-    public float xPos;
-    public float yPos;
-    public bool facingDirection;
-    public byte animation;
-    public byte[] skin;
-    public ushort ping;
+    public float XPosition { get; private set; } = 0;
+    public float YPosition { get; private set; } = 0;
+    public byte Animation { get; private set; } = 0;
+    public bool Direction { get; private set; } = true;
 
-    public string sceneName;
+    public string Scene { get; private set; }
+    public byte[] Skin { get; private set; }
+    public ushort Ping { get; private set; }
 
     public PlayerInfo(string ip, string name, byte team)
     {
@@ -23,18 +23,39 @@ public class PlayerInfo
         Name = name;
         Team = team;
 
-        sceneName = string.Empty;
-        skin = Encoding.UTF8.GetBytes("PENITENT_DEFAULT");
-        ping = 0;
+        Scene = string.Empty;
+        Skin = Encoding.UTF8.GetBytes("PENITENT_DEFAULT");
+        Ping = 0;
     }
 
-    public bool isInSameScene(PlayerInfo player)
+    public void UpdatePosition(float x, float y)
     {
-        return sceneName != "" && sceneName == player.sceneName;
+        XPosition = x;
+        YPosition = y;
     }
 
-    public override string ToString()
+    public void UpdateAnimation(byte anim)
     {
-        return $"{Name} is at position ({xPos},{yPos}) facing {(facingDirection ? "right" : "left")} in the animation {animation} in room {sceneName}";
+        Animation = anim;
+    }
+
+    public void UpdateDirection(bool dir)
+    {
+        Direction = dir;
+    }
+
+    public void UpdateScene(string scene)
+    {
+        Scene = scene;
+    }
+
+    public void UpdateSkin(byte[] skin)
+    {
+        Skin = skin;
+    }
+
+    public void UpdatePing(ushort ping)
+    {
+        Ping = ping;
     }
 }
