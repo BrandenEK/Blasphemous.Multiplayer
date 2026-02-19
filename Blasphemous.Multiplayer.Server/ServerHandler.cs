@@ -135,6 +135,9 @@ public class ServerHandler
             case AnimationPacket animation:
                 ReceiveAnimation(ip, animation);
                 break;
+            case DirectionPacket direction:
+                ReceiveDirection(ip, direction);
+                break;
 
             default:
                 Logger.Error("TEMP: Dont know what to do with this packet yet");
@@ -169,6 +172,21 @@ public class ServerHandler
         foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
         {
             _server.Send(player.Ip, new AnimationResponsePacket(current.Name, current.Animation));
+        }
+    }
+
+    private void ReceiveDirection(string playerIp, DirectionPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Update player's stored direction
+        current.UpdateDirection(packet.Direction);
+
+        // Send updated direction
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
+        {
+            _server.Send(player.Ip, new DirectionResponsePacket(current.Name, current.Direction));
         }
     }
 }
