@@ -158,12 +158,14 @@ public class ServerHandler
             case EffectPacket effect:
                 ReceiveEffect(ip, effect);
                 break;
-
+            case ProgressPacket progress:
+                ReceiveProgress(ip, progress);
+                break;
             case PingPacket ping:
                 ReceivePing(ip, ping);
                 break;
             default:
-                Logger.Error("TEMP: Dont know what to do with this packet yet");
+                Logger.Error($"Received unexpected packet from {ip}: {packet.GetType().Name}");
                 break;
         }
     }
@@ -219,9 +221,9 @@ public class ServerHandler
             return;
 
         if (string.IsNullOrEmpty(packet.Scene))
-            OnPlayerEnterScene(playerIp, packet.Scene);
-        else
             OnPlayerLeaveScene(playerIp);
+        else
+            OnPlayerEnterScene(playerIp, packet.Scene);
     }
 
     private void OnPlayerEnterScene(string playerIp, string scene)
@@ -365,7 +367,99 @@ public class ServerHandler
         }
     }
 
+    // TODO: revamp this whole thing
+    private void ReceiveProgress(string playerIp, ProgressPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
 
+        // Update team progress data and send new packet
+        string progressId = packet.Id;
+        byte progressType = packet.Type;
+        byte progressValue = packet.Value;
+
+        // Add the progress to the server data, and if it's new send it to the rest of the players
+        if (!Core.getTeamData(current.Team).AddTeamProgress(progressId, progressType, progressValue))
+        {
+            Logger.ProgressBad($"Received duplicated or inferior progress from {current.Name}: {progressId}, Type {progressType}, Value {progressValue}");
+            return;
+        }
+
+        if (progressType >= 0 && progressType <= 5)
+        {
+            // Item
+            Logger.ProgressGood($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.Name}: {progressId}");
+        }
+        else if (progressType == 6)
+        {
+            // Stat
+            Logger.ProgressGood($"Received new stat upgrade from {current.Name}: {progressId} level {progressValue + 1}");
+        }
+        else if (progressType == 7)
+        {
+            // Skill
+            Logger.ProgressGood($"Received new skill from {current.Name}: {progressId}");
+        }
+        else if (progressType == 8)
+        {
+            // Map cell
+            Logger.ProgressGood($"Received new map cell from {current.Name}: {progressId}");
+        }
+        else if (progressType == 9)
+        {
+            // Flag
+            Logger.ProgressGood($"Received new flag from {current.Name}: {progressId}");
+        }
+        else if (progressType == 10)
+        {
+            // Pers. object
+            Logger.ProgressGood($"Received new pers. object from {current.Name}: {progressId}");
+        }
+        else if (progressType == 11)
+        {
+            // Teleport
+            Logger.ProgressGood($"Received new teleport location from {current.Name}: {progressId}");
+        }
+        else if (progressType == 12)
+        {
+            // Church donation
+            Logger.ProgressGood($"Received new tear donation from {current.Name}: {progressValue}");
+        }
+        else if (progressType == 13)
+        {
+            // Miriam status
+            Logger.ProgressGood($"Received new miriam status from {current.Name}: {progressId}");
+        }
+
+        // If this is a stat upgrade, might have to do something extra with flask/flaskhealth
+        if (progressType == 6)
+        {
+            if (progressId == "FLASK")
+            {
+                Logger.Info("Received flask level: " + progressValue);
+                byte flaskHealthUpgrades = Core.getTeamData(current.Team).GetTeamProgressValue(6, "FLASKHEALTH");
+                progressValue -= flaskHealthUpgrades;
+                Logger.Info("Flask level sent out: " + progressValue);
+            }
+            else if (progressId == "FLASKHEALTH")
+            {
+                byte flaskUpgrades = Core.getTeamData(current.Team).GetTeamProgressValue(6, "FLASK");
+                Logger.Info("Flask level stored: " + flaskUpgrades);
+                Logger.Info("Flask level sent: " + (byte)(flaskUpgrades - progressValue));
+
+                foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && x.Team == current.Team))
+                {
+                    _server.Send(player.Ip, new ProgressResponsePacket(current.Name, ProgressType.PlayerStat, "FLASK", (byte)(flaskUpgrades - progressValue)));
+                }
+            }
+        }
+
+        // Send progress info
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && x.Team == current.Team))
+        {
+            _server.Send(player.Ip, new ProgressResponsePacket(current.Name, (ProgressType)progressType, progressId, progressValue));
+        }
+    }
 
     private void ReceivePing(string playerIp, PingPacket packet)
     {
