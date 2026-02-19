@@ -159,6 +159,9 @@ public class ServerHandler
                 ReceiveEffect(ip, effect);
                 break;
 
+            case PingPacket ping:
+                ReceivePing(ip, ping);
+                break;
             default:
                 Logger.Error("TEMP: Dont know what to do with this packet yet");
                 break;
@@ -360,5 +363,20 @@ public class ServerHandler
         {
             _server.Send(player.Ip, new EffectResponsePacket(current.Name, packet.Type));
         }
+    }
+
+
+
+    private void ReceivePing(string playerIp, PingPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Update player's stored ping
+        current.UpdatePing(packet.Ping);
+
+        // Send updated position
+        var pings = _connectedPlayers.Values.Where(x => playerIp != x.Ip).ToDictionary(x => x.Name, x => x.Ping);
+        _server.Send(playerIp, new PingResponsePacket(packet.TimeStamp, pings));
     }
 }
