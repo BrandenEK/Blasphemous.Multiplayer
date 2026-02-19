@@ -25,7 +25,7 @@ public class NetworkHelper
 
             .RegisterPacket<IntroPacket>(60, () => new IntroPacket(0, string.Empty, string.Empty, string.Empty, 0))
             .RegisterPacket<IntroResponsePacket>(61, () => new IntroResponsePacket(0))
-            .RegisterPacket<JoinResponsePacket>(63, () => new JoinResponsePacket(string.Empty))
+            .RegisterPacket<JoinResponsePacket>(63, () => new JoinResponsePacket(string.Empty, 0))
             .RegisterPacket<QuitResponsePacket>(65, () => new QuitResponsePacket(string.Empty))
 
             .RegisterPacket<AttackPacket>(80, () => new AttackPacket(0, 0, string.Empty))

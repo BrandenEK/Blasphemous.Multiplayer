@@ -1,6 +1,7 @@
 ﻿using Basalt.Framework.Networking;
 using Basalt.Framework.Networking.Server;
 using Blasphemous.Multiplayer.Common;
+using Blasphemous.Multiplayer.Common.Enums;
 using Blasphemous.Multiplayer.Common.Packets;
 using Blasphemous.Multiplayer.Server.Models;
 using System.Collections.Generic;
@@ -144,7 +145,9 @@ public class ServerHandler
             case SkinPacket skin:
                 ReceiveSkin(ip, skin);
                 break;
-
+            case IntroPacket intro:
+                ReceiveIntro(ip, intro);
+                break;
 
             default:
                 Logger.Error("TEMP: Dont know what to do with this packet yet");
@@ -262,6 +265,66 @@ public class ServerHandler
         foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip))
         {
             _server.Send(player.Ip, new SkinResponsePacket(current.Name, current.Skin));
+        }
+    }
+
+    private void ReceiveIntro(string playerIp, IntroPacket packet)
+    {
+        // Ensure the server doesn't have max number of players
+        if (_connectedPlayers.Count >= _maxPlayers)
+        {
+            Logger.Warn("Player connection rejected: Player limit reached");
+            _server.Send(playerIp, new IntroResponsePacket(RefusalType.PlayerLimit));
+            return;
+        }
+
+        // Ensure there are no duplicate ips
+        if (_connectedPlayers.ContainsKey(playerIp))
+        {
+            Logger.Warn("Player connection rejected: Duplicate ip address");
+            _server.Send(playerIp, new IntroResponsePacket(RefusalType.DuplicateIp));
+            return;
+        }
+
+        // Ensure the protocol version matches
+        if (packet.ProtocolVersion != Protocol.VERSION)
+        {
+            Logger.Warn("Player connection rejected: Protocol version doesn't match");
+            _server.Send(playerIp, new IntroResponsePacket(RefusalType.Protocol));
+            return;
+        }
+
+        // Ensure there are no duplicate names
+        if (_connectedPlayers.Values.Any(x => x.Name == packet.PlayerName))
+        {
+            Logger.Warn("Player connection rejected: Duplicate name");
+            _server.Send(playerIp, new IntroResponsePacket(RefusalType.DuplicateName));
+            return;
+        }
+
+        // Ensure the password is correct
+        if (!string.IsNullOrEmpty(_password) && (string.IsNullOrEmpty(packet.Password) || packet.Password != _password))
+        {
+            Logger.Warn("Player connection rejected: Incorrect password");
+            _server.Send(playerIp, new IntroResponsePacket(RefusalType.Password));
+            return;
+        }
+
+        // Add new connected player
+        Logger.Info("Player connection accepted");
+        PlayerInfo current = new PlayerInfo(playerIp, packet.PlayerName, packet.TeamNumber);
+        _connectedPlayers.Add(playerIp, current);
+
+        // Send connections
+        _server.Send(playerIp, new IntroResponsePacket(RefusalType.Accepted));
+
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip))
+        {
+            _server.Send(player.Ip, new JoinResponsePacket(current.Name, current.Team));
+
+            _server.Send(playerIp, new JoinResponsePacket(player.Name, player.Team));
+            _server.Send(playerIp, new SceneResponsePacket(player.Name, player.Scene));
+            _server.Send(playerIp, new SkinResponsePacket(player.Name, player.Skin));
         }
     }
 }
