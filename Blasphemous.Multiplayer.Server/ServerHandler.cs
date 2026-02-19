@@ -92,7 +92,7 @@ public class ServerHandler
         }
     }
 
-    private const int READ_INTERVAL_MS = 16;
+    private const int READ_INTERVAL_MS = 10;
 
     // =======================================
     // New (old) stuff that I want to refactor
@@ -140,7 +140,7 @@ public class ServerHandler
         // Send updated position
         foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && current.isInSameScene(x)))
         {
-            _server.Send(player.Ip, new PositionResponsePacket(current.name, current.xPos, current.yPos));
+            _server.Send(player.Ip, new PositionResponsePacket(current.Name, current.xPos, current.yPos));
         }
     }
 }

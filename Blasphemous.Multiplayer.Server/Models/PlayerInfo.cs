@@ -5,9 +5,8 @@ namespace Blasphemous.Multiplayer.Server.Models;
 public class PlayerInfo
 {
     public string Ip { get; }
-
-    public string name;
-    public byte team;
+    public string Name { get; }
+    public byte Team { get; }
 
     public float xPos;
     public float yPos;
@@ -21,8 +20,9 @@ public class PlayerInfo
     public PlayerInfo(string ip, string name, byte team)
     {
         Ip = ip;
-        this.name = name;
-        this.team = team;
+        Name = name;
+        Team = team;
+
         sceneName = string.Empty;
         skin = Encoding.UTF8.GetBytes("PENITENT_DEFAULT");
         ping = 0;
@@ -35,6 +35,6 @@ public class PlayerInfo
 
     public override string ToString()
     {
-        return $"{name} is at position ({xPos},{yPos}) facing {(facingDirection ? "right" : "left")} in the animation {animation} in room {sceneName}";
+        return $"{Name} is at position ({xPos},{yPos}) facing {(facingDirection ? "right" : "left")} in the animation {animation} in room {sceneName}";
     }
 }

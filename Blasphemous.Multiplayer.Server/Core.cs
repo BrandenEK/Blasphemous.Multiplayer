@@ -76,7 +76,7 @@ internal static class Core
             bool teamExists = false;
             foreach (PlayerInfo player in allPlayers.Values)
             {
-                if (player.team == i)
+                if (player.Team == i)
                 {
                     teamExists = true;
                     break;

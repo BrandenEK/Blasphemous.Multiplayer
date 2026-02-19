@@ -180,7 +180,7 @@ public class Server
 
     private byte[] GetPositionPacket(PlayerInfo player)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(BitConverter.GetBytes(player.xPos));
         bytes.AddRange(BitConverter.GetBytes(player.yPos));
         return bytes.ToArray();
@@ -211,7 +211,7 @@ public class Server
 
     private byte[] GetAnimationPacket(PlayerInfo player)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.Add(player.animation);
         return bytes.ToArray();
     }
@@ -241,7 +241,7 @@ public class Server
 
     private byte[] GetDirectionPacket(PlayerInfo player)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(BitConverter.GetBytes(player.facingDirection));
         return bytes.ToArray();
     }
@@ -283,7 +283,7 @@ public class Server
 
     private byte[] getScenePacket(PlayerInfo player)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(Encoding.UTF8.GetBytes(player.sceneName));
         return bytes.ToArray();
     }
@@ -303,7 +303,7 @@ public class Server
             if (playerIp != ip)
             {
                 // Send that this player has left their old scene
-                Send(ip, Encoding.UTF8.GetBytes(current.name), NetworkType.LeaveScene);
+                Send(ip, Encoding.UTF8.GetBytes(current.Name), NetworkType.LeaveScene);
             }
         }
     }
@@ -341,7 +341,7 @@ public class Server
 
     private byte[] getSkinPacket(PlayerInfo player)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(player.skin);
         return bytes.ToArray();
     }
@@ -363,14 +363,14 @@ public class Server
         Logger.Info("Sending all server data to " + playerIp);
         for (byte i = 0; i < TeamInfo.NUMBER_OF_PROGRESS_TYPES; i++)
         {
-            Dictionary<string, byte> progressSet = Core.getTeamData(current.team).GetTeamProgressSet(i);
+            Dictionary<string, byte> progressSet = Core.getTeamData(current.Team).GetTeamProgressSet(i);
             foreach (string id in progressSet.Keys)
             {
                 byte value = progressSet[id];
                 if (i == 6 && id == "FLASK")
                 {
                     Logger.Info("Send all server flask: " + value);
-                    value -= Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
+                    value -= Core.getTeamData(current.Team).GetTeamProgressValue(6, "FLASKHEALTH");
                     Logger.Info("Send all send flask: " + value);
                 }
                 Send(playerIp, getProgressPacket("*", i, value, id), NetworkType.Progress);
@@ -381,7 +381,7 @@ public class Server
     private void receivePlayerTeam(string playerIp, byte[] data)
     {
         PlayerInfo current = getCurrentPlayer(playerIp);
-        current.team = data[0];
+        //current.Team = data[0];
 
         sendPlayerTeam(playerIp);
         Core.removeUnusedGameData(connectedPlayers);
@@ -389,8 +389,8 @@ public class Server
 
     private byte[] getTeamPacket(PlayerInfo player)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
-        bytes.Add(player.team);
+        List<byte> bytes = addPlayerNameToData(player.Name);
+        bytes.Add(player.Team);
         return bytes.ToArray();
     }
 
@@ -411,7 +411,7 @@ public class Server
 
     private byte[] getConnectionPacket(PlayerInfo player, bool connected)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(BitConverter.GetBytes(connected));
         return bytes.ToArray();
     }
@@ -490,7 +490,7 @@ public class Server
         // Ensure there are no duplicate names
         foreach (PlayerInfo player in connectedPlayers.Values)
         {
-            if (player.name == name)
+            if (player.Name == name)
             {
                 Logger.Warn("Player connection rejected: Duplicate name");
                 sendPlayerIntro(playerIp, RefusalType.DuplicateName);
@@ -532,9 +532,9 @@ public class Server
         PlayerInfo current = getCurrentPlayer(playerIp);
         foreach (string ip in connectedPlayers.Keys)
         {
-            if (playerIp != ip && current.team == getCurrentPlayer(ip).team)
+            if (playerIp != ip && current.Team == getCurrentPlayer(ip).Team)
             {
-                Send(ip, getProgressPacket(current.name, type, value, id), NetworkType.Progress);
+                Send(ip, getProgressPacket(current.Name, type, value, id), NetworkType.Progress);
             }
         }
     }
@@ -547,56 +547,56 @@ public class Server
         string progressId = Encoding.UTF8.GetString(data, 2, data.Length - 2);
 
         // Add the progress to the server data, and if it's new send it to the rest of the players
-        if (!Core.getTeamData(current.team).AddTeamProgress(progressId, progressType, progressValue))
+        if (!Core.getTeamData(current.Team).AddTeamProgress(progressId, progressType, progressValue))
         {
-            Logger.ProgressBad($"Received duplicated or inferior progress from {current.name}: {progressId}, Type {progressType}, Value {progressValue}");
+            Logger.ProgressBad($"Received duplicated or inferior progress from {current.Name}: {progressId}, Type {progressType}, Value {progressValue}");
             return;
         }
 
         if (progressType >= 0 && progressType <= 5)
         {
             // Item
-            Logger.ProgressGood($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.name}: {progressId}");
+            Logger.ProgressGood($"{(progressValue == 0 ? "Received new" : "Lost an")} item from {current.Name}: {progressId}");
         }
         else if (progressType == 6)
         {
             // Stat
-            Logger.ProgressGood($"Received new stat upgrade from {current.name}: {progressId} level {progressValue + 1}");
+            Logger.ProgressGood($"Received new stat upgrade from {current.Name}: {progressId} level {progressValue + 1}");
         }
         else if (progressType == 7)
         {
             // Skill
-            Logger.ProgressGood($"Received new skill from {current.name}: {progressId}");
+            Logger.ProgressGood($"Received new skill from {current.Name}: {progressId}");
         }
         else if (progressType == 8)
         {
             // Map cell
-            Logger.ProgressGood($"Received new map cell from {current.name}: {progressId}");
+            Logger.ProgressGood($"Received new map cell from {current.Name}: {progressId}");
         }
         else if (progressType == 9)
         {
             // Flag
-            Logger.ProgressGood($"Received new flag from {current.name}: {progressId}");
+            Logger.ProgressGood($"Received new flag from {current.Name}: {progressId}");
         }
         else if (progressType == 10)
         {
             // Pers. object
-            Logger.ProgressGood($"Received new pers. object from {current.name}: {progressId}");
+            Logger.ProgressGood($"Received new pers. object from {current.Name}: {progressId}");
         }
         else if (progressType == 11)
         {
             // Teleport
-            Logger.ProgressGood($"Received new teleport location from {current.name}: {progressId}");
+            Logger.ProgressGood($"Received new teleport location from {current.Name}: {progressId}");
         }
         else if (progressType == 12)
         {
             // Church donation
-            Logger.ProgressGood($"Received new tear donation from {current.name}: {progressValue}");
+            Logger.ProgressGood($"Received new tear donation from {current.Name}: {progressValue}");
         }
         else if (progressType == 13)
         {
             // Miriam status
-            Logger.ProgressGood($"Received new miriam status from {current.name}: {progressId}");
+            Logger.ProgressGood($"Received new miriam status from {current.Name}: {progressId}");
         }
 
         // If this is a stat upgrade, might have to do something extra with flask/flaskhealth
@@ -605,13 +605,13 @@ public class Server
             if (progressId == "FLASK")
             {
                 Logger.Info("Received flask level: " + progressValue);
-                byte flaskHealthUpgrades = Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASKHEALTH");
+                byte flaskHealthUpgrades = Core.getTeamData(current.Team).GetTeamProgressValue(6, "FLASKHEALTH");
                 progressValue -= flaskHealthUpgrades;
                 Logger.Info("Flask level sent out: " + progressValue);
             }
             else if (progressId == "FLASKHEALTH")
             {
-                byte flaskUpgrades = Core.getTeamData(current.team).GetTeamProgressValue(6, "FLASK");
+                byte flaskUpgrades = Core.getTeamData(current.Team).GetTeamProgressValue(6, "FLASK");
                 Logger.Info("Flask level stored: " + flaskUpgrades);
                 Logger.Info("Flask level sent: " + (byte)(flaskUpgrades - progressValue));
                 sendPlayerProgress(playerIp, 6, (byte)(flaskUpgrades - progressValue), "FLASK");
@@ -652,7 +652,7 @@ public class Server
 
     private byte[] getAttackPacket(PlayerInfo player, byte[] attackData)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.AddRange(attackData);
         return bytes.ToArray();
     }
@@ -679,7 +679,7 @@ public class Server
 
     private byte[] getEffectPacket(PlayerInfo player, byte effect)
     {
-        List<byte> bytes = addPlayerNameToData(player.name);
+        List<byte> bytes = addPlayerNameToData(player.Name);
         bytes.Add(effect);
         return bytes.ToArray();
     }
@@ -696,7 +696,7 @@ public class Server
             if (player.Key == playerIp)
                 continue;
 
-            string name = player.Value.name;
+            string name = player.Value.Name;
             ushort ping = player.Value.ping;
 
             bytes.Add((byte)name.Length);
