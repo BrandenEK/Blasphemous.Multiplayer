@@ -105,13 +105,13 @@ public class ServerHandler
         return _connectedPlayers;
     }
 
-    private PlayerInfo getCurrentPlayer(string ip)
+    private bool TryGetPlayer(string ip, out PlayerInfo player)
     {
-        if (_connectedPlayers.ContainsKey(ip))
-            return _connectedPlayers[ip];
+        if (_connectedPlayers.TryGetValue(ip, out player))
+            return true;
 
-        Logger.Warn("Data for " + ip + " has not been created yet!");
-        return new PlayerInfo(string.Empty, string.Empty, 1);
+        Logger.Warn($"Player {ip} does not exist in the server");
+        return false;
     }
 
     private void OnPacketReceived(string ip, BasePacket packet)
@@ -123,6 +123,9 @@ public class ServerHandler
             case PositionPacket position:
                 ReceivePosition(ip, position);
                 break;
+            case AnimationPacket animation:
+                ReceiveAnimation(ip, animation);
+                break;
 
             default:
                 Logger.Error("TEMP: Dont know what to do with this packet yet");
@@ -132,8 +135,10 @@ public class ServerHandler
 
     private void ReceivePosition(string playerIp, PositionPacket packet)
     {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
         // Update player's stored position
-        PlayerInfo current = getCurrentPlayer(playerIp);
         current.xPos = packet.X;
         current.yPos = packet.Y;
 
@@ -141,6 +146,21 @@ public class ServerHandler
         foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && current.isInSameScene(x)))
         {
             _server.Send(player.Ip, new PositionResponsePacket(current.Name, current.xPos, current.yPos));
+        }
+    }
+
+    private void ReceiveAnimation(string playerIp, AnimationPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Update player's stored animation
+        current.animation = packet.Animation;
+
+        // Send updated animation
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && current.isInSameScene(x)))
+        {
+            _server.Send(player.Ip, new AnimationResponsePacket(current.Name, current.animation));
         }
     }
 }
