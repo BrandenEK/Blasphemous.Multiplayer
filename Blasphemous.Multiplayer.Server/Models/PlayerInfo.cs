@@ -47,6 +47,14 @@ public class PlayerInfo
     public void UpdateScene(string scene)
     {
         Scene = scene;
+
+        if (!string.IsNullOrEmpty(scene))
+            return;
+
+        XPosition = 0;
+        YPosition = 0;
+        Animation = 0;
+        Direction = false;
     }
 
     public void UpdateSkin(byte[] skin)

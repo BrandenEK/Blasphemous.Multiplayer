@@ -138,6 +138,9 @@ public class ServerHandler
             case DirectionPacket direction:
                 ReceiveDirection(ip, direction);
                 break;
+            case ScenePacket scene:
+                ReceiveScene(ip, scene);
+                break;
 
             default:
                 Logger.Error("TEMP: Dont know what to do with this packet yet");
@@ -187,6 +190,59 @@ public class ServerHandler
         foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
         {
             _server.Send(player.Ip, new DirectionResponsePacket(current.Name, current.Direction));
+        }
+    }
+
+    private void ReceiveScene(string playerIp, ScenePacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        if (string.IsNullOrEmpty(packet.Scene))
+            OnPlayerEnterScene(playerIp, packet.Scene);
+        else
+            OnPlayerLeaveScene(playerIp);
+    }
+
+    private void OnPlayerEnterScene(string playerIp, string scene)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Update player's stored scene
+        current.UpdateScene(scene);
+
+        // Send updated scene
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip))
+        {
+            _server.Send(player.Ip, new SceneResponsePacket(current.Name, scene));
+
+            if (InSameScene(current, player))
+            {
+                // These should just be default right now, but they are about to be sent
+                //_server.Send(player.Ip, new PositionResponsePacket(current.Name, current.XPosition, current.YPosition));
+                //_server.Send(player.Ip, new AnimationResponsePacket(current.Name, current.Animation));
+                //_server.Send(player.Ip, new DirectionResponsePacket(current.Name, current.Direction));
+
+                _server.Send(playerIp, new PositionResponsePacket(player.Name, player.XPosition, player.YPosition));
+                _server.Send(playerIp, new AnimationResponsePacket(player.Name, player.Animation));
+                _server.Send(playerIp, new DirectionResponsePacket(player.Name, player.Direction));
+            }
+        }
+    }
+
+    private void OnPlayerLeaveScene(string playerIp)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Update player's stored scene
+        current.UpdateScene(string.Empty);
+
+        // Send updated scene
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip))
+        {
+            _server.Send(player.Ip, new SceneResponsePacket(current.Name, string.Empty));
         }
     }
 }
