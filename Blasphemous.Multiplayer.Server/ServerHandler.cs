@@ -57,13 +57,17 @@ public class ServerHandler
     {
         Logger.Info($"Client disconnected at {ip}"); // TODO: everything after this was old
 
-        // Make sure this client was actually connected, not just rejected from server
-        if (!_connectedPlayers.ContainsKey(ip))
+        if (!TryGetPlayer(ip, out PlayerInfo current))
             return;
 
         // Send that this player has disconnected & remove them
-        //sendPlayerConnection(e.ip, false);
         _connectedPlayers.Remove(ip);
+
+        foreach (var player in _connectedPlayers.Values)
+        {
+            _server.Send(player.Ip, new QuitResponsePacket(current.Name));
+        }
+
         //Core.removeUnusedGameData(_connectedPlayers);
     }
 
@@ -147,6 +151,12 @@ public class ServerHandler
                 break;
             case IntroPacket intro:
                 ReceiveIntro(ip, intro);
+                break;
+            case AttackPacket attack:
+                ReceiveAttack(ip, attack);
+                break;
+            case EffectPacket effect:
+                ReceiveEffect(ip, effect);
                 break;
 
             default:
@@ -325,6 +335,30 @@ public class ServerHandler
             _server.Send(playerIp, new JoinResponsePacket(player.Name, player.Team));
             _server.Send(playerIp, new SceneResponsePacket(player.Name, player.Scene));
             _server.Send(playerIp, new SkinResponsePacket(player.Name, player.Skin));
+        }
+    }
+
+    private void ReceiveAttack(string playerIp, AttackPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Send attack info
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
+        {
+            _server.Send(player.Ip, new AttackResponsePacket(current.Name, packet.Type, packet.Amount, packet.Victim));
+        }
+    }
+
+    private void ReceiveEffect(string playerIp, EffectPacket packet)
+    {
+        if (!TryGetPlayer(playerIp, out PlayerInfo current))
+            return;
+
+        // Send effect info
+        foreach (var player in _connectedPlayers.Values.Where(x => playerIp != x.Ip && InSameScene(current, x)))
+        {
+            _server.Send(player.Ip, new EffectResponsePacket(current.Name, packet.Type));
         }
     }
 }
