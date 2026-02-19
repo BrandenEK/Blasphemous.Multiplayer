@@ -7,7 +7,7 @@ public class ProgressResponsePacket(string player, ProgressType type, string id,
 {
     public string Player { get; set; } = player;
 
-    public byte Type { get; set; } = (byte)type;
+    public ProgressType Type { get; set; } = type;
 
     public string Id { get; set; } = id;
 

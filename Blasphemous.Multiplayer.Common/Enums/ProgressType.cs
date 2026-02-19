@@ -1,7 +1,7 @@
 ﻿
 namespace Blasphemous.Multiplayer.Common.Enums;
 
-public enum ProgressType
+public enum ProgressType : byte
 {
     Bead = 0,
     Prayer = 1,

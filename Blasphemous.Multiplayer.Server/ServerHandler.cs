@@ -375,7 +375,7 @@ public class ServerHandler
 
         // Update team progress data and send new packet
         string progressId = packet.Id;
-        byte progressType = packet.Type;
+        byte progressType = (byte)packet.Type;
         byte progressValue = packet.Value;
 
         // Add the progress to the server data, and if it's new send it to the rest of the players

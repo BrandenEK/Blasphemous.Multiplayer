@@ -1,7 +1,7 @@
 ﻿
 namespace Blasphemous.Multiplayer.Common.Enums;
 
-public enum RefusalType
+public enum RefusalType : byte
 {
     Accepted = 0,
     // Network
