@@ -11,9 +11,5 @@
     <DebugType>None</DebugType>
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Basalt.Framework.Networking" Version="2.0.0" />
-  </ItemGroup>
   
 </Project>

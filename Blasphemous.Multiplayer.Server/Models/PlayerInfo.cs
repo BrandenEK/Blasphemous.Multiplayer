@@ -1,64 +1,37 @@
-﻿
+﻿using System.Text;
+
 namespace Blasphemous.Multiplayer.Server.Models;
 
 public class PlayerInfo
 {
-    public string Ip { get; }
-    public string Name { get; }
-    public byte Team { get; }
+    public string name;
+    public byte team;
 
-    public float XPosition { get; private set; } = 0;
-    public float YPosition { get; private set; } = 0;
-    public byte Animation { get; private set; } = 0;
-    public bool Direction { get; private set; } = true;
+    public float xPos;
+    public float yPos;
+    public bool facingDirection;
+    public byte animation;
+    public byte[] skin;
+    public ushort ping;
 
-    public string Scene { get; private set; } = string.Empty;
-    public string Skin { get; private set; } = "PENITENT_DEFAULT";
-    public ushort Ping { get; private set; } = 0;
+    public string sceneName;
 
-    public PlayerInfo(string ip, string name, byte team)
+    public PlayerInfo(string name, byte team)
     {
-        Ip = ip;
-        Name = name;
-        Team = team;
+        this.name = name;
+        this.team = team;
+        sceneName = string.Empty;
+        skin = Encoding.UTF8.GetBytes("PENITENT_DEFAULT");
+        ping = 0;
     }
 
-    public void UpdatePosition(float x, float y)
+    public bool isInSameScene(PlayerInfo player)
     {
-        XPosition = x;
-        YPosition = y;
+        return sceneName != "" && sceneName == player.sceneName;
     }
 
-    public void UpdateAnimation(byte anim)
+    public override string ToString()
     {
-        Animation = anim;
-    }
-
-    public void UpdateDirection(bool dir)
-    {
-        Direction = dir;
-    }
-
-    public void UpdateScene(string scene)
-    {
-        Scene = scene;
-
-        if (!string.IsNullOrEmpty(scene))
-            return;
-
-        XPosition = 0;
-        YPosition = 0;
-        Animation = 0;
-        Direction = false;
-    }
-
-    public void UpdateSkin(string skin)
-    {
-        Skin = skin;
-    }
-
-    public void UpdatePing(ushort ping)
-    {
-        Ping = ping;
+        return $"{name} is at position ({xPos},{yPos}) facing {(facingDirection ? "right" : "left")} in the animation {animation} in room {sceneName}";
     }
 }

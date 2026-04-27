@@ -1,8 +1,7 @@
 ﻿
 namespace Blasphemous.Multiplayer.Common.Enums;
 
-// TODO: this might be unused now
-public enum NetworkType : byte
+public enum NetworkType
 {
     Position = 0,
     Animation = 1,
