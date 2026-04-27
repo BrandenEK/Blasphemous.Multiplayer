@@ -26,7 +26,7 @@ public readonly struct ConnectionInfo
     /// </summary>
     public ConnectionInfo()
     {
-        ServerIp = $"{Protocol.DEFAULT_IP}:{Protocol.DEFAULT_PORT}";
+        ServerIp = $"{Protocol.DEFAULT_IP}";
         RoomName = string.Empty;
         PlayerName = string.Empty;
         Password = string.Empty;
