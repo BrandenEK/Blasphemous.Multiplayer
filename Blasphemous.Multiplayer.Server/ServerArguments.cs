@@ -3,7 +3,7 @@ using Blasphemous.Multiplayer.Common;
 
 namespace Blasphemous.Multiplayer.Server;
 
-public class ServerCommand : CommandData
+public class ServerArguments : ProgramArguments
 {
     [IntegerArgument('p', "port")]
     public int Port { get; set; } = Protocol.DEFAULT_PORT;
