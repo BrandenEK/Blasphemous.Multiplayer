@@ -1,6 +1,6 @@
 ﻿using Basalt.Framework.Networking;
+using Basalt.Framework.Networking.Serializers;
 using Basalt.Framework.Networking.Server;
-using Blasphemous.Multiplayer.Common;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -20,7 +20,12 @@ public class ServerHandler
         _maxPlayers = maxPlayers;
         _password = password;
 
-        _server = new NetworkServer(NetworkHelper.CreateSerializer());
+        //_server = new NetworkServer(new ClassicSerializer()
+        //    .RegisterPacket<PositionPacket>(0, () => new PositionPacket(0, 0))
+        //    .RegisterPacket<ScenePacket>(5, () => new ScenePacket(string.Empty)));
+
+        _server = new NetworkServer(null);
+
         _server.OnClientConnected += OnClientConnected;
         _server.OnClientDisconnected += OnClientDisconnected;
         _server.OnPacketReceived += OnPacketReceived;
