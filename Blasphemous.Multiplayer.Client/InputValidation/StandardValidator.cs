@@ -12,25 +12,6 @@ internal class StandardValidator : ISanitizer, IValidator
 
     public bool IsServerValid(string text)
     {
-        //// Empty field
-        //if (string.IsNullOrEmpty(text))
-        //    return false;
-
-        //// Too long
-        //if (text.Length > SERVER_LENGTH)
-        //    return false;
-
-        //// Invalid chars
-        //if (text.Any(c => !char.IsLetterOrDigit(c) && !SERVER_CHARS.Contains(c)))
-        //    return false;
-
-        //return text.Count(c => c == ':') switch
-        //{
-        //    0 => true,
-        //    1 => ushort.TryParse(text.Substring(text.IndexOf(':') + 1), out _),
-        //    _ => false
-        //};
-
         return !string.IsNullOrEmpty(text)
             && text.Length <= SERVER_LENGTH
             && text.All(c => char.IsLetterOrDigit(c) || SERVER_CHARS.Contains(c))
