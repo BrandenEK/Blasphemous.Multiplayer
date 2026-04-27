@@ -1,4 +1,5 @@
-﻿using Blasphemous.Multiplayer.Server.Models;
+﻿using Basalt.CommandParser;
+using Blasphemous.Multiplayer.Server.Models;
 using System;
 using System.Collections.Generic;
 
@@ -25,20 +26,19 @@ internal static class Core
         Console.Title = ApplicationTitle;
         Console.WriteLine(string.Empty);
 
-        // Read settings from args
-        var cmd = new ServerCommand();
-        cmd.Process(args);
+        // Read options from args
+        var options = CommandParser.ProcessArguments<ServerArguments>(args);
 
         // Create server
-        server = new Server(cmd.MaxPlayers, cmd.Password);
-        if (!server.Start(cmd.Port))
+        server = new Server(options.MaxPlayers, options.Password);
+        if (!server.Start(options.Port))
         {
-            Logger.Error($"Server failed to start on port {cmd.Port}");
+            Logger.Error($"Server failed to start on port {options.Port}");
             return;
         }
 
         // Initial messages
-        Logger.Info($"Server has been started on port {cmd.Port}");
+        Logger.Info($"Server has been started on port {options.Port}");
         Logger.Info("Press 'esc' to exit");
 
         // Start read loop
