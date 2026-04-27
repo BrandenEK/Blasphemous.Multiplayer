@@ -5,7 +5,7 @@ namespace Blasphemous.Multiplayer.Common.Packets;
 
 public class ProgressPacket(ProgressType type, string id, byte value) : BasePacket
 {
-    public ProgressType Type { get; set; } = type;
+    public byte Type { get; set; } = (byte)type;
 
     public string Id { get; set; } = id;
 
