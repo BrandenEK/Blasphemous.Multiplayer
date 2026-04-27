@@ -1,6 +1,7 @@
 ﻿using Blasphemous.ModdingAPI;
 using Blasphemous.ModdingAPI.Helpers;
 using Blasphemous.Multiplayer.Client.InputValidation;
+using Blasphemous.Multiplayer.Common;
 using Blasphemous.Multiplayer.Common.Enums;
 using Framework.Managers;
 using System.Collections;
@@ -197,14 +198,27 @@ public class ConnectionDisplay : MonoBehaviour
     {
         ModLog.Info($"Attempting to connect to {_connection.ServerIp}");
 
-        string[] ipParts = _connection.ServerIp.Split(':');  // Do this better
+        string server;
+        int port;
+
+        if (_connection.ServerIp.Contains(':'))
+        {
+            var parts = _connection.ServerIp.Split(':');
+            server = parts[0];
+            port = int.Parse(parts[1]);
+        }
+        else
+        {
+            server = _connection.ServerIp;
+            port = Protocol.DEFAULT_PORT;
+        }
 
         _attemptingConnection = true;
         Main.Multiplayer.NetworkManager.OnConnect += OnConnect;
 
         yield return null;
 
-        bool result = Main.Multiplayer.NetworkManager.Connect(ipParts[0], int.Parse(ipParts[1]), _connection.RoomName, _connection.PlayerName, _connection.Password, (byte)_connection.TeamNumber);
+        bool result = Main.Multiplayer.NetworkManager.Connect(server, port, _connection.RoomName, _connection.PlayerName, _connection.Password, (byte)_connection.TeamNumber);
     }
 
     private void OnConnect(bool success, RefusalType refusal)
