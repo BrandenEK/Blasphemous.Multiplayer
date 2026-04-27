@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Basalt.CommandParser" Version="1.0.1" />
+    <PackageReference Include="Basalt.CommandParser" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
